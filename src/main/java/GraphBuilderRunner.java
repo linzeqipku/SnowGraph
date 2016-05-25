@@ -3,12 +3,9 @@
 import java.util.HashMap;
 import java.util.Map;
 
-import crawlers.qa.QaExtractor;
 import discretgraphs.GraphBuilder;
 import discretgraphs.code.CodeGraphBuilder;
 import discretgraphs.code.CodeIndexes;
-import discretgraphs.issuetracker.IssueGraphBuilder;
-import discretgraphs.mail.MailGraphBuilder;
 import discretgraphs.qa.QaGraphDbBuilder;
 import graphfusion.CodeLinker;
 

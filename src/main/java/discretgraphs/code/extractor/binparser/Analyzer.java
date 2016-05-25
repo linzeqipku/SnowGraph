@@ -152,6 +152,7 @@ public class Analyzer
 					//寻找普通方法的调用
 					ctMethod.instrument(new ExprEditor()
 					{
+						@Override
 						public void edit(MethodCall m) throws CannotCompileException
 						{
 							try
@@ -166,6 +167,7 @@ public class Analyzer
 						}
 
 						//寻找域的调用
+						@Override
 						public void edit(FieldAccess a)
 						{
 							try
@@ -180,6 +182,7 @@ public class Analyzer
 						}
 
 						//寻找对自己的构造方法的调用
+						@Override
 						public void edit(ConstructorCall m) throws CannotCompileException
 						{
 							try
@@ -194,6 +197,7 @@ public class Analyzer
 						}
 
 						//寻找对其它类的构造方法的调用
+						@Override
 						public void edit(NewExpr m) throws CannotCompileException
 						{
 							try
@@ -242,6 +246,7 @@ public class Analyzer
 				{
 					ctConstructor.instrument(new ExprEditor()
 					{
+						@Override
 						public void edit(MethodCall m) throws CannotCompileException
 						{
 							try
@@ -255,6 +260,7 @@ public class Analyzer
 							}
 						}
 
+						@Override
 						public void edit(FieldAccess a)
 						{
 							try
@@ -268,6 +274,7 @@ public class Analyzer
 							}
 						}
 
+						@Override
 						public void edit(ConstructorCall m) throws CannotCompileException
 						{
 							try
@@ -281,6 +288,7 @@ public class Analyzer
 							}
 						}
 
+						@Override
 						public void edit(NewExpr m) throws CannotCompileException
 						{
 							try

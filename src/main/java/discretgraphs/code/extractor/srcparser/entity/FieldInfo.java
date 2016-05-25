@@ -177,6 +177,7 @@ public class FieldInfo extends CommonInfo{
 		this.uuid = uuid;
 	}
 
+	@Override
 	public String getHashName() {
 		if (interfaceInfo != null) {
 			return interfaceInfo.getHashName() + "|#|" + name;
@@ -187,6 +188,7 @@ public class FieldInfo extends CommonInfo{
 		return "|#||#||#||#|" + name;
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if(this.getHashName().equals(((FieldInfo) o).getHashName())) {
 			return true;

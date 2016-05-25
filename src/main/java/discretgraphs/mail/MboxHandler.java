@@ -2,9 +2,6 @@ package discretgraphs.mail;
 
 import graphmodel.entity.mail.MailSchema;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -45,6 +42,7 @@ public class MboxHandler extends AbstractContentHandler
 	String receiverNames[] = new String[]{};
 	String receiverMails[] = new String[]{};
 	
+	@Override
 	public void field(Field fieldData) throws MimeException
 	{
 		if (fieldData.toString().startsWith("Message-ID:") || fieldData.toString().startsWith("Message-Id:"))
@@ -96,6 +94,7 @@ public class MboxHandler extends AbstractContentHandler
 		}
 	}
 
+	@Override
 	public void body(BodyDescriptor bd, InputStream is) throws MimeException,
 			IOException
 	{
@@ -131,48 +130,59 @@ public class MboxHandler extends AbstractContentHandler
 		body+=r;
 	}
 
+	@Override
 	public void startMultipart(BodyDescriptor bd) throws MimeException
 	{
 	}
 
+	@Override
 	public void endMultipart() throws MimeException
 	{
 	}
 
+	@Override
 	public void epilogue(InputStream is) throws MimeException
 	{
 	}
 
+	@Override
 	public void preamble(InputStream is) throws MimeException
 	{
 	}
 
+	@Override
 	public void startHeader() throws MimeException
 	{
 	}
 
+	@Override
 	public void endHeader() throws MimeException
 	{
 	}
 
+	@Override
 	public void startBodyPart() throws MimeException
 	{
 	}
 
+	@Override
 	public void endBodyPart() throws MimeException
 	{
 	}
 
+	@Override
 	public void startMessage() throws MimeException
 	{
 	}
 
+	@Override
 	public void endMessage() throws MimeException
 	{
 		Node node=db.createNode();		
 		mailSchema=new MailSchema(node, subject, id, senderName, senderMail, receiverNames, receiverMails, replyTo, date, body);
 	}
 
+	@Override
 	public void raw(InputStream is) throws MimeException
 	{
 	}

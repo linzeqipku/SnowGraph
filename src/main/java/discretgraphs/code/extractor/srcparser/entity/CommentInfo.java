@@ -65,7 +65,8 @@ public class CommentInfo extends CommonInfo implements Comparable<CommentInfo>{
 		return null;
 	}
 	
-	 public int compareTo(CommentInfo arg0) { 
+	 @Override
+	public int compareTo(CommentInfo arg0) { 
 	    return this.getStartLineNum() - arg0.getStartLineNum(); 
 	 } 
 

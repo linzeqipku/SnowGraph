@@ -175,6 +175,7 @@ public class InterfaceInfo extends CommonInfo {
 		this.fullName = fullName;
 	}
 
+	@Override
 	public String getHashName() {
 		if(groupInfo != null)
 		{
@@ -185,6 +186,7 @@ public class InterfaceInfo extends CommonInfo {
 		}
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if(this.getHashName().equals(((InterfaceInfo) o).getHashName())) {
 			return true;

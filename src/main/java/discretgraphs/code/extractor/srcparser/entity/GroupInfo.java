@@ -197,6 +197,7 @@ public class GroupInfo extends CommonInfo{
 		this.uuid = uuid;
 	}
 
+	@Override
 	public String getHashName() {
 		if(packageInfo != null)
 		{
@@ -207,6 +208,7 @@ public class GroupInfo extends CommonInfo{
 		}
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if(this.getHashName().equals(((GroupInfo) o).getHashName())) {
 			return true;

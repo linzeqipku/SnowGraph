@@ -87,6 +87,7 @@ public class ParameterInfo extends CommonInfo {
 		return methodInfo;
 	}
 
+	@Override
 	public String getHashName() {
 		if(methodInfo != null)
 		{
@@ -97,6 +98,7 @@ public class ParameterInfo extends CommonInfo {
 		}
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if(this.getHashName().equals(((ParameterInfo) o).getHashName())) {
 			return true;

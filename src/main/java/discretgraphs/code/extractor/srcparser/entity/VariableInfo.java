@@ -84,6 +84,7 @@ public class VariableInfo extends CommonInfo {
 	public void setSimpleTypes(List<String> simpleTypes) {
 		this.simpleTypes = simpleTypes;
 	}
+	@Override
 	public String getHashName() {
 		if (methodInfo != null) {
 			return methodInfo.getHashName() + "|#|" + type + " " + name;
@@ -91,6 +92,7 @@ public class VariableInfo extends CommonInfo {
 		return "|#||#||#||#||#|" + type + " " + name;
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if(this.getHashName().equals(((VariableInfo) o).getHashName())) {
 			return true;

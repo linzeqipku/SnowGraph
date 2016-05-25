@@ -2,6 +2,7 @@ package graphmodel.entity;
 
 import graphmodel.ManageElements;
 import graphmodel.entity.code.ClassSchema;
+import graphmodel.entity.code.CodeSchema;
 import graphmodel.entity.code.InterfaceSchema;
 import graphmodel.entity.code.MethodSchema;
 import graphmodel.entity.issuetracker.IssueCommentSchema;
@@ -25,20 +26,20 @@ public abstract class Schema {
 		
 		if (node.hasLabel(ManageElements.Labels.CLASS)){
 			r=(String)node.getProperty(ClassSchema.NAME)+" ";
-			if (node.hasProperty(ClassSchema.COMMENT))
-				r+=(String)node.getProperty(ClassSchema.COMMENT);
+			if (node.hasProperty(CodeSchema.COMMENT))
+				r+=(String)node.getProperty(CodeSchema.COMMENT);
 		}
 		
 		if (node.hasLabel(ManageElements.Labels.INTERFACE)){
 			r=(String)node.getProperty(InterfaceSchema.NAME)+" ";
-			if (node.hasProperty(InterfaceSchema.COMMENT))
-				r+=(String)node.getProperty(InterfaceSchema.COMMENT);
+			if (node.hasProperty(CodeSchema.COMMENT))
+				r+=(String)node.getProperty(CodeSchema.COMMENT);
 		}
 		
 		if (node.hasLabel(ManageElements.Labels.METHOD)){
 			r=(String)node.getProperty(MethodSchema.NAME)+" ";
-			if (node.hasProperty(MethodSchema.COMMENT))
-				r+=(String)node.getProperty(MethodSchema.COMMENT);
+			if (node.hasProperty(CodeSchema.COMMENT))
+				r+=(String)node.getProperty(CodeSchema.COMMENT);
 		}
 		
 		if (node.hasLabel(ManageElements.Labels.MAIL)){

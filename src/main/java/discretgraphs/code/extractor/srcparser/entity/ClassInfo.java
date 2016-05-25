@@ -221,6 +221,7 @@ public class ClassInfo extends CommonInfo{
 		this.commentInfo = commentInfo;
 	}
 
+	@Override
 	public String getHashName() {
 		if(groupInfo != null)
 		{
@@ -231,6 +232,7 @@ public class ClassInfo extends CommonInfo{
 		}
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if(this.getHashName().equals(((ClassInfo) o).getHashName())) {
 			return true;

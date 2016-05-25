@@ -112,10 +112,12 @@ public class ProjectInfo extends CommonInfo {
 		return state;
 	}
 
+	@Override
 	public String getHashName() {
 		return name;
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if(this.getHashName().equals(((ProjectInfo) o).getHashName())) {
 			return true;

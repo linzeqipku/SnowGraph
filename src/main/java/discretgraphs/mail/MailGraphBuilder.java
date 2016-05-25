@@ -50,6 +50,7 @@ public class MailGraphBuilder extends GraphBuilder {
 		long usageTime = System.currentTimeMillis() - beginTime;
 	}
 	
+	@Override
 	public void run(){
 		File dir=new File(mboxDirPath);
 		

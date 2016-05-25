@@ -316,6 +316,7 @@ public class MethodInfo extends CommonInfo {
 		this.statementInfoList = statementInfoList;
 	}
 
+	@Override
 	public String getHashName() {
 		if (interfaceInfo != null) {
 			return interfaceInfo.getHashName() + "|#|" + name;
@@ -326,6 +327,7 @@ public class MethodInfo extends CommonInfo {
 		return "|#||#||#||#|" + name;
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if(this.getHashName().equals(((MethodInfo) o).getHashName())) {
 			return true;

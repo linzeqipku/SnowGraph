@@ -54,6 +54,7 @@ public class CodeGraphBuilder extends GraphBuilder
 		name = "CodeGraphBuilder";
 	}
 
+	@Override
 	public void run()
 	{
 		ByteCodePool pool = new ByteCodePool(new File(binPath));

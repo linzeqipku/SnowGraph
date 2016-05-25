@@ -72,6 +72,7 @@ public class QaGraphDbBuilder extends GraphBuilder
 		builder.run();
 	}
 	
+	@Override
 	public void run(){
 		
 		//delete existed database before creating a new one

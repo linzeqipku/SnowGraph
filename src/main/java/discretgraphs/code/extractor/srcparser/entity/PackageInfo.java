@@ -76,6 +76,7 @@ public class PackageInfo extends CommonInfo {
 		this.comment = comment;
 	}
 
+	@Override
 	public String getHashName() {
 		if(projectInfo != null)
 		{
@@ -116,6 +117,7 @@ public class PackageInfo extends CommonInfo {
 		this.uuid = uuid;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if(this.getHashName().equals(((PackageInfo) o).getHashName())) {
 			return true;

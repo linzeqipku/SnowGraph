@@ -75,6 +75,7 @@ public class MethodInvocationInfo extends CommonInfo {
 	// public void setArgumentList(List<String> argumentList) {
 	// this.argumentList = argumentList;
 	// }
+	@Override
 	public String getHashName() {
 		if (methodInfo != null) {
 			return methodInfo.getHashName() + "|#|" + name;
@@ -82,6 +83,7 @@ public class MethodInvocationInfo extends CommonInfo {
 		return "|#||#||#||#||#|" + name;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (this.getHashName().equals(((MethodInvocationInfo) o).getHashName())) {
 			return true;

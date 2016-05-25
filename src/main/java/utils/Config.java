@@ -1,11 +1,8 @@
 package utils;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
-
-import org.apache.commons.io.IOUtils;
-
 
 public class Config {
 	private static Properties properties = new Properties();
@@ -22,8 +19,9 @@ public class Config {
 	 * Load key/value pairs from property file
 	 */
 	static{
-		try(FileInputStream fis = new FileInputStream("src/config.properties")){
-			properties.load(fis);
+		
+		try(InputStream is = Config.class.getClassLoader().getResourceAsStream("config.properties")){
+			properties.load(is);
 		}catch(IOException e){
 			e.printStackTrace();
 		}
@@ -91,44 +89,6 @@ public class Config {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		//clear all key/value pairs in properties to test all default values
-		properties.clear();
-		assert getConnectionTimeout() == DEFAULT_CONNECTION_TIMEOUT;
-		assert getReadTimeout() == DEFAULT_READ_TIMEOUT;
-		assert getRetryTimes() == DEFAULT_RETRY_TIMES;
-		assert getLogPath().equals(DEFAULT_LOG_PATH) == true;
-		assert getThreadPoolSize() == DEFAULT_THREAD_POOL_SIZE;
-		
-		//custom configure file content
-		int connTimeout = 100;
-		int readTimeout = 200;
-		int retryTimes = 1;
-		int threadPoolSize = 5;
-		String logPath = "logFilePath";
-		StringBuilder configContentBuilder = new StringBuilder();
-		configContentBuilder.append("connectiontimeout=").append(connTimeout).append("\n");
-		configContentBuilder.append("readtimeout=").append(readTimeout).append("\n");
-		configContentBuilder.append("retrytimes=").append(retryTimes).append("\n");
-		configContentBuilder.append("logPath=").append(logPath).append("\n");
-		configContentBuilder.append("threadpoolsize=").append(threadPoolSize).append("\n");
-		
-		properties.load(IOUtils.toInputStream(configContentBuilder.toString()));
-		
-		assert getConnectionTimeout() == connTimeout;
-		assert getReadTimeout() == readTimeout;
-		assert getRetryTimes() == retryTimes;
-		assert getLogPath().equals(logPath) == true;
-		assert getThreadPoolSize() == threadPoolSize;
-		
-		
-		//test for method {$method getIssueFileSavedPath}
-		String projectName = "lucene";
-		String issueId = "2133";
-		String issueName = "LUCENE-2133";		
-		System.out.println(getIssueFileSavedPath(projectName, issueId, issueName));
-		
-		String patchId = "1234";
-		String patchName = "LUCENE-2133.patch";
-		System.out.println(getPatchFileSavedPath(projectName, issueId, patchId, patchName));
+		System.out.println(Config.getIntValue("connectiontimeout", 0));
 	}
 }

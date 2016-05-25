@@ -116,17 +116,20 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
         findEnd = lineMatcher.end();
     }
 
-    public Iterator<CharBufferWrapper> iterator() {
+    @Override
+	public Iterator<CharBufferWrapper> iterator() {
         return new MessageIterator();
     }
 
-    public void close() throws IOException {
+    @Override
+	public void close() throws IOException {
         theFile.close();
     }
 
     private class MessageIterator implements Iterator<CharBufferWrapper> {
 
-        public boolean hasNext() {
+        @Override
+		public boolean hasNext() {
             if (!fromLineFound) {
                 try {
                     close();
@@ -143,7 +146,8 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
          *
          * @return CharBuffer instance
          */
-        public CharBufferWrapper next() {
+        @Override
+		public CharBufferWrapper next() {
             final CharBuffer message;
             fromLineFound = fromLineMatcher.find();
             if (fromLineFound) {
@@ -190,7 +194,8 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
             return new CharBufferWrapper(message);
         }
 
-        public void remove() {
+        @Override
+		public void remove() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }

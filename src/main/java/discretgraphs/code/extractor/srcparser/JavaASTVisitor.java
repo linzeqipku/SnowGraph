@@ -16,8 +16,6 @@ package discretgraphs.code.extractor.srcparser;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.jdt.core.dom.Modifier;
-
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -30,8 +28,6 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-
 import discretgraphs.code.extractor.srcparser.entity.ClassInfo;
 import discretgraphs.code.extractor.srcparser.entity.CommentInfo;
 import discretgraphs.code.extractor.srcparser.entity.FieldInfo;

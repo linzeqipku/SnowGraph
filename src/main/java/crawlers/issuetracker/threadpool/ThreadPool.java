@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
  * 		For different kinds of tasks, we can run them sequentially. 
  */
 public class ThreadPool {
-	private static int threadPoolSize = Config.getThreadPoolSize();
+	private static int threadPoolSize = Config.getIntValue("threadpoolsize",20);
 	private static ExecutorService executors = null;
 	
 	/*fields for statistics*/

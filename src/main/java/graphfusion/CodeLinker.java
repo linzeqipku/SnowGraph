@@ -21,7 +21,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.tooling.GlobalGraphOperations;
 
 import discretgraphs.code.CodeIndexes;
 
@@ -46,7 +45,7 @@ public class CodeLinker
 		db = new GraphDatabaseFactory().newEmbeddedDatabase(new File(dbPath));
 		try (Transaction tx = db.beginTx())
 		{
-			ResourceIterator<Node> nodes = GlobalGraphOperations.at(db).getAllNodes().iterator();
+			ResourceIterator<Node> nodes = db.getAllNodes().iterator();
 			while (nodes.hasNext())
 			{
 				Node node = nodes.next();

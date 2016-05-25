@@ -19,7 +19,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.tooling.GlobalGraphOperations;
 
 public class ReferenceLinker extends Linker {
 
@@ -30,7 +29,7 @@ public class ReferenceLinker extends Linker {
 	@Override
 	public void link() {
 		try(Transaction tx = graphDb.beginTx()){
-			ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graphDb).getAllNodes();
+			ResourceIterable<Node> allNodes = graphDb.getAllNodes();
 			
 			Map<String,Node> questionId2NodeMap = new HashMap<>();
 			Map<String,Node> answerId2NodeMap = new HashMap<>();

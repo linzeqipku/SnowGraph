@@ -16,7 +16,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.tooling.GlobalGraphOperations;
 
 public class CodeIndexes
 {
@@ -34,7 +33,7 @@ public class CodeIndexes
 		GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(new File(dbPath));
 		try (Transaction tx = db.beginTx())
 		{
-			ResourceIterator<Node> nodes = GlobalGraphOperations.at(db).getAllNodes().iterator();
+			ResourceIterator<Node> nodes = db.getAllNodes().iterator();
 			Set<Node> codeNodes = new HashSet<Node>();
 			while (nodes.hasNext())
 			{

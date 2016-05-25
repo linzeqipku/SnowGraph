@@ -6,15 +6,7 @@ import java.util.Properties;
 
 public class Config {
 	private static Properties properties = new Properties();
-	
-	private static final String DEFAULT_LOG_PATH = "log/log.txt";
-	
-	private static final int DEFAULT_CONNECTION_TIMEOUT = 1000;//ms
-	private static final int DEFAULT_READ_TIMEOUT = 1000;//ms
-	private static final int DEFAULT_RETRY_TIMES = 3;
-	
-	private static final int DEFAULT_THREAD_POOL_SIZE = 10;
-	
+
 	/*
 	 * Load key/value pairs from property file
 	 */
@@ -31,12 +23,12 @@ public class Config {
 		return properties.getProperty(key);
 	}
 	
-	private static String getValue(String key,String defaultValue){
+	public static String getValue(String key,String defaultValue){
 		String value = getValue(key);
 		return (value != null ? value : defaultValue);
 	}
 	
-	private static int getIntValue(String key, int defaultValue){
+	public static int getIntValue(String key, int defaultValue){
 		String strValue = getValue(key);
 		if(strValue == null){
 			return defaultValue;
@@ -49,27 +41,6 @@ public class Config {
 			e.printStackTrace();
 		}
 		return nValue;
-	}
-	
-	
-	public static String getLogPath(){
-		return getValue("logPath",DEFAULT_LOG_PATH);
-	}
-
-	public static int getConnectionTimeout() {
-		return getIntValue("connectiontimeout",DEFAULT_CONNECTION_TIMEOUT);
-	}
-	
-	public static int getReadTimeout(){
-		return getIntValue("readtimeout",DEFAULT_READ_TIMEOUT);
-	}
-
-	public static int getRetryTimes(){
-		return getIntValue("retrytimes",DEFAULT_RETRY_TIMES);
-	}
-	
-	public static int getThreadPoolSize(){
-		return getIntValue("threadpoolsize",DEFAULT_THREAD_POOL_SIZE);
 	}
 	
 	/* 

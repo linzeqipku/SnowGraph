@@ -27,9 +27,9 @@ public class CrawlerUtil {
 	 * Initialize Crawler
 	 */
 	static{
-		connectionTimeout = Config.getConnectionTimeout();
-		readTimeout = Config.getReadTimeout();
-		retryTimes = Config.getRetryTimes();
+		connectionTimeout = Config.getIntValue("connectiontimeout",10000);
+		readTimeout = Config.getIntValue("readtimeout",5000);
+		retryTimes = Config.getIntValue("retrytimes",20);
 	}
 	
 	/*

@@ -3,10 +3,14 @@ package crawlers.qa;
 import java.util.HashSet;
 import java.util.Set;
 
+import utils.Config;
+
 public class QaExtractor
 {
 
-	public static void extract(String projectName, String remoteQaPath, String qPath, String aPath, String cPath, String uPath, String plPath){
+	static String remoteQaPath=Config.getValue("stackoverflowdump", "");
+	
+	public static void extract(String projectName, String qPath, String aPath, String cPath, String uPath, String plPath){
 		QuestionExtractor qExtractor=new QuestionExtractor(projectName);
 		String postXmlPath=remoteQaPath+"/Posts.xml";
 		qExtractor.extractQuestionXmlFile(postXmlPath, qPath);

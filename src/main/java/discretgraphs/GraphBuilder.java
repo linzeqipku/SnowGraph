@@ -13,7 +13,6 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.tooling.GlobalGraphOperations;
 
 public abstract class GraphBuilder
 {
@@ -34,7 +33,7 @@ public abstract class GraphBuilder
 		
 		try (Transaction tx1 = db.beginTx();Transaction tx2 = dstDb.beginTx()){
 			
-			ResourceIterator<Node> nodes = GlobalGraphOperations.at(db).getAllNodes().iterator();
+			ResourceIterator<Node> nodes = db.getAllNodes().iterator();
 			while (nodes.hasNext()){
 				Node node=nodes.next();
 				Iterator<Label> labels=node.getLabels().iterator();
@@ -58,7 +57,7 @@ public abstract class GraphBuilder
 				}
 			}
 			
-			Iterator<Relationship> rels=GlobalGraphOperations.at(db).getAllRelationships().iterator();
+			Iterator<Relationship> rels=db.getAllRelationships().iterator();
 			while (rels.hasNext()){
 				Relationship rel=rels.next();
 				Node startNode=rel.getStartNode();

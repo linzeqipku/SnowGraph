@@ -11,7 +11,7 @@ import discretgraphs.qa.QaGraphDbBuilder;
 
 public class GraphPreparation {
 
-	String projectName="";
+	SimilarQuestionTaskConfig config=null;
 	
 	public static void main(String[] args){
 		GraphPreparation p=new GraphPreparation("apache-poi");
@@ -24,16 +24,15 @@ public class GraphPreparation {
 	}
 	
 	public GraphPreparation(String projectName){
-		this.projectName=projectName;
+		config=new SimilarQuestionTaskConfig(projectName);
 	}
 	
 	public void run() throws IOException{
-		SimilarQuestionTaskConfig config=new SimilarQuestionTaskConfig(projectName);
 		if (!new File(config.qPath).exists()||!new File(config.aPath).exists()||
 				!new File(config.cPath).exists()||!new File(config.uPath).exists()
 				||!new File(config.plPath).exists()){
 			FileUtils.cleanDirectory(new File(config.qaPath));
-			QaExtractor.extract(projectName,config.qPath, config.aPath, config.cPath, config.uPath, config.plPath);
+			QaExtractor.extract(config.projectName,config.qPath, config.aPath, config.cPath, config.uPath, config.plPath);
 		}
 		FileUtils.cleanDirectory(new File(config.graphPath));
 		

@@ -2,6 +2,8 @@ package similarquestions;
 
 import java.io.File;
 
+import org.neo4j.graphdb.RelationshipType;
+
 import utils.Config;
 
 public class SimilarQuestionTaskConfig {
@@ -15,6 +17,12 @@ public class SimilarQuestionTaskConfig {
 	
 	public String srcPath="";
 	public String binPath="";
+	
+	public static String TOKENS_LINE="tokens_line";
+	public static enum RelTypes implements RelationshipType{
+		SIMILAR_ANSWER;
+	}
+	public static String RANK="rank";
 	
 	public SimilarQuestionTaskConfig(String projectName){
 		this.projectName=projectName;

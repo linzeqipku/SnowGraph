@@ -46,6 +46,12 @@ public class QaTokenizer {
 					if (word.length()==0)
 						continue;
 					List<String> camelTokens=camelSplit(word);
+					// IndexReader --> stem(indexreader)+stem(index)+stem(reader)
+					if (camelTokens.size()>1){
+						stemmer.setCurrent(word.toLowerCase());
+						stemmer.stem();
+						tokens.add(stemmer.getCurrent());
+					}
 					for (String token:camelTokens){
 						stemmer.setCurrent(token);
 						stemmer.stem();

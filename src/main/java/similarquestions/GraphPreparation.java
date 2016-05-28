@@ -7,7 +7,9 @@ import org.apache.commons.io.FileUtils;
 
 import crawlers.qa.QaExtractor;
 import discretgraphs.code.CodeGraphBuilder;
+import discretgraphs.code.CodeIndexes;
 import discretgraphs.qa.QaGraphDbBuilder;
+import graphfusion.CodeLinker;
 
 public class GraphPreparation {
 
@@ -45,6 +47,10 @@ public class GraphPreparation {
 		QaGraphDbBuilder qaGraphDbBuilder=new QaGraphDbBuilder(config.tmpPath, config.qPath, config.aPath, config.cPath, config.uPath, config.plPath);
 		qaGraphDbBuilder.run();
 		qaGraphDbBuilder.migrateTo(config.graphPath);
+		
+		CodeIndexes codeIndexes=new CodeIndexes(config.graphPath);
+		CodeLinker codeLinker=new CodeLinker(config.graphPath, codeIndexes);
+		codeLinker.run();
 	}
 	
 }

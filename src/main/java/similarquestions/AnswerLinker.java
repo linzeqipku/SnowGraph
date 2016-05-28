@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -27,6 +28,7 @@ public class AnswerLinker {
 	GraphDatabaseService db = null;
 	
 	private Set<Node> acAnswerNodes=new HashSet<Node>();
+	private Set<Node> sampleAnswerNodes=new HashSet<Node>();
 	private Map<String, Double> idfMap=new HashMap<String,Double>();
 	private double avgDL=0;
 	
@@ -46,6 +48,7 @@ public class AnswerLinker {
 	public void run(){
 		clean();
 		getAcAnswerNodes();
+		getSampleAnswerNodes();
 		getIdfMapAndAvgDL();
 		linkSimilarAnswers();
 	}
@@ -76,6 +79,18 @@ public class AnswerLinker {
 			tx.success();
 		}
 		System.out.println("共有"+acAnswerNodes.size()+"个被采纳的答案.");
+	}
+	
+	private void getSampleAnswerNodes(){
+		try (Transaction tx = db.beginTx()){
+			for (Node aNode:acAnswerNodes){
+				Node qNode=aNode.getRelationships(ManageElements.RelTypes.HAVE_ANSWER,Direction.INCOMING).iterator().next().getStartNode();
+				if (qNode.hasProperty(SimilarQuestionTaskConfig.CODES_LINE)&&aNode.hasProperty(SimilarQuestionTaskConfig.CODES_LINE))
+					sampleAnswerNodes.add(aNode);
+			}
+			tx.success();
+		}
+		System.out.println("选取了"+sampleAnswerNodes.size()+"个样本.");
 	}
 	
 	private void getIdfMapAndAvgDL(){
@@ -113,7 +128,7 @@ public class AnswerLinker {
 	
 	private void linkSimilarAnswers(){
 		int T=20;
-		for (Node node:acAnswerNodes){
+		for (Node node:sampleAnswerNodes){
 			Map<Node, Double> scoreMap=scoreAnswers(node);
 			List<Entry<Node, Double>> entries=new ArrayList<Entry<Node, Double>>(scoreMap.entrySet());
 			Collections.sort(entries,new Comparator<Entry<Node, Double>>() {
@@ -139,11 +154,29 @@ public class AnswerLinker {
 		Map<Node, Double> r=new HashMap<Node,Double>();
 		try (Transaction tx = db.beginTx()){
 			String line1=(String)node1.getProperty(SimilarQuestionTaskConfig.TOKENS_LINE);
+			String cLine1=(String)node1.getProperty(SimilarQuestionTaskConfig.CODES_LINE);
+			Set<Long> codeSet1=new HashSet<Long>();
+			for (String id:cLine1.trim().split("\\s+"))
+				if (id.length()>0)
+					codeSet1.add(Long.parseLong(id));
 			for (Node node2:acAnswerNodes){
 				if (node1==node2)
 					continue;
 				String line2=(String)node2.getProperty(SimilarQuestionTaskConfig.TOKENS_LINE);
 				r.put(node2, bm25Similarity(line1, line2));
+				String cLine2="";
+				if (node2.hasProperty(SimilarQuestionTaskConfig.CODES_LINE))
+					cLine2=(String)node2.getProperty(SimilarQuestionTaskConfig.CODES_LINE);
+				Set<Long> codeSet2=new HashSet<Long>();
+				for (String id:cLine2.trim().split("\\s+"))
+					if (id.length()>0)
+						codeSet2.add(Long.parseLong(id));
+				boolean flag=false;
+				for (long id:codeSet1)
+					if (codeSet2.contains(id))
+						flag=true;
+				if (!flag)
+					r.put(node2, 0.0);
 			}
 			tx.success();
 		}

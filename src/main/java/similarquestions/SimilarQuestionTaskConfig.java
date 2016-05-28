@@ -19,8 +19,9 @@ public class SimilarQuestionTaskConfig {
 	public String binPath="";
 	
 	public static String TOKENS_LINE="tokens_line";
+	public static String CODES_LINE="codes_line";
 	public static enum RelTypes implements RelationshipType{
-		SIMILAR_ANSWER;
+		SIMILAR_ANSWER
 	}
 	public static String RANK="rank";
 	

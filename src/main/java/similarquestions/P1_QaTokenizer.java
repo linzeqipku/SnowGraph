@@ -16,17 +16,18 @@ import org.tartarus.snowball.ext.EnglishStemmer;
 
 import graphmodel.ManageElements;
 import graphmodel.entity.Schema;
+import similarquestions.utils.SimilarQuestionTaskConfig;
 
-public class QaTokenizer {
+public class P1_QaTokenizer {
 
 	SimilarQuestionTaskConfig config = null;
 	
 	public static void main(String[] args){
-		QaTokenizer p=new QaTokenizer("apache-poi");
+		P1_QaTokenizer p=new P1_QaTokenizer("apache-poi");
 		p.run();
 	}
 
-	public QaTokenizer(String projectName) {
+	public P1_QaTokenizer(String projectName) {
 		config = new SimilarQuestionTaskConfig(projectName);
 	}
 

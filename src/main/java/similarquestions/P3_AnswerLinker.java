@@ -21,26 +21,25 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import graphmodel.ManageElements;
 import graphmodel.entity.qa.AnswerSchema;
+import similarquestions.utils.BM25Similarity;
+import similarquestions.utils.SimilarQuestionTaskConfig;
 
-public class AnswerLinker {
+public class P3_AnswerLinker {
 
 	SimilarQuestionTaskConfig config = null;
 	GraphDatabaseService db = null;
 	
+	BM25Similarity sim=new BM25Similarity();
+	
 	private Set<Node> acAnswerNodes=new HashSet<Node>();
 	private Set<Node> sampleAnswerNodes=new HashSet<Node>();
-	private Map<String, Double> idfMap=new HashMap<String,Double>();
-	private double avgDL=0;
-	
-	private static double K1=2;
-	private static double B=0.75;
 	
 	public static void main(String[] args){
-		AnswerLinker p=new AnswerLinker("apache-poi");
+		P3_AnswerLinker p=new P3_AnswerLinker("apache-poi");
 		p.run();
 	}
 	
-	public AnswerLinker(String projectName){
+	public P3_AnswerLinker(String projectName){
 		config=new SimilarQuestionTaskConfig(projectName);
 		db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(config.graphPath));
 	}
@@ -119,11 +118,13 @@ public class AnswerLinker {
 			}
 			tx.success();
 		}
-		avgDL=tokenNum/docNum;
+		sim.setAvgDL(tokenNum/docNum);
+		Map<String, Double> idfMap=new HashMap<String, Double>();
 		for (String token:countMap.keySet()){
 			double idf=Math.log((0.5+docNum-countMap.get(token))/(0.5+countMap.get(token)));
 			idfMap.put(token, idf);
 		}
+		sim.setIdfMap(idfMap);
 	}
 	
 	private void linkSimilarAnswers(){
@@ -163,7 +164,7 @@ public class AnswerLinker {
 				if (node1==node2)
 					continue;
 				String line2=(String)node2.getProperty(SimilarQuestionTaskConfig.TOKENS_LINE);
-				r.put(node2, bm25Similarity(line1, line2));
+				r.put(node2, sim.sim(line1, line2));
 				String cLine2="";
 				if (node2.hasProperty(SimilarQuestionTaskConfig.CODES_LINE))
 					cLine2=(String)node2.getProperty(SimilarQuestionTaskConfig.CODES_LINE);
@@ -179,30 +180,6 @@ public class AnswerLinker {
 					r.put(node2, 0.0);
 			}
 			tx.success();
-		}
-		return r;
-	}
-	
-	private double bm25Similarity(String line1,String line2){
-		List<String> tokenList1=new ArrayList<String>();
-		double n=0;
-		for (String token:line1.split(" "))
-			tokenList1.add(token);
-		Map<String,Integer> tokenMap2=new HashMap<String,Integer>();
-		for (String token:line2.split(" ")){
-			if (!tokenMap2.containsKey(token))
-				tokenMap2.put(token, 0);
-			tokenMap2.put(token, tokenMap2.get(token)+1);
-			n++;
-		}
-		double r=0;
-		for (String token:tokenList1){
-			if (!tokenMap2.containsKey(token))
-				continue;
-			double idf=idfMap.get(token);
-			double u=(K1+1)*tokenMap2.get(token)/n;
-			double d=tokenMap2.get(token)/n+K1*(1.0-B+B*n/avgDL);
-			r+=idf*u/d;
 		}
 		return r;
 	}

@@ -10,13 +10,14 @@ import discretgraphs.code.CodeGraphBuilder;
 import discretgraphs.code.CodeIndexes;
 import discretgraphs.qa.QaGraphDbBuilder;
 import graphfusion.CodeLinker;
+import similarquestions.utils.SimilarQuestionTaskConfig;
 
-public class GraphPreparation {
+public class P0_GraphPreparation {
 
 	SimilarQuestionTaskConfig config=null;
 	
 	public static void main(String[] args){
-		GraphPreparation p=new GraphPreparation("apache-poi");
+		P0_GraphPreparation p=new P0_GraphPreparation("apache-poi");
 		try {
 			p.run();
 		} catch (IOException e) {
@@ -25,7 +26,7 @@ public class GraphPreparation {
 		}
 	}
 	
-	public GraphPreparation(String projectName){
+	public P0_GraphPreparation(String projectName){
 		config=new SimilarQuestionTaskConfig(projectName);
 	}
 	

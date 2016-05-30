@@ -1,4 +1,4 @@
-package similarquestions;
+package similarquestions.utils;
 
 import java.io.File;
 

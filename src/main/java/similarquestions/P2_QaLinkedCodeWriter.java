@@ -13,17 +13,18 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import graphmodel.ManageElements;
+import similarquestions.utils.SimilarQuestionTaskConfig;
 
-public class QaLinkedCodeWriter {
+public class P2_QaLinkedCodeWriter {
 
 	SimilarQuestionTaskConfig config = null;
 	
 	public static void main(String[] args){
-		QaLinkedCodeWriter p=new QaLinkedCodeWriter("apache-poi");
+		P2_QaLinkedCodeWriter p=new P2_QaLinkedCodeWriter("apache-poi");
 		p.run();
 	}
 
-	public QaLinkedCodeWriter(String projectName) {
+	public P2_QaLinkedCodeWriter(String projectName) {
 		config = new SimilarQuestionTaskConfig(projectName);
 	}
 

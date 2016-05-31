@@ -25,6 +25,8 @@ public class SimilarQuestionTaskConfig {
 		SIMILAR_ANSWER
 	}
 	public static String RANK="rank";
+	public static String RANK_0="rank0";
+	public static String RANK_1="rank1";
 	
 	public SimilarQuestionTaskConfig(String projectName){
 		this.projectName=projectName;

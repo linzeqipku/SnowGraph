@@ -8,7 +8,7 @@ public class PTransE {
 		
 	private int DIMENSION=100;
 	private double STEP_SIZE=0.003;
-	private int EPOCHES=50;
+	private int EPOCHES=100;
 	private String NORM="L1";
 	
 	private List<String[]> trainExamples;

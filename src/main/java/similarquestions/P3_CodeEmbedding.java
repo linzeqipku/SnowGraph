@@ -14,18 +14,18 @@ import graphmodel.ManageElements;
 import similarquestions.utils.PTransE;
 import similarquestions.utils.SimilarQuestionTaskConfig;
 
-public class P4_CodeEmbedding {
+public class P3_CodeEmbedding {
 
 	SimilarQuestionTaskConfig config = null;
 	GraphDatabaseService db = null;
 	PTransE pTransE=null;
 	
 	public static void main(String[] args){
-		P4_CodeEmbedding p=new P4_CodeEmbedding("apache-poi");
+		P3_CodeEmbedding p=new P3_CodeEmbedding("apache-poi");
 		p.run();
 	}
 	
-	public P4_CodeEmbedding(String projectName){
+	public P3_CodeEmbedding(String projectName){
 		config=new SimilarQuestionTaskConfig(projectName);
 		db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(config.graphPath));
 		pTransE=new PTransE();

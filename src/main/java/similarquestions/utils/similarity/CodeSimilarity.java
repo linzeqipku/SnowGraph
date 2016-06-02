@@ -64,8 +64,8 @@ public class CodeSimilarity {
 		if (vec1==null||vec2==null||vec1.length!=vec2.length)
 			return 0;
 		for (int i=0;i<vec1.length;i++)
-			r+=(vec1[i]-vec2[i])*(vec1[i]-vec2[i]);
-		return 0.5*r;
+			r+=Math.abs(vec1[i]-vec2[i]);
+		return 1-0.5*r;
 	}
 	
 }

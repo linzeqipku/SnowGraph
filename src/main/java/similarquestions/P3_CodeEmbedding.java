@@ -89,7 +89,7 @@ public class P3_CodeEmbedding {
 				for (int j=0;j<1000;j++){
 					if (i+j>=keys.size())
 						break;
-					String nodeIdString=keys.get(i);
+					String nodeIdString=keys.get(i+j);
 					Node node=db.getNodeById(Long.parseLong(nodeIdString));
 					String line="";
 					for (double d:embeddings.get(nodeIdString))

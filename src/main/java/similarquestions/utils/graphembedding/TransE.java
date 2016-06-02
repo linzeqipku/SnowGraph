@@ -98,6 +98,7 @@ public class TransE {
 		for (int i = 0; i < relation_num; i++) {
 			for (int ii = 0; ii < n; ii++)
 				relation_vec[i][ii] = randn(0, 1.0 / n, -6.0 / Math.sqrt(n), 6.0 / Math.sqrt(n));
+			norm(relation_vec[i]);
 		}
 		for (int i = 0; i < entity_num; i++) {
 			for (int ii = 0; ii < n; ii++)
@@ -140,11 +141,11 @@ public class TransE {
 					if (method == 0)
 						pr = 500;
 					if (rand_max(1000) < pr) {
-						while (ok.contains(new ImmutableTriple<Integer, Integer,Integer>(fb_h.get(i), fb_r.get(i),j)))
+						while (ok.contains(new ImmutableTriple<Integer, Integer, Integer>(fb_h.get(i), fb_r.get(i), j)))
 							j = rand_max(entity_num);
 						train_kb(fb_h.get(i), fb_l.get(i), fb_r.get(i), fb_h.get(i), j, fb_r.get(i));
 					} else {
-						while (ok.contains(new ImmutableTriple<Integer, Integer,Integer>(j, fb_r.get(i),fb_l.get(i))))
+						while (ok.contains(new ImmutableTriple<Integer, Integer, Integer>(j, fb_r.get(i), fb_l.get(i))))
 							j = rand_max(entity_num);
 						train_kb(fb_h.get(i), fb_l.get(i), fb_r.get(i), j, fb_l.get(i), fb_r.get(i));
 					}
@@ -229,12 +230,11 @@ public class TransE {
 		return res;
 	}
 
-	private static double norm(double[] a) {
+	private static void norm(double[] a) {
 		double x = vec_len(a);
 		if (x > 1)
 			for (int ii = 0; ii < a.length; ii++)
 				a[ii] /= x;
-		return 0;
 	}
 
 	private static int rand_max(int x) {

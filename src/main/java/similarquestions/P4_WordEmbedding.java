@@ -51,7 +51,7 @@ public class P4_WordEmbedding {
 				.setLayerSize(200)
 				.useNegativeSamples(25)
 				.setDownSamplingRate(1e-4)
-				.setNumIterations(5)
+				.setNumIterations(10)
 				.setListener(new TrainingProgressListener() {
 					@Override public void update(Stage stage, double progress) {
 						System.out.println(String.format("%s is %.2f%% complete", Format.formatEnum(stage), progress * 100));

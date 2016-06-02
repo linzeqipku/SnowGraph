@@ -23,7 +23,7 @@ public class SimilarQuestionTaskConfig {
 	public static String CODES_LINE="codes_line";
 	public static String VEC_LINE="vec_line";
 	public static enum RelTypes implements RelationshipType{
-		SIMILAR_ANSWER
+		SIMILAR_QUESTION
 	}
 	public static String RANK="rank";
 	public static String RANK_0="rank0";

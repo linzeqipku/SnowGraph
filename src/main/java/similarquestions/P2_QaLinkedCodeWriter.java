@@ -34,6 +34,12 @@ public class P2_QaLinkedCodeWriter {
 			ResourceIterator<Node> nodes=db.getAllNodes().iterator();
 			while (nodes.hasNext()){
 				Node node=nodes.next();
+				if (node.hasProperty(SimilarQuestionTaskConfig.CODES_LINE))
+					node.removeProperty(SimilarQuestionTaskConfig.CODES_LINE);
+			}
+			nodes=db.getAllNodes().iterator();
+			while (nodes.hasNext()){
+				Node node=nodes.next();
 				if (!node.hasLabel(ManageElements.Labels.QUESTION)&&!node.hasLabel(ManageElements.Labels.ANSWER))
 					continue;
 				Set<Long> codeSet=new HashSet<Long>();
@@ -43,8 +49,6 @@ public class P2_QaLinkedCodeWriter {
 				rels=node.getRelationships(ManageElements.RelTypes.LEX_LEVEL_REFER,Direction.OUTGOING).iterator();
 				while (rels.hasNext())
 					codeSet.add(rels.next().getEndNode().getId());
-				if (codeSet.size()==0)
-					continue;
 				String codeLine="";
 				for (Long id:codeSet)
 					codeLine+=id+" ";

@@ -1,12 +1,10 @@
-package similarquestions.utils;
+package similarquestions.utils.similarity;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.medallia.word2vec.Searcher.UnknownWordException;
 
 public class CodeSimilarity {
 
@@ -34,11 +32,11 @@ public class CodeSimilarity {
 		this.vecMap.putAll(vecMap);
 	}
 	
-	public double sim(List<String> d1, List<String> d2) throws UnknownWordException{
-		return sim0(d1, d2)+sim0(d2, d1);
+	public double sim(List<String> d1, List<String> d2){
+		return 0.5*(sim0(d1, d2)+sim0(d2, d1));
 	}
 	
-	private double sim0(List<String> d1, List<String> d2) throws UnknownWordException{
+	private double sim0(List<String> d1, List<String> d2){
 		double u=0,d=0;
 		for (String token:d1){
 			u+=idfMap.get(token)*sim0(token, d2);
@@ -49,7 +47,7 @@ public class CodeSimilarity {
 		return u/d;
 	}
 	
-	private double sim0(String token, List<String> d2) throws UnknownWordException{
+	private double sim0(String token, List<String> d2){
 		double r=0;
 		for (String token2:d2){
 			double sim=sim0(token, token2);
@@ -66,8 +64,8 @@ public class CodeSimilarity {
 		if (vec1==null||vec2==null||vec1.length!=vec2.length)
 			return 0;
 		for (int i=0;i<vec1.length;i++)
-			r+=vec1[i]*vec2[i];
-		return r;
+			r+=(vec1[i]-vec2[i])*(vec1[i]-vec2[i]);
+		return 0.5*r;
 	}
 	
 }

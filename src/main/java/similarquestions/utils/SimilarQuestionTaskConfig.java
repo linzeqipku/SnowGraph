@@ -15,6 +15,7 @@ public class SimilarQuestionTaskConfig {
 	public String graphPath="";
 	public String tmpPath="";
 	public String word2vecPath="";
+	public String word2questionPath="";
 	
 	public String srcPath="";
 	public String binPath="";
@@ -25,7 +26,6 @@ public class SimilarQuestionTaskConfig {
 	public static enum RelTypes implements RelationshipType{
 		SIMILAR_QUESTION
 	}
-	public static String RANK="rank";
 	public static String RANK_0="rank0";
 	public static String RANK_1="rank1";
 	
@@ -37,6 +37,7 @@ public class SimilarQuestionTaskConfig {
 			file.mkdir();
 		tmpPath=projectPath+"/tmp";
 		word2vecPath=projectPath+"/word2vec.bin";
+		word2questionPath=projectPath+"/word2question.bin";
 		file=new File(tmpPath);
 		if (!file.exists())
 			file.mkdir();

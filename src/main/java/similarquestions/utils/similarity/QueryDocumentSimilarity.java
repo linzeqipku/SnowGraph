@@ -10,7 +10,7 @@ public class QueryDocumentSimilarity {
 
 	Map<String, Double> idfMap=new HashMap<String, Double>();
 	
-	public void setIdfMap(List<List<String>> corpus){
+	public void init(List<List<String>> corpus){
 		idfMap.clear();
 		Map<String, Integer> countMap=new HashMap<String, Integer>();
 		for (List<String> doc:corpus){

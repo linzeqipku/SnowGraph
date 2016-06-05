@@ -34,8 +34,7 @@ import similarquestions.utils.similarity.Word2VecDocumentSimilarity;
 
 public class P6_SimilarQuestionRecommender {
 	
-	static double ALPHA=0.75;
-	static double BETA=0.25;
+	static double ALPHA=0.2;
 
 	SimilarQuestionTaskConfig config = null;
 	GraphDatabaseService db = null;
@@ -45,6 +44,7 @@ public class P6_SimilarQuestionRecommender {
 	CodeSimilarity codeSimilarity=new CodeSimilarity();
 	
 	private Set<Node> acQuestionNodes=new HashSet<Node>();
+	private Map<Node, Node> qaMap=new HashMap<Node, Node>();
 	private Set<Node> sampleQuestionNodes=new HashSet<Node>();
 	
 	public static void main(String[] args){
@@ -86,7 +86,9 @@ public class P6_SimilarQuestionRecommender {
 					continue;
 				if (!(boolean)node.getProperty(AnswerSchema.ACCEPTED))
 					continue;
-				acQuestionNodes.add(node.getRelationships(ManageElements.RelTypes.HAVE_ANSWER,Direction.INCOMING).iterator().next().getStartNode());
+				Node qNode=node.getRelationships(ManageElements.RelTypes.HAVE_ANSWER,Direction.INCOMING).iterator().next().getStartNode();
+				acQuestionNodes.add(qNode);
+				qaMap.put(qNode, node);
 			}
 			tx.success();
 		}
@@ -96,8 +98,12 @@ public class P6_SimilarQuestionRecommender {
 	private void getSampleQuestionNodes(){
 		try (Transaction tx = db.beginTx()){
 			for (Node qNode:acQuestionNodes){
-				if (((String)qNode.getProperty(SimilarQuestionTaskConfig.CODES_LINE)).length()>0)
-					sampleQuestionNodes.add(qNode);
+				if (((String)qNode.getProperty(SimilarQuestionTaskConfig.CODES_LINE)).length()==0)
+					continue;
+				Node aNode=qaMap.get(qNode);
+				if (((String)aNode.getProperty(SimilarQuestionTaskConfig.CODES_LINE)).length()==0)
+					continue;
+				sampleQuestionNodes.add(qNode);
 			}
 			tx.success();
 		}
@@ -163,21 +169,29 @@ public class P6_SimilarQuestionRecommender {
 			Map<Node, Score> scoreMap=scoreQuestions(node);
 			List<Pair<Node, Double>> list0=new ArrayList<Pair<Node, Double>>();
 			List<Pair<Node, Double>> list1=new ArrayList<Pair<Node, Double>>();
+			List<Pair<Node, Double>> lists=new ArrayList<Pair<Node, Double>>();
 			for (Entry<Node, Score> entry:scoreMap.entrySet()){
 				list0.add(new ImmutablePair<Node, Double>(entry.getKey(), entry.getValue().v0));
 				list1.add(new ImmutablePair<Node, Double>(entry.getKey(), entry.getValue().v1));
+				lists.add(new ImmutablePair<Node, Double>(entry.getKey(), entry.getValue().vs));
 			}
 			Collections.sort(list0,new TempComparator());
 			Collections.sort(list1,new TempComparator());
+			Collections.sort(lists,new TempComparator());
 			Map<Node, Integer> node2Rank0Map=new HashMap<Node, Integer>();
+			Map<Node, Integer> node2Rank1Map=new HashMap<Node, Integer>();
 			for (int i=0;i<list0.size();i++)
 				node2Rank0Map.put(list0.get(i).getKey(), i+1);
+			for (int i=0;i<list1.size();i++)
+				node2Rank1Map.put(list1.get(i).getKey(), i+1);
 			try (Transaction tx = db.beginTx()){
-				for (int i=0;i<T&&i<list1.size();i++){
-					Node node2=list1.get(i).getKey();
-					double rank0=node2Rank0Map.get(node2);
-					double rank1=i+1;
+				for (int i=0;i<T&&i<lists.size();i++){
+					Node node2=lists.get(i).getKey();
+					int ranks=i+1;
+					int rank0=node2Rank0Map.get(node2);
+					int rank1=node2Rank1Map.get(node2);
 					Relationship rel=node.createRelationshipTo(node2, SimilarQuestionTaskConfig.RelTypes.SIMILAR_QUESTION);
+					rel.setProperty(SimilarQuestionTaskConfig.RANK_S, ranks);
 					rel.setProperty(SimilarQuestionTaskConfig.RANK_0, rank0);
 					rel.setProperty(SimilarQuestionTaskConfig.RANK_1, rank1);
 				}
@@ -189,32 +203,28 @@ public class P6_SimilarQuestionRecommender {
 	private Map<Node, Score> scoreQuestions(Node node1){
 		Map<Node, Score> r=new HashMap<Node,Score>();
 		try (Transaction tx = db.beginTx()){
-			String line1=(String)node1.getProperty(SimilarQuestionTaskConfig.TOKENS_LINE);
-			String cLine1=(String)node1.getProperty(SimilarQuestionTaskConfig.CODES_LINE);
-			List<String> doc1=new ArrayList<String>();
-			for (String token:line1.split("\\s+"))
-				doc1.add(token);
-			List<String> cDoc1=new ArrayList<String>();
-			for (String token:cLine1.split("\\s+"))
-				cDoc1.add(token);
+			List<String> doc1=split((String)node1.getProperty(SimilarQuestionTaskConfig.TOKENS_LINE));
+			List<String> cDoc1=split((String)node1.getProperty(SimilarQuestionTaskConfig.CODES_LINE));
+			List<String> aCodeDoc1=split((String)qaMap.get(node1).getProperty(SimilarQuestionTaskConfig.CODES_LINE));
 			for (Node node2:acQuestionNodes){
 				if (node1.getId()==node2.getId())
 					continue;
-				String line2=(String)node2.getProperty(SimilarQuestionTaskConfig.TOKENS_LINE);
-				String cLine2=(String)node2.getProperty(SimilarQuestionTaskConfig.CODES_LINE);
-				List<String> doc2=new ArrayList<String>();
-				for (String token:line2.split("\\s+"))
-					doc2.add(token);
-				List<String> cDoc2=new ArrayList<String>();
-				for (String token:cLine2.split("\\s+"))
-					cDoc2.add(token);
+				List<String> doc2=split((String)node2.getProperty(SimilarQuestionTaskConfig.TOKENS_LINE));
+				List<String> cDoc2=split((String)node2.getProperty(SimilarQuestionTaskConfig.CODES_LINE));
+				List<String> aCodeDoc2=split((String)qaMap.get(node2).getProperty(SimilarQuestionTaskConfig.CODES_LINE));
 				double queryDocSim=queryDocumentSimilarity.sim(doc1, doc2);
 				double word2VecSim=word2VecDocumentSimilarity.sim(node1.getId(), node2.getId());
 				double codeSimScore=codeSimilarity.sim(cDoc1, cDoc2);
 				//System.out.println(queryDocSim+" "+word2VecSim+" "+codeSimScore);
-				double r0=word2VecSim;
-				double r1=(1.0-ALPHA-BETA)*queryDocSim+ALPHA*word2VecSim+BETA*codeSimScore;
-				Score score=new Score(r0, r1);
+				double v0=queryDocSim;
+				double v1=(1.0-ALPHA)*word2VecSim+ALPHA*codeSimScore;
+				double vs=v1;
+				Set<String> set=new HashSet<String>(aCodeDoc2);
+				set.addAll(cDoc2);
+				set.retainAll(new HashSet<String>(aCodeDoc1));
+				if (set.isEmpty())
+					vs=0;
+				Score score=new Score(v0, v1, vs);
 				r.put(node2, score);
 			}
 			tx.success();
@@ -222,14 +232,22 @@ public class P6_SimilarQuestionRecommender {
 		return r;
 	}
 	
+	private static List<String> split(String s){
+		List<String> r=new ArrayList<String>();
+		for (String e:s.split("\\s+"))
+			r.add(e);
+		return r;
+	}
+	
 }
 
 class Score{
-	Score(double v0, double v1){
+	Score(double v0, double v1, double vs){
 		this.v0=v0;
 		this.v1=v1;
+		this.vs=vs;
 	}
-	double v0,v1;
+	double v0,v1,vs;
 }
 
 class TempComparator implements Comparator<Pair<Node, Double>>{

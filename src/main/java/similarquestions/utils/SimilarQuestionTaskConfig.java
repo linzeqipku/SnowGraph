@@ -26,8 +26,9 @@ public class SimilarQuestionTaskConfig {
 	public static enum RelTypes implements RelationshipType{
 		SIMILAR_QUESTION
 	}
-	public static String RANK_0="rank0";
-	public static String RANK_1="rank1";
+	public static String RANK_0="rank_0";
+	public static String RANK_1="rank_1";
+	public static String RANK_S="rank_s";
 	
 	public SimilarQuestionTaskConfig(String projectName){
 		this.projectName=projectName;

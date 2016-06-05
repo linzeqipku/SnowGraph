@@ -32,7 +32,6 @@ public class P5_Word2QuestionScoring {
 	Word2VecDocumentSimilarity word2VecDocumentSimilarity=null;
 	
 	private Set<Node> acQuestionNodes=new HashSet<Node>();
-	private Set<Node> sampleQuestionNodes=new HashSet<Node>();
 	
 	public static void main(String[] args){
 		P5_Word2QuestionScoring p=new P5_Word2QuestionScoring("apache-poi");
@@ -46,7 +45,6 @@ public class P5_Word2QuestionScoring {
 	
 	public void run(){
 		getAcQuestionNodes();
-		getSampleQuestionNodes();
 		getSimilarity();
 	}
 
@@ -64,17 +62,6 @@ public class P5_Word2QuestionScoring {
 			tx.success();
 		}
 		System.out.println("共有"+acQuestionNodes.size()+"个有被采纳的答案的问题.");
-	}
-	
-	private void getSampleQuestionNodes(){
-		try (Transaction tx = db.beginTx()){
-			for (Node qNode:acQuestionNodes){
-				if (((String)qNode.getProperty(SimilarQuestionTaskConfig.CODES_LINE)).length()>0)
-					sampleQuestionNodes.add(qNode);
-			}
-			tx.success();
-		}
-		System.out.println("选取了"+sampleQuestionNodes.size()+"个样本.");
 	}
 	
 	private void getSimilarity(){

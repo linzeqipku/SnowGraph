@@ -1,42 +1,15 @@
 package similarquestions;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.management.relation.Relation;
-
-import java.util.Set;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
-import graphmodel.ManageElements;
-import graphmodel.entity.qa.AnswerSchema;
 import similarquestions.utils.SimilarQuestionTaskConfig;
-import similarquestions.utils.similarity.CodeSimilarity;
-import similarquestions.utils.similarity.QueryDocumentSimilarity;
-import similarquestions.utils.similarity.Word2VecDocumentSimilarity;
 
 public class P7_Evaluation {
 
@@ -60,6 +33,11 @@ public class P7_Evaluation {
 	public void run(){
 		getMap();
 		mrr();
+		ndcg(10);
+		ndcg(20);
+		ndcg(30);
+		hitAt(5);
+		hitAt(10);
 	}
 	
 	private void getMap(){
@@ -114,6 +92,48 @@ public class P7_Evaluation {
 		mrr0/=map0.size();
 		mrr1/=map0.size();
 		System.out.println("MRR0="+mrr0+"    MRR1="+mrr1);
+	}
+	
+	private void ndcg(int K){
+		if (K>N)
+			return;
+		double r0=0,r1=0;
+		for (Long id:map0.keySet()){
+			boolean[] list0=map0.get(id);
+			boolean[] list1=map1.get(id);
+			double maxDCG=0,nDCG0=0,nDCG1=0;
+			for (int i=1;i<=K;i++){
+				double discount=1.0/Math.log(1+i);
+				maxDCG+=discount;
+				nDCG0+=discount*(list0[i]?1:0);
+				nDCG1+=discount*(list1[i]?1:0);
+			}
+			r0+=nDCG0/maxDCG;
+			r1+=nDCG1/=maxDCG;
+		}
+		r0/=map0.size();
+		r1/=map0.size();
+		System.out.println("NDCG@"+K+"_0="+r0+"    NDCG@"+K+"_1="+r1);
+	}
+	
+	private void hitAt(int K){
+		if (K>N)
+			return;
+		double c0=0,c1=0;
+		for (Long id:map0.keySet()){
+			boolean[] list0=map0.get(id);
+			boolean[] list1=map1.get(id);
+			boolean h0=false,h1=false;
+			for (int i=1;i<=K;i++){
+				h0=h0|list0[i];
+				h1=h1|list1[i];
+			}
+			c0+=h0?1:0;
+			c1+=h1?1:0;
+		}
+		c0/=map0.size();
+		c1/=map0.size();
+		System.out.println("Hit@"+K+"_0="+c0+"    Hit@"+K+"_1="+c1);
 	}
 	
 }

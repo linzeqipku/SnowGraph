@@ -169,31 +169,52 @@ public class P6_SimilarQuestionRecommender {
 			Map<Node, Score> scoreMap=scoreQuestions(node);
 			List<Pair<Node, Double>> list0=new ArrayList<Pair<Node, Double>>();
 			List<Pair<Node, Double>> list1=new ArrayList<Pair<Node, Double>>();
-			List<Pair<Node, Double>> lists=new ArrayList<Pair<Node, Double>>();
+			Set<Node> cfSet=new HashSet<Node>();
 			for (Entry<Node, Score> entry:scoreMap.entrySet()){
 				list0.add(new ImmutablePair<Node, Double>(entry.getKey(), entry.getValue().v0));
 				list1.add(new ImmutablePair<Node, Double>(entry.getKey(), entry.getValue().v1));
-				lists.add(new ImmutablePair<Node, Double>(entry.getKey(), entry.getValue().vs));
+				if (entry.getValue().cf)
+					cfSet.add(entry.getKey());
 			}
 			Collections.sort(list0,new TempComparator());
 			Collections.sort(list1,new TempComparator());
-			Collections.sort(lists,new TempComparator());
 			Map<Node, Integer> node2Rank0Map=new HashMap<Node, Integer>();
 			Map<Node, Integer> node2Rank1Map=new HashMap<Node, Integer>();
 			for (int i=0;i<list0.size();i++)
 				node2Rank0Map.put(list0.get(i).getKey(), i+1);
 			for (int i=0;i<list1.size();i++)
 				node2Rank1Map.put(list1.get(i).getKey(), i+1);
+			Set<Node> targetNodes=new HashSet<Node>();
 			try (Transaction tx = db.beginTx()){
-				for (int i=0;i<T&&i<lists.size();i++){
-					Node node2=lists.get(i).getKey();
-					int ranks=i+1;
-					int rank0=node2Rank0Map.get(node2);
-					int rank1=node2Rank1Map.get(node2);
-					Relationship rel=node.createRelationshipTo(node2, SimilarQuestionTaskConfig.RelTypes.SIMILAR_QUESTION);
-					rel.setProperty(SimilarQuestionTaskConfig.RANK_S, ranks);
-					rel.setProperty(SimilarQuestionTaskConfig.RANK_0, rank0);
-					rel.setProperty(SimilarQuestionTaskConfig.RANK_1, rank1);
+				int linkCount=0,p=0;
+				while (linkCount<T&&p<list0.size()){
+					Node node2=list0.get(p).getKey();
+					if (cfSet.contains(node2)&&!targetNodes.contains(node2)){
+						linkCount++;
+						int ranks=linkCount;
+						int rank0=node2Rank0Map.get(node2);
+						int rank1=node2Rank1Map.get(node2);
+						Relationship rel=node.createRelationshipTo(node2, SimilarQuestionTaskConfig.RelTypes.SIMILAR_QUESTION);
+						rel.setProperty(SimilarQuestionTaskConfig.RANK_S, ranks);
+						rel.setProperty(SimilarQuestionTaskConfig.RANK_0, rank0);
+						rel.setProperty(SimilarQuestionTaskConfig.RANK_1, rank1);
+						targetNodes.add(node2);
+					}
+					if (linkCount==T)
+						break;
+					node2=list1.get(p).getKey();
+					if (cfSet.contains(node2)&&!targetNodes.contains(node2)){
+						linkCount++;
+						int ranks=linkCount;
+						int rank0=node2Rank0Map.get(node2);
+						int rank1=node2Rank1Map.get(node2);
+						Relationship rel=node.createRelationshipTo(node2, SimilarQuestionTaskConfig.RelTypes.SIMILAR_QUESTION);
+						rel.setProperty(SimilarQuestionTaskConfig.RANK_S, ranks);
+						rel.setProperty(SimilarQuestionTaskConfig.RANK_0, rank0);
+						rel.setProperty(SimilarQuestionTaskConfig.RANK_1, rank1);
+						targetNodes.add(node2);
+					}
+					p++;
 				}
 				tx.success();
 			}
@@ -218,13 +239,13 @@ public class P6_SimilarQuestionRecommender {
 				//System.out.println(queryDocSim+" "+word2VecSim+" "+codeSimScore);
 				double v0=queryDocSim;
 				double v1=(1.0-ALPHA)*word2VecSim+ALPHA*codeSimScore;
-				double vs=v1;
+				boolean cf=true;
 				Set<String> set=new HashSet<String>(aCodeDoc2);
 				set.addAll(cDoc2);
 				set.retainAll(new HashSet<String>(aCodeDoc1));
 				if (set.isEmpty())
-					vs=0;
-				Score score=new Score(v0, v1, vs);
+					cf=false;
+				Score score=new Score(v0, v1, cf);
 				r.put(node2, score);
 			}
 			tx.success();
@@ -242,12 +263,13 @@ public class P6_SimilarQuestionRecommender {
 }
 
 class Score{
-	Score(double v0, double v1, double vs){
+	Score(double v0, double v1, boolean cf){
 		this.v0=v0;
 		this.v1=v1;
-		this.vs=vs;
+		this.cf=cf;
 	}
-	double v0,v1,vs;
+	double v0,v1;
+	boolean cf;
 }
 
 class TempComparator implements Comparator<Pair<Node, Double>>{

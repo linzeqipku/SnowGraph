@@ -13,19 +13,22 @@ import org.apache.commons.lang3.tuple.Triple;
 
 public class TransE {
 
-	private boolean L1_flag = true;
+	public boolean L1_flag = true;
+	public int n = 200;
+	public int method = 0;
+	public double rate = 0.001;
+	public double margin = 1;
 
-	private int relation_num, entity_num;
+	private int relation_num;
+	private int entity_num;
 	private Map<String, Integer> relation2id, entity2id;
 	private Map<Integer, String> id2entity, id2relation;
 	private Map<Integer, Map<Integer, Integer>> left_entity, right_entity;
 	private Map<Integer, Double> left_num, right_num;
 	private Set<Triple<Integer, Integer, Integer>> ok;
-	private int n = 200;
-	private int method = 0;
-	private double res;// loss function value
-	private double rate = 0.001, margin = 1;
+	private double res;
 	private List<Integer> fb_h, fb_l, fb_r;
+	
 	private double[][] relation_vec, entity_vec;
 	private double[][] relation_tmp, entity_tmp;
 
@@ -89,8 +92,8 @@ public class TransE {
 		System.out.println("relation_num=" + relation_num);
 		System.out.println("entity_num=" + entity_num);
 	}
-
-	public void run() {
+	
+	public void run(){
 		relation_vec = new double[relation_num][n];
 		entity_vec = new double[entity_num][n];
 		relation_tmp = new double[relation_num][n];
@@ -107,18 +110,14 @@ public class TransE {
 		}
 		bfgs();
 	}
-
+	
 	public Map<String, double[]> getEntityVecMap() {
-		Map<String, double[]> r = new HashMap<String, double[]>();
-		for (int i = 0; i < entity_num; i++)
-			r.put(id2entity.get(i), entity_vec[i]);
-		return r;
-	}
-
-	public Map<String, double[]> getRelationVecMap() {
-		Map<String, double[]> r = new HashMap<String, double[]>();
-		for (int i = 0; i < relation_num; i++)
-			r.put(id2relation.get(i), relation_vec[i]);
+		Map<String, double[]> r=new HashMap<String, double[]>();
+		for (int i=0;i<entity_num;i++){
+			String name=id2entity.get(i);
+			double[] vec=entity_vec[i];
+			r.put(name, vec);
+		}
 		return r;
 	}
 
@@ -161,7 +160,7 @@ public class TransE {
 		}
 	}
 
-	private double calc_sum(int e1, int e2, int rel) {
+	public double calc_sum(int e1, int e2, int rel) {
 		double sum = 0;
 		if (L1_flag)
 			for (int ii = 0; ii < n; ii++)
@@ -172,7 +171,7 @@ public class TransE {
 		return sum;
 	}
 
-	private void gradient(int e1_a, int e2_a, int rel_a, int e1_b, int e2_b, int rel_b) {
+	public void gradient(int e1_a, int e2_a, int rel_a, int e1_b, int e2_b, int rel_b) {
 		for (int ii = 0; ii < n; ii++) {
 			double x = 2.0 * (entity_vec[e2_a][ii] - entity_vec[e1_a][ii] - relation_vec[rel_a][ii]);
 			if (L1_flag)
@@ -204,15 +203,15 @@ public class TransE {
 		}
 	}
 
-	private static double rand(double min, double max) {
+	public static double rand(double min, double max) {
 		return min + (max - min) * Math.random();
 	}
 
-	private static double normal(double x, double miu, double sigma) {
+	public static double normal(double x, double miu, double sigma) {
 		return 1.0 / Math.sqrt(2.0 * Math.PI) / sigma * Math.exp(-1.0 * (x - miu) * (x - miu) / (2.0 * sigma * sigma));
 	}
 
-	private static double randn(double miu, double sigma, double min, double max) {
+	public static double randn(double miu, double sigma, double min, double max) {
 		double x, y, dScope;
 		do {
 			x = rand(min, max);
@@ -222,7 +221,7 @@ public class TransE {
 		return x;
 	}
 
-	private static double vec_len(double[] a) {
+	public static double vec_len(double[] a) {
 		double res = 0;
 		for (int i = 0; i < a.length; i++)
 			res += a[i] * a[i];
@@ -230,18 +229,18 @@ public class TransE {
 		return res;
 	}
 
-	private static void norm(double[] a) {
+	public static void norm(double[] a) {
 		double x = vec_len(a);
 		if (x > 1)
 			for (int ii = 0; ii < a.length; ii++)
 				a[ii] /= x;
 	}
 
-	private static int rand_max(int x) {
+	public static int rand_max(int x) {
 		return (int) (Math.random() * x);
 	}
 
-	private void add(int e1, int e2, int r) {
+	public void add(int e1, int e2, int r) {
 		fb_h.add(e1);
 		fb_r.add(r);
 		fb_l.add(e2);

@@ -19,13 +19,13 @@ import com.medallia.word2vec.util.Format;
 
 import similarquestions.utils.SimilarQuestionTaskConfig;
 
-public class P4_WordEmbedding {
+public class T4_WordEmbedding {
 
 	SimilarQuestionTaskConfig config = null;
 	GraphDatabaseService db = null;
 	
 	public static void main(String[] args){
-		P4_WordEmbedding p=new P4_WordEmbedding("apache-poi");
+		T4_WordEmbedding p=new T4_WordEmbedding("apache-poi");
 		try {
 			p.run();
 		} catch (InterruptedException | IOException e) {
@@ -34,7 +34,7 @@ public class P4_WordEmbedding {
 		}
 	}
 	
-	public P4_WordEmbedding(String projectName){
+	public T4_WordEmbedding(String projectName){
 		config=new SimilarQuestionTaskConfig(projectName);
 		db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(config.graphPath));
 	}

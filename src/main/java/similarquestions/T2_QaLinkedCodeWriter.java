@@ -15,16 +15,16 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import graphmodel.ManageElements;
 import similarquestions.utils.SimilarQuestionTaskConfig;
 
-public class P2_QaLinkedCodeWriter {
+public class T2_QaLinkedCodeWriter {
 
 	SimilarQuestionTaskConfig config = null;
 	
 	public static void main(String[] args){
-		P2_QaLinkedCodeWriter p=new P2_QaLinkedCodeWriter("apache-poi");
+		T2_QaLinkedCodeWriter p=new T2_QaLinkedCodeWriter("apache-poi");
 		p.run();
 	}
 
-	public P2_QaLinkedCodeWriter(String projectName) {
+	public T2_QaLinkedCodeWriter(String projectName) {
 		config = new SimilarQuestionTaskConfig(projectName);
 	}
 

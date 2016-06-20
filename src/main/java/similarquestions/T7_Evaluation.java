@@ -1,6 +1,7 @@
 package similarquestions;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -11,7 +12,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import similarquestions.utils.SimilarQuestionTaskConfig;
 
-public class P7_Evaluation {
+public class T7_Evaluation {
 
 	SimilarQuestionTaskConfig config = null;
 	GraphDatabaseService db = null;
@@ -19,25 +20,41 @@ public class P7_Evaluation {
 	int N=30;
 	Map<Long, boolean[]> map0=new HashMap<Long, boolean[]>();
 	Map<Long, boolean[]> map1=new HashMap<Long, boolean[]>();
+	DecimalFormat df = new DecimalFormat( "0.0000");
 	
 	public static void main(String[] args){
-		P7_Evaluation p=new P7_Evaluation("apache-poi");
+		T7_Evaluation p=new T7_Evaluation("apache-poi");
 		p.run();
 	}
 	
-	public P7_Evaluation(String projectName){
+	public T7_Evaluation(String projectName){
 		config=new SimilarQuestionTaskConfig(projectName);
 		db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(config.graphPath));
 	}
 	
 	public void run(){
 		getMap();
+		
+		//MRR
+		System.out.println();
+		System.out.println("MRR Metric:");
 		mrr();
+		
+		//NDCG@K
+		System.out.println();
+		System.out.println("NDCG@K Metrics:");
+		ndcg(5);
 		ndcg(10);
 		ndcg(20);
 		ndcg(30);
+		
+		//Hit@K
+		System.out.println();
+		System.out.println("Hit@K Metrics:");
 		hitAt(5);
 		hitAt(10);
+		hitAt(20);
+		hitAt(30);
 	}
 	
 	private void getMap(){
@@ -91,7 +108,7 @@ public class P7_Evaluation {
 		}
 		mrr0/=map0.size();
 		mrr1/=map0.size();
-		System.out.println("MRR0="+mrr0+"    MRR1="+mrr1);
+		System.out.println("MRR:"+df.format(mrr0)+"-->"+df.format(mrr1));
 	}
 	
 	private void ndcg(int K){
@@ -113,7 +130,7 @@ public class P7_Evaluation {
 		}
 		r0/=map0.size();
 		r1/=map0.size();
-		System.out.println("NDCG@"+K+"_0="+r0+"    NDCG@"+K+"_1="+r1);
+		System.out.println("NDCG@"+K+":"+df.format(r0)+"-->"+df.format(r1));
 	}
 	
 	private void hitAt(int K){
@@ -133,7 +150,7 @@ public class P7_Evaluation {
 		}
 		c0/=map0.size();
 		c1/=map0.size();
-		System.out.println("Hit@"+K+"_0="+c0+"    Hit@"+K+"_1="+c1);
+		System.out.println("Hit@"+K+":"+df.format(c0)+"-->"+df.format(c1));
 	}
 	
 }

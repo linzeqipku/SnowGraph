@@ -24,7 +24,7 @@ import graphmodel.entity.qa.AnswerSchema;
 import similarquestions.utils.SimilarQuestionTaskConfig;
 import similarquestions.utils.similarity.Word2VecDocumentSimilarity;
 
-public class P5_Word2QuestionScoring {
+public class T5_Word2QuestionScoring {
 
 	SimilarQuestionTaskConfig config = null;
 	GraphDatabaseService db = null;
@@ -34,11 +34,11 @@ public class P5_Word2QuestionScoring {
 	private Set<Node> acQuestionNodes=new HashSet<Node>();
 	
 	public static void main(String[] args){
-		P5_Word2QuestionScoring p=new P5_Word2QuestionScoring("apache-poi");
+		T5_Word2QuestionScoring p=new T5_Word2QuestionScoring("apache-poi");
 		p.run();
 	}
 	
-	public P5_Word2QuestionScoring(String projectName){
+	public T5_Word2QuestionScoring(String projectName){
 		config=new SimilarQuestionTaskConfig(projectName);
 		db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(config.graphPath));
 	}

@@ -32,7 +32,7 @@ import similarquestions.utils.similarity.CodeSimilarity;
 import similarquestions.utils.similarity.QueryDocumentSimilarity;
 import similarquestions.utils.similarity.Word2VecDocumentSimilarity;
 
-public class P6_SimilarQuestionRecommender {
+public class T6_SimilarQuestionRecommender {
 	
 	static double ALPHA=0.2;
 
@@ -48,11 +48,11 @@ public class P6_SimilarQuestionRecommender {
 	private Set<Node> sampleQuestionNodes=new HashSet<Node>();
 	
 	public static void main(String[] args){
-		P6_SimilarQuestionRecommender p=new P6_SimilarQuestionRecommender("apache-poi");
+		T6_SimilarQuestionRecommender p=new T6_SimilarQuestionRecommender("apache-poi");
 		p.run();
 	}
 	
-	public P6_SimilarQuestionRecommender(String projectName){
+	public T6_SimilarQuestionRecommender(String projectName){
 		config=new SimilarQuestionTaskConfig(projectName);
 		db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(config.graphPath));
 	}

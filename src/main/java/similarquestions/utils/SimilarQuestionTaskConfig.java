@@ -16,6 +16,7 @@ public class SimilarQuestionTaskConfig {
 	public String tmpPath="";
 	public String word2vecPath="";
 	public String word2questionPath="";
+	public String featuresPath="";
 	
 	public String srcPath="";
 	public String binPath="";
@@ -40,6 +41,7 @@ public class SimilarQuestionTaskConfig {
 		tmpPath=projectPath+"/tmp";
 		word2vecPath=projectPath+"/word2vec.bin";
 		word2questionPath=projectPath+"/word2question.bin";
+		featuresPath=projectPath+"/features.bin";
 		file=new File(tmpPath);
 		if (!file.exists())
 			file.mkdir();

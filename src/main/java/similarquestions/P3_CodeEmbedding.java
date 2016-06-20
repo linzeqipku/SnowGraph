@@ -18,18 +18,18 @@ import graphmodel.ManageElements;
 import similarquestions.utils.SimilarQuestionTaskConfig;
 import similarquestions.utils.graphembedding.TransE;
 
-public class T3_CodeEmbedding {
+public class P3_CodeEmbedding {
 
 	SimilarQuestionTaskConfig config = null;
 	GraphDatabaseService db = null;
 	TransE transE=null;
 	
 	public static void main(String[] args){
-		T3_CodeEmbedding p=new T3_CodeEmbedding("apache-poi");
+		P3_CodeEmbedding p=new P3_CodeEmbedding("apache-poi");
 		p.run();
 	}
 	
-	public T3_CodeEmbedding(String projectName){
+	public P3_CodeEmbedding(String projectName){
 		config=new SimilarQuestionTaskConfig(projectName);
 		db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(config.graphPath));
 		transE=new TransE();

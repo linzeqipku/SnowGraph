@@ -18,16 +18,16 @@ import graphmodel.ManageElements;
 import graphmodel.entity.Schema;
 import similarquestions.utils.SimilarQuestionTaskConfig;
 
-public class T1_QaTokenizer {
+public class P1_QaTokenizer {
 
 	SimilarQuestionTaskConfig config = null;
 	
 	public static void main(String[] args){
-		T1_QaTokenizer p=new T1_QaTokenizer("apache-poi");
+		P1_QaTokenizer p=new P1_QaTokenizer("apache-poi");
 		p.run();
 	}
 
-	public T1_QaTokenizer(String projectName) {
+	public P1_QaTokenizer(String projectName) {
 		config = new SimilarQuestionTaskConfig(projectName);
 	}
 

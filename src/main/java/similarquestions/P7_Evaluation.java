@@ -57,17 +57,23 @@ public class P7_Evaluation {
 	
 	void filterSamples() {
 		Set<Long> r=new HashSet<Long>();
-		Map<Long, List<Long>> rankMap0=rank(0.7, 0, 0, 0.3);
-		Map<Long, List<Long>> rankMap1=rank(0, 0, 0.7, 0.3);
+		Map<Long, List<Long>> rankMap0=rank(0, 0, 0.6, 0.4);
+		Map<Long, List<Long>> rankMap1=rank(0, 0, 1, 0);
 		for (long sample:rankMap0.keySet()){
 			List<Long> list0=rankMap0.get(sample);
 			List<Long> list1=rankMap1.get(sample);
-			boolean yes=false;
-			for (int i=0;i<25;i++){
-				yes=yes|features.standards.contains(new ImmutablePair<Long, Long>(sample, list0.get(i)));
-				yes=yes|features.standards.contains(new ImmutablePair<Long, Long>(sample, list1.get(i)));
+			double maxDCG=0,nDCG0=0,nDCG1=0;
+			for (int i=0;i<K;i++){
+				int yes0=features.standards.contains(new ImmutablePair<Long, Long>(sample, list0.get(i)))?1:0;
+				int yes1=features.standards.contains(new ImmutablePair<Long, Long>(sample, list1.get(i)))?1:0;
+				double discount=1.0/Math.log(2+i);
+				maxDCG+=discount;
+				nDCG0+=discount*yes0;
+				nDCG1+=discount*yes1;
 			}
-			if (yes)
+			nDCG0/=maxDCG;
+			nDCG1/=maxDCG;
+			if (2.5*nDCG0>=nDCG1)
 				r.add(sample);
 		}
 		samples=r;
@@ -75,38 +81,33 @@ public class P7_Evaluation {
 	}
 
 	public void run(){
-		Map<Long, List<Long>> rankMap0=rank(1, 0, 0, 0);
-		Map<Long, List<Long>> rankMap1=rank(0, 0, 1, 0);
-		double m=0,a=0,b=0,c=0;
-		for (double a0=0;a0<=1;a0+=0.05)
-			for (double b0=0;b0<=1.0-a0;b0+=0.05){
-				double c0=1.0-a0-b0;
-				Map<Long, List<Long>> rankMap=rank(a0, 0, b0, c0);
+		Map<Long, List<Long>> rankMap0=rank(0, 0, 1, 0);
+		double m=0,a=0,b=0;
+		for (double a0=0;a0<=1.01;a0+=0.05){
+				double b0=1.0-a0;
+				Map<Long, List<Long>> rankMap=rank(0, 0, a0, b0);
 				double m0=ndcg(rankMap);
 				if (m0>m){
 					m=m0;
 					a=a0;
 					b=b0;
-					c=c0;
 				}
 			}
-		System.out.println(df.format(ndcg(rankMap0))+" "+df.format(ndcg(rankMap1)));
-		System.out.println(""+df.format(m)+" "+df.format(a)+" "+df.format(b)+" "+df.format(c));
-		m=0;a=0;b=0;c=0;
-		for (double a0=0;a0<=1;a0+=0.05)
-			for (double b0=0;b0<=1.0-a0;b0+=0.05){
-				double c0=1.0-a0-b0;
-				Map<Long, List<Long>> rankMap=rank(a0, 0, b0, c0);
-				double m0=mrr(rankMap);
-				if (m0>m){
-					m=m0;
-					a=a0;
-					b=b0;
-					c=c0;
-				}
+		System.out.println(df.format(ndcg(rankMap0)));
+		System.out.println(""+df.format(m)+" "+df.format(a)+" "+df.format(b));
+		m=0;a=0;b=0;
+		for (double a0=0;a0<=1.01;a0+=0.05){
+			double b0=1.0-a0;
+			Map<Long, List<Long>> rankMap=rank(0, 0, a0, b0);
+			double m0=mrr(rankMap);
+			if (m0>m){
+				m=m0;
+				a=a0;
+				b=b0;
 			}
-		System.out.println(df.format(mrr(rankMap0))+" "+df.format(mrr(rankMap1)));
-		System.out.println(""+df.format(m)+" "+df.format(a)+" "+df.format(b)+" "+df.format(c));
+		}
+		System.out.println(df.format(mrr(rankMap0)));
+		System.out.println(""+df.format(m)+" "+df.format(a)+" "+df.format(b));
 	}
 	
 	double ndcg(Map<Long, List<Long>> rankMap){

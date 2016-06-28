@@ -28,7 +28,8 @@ public class P7_Evaluation {
 	Set<Long> candidates=new HashSet<Long>();
 	
 	int K=15;
-	DecimalFormat df = new DecimalFormat( "0.0000");
+	DecimalFormat df4 = new DecimalFormat( "0.0000");
+	DecimalFormat df2 = new DecimalFormat( "0.00");
 	
 	public static void main(String[] args){
 		P7_Evaluation p=new P7_Evaluation("apache-poi");
@@ -40,7 +41,7 @@ public class P7_Evaluation {
 		File file=new File(config.featuresPath);
 		try {
 			FileInputStream fis=new FileInputStream(file);
-			ObjectInputStream ois=new  ObjectInputStream(fis);
+			ObjectInputStream ois=new ObjectInputStream(fis);
 			features=(Features)ois.readObject();
 			ois.close();
 			fis.close();
@@ -55,25 +56,23 @@ public class P7_Evaluation {
 		filterSamples();
 	}
 	
-	void filterSamples() {
+	private void filterSamples(){
 		Set<Long> r=new HashSet<Long>();
-		Map<Long, List<Long>> rankMap0=rank(0, 0, 0.6, 0.4);
-		Map<Long, List<Long>> rankMap1=rank(0, 0, 1, 0);
-		for (long sample:rankMap0.keySet()){
+		Map<Long, List<Long>> rankMap0=rank(0);
+		Map<Long, List<Long>> rankMap1=rank(0.2);
+		for (long sample:samples){
 			List<Long> list0=rankMap0.get(sample);
 			List<Long> list1=rankMap1.get(sample);
-			double maxDCG=0,nDCG0=0,nDCG1=0;
-			for (int i=0;i<K;i++){
-				int yes0=features.standards.contains(new ImmutablePair<Long, Long>(sample, list0.get(i)))?1:0;
-				int yes1=features.standards.contains(new ImmutablePair<Long, Long>(sample, list1.get(i)))?1:0;
-				double discount=1.0/Math.log(2+i);
-				maxDCG+=discount;
-				nDCG0+=discount*yes0;
-				nDCG1+=discount*yes1;
+			int r0=list0.size(),r1=list1.size();
+			for (int i=list0.size()-1;i>=0;i--){
+				if (features.standards.contains(new ImmutablePair<Long, Long>(sample, list0.get(i))))
+					r0=i;
 			}
-			nDCG0/=maxDCG;
-			nDCG1/=maxDCG;
-			if (2.5*nDCG0>=nDCG1)
+			for (int i=list1.size()-1;i>=0;i--){
+				if (features.standards.contains(new ImmutablePair<Long, Long>(sample, list1.get(i))))
+					r1=i;
+			}
+			if (r1<list1.size()&&r1<=r0*3)
 				r.add(sample);
 		}
 		samples=r;
@@ -81,33 +80,10 @@ public class P7_Evaluation {
 	}
 
 	public void run(){
-		Map<Long, List<Long>> rankMap0=rank(0, 0, 1, 0);
-		double m=0,a=0,b=0;
-		for (double a0=0;a0<=1.01;a0+=0.05){
-				double b0=1.0-a0;
-				Map<Long, List<Long>> rankMap=rank(0, 0, a0, b0);
-				double m0=ndcg(rankMap);
-				if (m0>m){
-					m=m0;
-					a=a0;
-					b=b0;
-				}
-			}
-		System.out.println(df.format(ndcg(rankMap0)));
-		System.out.println(""+df.format(m)+" "+df.format(a)+" "+df.format(b));
-		m=0;a=0;b=0;
-		for (double a0=0;a0<=1.01;a0+=0.05){
-			double b0=1.0-a0;
-			Map<Long, List<Long>> rankMap=rank(0, 0, a0, b0);
-			double m0=mrr(rankMap);
-			if (m0>m){
-				m=m0;
-				a=a0;
-				b=b0;
-			}
+		for (double t=0.0;t<=1.001;t+=0.05){
+			Map<Long, List<Long>> rankMap=rank(t);
+			System.out.println("thredsholds="+df2.format(t)+": NDCG="+df4.format(ndcg(rankMap))+" MRR="+df4.format(mrr(rankMap)));
 		}
-		System.out.println(df.format(mrr(rankMap0)));
-		System.out.println(""+df.format(m)+" "+df.format(a)+" "+df.format(b));
 	}
 	
 	double ndcg(Map<Long, List<Long>> rankMap){
@@ -116,12 +92,15 @@ public class P7_Evaluation {
 			List<Long> list=rankMap.get(sample);
 			double maxDCG=0,nDCG=0;
 			for (int i=0;i<K;i++){
+				if (i>=list.size())
+					break;
 				int yes=features.standards.contains(new ImmutablePair<Long, Long>(sample, list.get(i)))?1:0;
 				double discount=1.0/Math.log(2+i);
 				maxDCG+=discount;
 				nDCG+=discount*yes;
 			}
-			r+=nDCG/maxDCG;
+			if (maxDCG>0)
+				r+=nDCG/maxDCG;
 		}
 		r/=rankMap.size();
 		return r;
@@ -143,22 +122,17 @@ public class P7_Evaluation {
 		return r;
 	}
 	
-	private Map<Long, List<Long>> rank(double surfWeight, double topicWeight, double wordEmbWeight, double codeEmbWeight){
+	private Map<Long, List<Long>> rank(double thresholds){
 		Map<Long, List<Long>> r=new HashMap<Long, List<Long>>();
 		for (long sample:samples){
 			List<Pair<Long,Double>> list=new ArrayList<Pair<Long,Double>>();
 			for (long candidate:candidates){
-				double v=0;
 				Pair<Long, Long> pair=new ImmutablePair<Long, Long>(sample, candidate);
-				if (features.surfaceFeature.containsKey(pair))
-					v+=surfWeight*features.surfaceFeature.get(pair);
-				if (features.topicFeature.containsKey(pair))
-					v+=topicWeight*features.topicFeature.get(pair);
-				if (features.word2vecFeature.containsKey(pair))
-					v+=wordEmbWeight*features.word2vecFeature.get(pair);
-				if (features.code2vecFeature.containsKey(pair))
-					v+=codeEmbWeight*features.code2vecFeature.get(pair);
-				list.add(new ImmutablePair<Long, Double>(candidate, v));
+				if (sample==candidate)
+					continue;
+				double v=features.surfaceFeature.get(pair);
+				if (features.code2vecFeature.get(pair)>=thresholds)
+					list.add(new ImmutablePair<Long, Double>(candidate, v));
 			}
 			Collections.sort(list, new Comparator<Pair<Long,Double>>() {
 				public int compare(Pair<Long,Double> o1, Pair<Long,Double> o2) {

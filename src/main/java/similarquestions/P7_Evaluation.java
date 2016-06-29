@@ -27,7 +27,7 @@ public class P7_Evaluation {
 	Set<Long> samples=new HashSet<Long>();
 	Set<Long> candidates=new HashSet<Long>();
 	
-	int K=15;
+	int K=100;
 	DecimalFormat df4 = new DecimalFormat( "0.0000");
 	DecimalFormat df2 = new DecimalFormat( "0.00");
 	
@@ -58,21 +58,25 @@ public class P7_Evaluation {
 	
 	private void filterSamples(){
 		Set<Long> r=new HashSet<Long>();
-		Map<Long, List<Long>> rankMap0=rank(0);
-		Map<Long, List<Long>> rankMap1=rank(0.2);
+		Map<Long, List<Long>> rankMap0=rank(-1);
 		for (long sample:samples){
 			List<Long> list0=rankMap0.get(sample);
-			List<Long> list1=rankMap1.get(sample);
-			int r0=list0.size(),r1=list1.size();
-			for (int i=list0.size()-1;i>=0;i--){
-				if (features.standards.contains(new ImmutablePair<Long, Long>(sample, list0.get(i))))
-					r0=i;
+			double cu=0,cd=0;
+			for (int i=0;i<list0.size();i++){
+				if (i>=K)
+					break;
+				Pair<Long, Long> pair=new ImmutablePair<Long, Long>(sample, list0.get(i));
+				boolean yes=features.standards.contains(pair);
+				if (yes){
+					cd++;
+					if (features.code2vecFeature.containsKey(pair))
+						cu+=features.code2vecFeature.get(pair);
+				}
 			}
-			for (int i=list1.size()-1;i>=0;i--){
-				if (features.standards.contains(new ImmutablePair<Long, Long>(sample, list1.get(i))))
-					r1=i;
-			}
-			if (r1<list1.size()&&r1<=r0*3)
+			double c=2;
+			if (cd>0)
+				c=cu/cd;
+			if (c>0.1)
 				r.add(sample);
 		}
 		samples=r;
@@ -80,9 +84,19 @@ public class P7_Evaluation {
 	}
 
 	public void run(){
-		for (double t=0.0;t<=1.001;t+=0.05){
-			Map<Long, List<Long>> rankMap=rank(t);
-			System.out.println("thredsholds="+df2.format(t)+": NDCG="+df4.format(ndcg(rankMap))+" MRR="+df4.format(mrr(rankMap)));
+		Map<Long, List<Long>> rankMap0=rank(0);
+		for (double t=-0.05;t<=1.001;t+=0.05){
+			System.out.print("thredsholds="+df2.format(t));
+			System.out.print(" Prec="+df4.format(prec(rankMap0, t)));
+			System.out.print(" FPR="+df4.format(falsePositiveRate(rankMap0, t)));
+			System.out.println(" TPR="+df4.format(truePositiveRate(rankMap0, t)));
+		}
+		System.out.println("==========");
+		for (double w=0.0;w<=1.001;w+=0.05){
+			Map<Long, List<Long>> rankMap=rank(w);
+			System.out.print("cWeight="+df2.format(w));
+			System.out.print(" NDCG="+df4.format(ndcg(rankMap)));
+			System.out.println(" MRR="+df4.format(mrr(rankMap)));
 		}
 	}
 	
@@ -91,7 +105,7 @@ public class P7_Evaluation {
 		for (long sample:rankMap.keySet()){
 			List<Long> list=rankMap.get(sample);
 			double maxDCG=0,nDCG=0;
-			for (int i=0;i<K;i++){
+			for (int i=0;i<10;i++){
 				if (i>=list.size())
 					break;
 				int yes=features.standards.contains(new ImmutablePair<Long, Long>(sample, list.get(i)))?1:0;
@@ -122,7 +136,68 @@ public class P7_Evaluation {
 		return r;
 	}
 	
-	private Map<Long, List<Long>> rank(double thresholds){
+	double prec(Map<Long, List<Long>> rankMap0, double thresholds){
+		double c=0,d=0;
+		for (long sample:rankMap0.keySet()){
+			List<Long> list0=rankMap0.get(sample);
+			for (int i=0;i<K;i++){
+				Pair<Long, Long> pair=new ImmutablePair<Long, Long>(sample, list0.get(i));
+				boolean yes=features.standards.contains(pair);
+				if (!(features.code2vecFeature.containsKey(pair)&&features.code2vecFeature.get(pair)>thresholds))
+					continue;
+				if (yes)
+					c++;
+				d++;
+			}
+		}
+		if (d==0)
+			return 0;
+		return c/d;
+	}
+	
+	double falsePositiveRate(Map<Long, List<Long>> rankMap0, double thresholds){
+		double r=0,c=0;
+		for (long sample:rankMap0.keySet()){
+			List<Long> list0=rankMap0.get(sample);
+			for (int i=0;i<list0.size();i++){
+				if (i>=K)
+					break;
+				Pair<Long, Long> pair=new ImmutablePair<Long, Long>(sample, list0.get(i));
+				boolean yes=features.standards.contains(pair);
+				if (yes){
+					c++;
+					if (!(features.code2vecFeature.containsKey(pair)&&features.code2vecFeature.get(pair)>thresholds))
+						r++;
+				}
+			}
+		}
+		if (c>0)
+			r/=c;
+		return r;
+	}
+	
+	double truePositiveRate(Map<Long, List<Long>> rankMap0, double thresholds){
+		double r=0,c=0;
+		for (long sample:rankMap0.keySet()){
+			List<Long> list0=rankMap0.get(sample);
+			for (int i=0;i<list0.size();i++){
+				if (i>=K)
+					break;
+				Pair<Long, Long> pair=new ImmutablePair<Long, Long>(sample, list0.get(i));
+				boolean yes=features.standards.contains(pair);
+				if (!yes){
+					c++;
+					if (!(features.code2vecFeature.containsKey(pair)&&features.code2vecFeature.get(pair)>thresholds))
+						r++;
+				}
+			}
+		}
+		if (c>0)
+			r/=c;
+		return r;
+	}
+	
+	private Map<Long, List<Long>> rank(double cWeight){
 		Map<Long, List<Long>> r=new HashMap<Long, List<Long>>();
 		for (long sample:samples){
 			List<Pair<Long,Double>> list=new ArrayList<Pair<Long,Double>>();
@@ -130,9 +205,9 @@ public class P7_Evaluation {
 				Pair<Long, Long> pair=new ImmutablePair<Long, Long>(sample, candidate);
 				if (sample==candidate)
 					continue;
-				double v=features.surfaceFeature.get(pair);
-				if (features.code2vecFeature.get(pair)>=thresholds)
-					list.add(new ImmutablePair<Long, Double>(candidate, v));
+				double v=(1.0-cWeight)*features.surfaceFeature.get(pair);
+				v+=cWeight*features.code2vecFeature.get(pair);
+				list.add(new ImmutablePair<Long, Double>(candidate, v));
 			}
 			Collections.sort(list, new Comparator<Pair<Long,Double>>() {
 				public int compare(Pair<Long,Double> o1, Pair<Long,Double> o2) {

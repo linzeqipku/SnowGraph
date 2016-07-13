@@ -38,7 +38,7 @@ import similarquestions.utils.similarity.CodeSimilarity;
 import similarquestions.utils.similarity.QueryDocumentSimilarity;
 import similarquestions.utils.similarity.Word2VecDocumentSimilarity;
 
-public class P6_FeatureGeneration {
+public class OP6_FeatureGeneration {
 	
 	static double ALPHA=0.2;
 
@@ -56,11 +56,11 @@ public class P6_FeatureGeneration {
 	private Map<Node, Set<Node>> standardMap=new HashMap<Node, Set<Node>>();
 	
 	public static void main(String[] args){
-		P6_FeatureGeneration p=new P6_FeatureGeneration("apache-poi");
+		OP6_FeatureGeneration p=new OP6_FeatureGeneration("apache-poi");
 		p.run();
 	}
 	
-	public P6_FeatureGeneration(String projectName){
+	public OP6_FeatureGeneration(String projectName){
 		config=new SimilarQuestionTaskConfig(projectName);
 		db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(config.graphPath));
 	}

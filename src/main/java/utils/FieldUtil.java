@@ -10,8 +10,6 @@ import graphmodel.entity.issuetracker.IssueCommentSchema;
 import graphmodel.entity.issuetracker.IssueSchema;
 import graphmodel.entity.issuetracker.IssueUserSchema;
 import graphmodel.entity.issuetracker.PatchSchema;
-import graphmodel.entity.mail.MailSchema;
-import graphmodel.entity.mail.MailUserSchema;
 import graphmodel.entity.qa.AnswerSchema;
 import graphmodel.entity.qa.QaCommentSchema;
 import graphmodel.entity.qa.QaUserSchema;
@@ -22,6 +20,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import pfr.plugins.parsers.mail.entity.MailSchema;
+import pfr.plugins.parsers.mail.entity.MailUserSchema;
 import javassist.Modifier;
 
 /*

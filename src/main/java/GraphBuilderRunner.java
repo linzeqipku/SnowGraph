@@ -3,10 +3,9 @@
 import java.util.HashMap;
 import java.util.Map;
 
-import discretgraphs.GraphBuilder;
-import discretgraphs.code.CodeGraphBuilder;
-import discretgraphs.code.CodeIndexes;
-import discretgraphs.qa.QaGraphDbBuilder;
+import pfr.plugins.parsers.javacode.CodeIndexes;
+import pfr.plugins.parsers.javacode.PfrPluginForJavaCode;
+import pfr.plugins.parsers.qa.QaGraphDbBuilder;
 import graphfusion.CodeLinker;
 
 public class GraphBuilderRunner
@@ -69,7 +68,7 @@ public class GraphBuilderRunner
 		long beginTime = System.currentTimeMillis();
 		
 		Map<GraphBuilder,Boolean> graphBuilders=new HashMap<GraphBuilder,Boolean>();
-		graphBuilders.put(new CodeGraphBuilder(codeDbPath,srcPath,binPath),true);//构造代码结构图
+		graphBuilders.put(new PfrPluginForJavaCode(codeDbPath,srcPath,binPath),true);//构造代码结构图
 		graphBuilders.put(new QaGraphDbBuilder(qaDbPath, qPath, aPath, cPath,uPath,plPath),true);//构造QA结构图
 		//graphBuilders.put(new MailGraphBuilder(mailDbPath,mPath),true);//构造邮件结构图
 		//graphBuilders.put(new IssueGraphBuilder(issueDbPath,issueFolderPath,projectName), true);//构建Issue结构图

@@ -8,10 +8,11 @@ import graphmodel.entity.code.MethodSchema;
 import graphmodel.entity.issuetracker.IssueCommentSchema;
 import graphmodel.entity.issuetracker.IssueSchema;
 import graphmodel.entity.issuetracker.PatchSchema;
-import graphmodel.entity.mail.MailSchema;
 import graphmodel.entity.qa.QaSchema;
 
 import org.neo4j.graphdb.Node;
+
+import pfr.plugins.parsers.mail.entity.MailSchema;
 
 public abstract class Schema {
 	

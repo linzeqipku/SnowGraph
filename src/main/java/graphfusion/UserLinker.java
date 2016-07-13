@@ -2,7 +2,6 @@ package graphfusion;
 
 import graphmodel.ManageElements;
 import graphmodel.entity.issuetracker.IssueUserSchema;
-import graphmodel.entity.mail.MailUserSchema;
 import graphmodel.entity.qa.QaUserSchema;
 
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
+import pfr.plugins.parsers.mail.entity.MailUserSchema;
 import utils.MultimapUtil;
 
 import com.google.common.collect.ArrayListMultimap;

@@ -5,10 +5,10 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 
+import pfr.plugins.parsers.javacode.CodeIndexes;
+import pfr.plugins.parsers.javacode.PfrPluginForJavaCode;
+import pfr.plugins.parsers.qa.QaGraphDbBuilder;
 import crawlers.qa.QaExtractor;
-import discretgraphs.code.CodeGraphBuilder;
-import discretgraphs.code.CodeIndexes;
-import discretgraphs.qa.QaGraphDbBuilder;
 import graphfusion.CodeLinker;
 import similarquestions.utils.SimilarQuestionTaskConfig;
 
@@ -40,7 +40,7 @@ public class P0_GraphPreparation {
 		FileUtils.cleanDirectory(new File(config.graphPath));
 		
 		FileUtils.cleanDirectory(new File(config.tmpPath));
-		CodeGraphBuilder codeGraphBuilder=new CodeGraphBuilder(config.tmpPath, config.srcPath, config.binPath);
+		PfrPluginForJavaCode codeGraphBuilder=new PfrPluginForJavaCode(config.tmpPath, config.srcPath, config.binPath);
 		codeGraphBuilder.run();
 		codeGraphBuilder.migrateTo(config.graphPath);
 		

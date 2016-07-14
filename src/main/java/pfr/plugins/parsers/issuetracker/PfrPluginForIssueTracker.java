@@ -233,8 +233,6 @@ public class PfrPluginForIssueTracker implements PFR{
 			
 			tx.success();
 		}
-		
-		graphDb.shutdown();
 	}
 
 }

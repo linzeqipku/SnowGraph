@@ -57,7 +57,6 @@ public class PfrPluginForMailList implements PFR {
 	public String mboxPath=null;
 	private static Charset charset = Charset.forName("UTF-8");
 	private final static CharsetDecoder DECODER = charset.newDecoder();
-	private int toSystemMailCount = 0;
 	
 	public void setMboxPath(String path) {
 		this.mboxPath=path;
@@ -100,10 +99,6 @@ public class PfrPluginForMailList implements PFR {
 			buildRelationships();
 			tx.success();
 		}
-		db.shutdown();
-		
-		System.out.println("Total Mail Count:" + mailMap.size());
-		System.out.println("toSystemMailCount:" + toSystemMailCount);
 	}  
 
 	public void parse(GraphDatabaseService db, File mboxFile){

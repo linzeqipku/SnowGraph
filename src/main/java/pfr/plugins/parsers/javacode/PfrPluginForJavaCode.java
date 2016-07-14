@@ -147,8 +147,6 @@ public class PfrPluginForJavaCode implements PFR
 			tx.success();
 		}
 
-		db.shutdown();
-
 	}
 
 	/**

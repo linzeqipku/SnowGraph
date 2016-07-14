@@ -1,12 +1,7 @@
-package graphfusion;
+package pfr.plugins.refiners.codelinking;
 
-import graphmodel.ManageElements;
-import graphmodel.entity.Schema;
-import graphmodel.entity.code.ClassSchema;
-import graphmodel.entity.code.MethodSchema;
-
-import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,56 +14,86 @@ import org.jsoup.select.Elements;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
-import pfr.plugins.parsers.javacode.CodeIndexes;
+import pfr.PFR;
+import pfr.annotations.PropertyDeclaration;
+import pfr.annotations.RelationDeclaration;
+import pfr.plugins.parsers.javacode.PfrPluginForJavaCode;
 
-public class CodeLinker
+public class PfrPluginForCodeLinking implements PFR
 {
+	
+	@RelationDeclaration public static final String DOC_LEVEL_REFER="docRef";
+	@RelationDeclaration public static final String LEX_LEVEL_REFER="lexRef";
 
-	String dbPath = null;
-	GraphDatabaseService db = null;
+	GraphDatabaseService db=null;
 	CodeIndexes codeIndexes=null;
 
-	Set<Node> srcNodes = new HashSet<Node>();
+	Set<String> focusSet=new HashSet<String>();
+	Map<Node,String> nodeToTextMap = new HashMap<Node,String>();
 	
-
-	public CodeLinker(String dbPath, CodeIndexes codeIndexes)
-	{
-		this.dbPath = dbPath;
-		this.codeIndexes=codeIndexes;
+	public void setFocusSet(Set<String> focusSet){
+		this.focusSet.clear();
+		this.focusSet.addAll(focusSet);
 	}
 
-	public void run()
+	public void run(GraphDatabaseService db)
 	{
-		db = new GraphDatabaseFactory().newEmbeddedDatabase(new File(dbPath));
-		try (Transaction tx = db.beginTx())
+		this.db=db;
+		codeIndexes=new CodeIndexes(db);
+		try
 		{
-			ResourceIterator<Node> nodes = db.getAllNodes().iterator();
-			while (nodes.hasNext())
-			{
-				Node node = nodes.next();
-				if (node.hasLabel(ManageElements.Labels.QUESTION) || node.hasLabel(ManageElements.Labels.ANSWER) || node.hasLabel(ManageElements.Labels.QA_COMMENT)|| node.hasLabel(ManageElements.Labels.MAIL))
-				{
-					srcNodes.add(node);
+			prepareNodeToTextMap();
+		}
+		catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		findDocLevelReference();
+		findLexLevelReference();
+	}
+	
+	void prepareNodeToTextMap() throws ClassNotFoundException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException{
+		Map<String, Set<String>> propMap=new HashMap<String, Set<String>>();
+		for (String str:focusSet){
+			int p=str.lastIndexOf('.');
+			String className=str.substring(0,p);
+			String fieldName=str.substring(p+1,str.length());
+			Class pluginClass=Class.forName(className);
+			Field field=pluginClass.getField(fieldName);
+			String concept=((PropertyDeclaration)field.getAnnotation(PropertyDeclaration.class)).parent();
+			if (!propMap.containsKey(concept))
+				propMap.put(concept, new HashSet<String>());
+			propMap.get(concept).add((String)field.get(null));
+		}
+		try (Transaction tx=db.beginTx()){
+			ResourceIterator<Node> nodes=db.getAllNodes().iterator();
+			while (nodes.hasNext()){
+				Node node=nodes.next();
+				if (!node.getLabels().iterator().hasNext())
+					continue;
+				String label=node.getLabels().iterator().next().name();
+				if (!propMap.containsKey(label))
+					continue;
+				String content="";
+				for (String property:propMap.get(label)){
+					if (node.hasProperty(property))
+						content+=((String)node.getProperty(property))+" ";
 				}
+				nodeToTextMap.put(node, content);
 			}
 			tx.success();
 		}
-		System.out.println("Source nodes are extracted successfully.");
-		findDocLevelReference();
-		System.out.println("Doc level references are built successfully");
-		findLexLevelReference();
-		System.out.println("Lexical level references are built successfully");
-		db.shutdown();
 	}
 	
 	void findDocLevelReference(){
 		try (Transaction tx = db.beginTx()){
-			for (Node srcNode:srcNodes){
-				String content=Schema.getContent(srcNode);
+			for (Node srcNode:nodeToTextMap.keySet()){
+				String content=nodeToTextMap.get(srcNode);
 				Set<String> tokens=new HashSet<String>();
 				for (String token:content.split("\\W+"))
 					if (token.length()>0)
@@ -105,24 +130,24 @@ public class CodeLinker
 				//精确链接匹配到的方法
 				for (String methodShortName:occMethodMap.keySet())
 					for (long id:occMethodMap.get(methodShortName)){
-						String str=((String)db.getNodeById(id).getProperty(MethodSchema.BELONGTO)).replace(".", "/");
-						str+=".html#"+methodShortName+"("+((String)db.getNodeById(id).getProperty(MethodSchema.PARAMS))+")";
+						String str=((String)db.getNodeById(id).getProperty(PfrPluginForJavaCode.METHOD_BELONGTO)).replace(".", "/");
+						str+=".html#"+methodShortName+"("+((String)db.getNodeById(id).getProperty(PfrPluginForJavaCode.METHOD_PARAMS))+")";
 						if (ahrefs.contains(str))
 							linkMethodSet.add(id);
 					}
 				//精确链接匹配到的类
 				for (String typeShortName:occTypeMap.keySet())
 					for (long id:occTypeMap.get(typeShortName)){
-						String str=((String)db.getNodeById(id).getProperty(ClassSchema.FULLNAME)).replace(".", "/");
+						String str=((String)db.getNodeById(id).getProperty(PfrPluginForJavaCode.CLASS_FULLNAME)).replace(".", "/");
 						str+=".html|";
 						if (ahrefs.contains(str))
 							linkTypeSet.add(id);
 					}
 				//建立链接关联
 				for (long id:linkMethodSet)
-					srcNode.createRelationshipTo(db.getNodeById(id), ManageElements.RelTypes.DOC_LEVEL_REFER);
+					srcNode.createRelationshipTo(db.getNodeById(id), RelationshipType.withName(DOC_LEVEL_REFER));
 				for (long id:linkTypeSet)
-					srcNode.createRelationshipTo(db.getNodeById(id), ManageElements.RelTypes.DOC_LEVEL_REFER);
+					srcNode.createRelationshipTo(db.getNodeById(id), RelationshipType.withName(DOC_LEVEL_REFER));
 								
 			}
 			tx.success();
@@ -137,8 +162,8 @@ public class CodeLinker
 	void findLexLevelReference(){
 		try (Transaction tx = db.beginTx()){
 			
-			for (Node srcNode : srcNodes){
-				String content = Schema.getContent(srcNode);
+			for (Node srcNode : nodeToTextMap.keySet()){
+				String content = nodeToTextMap.get(srcNode);
 				Set<String> lexes = new HashSet<String>();
 				for (String e:content.split("\\W+"))
 					lexes.add(e);
@@ -164,7 +189,7 @@ public class CodeLinker
 					//主类在
 					for (long methodNodeId:codeIndexes.methodShortNameMap.get(methodShortName)){
 						Node methodNode=db.getNodeById(methodNodeId);
-						if (resultNodes.contains(methodNode.getRelationships(ManageElements.RelTypes.HAVE_METHOD, Direction.INCOMING).iterator().next().getStartNode())){
+						if (resultNodes.contains(methodNode.getRelationships(RelationshipType.withName(PfrPluginForJavaCode.HAVE_METHOD), Direction.INCOMING).iterator().next().getStartNode())){
 							resultNodes.add(methodNode);
 							flag=true;
 						}
@@ -176,7 +201,7 @@ public class CodeLinker
 				}
 				
 				for (Node rNode:resultNodes)
-					srcNode.createRelationshipTo(rNode, ManageElements.RelTypes.LEX_LEVEL_REFER);
+					srcNode.createRelationshipTo(rNode,RelationshipType.withName(LEX_LEVEL_REFER));
 				
 			}
 			

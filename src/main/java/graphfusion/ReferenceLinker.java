@@ -6,20 +6,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import graphmodel.ManageElements;
-import graphmodel.entity.Schema;
-import graphmodel.entity.issuetracker.IssueSchema;
-import graphmodel.entity.issuetracker.PatchSchema;
-import graphmodel.entity.qa.AnswerSchema;
-import graphmodel.entity.qa.QaCommentSchema;
-import graphmodel.entity.qa.QuestionSchema;
-
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-
-import pfr.plugins.parsers.mail.entity.MailSchema;
 
 public class ReferenceLinker extends Linker {
 

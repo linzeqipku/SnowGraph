@@ -5,11 +5,11 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 
-import pfr.plugins.parsers.javacode.CodeIndexes;
 import pfr.plugins.parsers.javacode.PfrPluginForJavaCode;
 import pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow;
+import pfr.plugins.refiners.codelinking.CodeIndexes;
+import pfr.plugins.refiners.codelinking.PfrPluginForCodeLinking;
 import crawlers.qa.QaExtractor;
-import graphfusion.CodeLinker;
 import similarquestions.utils.SimilarQuestionTaskConfig;
 
 public class P0_GraphPreparation {
@@ -50,7 +50,7 @@ public class P0_GraphPreparation {
 		qaGraphDbBuilder.migrateTo(config.graphPath);
 		
 		CodeIndexes codeIndexes=new CodeIndexes(config.graphPath);
-		CodeLinker codeLinker=new CodeLinker(config.graphPath, codeIndexes);
+		PfrPluginForCodeLinking codeLinker=new PfrPluginForCodeLinking(config.graphPath, codeIndexes);
 		codeLinker.run();
 	}
 	

@@ -1,6 +1,5 @@
-package pfr.plugins.parsers.javacode;
+package pfr.plugins.refiners.codelinking;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,7 +10,7 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import pfr.plugins.parsers.javacode.PfrPluginForJavaCode;
 
 public class CodeIndexes
 {
@@ -24,9 +23,8 @@ public class CodeIndexes
 	public Map<String, Set<Long>> methodMidNameMap=new HashMap<String, Set<Long>>();
 	public Map<String, Set<Long>> methodShortNameMap=new HashMap<String,Set<Long>>();
 	
-	public CodeIndexes(String dbPath)
+	public CodeIndexes(GraphDatabaseService db)
 	{
-		GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(new File(dbPath));
 		try (Transaction tx = db.beginTx())
 		{
 			ResourceIterator<Node> nodes = db.getAllNodes().iterator();
@@ -94,8 +92,6 @@ public class CodeIndexes
 
 			tx.success();
 		}
-		
-		db.shutdown();
 	}
 	
 }

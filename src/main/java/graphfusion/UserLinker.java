@@ -1,9 +1,5 @@
 package graphfusion;
 
-import graphmodel.ManageElements;
-import graphmodel.entity.issuetracker.IssueUserSchema;
-import graphmodel.entity.qa.QaUserSchema;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

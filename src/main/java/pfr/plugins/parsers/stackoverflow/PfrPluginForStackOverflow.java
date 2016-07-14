@@ -223,8 +223,6 @@ public class PfrPluginForStackOverflow implements PFR
 			}
 			tx.success();
 		}
-		
-		db.shutdown();
 	}
 
 }

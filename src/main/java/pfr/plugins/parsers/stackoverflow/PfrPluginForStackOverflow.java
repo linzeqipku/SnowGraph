@@ -1,11 +1,4 @@
-package pfr.plugins.parsers.qa;
-
-import GraphBuilder;
-import graphmodel.ManageElements;
-import graphmodel.entity.qa.AnswerSchema;
-import graphmodel.entity.qa.QaCommentSchema;
-import graphmodel.entity.qa.QaUserSchema;
-import graphmodel.entity.qa.QuestionSchema;
+package pfr.plugins.parsers.stackoverflow;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,11 +14,20 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.lang3.tuple.Pair;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import pfr.PFR;
+import pfr.annotations.ConceptDeclaration;
+import pfr.annotations.PropertyDeclaration;
+import pfr.annotations.RelationDeclaration;
+import pfr.plugins.parsers.stackoverflow.entity.AnswerInfo;
+import pfr.plugins.parsers.stackoverflow.entity.QaCommentInfo;
+import pfr.plugins.parsers.stackoverflow.entity.QaUserInfo;
+import pfr.plugins.parsers.stackoverflow.entity.QuestionInfo;
 
 /**
  * 从StackOverflow的XML文件数据中生成图数据
@@ -33,53 +35,72 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 
-public class QaGraphDbBuilder extends GraphBuilder
+public class PfrPluginForStackOverflow implements PFR
 {
+	
+	@ConceptDeclaration public static final String QUESTION="SoQuestion";
+	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_ID="questionId";
+	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_CREATION_DATE="creationDate";
+	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_SCORE="score";
+	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_VIEW_COUNT="viewCount";
+	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_BODY="body";
+	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_OWNER_USER_ID="ownerUserId";
+	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_TITLE="title";
+	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_TAGS="tags";
+	
+	@ConceptDeclaration public static final String ANSWER="SoAnswer";
+	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_ACCEPTED="accepted";
+	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_ID="answerId";
+	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_PARENT_QUESTION_ID="parentQuestionId";
+	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_CREATION_DATE="creationDate";
+	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_SCORE="score";
+	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_BODY="body";
+	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_OWNER_USER_ID="ownerUserId";
+	
+	@ConceptDeclaration public static final String COMMENT="SoComment";
+	@PropertyDeclaration(parent=COMMENT)public static final String COMMENT_ID="commentId";
+	@PropertyDeclaration(parent=COMMENT)public static final String COMMENT_PARENT_ID="parentId";
+	@PropertyDeclaration(parent=COMMENT)public static final String COMMENT_SCORE="score";
+	@PropertyDeclaration(parent=COMMENT)public static final String COMMENT_TEXT="text";
+	@PropertyDeclaration(parent=COMMENT)public static final String COMMENT_CREATION_DATE="creationDate";
+	@PropertyDeclaration(parent=COMMENT)public static final String COMMENT_USER_ID="userId";
+	
+	@ConceptDeclaration public static final String USER="SoUser";
+	@PropertyDeclaration(parent=USER)public static final String USER_ID = "user_id";
+	@PropertyDeclaration(parent=USER)public static final String USER_REPUTATION = "reputation";
+	@PropertyDeclaration(parent=USER)public static final String USER_CREATION_DATE = "creationDate";
+	@PropertyDeclaration(parent=USER)public static final String USER_DISPLAY_NAME = "displayName";
+	@PropertyDeclaration(parent=USER)public static final String USER_LAST_ACCESS_dATE = "lastAccessDate";
+	@PropertyDeclaration(parent=USER)public static final String USER_VIEWS = "views";
+	@PropertyDeclaration(parent=USER)public static final String USER_UP_VOTES = "upVotes";
+	@PropertyDeclaration(parent=USER)public static final String USER_DOWN_VOTES = "downVotes";
+	
+	@RelationDeclaration public static final String HAVE_QUESTION="haveSoQuestion";
+	@RelationDeclaration public static final String HAVE_ANSWER="haveSoAnswer";
+	@RelationDeclaration public static final String HAVE_COMMENT="haveSoComment";
+	@RelationDeclaration public static final String AUTHOR="soAuthor";
+	@RelationDeclaration public static final String DUPLICATE="soDuplicate";
 
-	private GraphDatabaseService db = null;
-	private Map<Integer, QuestionSchema> questionMap = new HashMap<Integer, QuestionSchema>();
-	private Map<Integer, AnswerSchema> answerMap = new HashMap<Integer, AnswerSchema>();
-	private Map<Integer, QaCommentSchema> commentMap = new HashMap<Integer, QaCommentSchema>();
-	private Map<Integer, QaUserSchema> userMap = new HashMap<Integer,QaUserSchema>();
+	String folderPath=null;
+	private Map<Integer, QuestionInfo> questionMap = new HashMap<Integer, QuestionInfo>();
+	private Map<Integer, AnswerInfo> answerMap = new HashMap<Integer, AnswerInfo>();
+	private Map<Integer, QaCommentInfo> commentMap = new HashMap<Integer, QaCommentInfo>();
+	private Map<Integer, QaUserInfo> userMap = new HashMap<Integer,QaUserInfo>();
 	private List<Pair<Integer,Integer>> duplicateLinkList = new ArrayList<>();
 	
 	String questionXmlPath=null,answerXmlPath=null,commentXmlPath=null,userXmlPath=null,postLinkXmlPath=null;
+	
+	public void setFolderPath(String path){
+		this.folderPath=path;
+		this.questionXmlPath=folderPath+"/Questions.xml";
+		this.answerXmlPath=folderPath+"/Answers.xml";
+		this.commentXmlPath=folderPath+"/Comments.xml";
+		this.userXmlPath=folderPath+"/Users.xml";
+		this.postLinkXmlPath=folderPath+"/PostLinks.xml";
+	}
 
-	public QaGraphDbBuilder(String dbPath, String questionXmlPath, String answerXmlPath, String commentXmlPath, 
-			                               String userXmlPath, String postLinkXmlPath){
-		super(dbPath);
-		this.questionXmlPath=questionXmlPath;
-		this.answerXmlPath=answerXmlPath;
-		this.commentXmlPath=commentXmlPath;
-		this.userXmlPath=userXmlPath;
-		this.postLinkXmlPath=postLinkXmlPath;
+	public void run(GraphDatabaseService db){
 		
-		name="QaGraphBuilder";
-	}
-	
-	public static void main(String[] args) {
-		String projectName = "lucene";
-		String dbPath = "data/" + projectName + "/graphdb/qa";
-		String folderPath = "data/" + projectName + "/source_data/qa";
-		String questionXmlPath = folderPath + "/Questions.xml";
-		String answerXmlPath = folderPath + "/Answers.xml";
-		String commentXmlPath = folderPath + "/Comments.xml";
-		String userXmlPath = folderPath + "/Users.xml";
-		String postLinkXmlPath = folderPath + "/PostLinks.xml";
-		
-		QaGraphDbBuilder builder = new QaGraphDbBuilder(dbPath,questionXmlPath,answerXmlPath,commentXmlPath,userXmlPath,postLinkXmlPath);
-		builder.run();
-	}
-	
-	@Override
-	public void run(){
-		
-		//delete existed database before creating a new one
-		File dbFile = new File(dbPath);
-		if(dbFile.exists()){
-			dbFile.delete();
-		}
-		db = new GraphDatabaseFactory().newEmbeddedDatabase(dbFile);
 		SAXParser qParser = null;
 		SAXParser aParser = null;
 		SAXParser cParser = null;
@@ -129,47 +150,47 @@ public class QaGraphDbBuilder extends GraphBuilder
 			
 			//建立QA结点之间的关联关系
 			
-			for (AnswerSchema answerSchema:answerMap.values()){
-				Node answerNode=answerSchema.getNode();
-				QuestionSchema questionSchema=questionMap.get(answerSchema.getParentQuestionId());
-				if (questionSchema!=null)
-					questionSchema.getNode().createRelationshipTo(answerNode, ManageElements.RelTypes.HAVE_ANSWER);
+			for (AnswerInfo answerInfo:answerMap.values()){
+				Node answerNode=answerInfo.getNode();
+				QuestionInfo questionInfo=questionMap.get(answerInfo.getParentQuestionId());
+				if (questionInfo!=null)
+					questionInfo.getNode().createRelationshipTo(answerNode, RelationshipType.withName(HAVE_ANSWER));
 			}
-			for (QaCommentSchema commentSchema:commentMap.values()){
-				Node commentNode=commentSchema.getNode();
-				QuestionSchema questionSchema=questionMap.get(commentSchema.getParentId());
-				if (questionSchema!=null)
-					questionSchema.getNode().createRelationshipTo(commentNode, ManageElements.RelTypes.HAVE_QA_COMMENT);
-				AnswerSchema answerSchema=answerMap.get(commentSchema.getParentId());
-				if (answerSchema!=null)
-					answerSchema.getNode().createRelationshipTo(commentNode, ManageElements.RelTypes.HAVE_QA_COMMENT);
+			for (QaCommentInfo commentInfo:commentMap.values()){
+				Node commentNode=commentInfo.getNode();
+				QuestionInfo questionInfo=questionMap.get(commentInfo.getParentId());
+				if (questionInfo!=null)
+					questionInfo.getNode().createRelationshipTo(commentNode, RelationshipType.withName(HAVE_COMMENT));
+				AnswerInfo answerInfo=answerMap.get(commentInfo.getParentId());
+				if (answerInfo!=null)
+					answerInfo.getNode().createRelationshipTo(commentNode, RelationshipType.withName(HAVE_COMMENT));
 			}
 			
 			//建立Question/Answer/Comment到User结点之间的关联关系
-			for(QuestionSchema questionSchema: questionMap.values()){
-				int userId = questionSchema.getOwnerUserId();
-				QaUserSchema userSchema = userMap.get(userId);
-				if(userSchema != null){
-					userSchema.getNode().createRelationshipTo(questionSchema.getNode(),ManageElements.RelTypes.AUTHOR);
-//					System.out.printf("Create Author relationship from User(%d) --> Question(%d)\n",userSchema.getUserId(),questionSchema.getQuestionId());
+			for(QuestionInfo questionInfo: questionMap.values()){
+				int userId = questionInfo.getOwnerUserId();
+				QaUserInfo userInfo = userMap.get(userId);
+				if(userInfo != null){
+					userInfo.getNode().createRelationshipTo(questionInfo.getNode(),RelationshipType.withName(AUTHOR));
+//					System.out.printf("Create Author relationship from User(%d) --> Question(%d)\n",userInfo.getUserId(),questionInfo.getQuestionId());
 				}
 			}
 			
-			for(AnswerSchema answerSchema: answerMap.values()){
-				int userId = answerSchema.getOwnerUserId();
-				QaUserSchema userSchema = userMap.get(userId);
-				if(userSchema != null){
-					userSchema.getNode().createRelationshipTo(answerSchema.getNode(), ManageElements.RelTypes.AUTHOR);
-//					System.out.printf("Create Author relationship from User(%d) --> Answer(%d)\n",userSchema.getUserId(),answerSchema.getAnswerId());
+			for(AnswerInfo answerInfo: answerMap.values()){
+				int userId = answerInfo.getOwnerUserId();
+				QaUserInfo userInfo = userMap.get(userId);
+				if(userInfo != null){
+					userInfo.getNode().createRelationshipTo(answerInfo.getNode(), RelationshipType.withName(AUTHOR));
+//					System.out.printf("Create Author relationship from User(%d) --> Answer(%d)\n",userInfo.getUserId(),answerInfo.getAnswerId());
 				}
 			}
 			
-			for(QaCommentSchema commentSchema: commentMap.values()){
-				int userId = commentSchema.getUserId();
-				QaUserSchema userSchema = userMap.get(userId);
-				if(userSchema != null){
-					userSchema.getNode().createRelationshipTo(commentSchema.getNode(), ManageElements.RelTypes.AUTHOR);
-//					System.out.printf("Create Author relationship from User(%d) --> Comment(%d)\n",userSchema.getUserId(),commentSchema.getCommentId());
+			for(QaCommentInfo commentInfo: commentMap.values()){
+				int userId = commentInfo.getUserId();
+				QaUserInfo userInfo = userMap.get(userId);
+				if(userInfo != null){
+					userInfo.getNode().createRelationshipTo(commentInfo.getNode(), RelationshipType.withName(AUTHOR));
+//					System.out.printf("Create Author relationship from User(%d) --> Comment(%d)\n",userInfo.getUserId(),commentInfo.getCommentId());
 				}
 			}
 			
@@ -178,10 +199,10 @@ public class QaGraphDbBuilder extends GraphBuilder
 				int postId = dupLink.getLeft();
 				int relatedPostId = dupLink.getRight();
 				
-				QuestionSchema post = questionMap.get(postId);
-				QuestionSchema relatedPost = questionMap.get(relatedPostId);
+				QuestionInfo post = questionMap.get(postId);
+				QuestionInfo relatedPost = questionMap.get(relatedPostId);
 				if(post != null && relatedPost != null){
-					post.getNode().createRelationshipTo(relatedPost.getNode(), ManageElements.RelTypes.DUPLICATE);
+					post.getNode().createRelationshipTo(relatedPost.getNode(),RelationshipType.withName(DUPLICATE));
 //					System.out.printf("Create Duplicate relationship from Question(%d) --> Question(%d)\n",post.getQuestionId(),relatedPost.getQuestionId());
 				}
 			}
@@ -194,11 +215,11 @@ public class QaGraphDbBuilder extends GraphBuilder
 			
 			//标记Answer结点是否是被接受的结点
 			
-			for (QuestionSchema questionSchema:questionMap.values()){
-				int acceptedAnswerId=questionSchema.getAcceptedAnswerId();
-				AnswerSchema answerSchema=answerMap.get(acceptedAnswerId);
-				if (answerSchema!=null)
-					answerSchema.setAccepted(true);
+			for (QuestionInfo questionInfo:questionMap.values()){
+				int acceptedAnswerId=questionInfo.getAcceptedAnswerId();
+				AnswerInfo answerInfo=answerMap.get(acceptedAnswerId);
+				if (answerInfo!=null)
+					answerInfo.setAccepted(true);
 			}
 			tx.success();
 		}
@@ -212,9 +233,9 @@ class QuestionHandler extends DefaultHandler
 {
 
 	private GraphDatabaseService db = null;
-	private Map<Integer, QuestionSchema> questionMap = null;
+	private Map<Integer, QuestionInfo> questionMap = null;
 
-	public QuestionHandler(GraphDatabaseService db, Map<Integer, QuestionSchema> questionMap)
+	public QuestionHandler(GraphDatabaseService db, Map<Integer, QuestionInfo> questionMap)
 	{
 		super();
 		this.db = db;
@@ -243,8 +264,8 @@ class QuestionHandler extends DefaultHandler
 		int acceptedAnswerId = Integer.parseInt(acceptedAnswerIdString);
 
 		Node node = db.createNode();
-		QuestionSchema questionSchema = new QuestionSchema(node, id, creationDate, score, viewCount, body, ownerUserId, title, tags, acceptedAnswerId);
-		questionMap.put(id, questionSchema);
+		QuestionInfo questionInfo = new QuestionInfo(node, id, creationDate, score, viewCount, body, ownerUserId, title, tags, acceptedAnswerId);
+		questionMap.put(id, questionInfo);
 	}
 
 }
@@ -253,9 +274,9 @@ class AnswerHandler extends DefaultHandler
 {
 
 	private GraphDatabaseService db = null;
-	private Map<Integer, AnswerSchema> answerMap = null;
+	private Map<Integer, AnswerInfo> answerMap = null;
 
-	public AnswerHandler(GraphDatabaseService db, Map<Integer, AnswerSchema> answerMap)
+	public AnswerHandler(GraphDatabaseService db, Map<Integer, AnswerInfo> answerMap)
 	{
 		super();
 		this.db = db;
@@ -278,8 +299,8 @@ class AnswerHandler extends DefaultHandler
 		int ownerUserId = Integer.parseInt(ownerUserIdString);
 
 		Node node = db.createNode();
-		AnswerSchema answerSchema = new AnswerSchema(node, id, parentId, creationDate, score, body, ownerUserId);
-		answerMap.put(id, answerSchema);
+		AnswerInfo answerInfo = new AnswerInfo(node, id, parentId, creationDate, score, body, ownerUserId);
+		answerMap.put(id, answerInfo);
 	}
 
 }
@@ -288,9 +309,9 @@ class QaCommentHandler extends DefaultHandler
 {
 
 	private GraphDatabaseService db = null;
-	private Map<Integer, QaCommentSchema> commentMap = null;
+	private Map<Integer, QaCommentInfo> commentMap = null;
 
-	public QaCommentHandler(GraphDatabaseService db, Map<Integer, QaCommentSchema> commentMap)
+	public QaCommentHandler(GraphDatabaseService db, Map<Integer, QaCommentInfo> commentMap)
 	{
 		super();
 		this.db = db;
@@ -313,8 +334,8 @@ class QaCommentHandler extends DefaultHandler
 		int userId = Integer.parseInt(userIdString);
 
 		Node node = db.createNode();
-		QaCommentSchema commentSchema = new QaCommentSchema(node, id, postId, score, text, creationDate, userId);
-		commentMap.put(id, commentSchema);
+		QaCommentInfo commentInfo = new QaCommentInfo(node, id, postId, score, text, creationDate, userId);
+		commentMap.put(id, commentInfo);
 	}
 
 }
@@ -322,9 +343,9 @@ class QaCommentHandler extends DefaultHandler
 
 class QaUserHandler extends DefaultHandler{
 	private GraphDatabaseService db = null;
-	private Map<Integer,QaUserSchema> userMap = null;
+	private Map<Integer,QaUserInfo> userMap = null;
 	
-	public QaUserHandler(GraphDatabaseService db, Map<Integer,QaUserSchema> userMap){
+	public QaUserHandler(GraphDatabaseService db, Map<Integer,QaUserInfo> userMap){
 		super();
 		this.db = db;
 		this.userMap = userMap;
@@ -356,8 +377,8 @@ class QaUserHandler extends DefaultHandler{
 		int downVotes = Integer.parseInt(attributes.getValue("DownVotes"));
 		
 		Node node = db.createNode();
-		QaUserSchema userSchema = new QaUserSchema(node,id,reputation,creationDate,displayName,lastAccessDate,views,upVotes,downVotes);
-		userMap.put(id, userSchema);
+		QaUserInfo userInfo = new QaUserInfo(node,id,reputation,creationDate,displayName,lastAccessDate,views,upVotes,downVotes);
+		userMap.put(id, userInfo);
 	}
 }
 

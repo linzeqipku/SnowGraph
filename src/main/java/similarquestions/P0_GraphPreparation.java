@@ -7,7 +7,7 @@ import org.apache.commons.io.FileUtils;
 
 import pfr.plugins.parsers.javacode.CodeIndexes;
 import pfr.plugins.parsers.javacode.PfrPluginForJavaCode;
-import pfr.plugins.parsers.qa.QaGraphDbBuilder;
+import pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow;
 import crawlers.qa.QaExtractor;
 import graphfusion.CodeLinker;
 import similarquestions.utils.SimilarQuestionTaskConfig;
@@ -45,7 +45,7 @@ public class P0_GraphPreparation {
 		codeGraphBuilder.migrateTo(config.graphPath);
 		
 		FileUtils.cleanDirectory(new File(config.tmpPath));
-		QaGraphDbBuilder qaGraphDbBuilder=new QaGraphDbBuilder(config.tmpPath, config.qPath, config.aPath, config.cPath, config.uPath, config.plPath);
+		PfrPluginForStackOverflow qaGraphDbBuilder=new PfrPluginForStackOverflow(config.tmpPath, config.qPath, config.aPath, config.cPath, config.uPath, config.plPath);
 		qaGraphDbBuilder.run();
 		qaGraphDbBuilder.migrateTo(config.graphPath);
 		

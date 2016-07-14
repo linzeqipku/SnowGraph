@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import pfr.plugins.parsers.mail.entity.MailSchema;
-import pfr.plugins.parsers.mail.entity.MailUserSchema;
+import pfr.plugins.parsers.mail.entity.MailUserInfo;
 import javassist.Modifier;
 
 /*
@@ -104,7 +104,7 @@ public class FieldUtil {
 		schemaLabelList.add(ManageElements.Labels.MAIL.toString());
 		
 		//Mail User Schema
-		schemaClassList.add(MailUserSchema.class);
+		schemaClassList.add(MailUserInfo.class);
 		schemaLabelList.add(ManageElements.Labels.MAIL_USER.toString());
 		
 		

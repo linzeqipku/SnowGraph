@@ -12,7 +12,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
-import pfr.plugins.parsers.mail.entity.MailUserSchema;
+import pfr.plugins.parsers.mail.entity.MailUserInfo;
 import utils.MultimapUtil;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -32,7 +32,7 @@ public class UserLinker extends Linker{
 	public void link() {
 		List<QaUserSchema> qaUsers = new ArrayList<>();
 		List<IssueUserSchema> issueUsers = new ArrayList<>();
-		List<MailUserSchema> mailUsers = new ArrayList<>();
+		List<MailUserInfo> mailUsers = new ArrayList<>();
 		
 		try(Transaction tx = graphDb.beginTx()){
 			/********************Get All Users (QA Users, Issue Users and Mail Users)****************/
@@ -56,7 +56,7 @@ public class UserLinker extends Linker{
 			nodes = graphDb.findNodes(ManageElements.Labels.MAIL_USER);
 			while(nodes.hasNext()){
 				Node node = nodes.next();
-				MailUserSchema schema = new MailUserSchema(node);
+				MailUserInfo schema = new MailUserInfo(node);
 				mailUsers.add(schema);
 			}
 			
@@ -84,9 +84,9 @@ public class UserLinker extends Linker{
 			MultimapUtil.removeAllKeysWithMultiValues(name2IssueUserMultimap);
 			
 			//get the mapping from mail, name to Mail users
-			HashMap<String,MailUserSchema> mail2MailUserMap = new HashMap<>();
-			Multimap<String,MailUserSchema> name2MailUserMultimap = ArrayListMultimap.create();
-			for(MailUserSchema schema: mailUsers){
+			HashMap<String,MailUserInfo> mail2MailUserMap = new HashMap<>();
+			Multimap<String,MailUserInfo> name2MailUserMultimap = ArrayListMultimap.create();
+			for(MailUserInfo schema: mailUsers){
 				String mail = schema.getMail();
 				String name = schema.getName();
 				
@@ -101,7 +101,7 @@ public class UserLinker extends Linker{
 			for(String issueMail: mail2IssueUserMap.keySet()){
 				IssueUserSchema issueSchema = mail2IssueUserMap.get(issueMail);
 				
-				MailUserSchema mailSchema = mail2MailUserMap.get(issueMail);
+				MailUserInfo mailSchema = mail2MailUserMap.get(issueMail);
 				if(mailSchema != null){
 					linkCount++;
 					issueSchema.getNode().createRelationshipTo(mailSchema.getNode(), ManageElements.RelTypes.SAME_USER);
@@ -118,7 +118,7 @@ public class UserLinker extends Linker{
 				}
 				
 				IssueUserSchema issueUserSchema = MultimapUtil.getUniqueValue(name2IssueUserMultimap,name);
-				MailUserSchema mailUserSchema = MultimapUtil.getUniqueValue(name2MailUserMultimap,name);
+				MailUserInfo mailUserSchema = MultimapUtil.getUniqueValue(name2MailUserMultimap,name);
 				
 				if(issueUserSchema != null){
 					linkCount++;

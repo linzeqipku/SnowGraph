@@ -8,31 +8,50 @@ import java.nio.charset.CharsetDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.james.mime4j.MimeException;
 import org.apache.james.mime4j.parser.ContentHandler;
 import org.apache.james.mime4j.parser.MimeStreamParser;
 import org.apache.james.mime4j.stream.MimeConfig;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import pfr.PFR;
+import pfr.annotations.ConceptDeclaration;
+import pfr.annotations.PropertyDeclaration;
 import pfr.annotations.RelationDeclaration;
-import pfr.plugins.parsers.mail.entity.MailSchema;
-import pfr.plugins.parsers.mail.entity.MailUserSchema;
+import pfr.plugins.parsers.mail.entity.MailInfo;
+import pfr.plugins.parsers.mail.entity.MailUserInfo;
 import pfr.plugins.parsers.mail.utils.CharBufferWrapper;
 import pfr.plugins.parsers.mail.utils.MboxHandler;
 import pfr.plugins.parsers.mail.utils.MboxIterator;
 
 public class PfrPluginForMailList implements PFR {
 	
+	@ConceptDeclaration public static final String MAIL = "mail";
+	@PropertyDeclaration(parent=MAIL)public static final String MAIL_ID = "mailId";
+	@PropertyDeclaration(parent=MAIL)public static final String MAIL_SUBJECT = "subject";
+	@PropertyDeclaration(parent=MAIL)public static final String MAIL_SENDER_NAME = "senderName";
+	@PropertyDeclaration(parent=MAIL)public static final String MAIL_SENDER_MAIL = "senderMail";
+	@PropertyDeclaration(parent=MAIL)public static final String MAIL_RECEIVER_NAMES = "receiverNames";
+	@PropertyDeclaration(parent=MAIL)public static final String MAIL_RECEIVER_MAILS = "receiverMails";
+	@PropertyDeclaration(parent=MAIL)public static final String MAIL_DATE = "date";
+	@PropertyDeclaration(parent=MAIL)public static final String MAIL_BODY = "body";
+	
+	@ConceptDeclaration public static final String MAILUSER = "mailUser";
+	@PropertyDeclaration(parent=MAILUSER)public static final String MAILUSER_NAME = "name";
+	@PropertyDeclaration(parent=MAILUSER)public static final String MAILUSER_MAIL = "mail";
+	
 	@RelationDeclaration public static final String MAIL_IN_REPLY_TO="mailInReplyTo";
 	@RelationDeclaration public static final String MAIL_SENDER="mailSender";
 	@RelationDeclaration public static final String MAIL_RECEIVER="mailReceiver";
 
-	private Map<String,MailSchema> mailMap = new HashMap<String,MailSchema>();
-	private Map<String,MailUserSchema> mailUserMap = new HashMap<>();
+	private Map<String,Pair<MailInfo,Node>> mailMap = new HashMap<String,Pair<MailInfo,Node>>();
+	private Map<String,Pair<MailUserInfo,Node>> mailUserMap = new HashMap<>();
 	private Map<String,String> mailAddrToMailNameMap = new HashMap<>();
 	
 	public String mboxPath=null;
@@ -47,16 +66,16 @@ public class PfrPluginForMailList implements PFR {
 	public void run(GraphDatabaseService db){
 		try (Transaction tx = db.beginTx()) {
 			parse(db, new File(mboxPath));
-			for(MailSchema mailSchema: mailMap.values()){
-				String senderName = mailSchema.getSenderName();
-				String senderMail = mailSchema.getSenderMail();
+			for(Pair<MailInfo,Node> mailSchema: mailMap.values()){
+				String senderName = mailSchema.getLeft().senderName;
+				String senderMail = mailSchema.getLeft().senderMail;
 				
 				if(!mailAddrToMailNameMap.containsKey(senderMail)){
 					mailAddrToMailNameMap.put(senderMail, senderName);
 				}
 				
-				String[] receiverNames = mailSchema.getReceiverNames();
-				String[] receiverMails = mailSchema.getReceiverMails();
+				String[] receiverNames = mailSchema.getLeft().receiverNames;
+				String[] receiverMails = mailSchema.getLeft().receiverMails;
 				int len = receiverNames.length;
 				for(int i=0;i<len;i++){
 					if(!mailAddrToMailNameMap.containsKey(receiverMails[i])){
@@ -67,9 +86,14 @@ public class PfrPluginForMailList implements PFR {
 			
 			for(String mailAddr: mailAddrToMailNameMap.keySet()){
 				String mailName = mailAddrToMailNameMap.get(mailAddr);
-				
 				Node node = db.createNode();
-				MailUserSchema mailUserSchema = new MailUserSchema(node,mailName,mailAddr);
+				MailUserInfo mailUserInfo=new MailUserInfo();
+				mailUserInfo.mail=mailAddr;
+				mailUserInfo.name=mailName;
+				node.addLabel(Label.label(MAILUSER));
+				node.setProperty(MAILUSER_NAME, mailName);
+				node.setProperty(MAILUSER_MAIL, mailAddr);
+				Pair<MailUserInfo, Node> mailUserSchema = new ImmutablePair<MailUserInfo, Node>(mailUserInfo, node);
 				mailUserMap.put(mailAddr, mailUserSchema);
 			}
 			
@@ -111,8 +135,9 @@ public class PfrPluginForMailList implements PFR {
 		try
 		{
 			parser.parse(new ByteArrayInputStream(message.toString().getBytes()));
-			if (myHandler.getMailSchema().getId().length()>0)
-				mailMap.put(myHandler.getMailSchema().getId(),myHandler.getMailSchema());
+			String id=myHandler.getMailInfo().id;
+			if (id.length()>0)
+				mailMap.put(id,new ImmutablePair<MailInfo, Node>(myHandler.getMailInfo(),myHandler.getMailNode()));
 		}
 		catch (MimeException | IOException e)
 		{
@@ -122,39 +147,29 @@ public class PfrPluginForMailList implements PFR {
 
 	public void buildRelationships() {
 		for (String id:mailMap.keySet()){
-			MailSchema mailSchema=mailMap.get(id);
+			Pair<MailInfo, Node> mailSchema=mailMap.get(id);
 			//建立邮件之间的回复关系（MAIL_IN_REPLY_TO）
-			if (!mailSchema.getReplyTo().equals("")){
-				if (mailMap.containsKey(mailSchema.getReplyTo())){
-					mailSchema.getNode().createRelationshipTo(mailMap.get(mailSchema.getReplyTo()).getNode(),ManageElements.RelTypes.MAIL_IN_REPLY_TO);
+			if (!mailSchema.getLeft().replyTo.equals("")){
+				if (mailMap.containsKey(mailSchema.getLeft().replyTo)){
+					mailSchema.getRight().createRelationshipTo(mailMap.get(mailSchema.getLeft().replyTo).getRight(),RelationshipType.withName(MAIL_IN_REPLY_TO));
 				}
 			}
 			
 			//建立邮件与发送者之间的关联关系（ 发送者 --MAIL_SENDER--> 邮件）
-			String senderMail = mailSchema.getSenderMail();
+			String senderMail = mailSchema.getLeft().senderMail;
 			if(mailUserMap.containsKey(senderMail)){
-				MailUserSchema mailUserSchema = mailUserMap.get(senderMail);
-				mailUserSchema.getNode().createRelationshipTo(mailSchema.getNode(), ManageElements.RelTypes.MAIL_SENDER);
-//				System.out.printf("%s --MAIL_SENDER--> %s\n", mailUserSchema.getMail(),mailSchema.getId());
+				Pair<MailUserInfo, Node> mailUserSchema = mailUserMap.get(senderMail);
+				mailUserSchema.getRight().createRelationshipTo(mailSchema.getRight(), RelationshipType.withName(MAIL_SENDER));
 			}
 			
-			//建立邮件与接收者之间的关联关系（邮件 --MAIL_RECEIVER-->接收者）
-			String[] receiverMails = mailSchema.getReceiverMails();
+			String[] receiverMails = mailSchema.getLeft().receiverMails;
 			for(String receiverMail: receiverMails){
 				if(!mailUserMap.containsKey(receiverMail)){
 					continue;
 				}
 				
-				if(receiverMail.equals("lucene-user@jakarta.apache.org") || receiverMail.equals("java-user@lucene.apache.org")){
-					toSystemMailCount++;
-					
-//					//不建立邮件与小组接收者之间的关联关系（MAIL_RECEIVER），原因是几乎全是发给小组接收者的。
-//					continue;
-				}
-				
-				MailUserSchema mailUserSchema = mailUserMap.get(receiverMail);
-				mailSchema.getNode().createRelationshipTo(mailUserSchema.getNode(), ManageElements.RelTypes.MAIL_RECEIVER);
-//				System.out.printf("%s--MAIL_RECEIVER-->%s\n",mailSchema.getId(),mailUserSchema.getMail());
+				Pair<MailUserInfo, Node> mailUserSchema = mailUserMap.get(receiverMail);
+				mailSchema.getRight().createRelationshipTo(mailUserSchema.getRight(), RelationshipType.withName(MAIL_RECEIVER));
 			}
 		}
 	}

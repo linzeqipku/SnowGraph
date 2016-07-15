@@ -37,8 +37,10 @@ public class KnowledgeGraphBuilder
 			e.printStackTrace();
 		}
 		GraphDatabaseService db=new GraphDatabaseFactory().newEmbeddedDatabase(f);
-		for (PFR pfr:pfrPlugins)
+		for (PFR pfr:pfrPlugins){
 			pfr.run(db);
+			System.out.println(pfr.getClass().getName()+" finished.");
+		}
 		db.shutdown();
 	}
 	

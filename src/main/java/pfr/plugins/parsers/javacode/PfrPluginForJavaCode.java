@@ -37,7 +37,7 @@ import pfr.plugins.parsers.javacode.extractor.srcparser.entity.ParameterInfo;
 public class PfrPluginForJavaCode implements PFR
 {
 	
-	@ConceptDeclaration public static final String CLASS="class";
+	@ConceptDeclaration public static final String CLASS="Class";
 	@PropertyDeclaration(parent = CLASS)public static final String CLASS_NAME="name";
 	@PropertyDeclaration(parent = CLASS)public static final String CLASS_FULLNAME="fullName";
 	@PropertyDeclaration(parent = CLASS)public static final String CLASS_TEMPLATE="template";
@@ -48,13 +48,13 @@ public class PfrPluginForJavaCode implements PFR
 	@PropertyDeclaration(parent = CLASS)public static final String CLASS_ACCESS="access";
 	@PropertyDeclaration(parent = CLASS)public static final String CLASS_COMMENT="comment";
 	
-	@ConceptDeclaration public static final String INTERFACE="interface";
+	@ConceptDeclaration public static final String INTERFACE="Interface";
 	@PropertyDeclaration(parent = INTERFACE)public static final String INTERFACE_NAME="name";
 	@PropertyDeclaration(parent = INTERFACE)public static final String INTERFACE_FULLNAME="fullName";
 	@PropertyDeclaration(parent = INTERFACE)public static final String INTERFACE_TEMPLATE="template";
 	@PropertyDeclaration(parent = INTERFACE)public static final String INTERFACE_COMMENT="comment";
 	
-	@ConceptDeclaration public static final String METHOD="method";
+	@ConceptDeclaration public static final String METHOD="Method";
 	@PropertyDeclaration(parent = METHOD)public static final String METHOD_NAME="name";
 	@PropertyDeclaration(parent = METHOD)public static final String METHOD_BELONGTO="belongTo";
 	@PropertyDeclaration(parent = METHOD)public static final String METHOD_PARAMS="params";
@@ -68,7 +68,7 @@ public class PfrPluginForJavaCode implements PFR
 	@PropertyDeclaration(parent = METHOD)public static final String METHOD_IS_SYNCHRONIZED="isSynchronized";
 	@PropertyDeclaration(parent = METHOD)public static final String METHOD_COMMENT="comment";
 	
-	@ConceptDeclaration public static final String FIELD="field";
+	@ConceptDeclaration public static final String FIELD="Field";
 	@PropertyDeclaration(parent = FIELD)public static final String FIELD_NAME="name";
 	@PropertyDeclaration(parent = FIELD)public static final String FIELD_TYPE="type";
 	@PropertyDeclaration(parent = FIELD)public static final String FIELD_BELONGTO="belongTo";

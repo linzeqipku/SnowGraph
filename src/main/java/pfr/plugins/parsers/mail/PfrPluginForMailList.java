@@ -32,7 +32,7 @@ import pfr.plugins.parsers.mail.utils.MboxIterator;
 
 public class PfrPluginForMailList implements PFR {
 	
-	@ConceptDeclaration public static final String MAIL = "mail";
+	@ConceptDeclaration public static final String MAIL = "Mail";
 	@PropertyDeclaration(parent=MAIL)public static final String MAIL_ID = "mailId";
 	@PropertyDeclaration(parent=MAIL)public static final String MAIL_SUBJECT = "subject";
 	@PropertyDeclaration(parent=MAIL)public static final String MAIL_SENDER_NAME = "senderName";
@@ -42,7 +42,7 @@ public class PfrPluginForMailList implements PFR {
 	@PropertyDeclaration(parent=MAIL)public static final String MAIL_DATE = "date";
 	@PropertyDeclaration(parent=MAIL)public static final String MAIL_BODY = "body";
 	
-	@ConceptDeclaration public static final String MAILUSER = "mailUser";
+	@ConceptDeclaration public static final String MAILUSER = "MailUser";
 	@PropertyDeclaration(parent=MAILUSER)public static final String MAILUSER_NAME = "name";
 	@PropertyDeclaration(parent=MAILUSER)public static final String MAILUSER_MAIL = "mail";
 	

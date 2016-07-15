@@ -24,7 +24,7 @@ import pfr.plugins.parsers.issuetracker.entity.PatchInfo;
 
 public class PfrPluginForIssueTracker implements PFR{
 	
-	@ConceptDeclaration public static final String ISSUE="issue";
+	@ConceptDeclaration public static final String ISSUE="Issue";
 	@PropertyDeclaration(parent = ISSUE)public static final String ISSUE_ID = "id";
 	@PropertyDeclaration(parent = ISSUE)public static final String ISSUE_NAME = "name";
 	@PropertyDeclaration(parent = ISSUE)public static final String ISSUE_SUMMARY = "summary";
@@ -44,7 +44,7 @@ public class PfrPluginForIssueTracker implements PFR{
 	@PropertyDeclaration(parent = ISSUE)public static final String ISSUE_UPDATED_DATE = "updatedDate";
 	@PropertyDeclaration(parent = ISSUE)public static final String ISSUE_RESOLUTION_DATE = "resolutionDate";
 	
-	@ConceptDeclaration public static final String PATCH="patch";
+	@ConceptDeclaration public static final String PATCH="Patch";
 	@PropertyDeclaration(parent = PATCH)public static final String PATCH_ISSUE_ID = "issueId";
 	@PropertyDeclaration(parent = PATCH)public static final String PATCH_ID = "id";
 	@PropertyDeclaration(parent = PATCH)public static final String PATCH_NAME = "name";
@@ -52,7 +52,7 @@ public class PfrPluginForIssueTracker implements PFR{
 	@PropertyDeclaration(parent = PATCH)public static final String PATCH_CREATOR_NAME = "creatorName";
 	@PropertyDeclaration(parent = PATCH)public static final String PATCH_CREATED_DATE = "createdDate";
 	
-	@ConceptDeclaration public static final String ISSUECOMMENT="issueComment";
+	@ConceptDeclaration public static final String ISSUECOMMENT="IssueComment";
 	@PropertyDeclaration(parent = ISSUECOMMENT)public static final String ISSUECOMMENT_ID = "id";
 	@PropertyDeclaration(parent = ISSUECOMMENT)public static final String ISSUECOMMENT_BODY = "body";
 	@PropertyDeclaration(parent = ISSUECOMMENT)public static final String ISSUECOMMENT_CREATOR_NAME = "creatorName";
@@ -60,7 +60,7 @@ public class PfrPluginForIssueTracker implements PFR{
 	@PropertyDeclaration(parent = ISSUECOMMENT)public static final String ISSUECOMMENT_CREATED_DATE = "createdDate";
 	@PropertyDeclaration(parent = ISSUECOMMENT)public static final String ISSUECOMMENT_UPDATED_DATE = "updatedDate";
 	
-	@ConceptDeclaration public static final String ISSUEUSER="issueUser";
+	@ConceptDeclaration public static final String ISSUEUSER="IssueUser";
 	@PropertyDeclaration(parent = ISSUEUSER)public static final String ISSUEUSER_NAME = "name";
 	@PropertyDeclaration(parent = ISSUEUSER)public static final String ISSUEUSER_EMAIL_ADDRESS = "emailAddress";
 	@PropertyDeclaration(parent = ISSUEUSER)public static final String ISSUEUSER_DISPLAY_NAME = "displayName";

@@ -38,7 +38,7 @@ import pfr.plugins.parsers.stackoverflow.entity.QuestionInfo;
 public class PfrPluginForStackOverflow implements PFR
 {
 	
-	@ConceptDeclaration public static final String QUESTION="SoQuestion";
+	@ConceptDeclaration public static final String QUESTION="StackOverflowQuestion";
 	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_ID="questionId";
 	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_CREATION_DATE="creationDate";
 	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_SCORE="score";
@@ -48,7 +48,7 @@ public class PfrPluginForStackOverflow implements PFR
 	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_TITLE="title";
 	@PropertyDeclaration(parent=QUESTION)public static final String QUESTION_TAGS="tags";
 	
-	@ConceptDeclaration public static final String ANSWER="SoAnswer";
+	@ConceptDeclaration public static final String ANSWER="StackOverflowAnswer";
 	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_ACCEPTED="accepted";
 	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_ID="answerId";
 	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_PARENT_QUESTION_ID="parentQuestionId";
@@ -57,7 +57,7 @@ public class PfrPluginForStackOverflow implements PFR
 	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_BODY="body";
 	@PropertyDeclaration(parent=ANSWER)public static final String ANSWER_OWNER_USER_ID="ownerUserId";
 	
-	@ConceptDeclaration public static final String COMMENT="SoComment";
+	@ConceptDeclaration public static final String COMMENT="StackOverflowComment";
 	@PropertyDeclaration(parent=COMMENT)public static final String COMMENT_ID="commentId";
 	@PropertyDeclaration(parent=COMMENT)public static final String COMMENT_PARENT_ID="parentId";
 	@PropertyDeclaration(parent=COMMENT)public static final String COMMENT_SCORE="score";
@@ -65,7 +65,7 @@ public class PfrPluginForStackOverflow implements PFR
 	@PropertyDeclaration(parent=COMMENT)public static final String COMMENT_CREATION_DATE="creationDate";
 	@PropertyDeclaration(parent=COMMENT)public static final String COMMENT_USER_ID="userId";
 	
-	@ConceptDeclaration public static final String USER="SoUser";
+	@ConceptDeclaration public static final String USER="StackOverflowUser";
 	@PropertyDeclaration(parent=USER)public static final String USER_ID = "user_id";
 	@PropertyDeclaration(parent=USER)public static final String USER_REPUTATION = "reputation";
 	@PropertyDeclaration(parent=USER)public static final String USER_CREATION_DATE = "creationDate";

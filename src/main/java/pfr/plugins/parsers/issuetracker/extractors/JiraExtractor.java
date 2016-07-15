@@ -21,7 +21,7 @@ import pfr.plugins.parsers.issuetracker.entity.IssueInfo;
 import pfr.plugins.parsers.issuetracker.entity.IssueLink;
 import pfr.plugins.parsers.issuetracker.entity.IssueUserInfo;
 import pfr.plugins.parsers.issuetracker.entity.PatchInfo;
-import utils.EmailAddressDecoder;
+import pfr.plugins.parsers.mail.utils.EmailAddressDecoder;
 
 public class JiraExtractor implements IssueTrackerExtractor{
 	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");

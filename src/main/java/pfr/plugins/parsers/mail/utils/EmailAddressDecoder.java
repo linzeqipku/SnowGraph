@@ -1,4 +1,4 @@
-package utils;
+package pfr.plugins.parsers.mail.utils;
 
 /*
  * JIRA email address encoding algorithm:

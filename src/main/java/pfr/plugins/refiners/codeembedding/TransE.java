@@ -1,4 +1,4 @@
-package similarquestions.utils.graphembedding;
+package pfr.plugins.refiners.codeembedding;
 
 import java.util.ArrayList;
 import java.util.HashMap;

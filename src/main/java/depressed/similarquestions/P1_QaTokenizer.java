@@ -1,4 +1,4 @@
-package similarquestions;
+package depressed.similarquestions;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,9 +14,9 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
+import depressed.similarquestions.utils.SimilarQuestionTaskConfig;
 import graphmodel.ManageElements;
 import graphmodel.entity.Schema;
-import similarquestions.utils.SimilarQuestionTaskConfig;
 
 public class P1_QaTokenizer {
 

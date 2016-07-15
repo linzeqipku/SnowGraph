@@ -1,4 +1,4 @@
-package similarquestions;
+package depressed.similarquestions;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow;
 import pfr.plugins.refiners.codelinking.CodeIndexes;
 import pfr.plugins.refiners.codelinking.PfrPluginForCodeLinking;
 import crawlers.qa.QaExtractor;
-import similarquestions.utils.SimilarQuestionTaskConfig;
+import depressed.similarquestions.utils.SimilarQuestionTaskConfig;
 
 public class P0_GraphPreparation {
 

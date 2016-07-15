@@ -1,4 +1,4 @@
-package similarquestions;
+package depressed.similarquestions;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,10 +19,10 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
+import depressed.similarquestions.utils.SimilarQuestionTaskConfig;
+import depressed.similarquestions.utils.similarity.Word2VecDocumentSimilarity;
 import graphmodel.ManageElements;
 import graphmodel.entity.qa.AnswerSchema;
-import similarquestions.utils.SimilarQuestionTaskConfig;
-import similarquestions.utils.similarity.Word2VecDocumentSimilarity;
 
 public class OP5_Word2QuestionScoring {
 

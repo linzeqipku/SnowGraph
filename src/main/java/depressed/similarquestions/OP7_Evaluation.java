@@ -1,4 +1,4 @@
-package similarquestions;
+package depressed.similarquestions;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,10 +16,11 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import similarquestions.utils.Features;
-import similarquestions.utils.SimilarQuestionTaskConfig;
 
-public class P5_Evaluation {
+import depressed.similarquestions.utils.Features;
+import depressed.similarquestions.utils.SimilarQuestionTaskConfig;
+
+public class OP7_Evaluation {
 
 	SimilarQuestionTaskConfig config = null;
 	Features features=null;
@@ -32,11 +33,11 @@ public class P5_Evaluation {
 	DecimalFormat df2 = new DecimalFormat( "0.00");
 	
 	public static void main(String[] args){
-		P5_Evaluation p=new P5_Evaluation("apache-poi");
+		OP7_Evaluation p=new OP7_Evaluation("apache-poi");
 		p.run();
 	}
 	
-	public P5_Evaluation(String projectName){
+	public OP7_Evaluation(String projectName){
 		config=new SimilarQuestionTaskConfig(projectName);
 		File file=new File(config.featuresPath);
 		try {
@@ -55,6 +56,37 @@ public class P5_Evaluation {
 			candidates.add(pair.getRight());
 		filterSamples();
 	}
+	
+	private void filterSamples(){
+		Set<Long> r=new HashSet<Long>();
+		Map<Long, List<Pair<Long,Double>>> rankMap=rank(0.2);
+		for (long sample:samples){
+			List<Pair<Long,Double>> list=rankMap.get(sample);
+			double fu=0,fd=0,tu=0,td=0;
+			for (int i=0;i<list.size();i++){
+				Pair<Long, Long> pair=new ImmutablePair<Long, Long>(sample, list.get(i).getKey());
+				boolean yes=features.standards.contains(pair);
+				if (yes){
+					fd++;
+					fu+=list.get(i).getValue();
+				}
+				else {
+					td++;
+					tu+=list.get(i).getValue();
+				}
+			}
+			double t=0;//need a small t
+			double f=1;//need a big f
+			if (td>0)
+				t=tu/td;
+			if (fd>0)
+				f=fu/fd;
+			if (f>2.0*t)
+				r.add(sample);
+		}
+		samples=r;
+		System.out.println("|samples|="+samples.size());
+	}
 
 	public void run(){
 		double step=0.1;
@@ -65,45 +97,8 @@ public class P5_Evaluation {
 		}
 		
 		//ROC Value
-		System.out.println("ROC="+df4.format(roc(m.get(0.0))));
-		
-		System.out.println("==========");
-		
-		//NDCG
 		for (double w=0.0;w<=1.0+step/10;w+=step)
-			System.out.println("NDCG@"+df2.format(w)+"="+df4.format(ndcg(m.get(w))));
-	}
-	
-	private void filterSamples(){
-		Set<Long> r=new HashSet<Long>();
-		int k=20;
-		Map<Long, List<Pair<Long,Double>>> rankMap=rank(0.3);
-		for (long sample:rankMap.keySet()){
-			int p=k+1;
-			for (int i=k-1;i>=0;i--)
-				if (features.standards.contains(new ImmutablePair<Long, Long>(sample,rankMap.get(sample).get(i).getLeft())))
-					p=i+1;
-			if (p<k+1)
-				r.add(sample);
-		}
-		samples=r;
-		System.out.println("|Samples|="+samples.size());
-	}
-	
-	double ndcg(Map<Long, List<Pair<Long,Double>>> rankMap){
-		int k=10;
-		Map<Long, Double> scoreMap=new HashMap<Long, Double>();
-		for (long sample:rankMap.keySet()){
-			int p=k+1;
-			for (int i=k-1;i>=0;i--)
-				if (features.standards.contains(new ImmutablePair<Long, Long>(sample,rankMap.get(sample).get(i).getLeft())))
-					p=i+1;
-			scoreMap.put(sample, Math.log(2)/Math.log(p+1));
-		}
-		double r=0;
-		for (long sample:rankMap.keySet())
-			r+=scoreMap.get(sample);
-		return r/rankMap.size();
+			System.out.println("ROC@"+df2.format(w)+"="+df4.format(roc(m.get(w))));
 	}
 	
 	double roc(Map<Long, List<Pair<Long,Double>>> rankMap){

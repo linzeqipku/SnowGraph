@@ -1,4 +1,4 @@
-package graphfusion;
+package depressed.graphfusion;
 
 import java.util.Collections;
 import java.util.HashMap;

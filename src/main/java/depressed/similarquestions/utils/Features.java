@@ -1,4 +1,4 @@
-package similarquestions.utils;
+package depressed.similarquestions.utils;
 
 import java.io.Serializable;
 import java.util.HashMap;

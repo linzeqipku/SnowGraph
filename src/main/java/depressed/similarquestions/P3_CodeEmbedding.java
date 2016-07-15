@@ -1,4 +1,4 @@
-package similarquestions;
+package depressed.similarquestions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,9 +14,9 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
+import depressed.similarquestions.utils.SimilarQuestionTaskConfig;
+import pfr.plugins.refiners.codeembedding.TransE;
 import graphmodel.ManageElements;
-import similarquestions.utils.SimilarQuestionTaskConfig;
-import similarquestions.utils.graphembedding.TransE;
 
 public class P3_CodeEmbedding {
 

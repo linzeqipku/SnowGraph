@@ -1,4 +1,4 @@
-package similarquestions;
+package depressed.similarquestions;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,7 +17,7 @@ import com.medallia.word2vec.Word2VecTrainerBuilder.TrainingProgressListener;
 import com.medallia.word2vec.neuralnetwork.NeuralNetworkType;
 import com.medallia.word2vec.util.Format;
 
-import similarquestions.utils.SimilarQuestionTaskConfig;
+import depressed.similarquestions.utils.SimilarQuestionTaskConfig;
 
 public class OP4_WordEmbedding {
 

@@ -1,4 +1,4 @@
-package similarquestions.utils.similarity;
+package depressed.similarquestions.utils.similarity;
 
 import java.util.HashMap;
 import java.util.HashSet;

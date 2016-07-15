@@ -1,4 +1,4 @@
-package similarquestions;
+package depressed.similarquestions;
 
 import java.util.Set;
 import java.io.File;
@@ -12,8 +12,9 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+
+import depressed.similarquestions.utils.SimilarQuestionTaskConfig;
 import graphmodel.ManageElements;
-import similarquestions.utils.SimilarQuestionTaskConfig;
 
 public class P2_QaLinkedCodeWriter {
 

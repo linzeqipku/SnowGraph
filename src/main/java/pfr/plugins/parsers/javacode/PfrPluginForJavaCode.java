@@ -97,9 +97,13 @@ public class PfrPluginForJavaCode implements PFR
 	String srcPath = "";
 	String binPath = "";
 
-	public PfrPluginForJavaCode(String srcPath, String binPath)
+	public void setSrcPath(String srcPath)
 	{
 		this.srcPath = srcPath;
+	}
+
+	public void setBinPath(String binPath)
+	{
 		this.binPath = binPath;
 	}
 

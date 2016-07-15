@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="graph" class="pfr.framework.KnowledgeGraphBuilder">
+        <property name="graphPath" value="E:/graphdb"/>
+        <property name="pfrPlugins">
+            <list>
+            	<ref bean="codegraph" />
+            	<ref bean="sograph" />
+            	<ref bean="codelinker" />
+            	<ref bean="codeembedding" />
+            </list>
+        </property>
+    </bean>
+    <bean id="codegraph" class="pfr.plugins.parsers.javacode.PfrPluginForJavaCode">
+        <property name="srcPath" value="E:/data/apache-poi/src" />
+        <property name="binPath" value="E:/data/apache-poi/bin" />
+    </bean>
+    <bean id="sograph" class="pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow">
+    	<property name="folderPath" value="E:/data/apache-poi/qa" />
+    </bean>
+    <bean id="codelinker" class="pfr.plugins.refiners.codelinking.PfrPluginForCodeLinking">
+    	<property name="focusSet">
+    		<set>
+    			<value>pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow.QUESTION_BODY</value>
+    			<value>pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow.QUESTION_TITLE</value>
+    			<value>pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow.ANSWER_BODY</value>
+    			<value>pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow.COMMENT_TEXT</value>
+    		</set>
+    	</property>
+    </bean>
+    <bean id="codeembedding" class="pfr.plugins.refiners.codeembedding.PfrPluginForTransE" />
+</beans>

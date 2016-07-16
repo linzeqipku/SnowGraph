@@ -120,25 +120,25 @@ public class PfrPluginForJavaCode implements PFR
 			for (BinClassInfo classInfo : codeInfo.getClassInfoList())
 			{
 				Node node = db.createNode();
-				PfrPluginForJavaCodeUtils.createClassNode(classInfo, node);
+				JavaCodeUtils.createClassNode(classInfo, node);
 				classList.add(new ImmutablePair<BinClassInfo, Node>(classInfo, node));
 			}
 			for (BinInterfaceInfo interfaceInfo : codeInfo.getInterfaceInfoList())
 			{
 				Node node = db.createNode();
-				PfrPluginForJavaCodeUtils.createInterfaceNode(interfaceInfo, node);
+				JavaCodeUtils.createInterfaceNode(interfaceInfo, node);
 				interfaceList.add(new ImmutablePair<BinInterfaceInfo, Node>(interfaceInfo, node));
 			}
 			for (BinMethodInfo methodInfo : codeInfo.getMethodInfoList())
 			{
 				Node node = db.createNode();
-				PfrPluginForJavaCodeUtils.createMethodNode(methodInfo, node);
+				JavaCodeUtils.createMethodNode(methodInfo, node);
 				methodList.add(new ImmutablePair<BinMethodInfo, Node>(methodInfo, node));
 			}
 			for (BinFieldInfo fieldInfo : codeInfo.getFieldInfoList())
 			{
 				Node node = db.createNode();
-				PfrPluginForJavaCodeUtils.createFieldNode(fieldInfo, node);
+				JavaCodeUtils.createFieldNode(fieldInfo, node);
 				fieldList.add(new ImmutablePair<BinFieldInfo, Node>(fieldInfo, node));
 			}
 			System.out.println("结点构建完毕.");

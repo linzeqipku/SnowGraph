@@ -12,7 +12,7 @@ import pfr.plugins.parsers.javacode.extractor.binparser.entity.BinFieldInfo;
 import pfr.plugins.parsers.javacode.extractor.binparser.entity.BinInterfaceInfo;
 import pfr.plugins.parsers.javacode.extractor.binparser.entity.BinMethodInfo;
 
-public class PfrPluginForJavaCodeUtils
+public class JavaCodeUtils
 {
 
 	public static void createClassNode(BinClassInfo classInfo, Node node){

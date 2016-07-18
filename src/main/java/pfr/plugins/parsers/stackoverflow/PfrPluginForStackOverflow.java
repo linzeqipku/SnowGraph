@@ -75,7 +75,6 @@ public class PfrPluginForStackOverflow implements PFR
 	@PropertyDeclaration(parent=USER)public static final String USER_UP_VOTES = "upVotes";
 	@PropertyDeclaration(parent=USER)public static final String USER_DOWN_VOTES = "downVotes";
 	
-	@RelationDeclaration public static final String HAVE_QUESTION="haveSoQuestion";
 	@RelationDeclaration public static final String HAVE_ANSWER="haveSoAnswer";
 	@RelationDeclaration public static final String HAVE_COMMENT="haveSoComment";
 	@RelationDeclaration public static final String AUTHOR="soAuthor";

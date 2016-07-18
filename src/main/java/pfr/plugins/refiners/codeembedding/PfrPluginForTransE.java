@@ -19,10 +19,7 @@ import pfr.plugins.parsers.javacode.PfrPluginForJavaCode;
 
 public class PfrPluginForTransE implements PFR{
 	
-	@PropertyDeclaration(parent=PfrPluginForJavaCode.CLASS) public static final String CLASS_TRANSE_VEC="transVec";
-	@PropertyDeclaration(parent=PfrPluginForJavaCode.INTERFACE) public static final String INTERFACE_TRANSE_VEC="transVec";
-	@PropertyDeclaration(parent=PfrPluginForJavaCode.METHOD) public static final String METHOD_TRANSE_VEC="transVec";
-	@PropertyDeclaration(parent=PfrPluginForJavaCode.FIELD) public static final String FIELD_TRANSE_VEC="transVec";
+	@PropertyDeclaration public static final String CODE_TRANSE_VEC="transVec";
 	
 	GraphDatabaseService db=null;
 	TransE transE=null;
@@ -97,14 +94,7 @@ public class PfrPluginForTransE implements PFR{
 	}
 	
 	private void setVec(Node node, String line){
-		if (node.hasLabel(Label.label(PfrPluginForJavaCode.CLASS)))
-			node.setProperty(CLASS_TRANSE_VEC, line);
-		if (node.hasLabel(Label.label(PfrPluginForJavaCode.INTERFACE)))
-			node.setProperty(INTERFACE_TRANSE_VEC, line);
-		if (node.hasLabel(Label.label(PfrPluginForJavaCode.METHOD)))
-			node.setProperty(METHOD_TRANSE_VEC, line);
-		if (node.hasLabel(Label.label(PfrPluginForJavaCode.FIELD)))
-			node.setProperty(FIELD_TRANSE_VEC, line);
+		node.setProperty(CODE_TRANSE_VEC, line);
 	}
 	
 }

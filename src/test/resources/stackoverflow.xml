@@ -11,6 +11,7 @@
             	<ref bean="sograph" />
             	<ref bean="codelinker" />
             	<ref bean="codeembedding" />
+            	<ref bean="tokenizer" />
             </list>
         </property>
     </bean>
@@ -32,4 +33,14 @@
     	</property>
     </bean>
     <bean id="codeembedding" class="pfr.plugins.refiners.codeembedding.PfrPluginForTransE" />
+    <bean id="tokenizer" class="pfr.plugins.refiners.tokenizer.PfrPluginForTokenizer">
+    	<property name="focusSet">
+    		<set>
+    			<value>pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow.QUESTION_BODY</value>
+    			<value>pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow.QUESTION_TITLE</value>
+    			<value>pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow.ANSWER_BODY</value>
+    			<value>pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow.COMMENT_TEXT</value>
+    		</set>
+    	</property>
+    </bean>
 </beans>

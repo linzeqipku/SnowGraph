@@ -1,7 +1,6 @@
 package pfr.plugins.refiners.codelinking;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,13 +14,12 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
 import pfr.PFR;
-import pfr.annotations.PropertyDeclaration;
 import pfr.annotations.RelationDeclaration;
 import pfr.plugins.parsers.javacode.PfrPluginForJavaCode;
+import pfr.plugins.utils.NodeToTextUtil;
 
 public class PfrPluginForCodeLinking implements PFR
 {
@@ -46,7 +44,7 @@ public class PfrPluginForCodeLinking implements PFR
 		codeIndexes=new CodeIndexes(db);
 		try
 		{
-			prepareNodeToTextMap();
+			nodeToTextMap = NodeToTextUtil.prepareNodeToTextMap(db,focusSet);
 		}
 		catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e)
 		{
@@ -55,41 +53,6 @@ public class PfrPluginForCodeLinking implements PFR
 		}
 		findDocLevelReference();
 		findLexLevelReference();
-	}
-	
-	void prepareNodeToTextMap() throws ClassNotFoundException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException{
-		Map<String, Set<String>> propMap=new HashMap<String, Set<String>>();
-		for (String str:focusSet){
-			int p=str.lastIndexOf('.');
-			String className=str.substring(0,p);
-			String fieldName=str.substring(p+1,str.length());
-			Class pluginClass=Class.forName(className);
-			Field field=pluginClass.getField(fieldName);
-			String concept=((PropertyDeclaration)field.getAnnotation(PropertyDeclaration.class)).parent();
-			if (!propMap.containsKey(concept))
-				propMap.put(concept, new HashSet<String>());
-			propMap.get(concept).add((String)field.get(null));
-		}
-		try (Transaction tx=db.beginTx()){
-			ResourceIterator<Node> nodes=db.getAllNodes().iterator();
-			while (nodes.hasNext()){
-				Node node=nodes.next();
-				if (!node.getLabels().iterator().hasNext())
-					continue;
-				String label=node.getLabels().iterator().next().name();
-				String content="";
-				for (String property:propMap.get(label)){
-					if (node.hasProperty(property))
-						content+=((String)node.getProperty(property))+" ";
-				}
-				for (String property:propMap.get("")){
-					if (node.hasProperty(property))
-						content+=((String)node.getProperty(property))+" ";
-				}
-				nodeToTextMap.put(node, content);
-			}
-			tx.success();
-		}
 	}
 	
 	void findDocLevelReference(){

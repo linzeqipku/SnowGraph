@@ -74,7 +74,6 @@ public class PfrPluginForTokenizer implements PFR
 			}
 			tx.success();
 		}
-		db.shutdown();
 	}
 	
 	static List<String> camelSplit(String e){

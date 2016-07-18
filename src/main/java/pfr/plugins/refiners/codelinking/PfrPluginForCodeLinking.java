@@ -77,10 +77,12 @@ public class PfrPluginForCodeLinking implements PFR
 				if (!node.getLabels().iterator().hasNext())
 					continue;
 				String label=node.getLabels().iterator().next().name();
-				if (!propMap.containsKey(label))
-					continue;
 				String content="";
 				for (String property:propMap.get(label)){
+					if (node.hasProperty(property))
+						content+=((String)node.getProperty(property))+" ";
+				}
+				for (String property:propMap.get("")){
 					if (node.hasProperty(property))
 						content+=((String)node.getProperty(property))+" ";
 				}

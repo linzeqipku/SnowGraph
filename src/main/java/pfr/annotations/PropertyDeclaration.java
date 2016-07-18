@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 public @interface PropertyDeclaration
 {
 
-	public String parent();
+	public String parent() default "";
 	
 }

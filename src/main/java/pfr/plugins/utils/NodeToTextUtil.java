@@ -38,17 +38,23 @@ public class NodeToTextUtil
 					continue;
 				String label=node.getLabels().iterator().next().name();
 				String content="";
+				boolean flag=false;
 				if (propMap.containsKey(label))
 					for (String property:propMap.get(label)){
-						if (node.hasProperty(property))
+						if (node.hasProperty(property)){
 							content+=((String)node.getProperty(property))+" ";
+							flag=true;
+						}
 					}
 				if (propMap.containsKey(""))
 					for (String property:propMap.get("")){
-						if (node.hasProperty(property))
+						if (node.hasProperty(property)){
 							content+=((String)node.getProperty(property))+" ";
+							flag=true;
+						}
 					}
-				nodeToTextMap.put(node, content);
+				if (flag)
+					nodeToTextMap.put(node, content);
 			}
 			tx.success();
 		}

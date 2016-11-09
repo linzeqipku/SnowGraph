@@ -15,7 +15,7 @@ public class KnowledgeGraphBuilder
 {
 
 	List<PFR> pfrPlugins=null;
-	String graphPath=null;
+	public String graphPath=null;
 	
 	public void setPfrPlugins(List<PFR> plugins){
 		pfrPlugins=new ArrayList<PFR>(plugins);

@@ -85,7 +85,7 @@ public class PfrPluginForCodeLinking implements PFR
 					ahrefs+=link.attr("href")+"||||||||||";
 				try
 				{
-					ahrefs=URLDecoder.decode(ahrefs, "UTF-8");
+					ahrefs=URLDecoder.decode(ahrefs.replaceAll("%(?![0-9a-fA-F]{2})", "%25").replaceAll("\\+", "%2B"), "UTF-8");
 				}
 				catch (UnsupportedEncodingException e)
 				{

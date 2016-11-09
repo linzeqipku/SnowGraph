@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="graph" class="pfr.framework.KnowledgeGraphBuilder">
-        <property name="graphPath" value="E:/graphdb"/>
+        <property name="graphPath" value="E:/graphdb-poi-code"/>
         <property name="pfrPlugins">
             <list>
             	<ref bean="codegraph" />
@@ -12,6 +12,6 @@
         </property>
     </bean>
     <bean id="codegraph" class="pfr.plugins.parsers.javacode.PfrPluginForJavaCode">
-        <property name="srcPath" value="E:/data/apache-poi/src" />
+        <property name="srcPath" value="E:/data/apache-lucene/src" />
     </bean>
 </beans>

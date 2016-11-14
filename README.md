@@ -92,3 +92,71 @@ SnowGraph以Java语言编写，在Eclipse中进行开发，通过Maven进行依�
 下图是这个知识图谱中的一个子图：
 
 ![image](https://github.com/linzeqipku/SnowGraph/blob/master/pic/graph-example.png?raw=true)
+
+各种不同的数据解析与知识提炼的结果，以“结点-边-属性”这样统一的图结构进行表示与汇聚。
+研究者可以使用neo4j图数据库系统提供的各种访问方式来对知识图谱进行查询：
+
+- neo4j图数据库自带的可视化交互式查询界面；
+- Cypher图形查询语言：http://docs.neo4j.org/refcard/2.1/；
+- neo4j Java API：http://neo4j.com/docs/java-reference/current/.
+
+项目代码架构入门
+----------------------------
+
+### pfr.framework.KnowledgeGraphBuilder
+
+类KnowledgeGraphBuilder是本项目的入口，总体负责一个完整的知识图谱的构造工作。
+
+KnowledgeGraphBuilder的成员包括：
+
+- String graphPath: 存储知识图谱的目标路径；
+- List<PFR> pfrPlugins: 插件列表。
+
+类KnowledgeGraphBuilder的工作流程：
+
+1. 在graphPath处创建一个空的neo4j图数据库；
+2. 逐个运行插件列表中的插件，每个插件会往图数据库中插入一些图数据。
+
+### pfr.PFR
+
+为了保证软件项目知识图谱的高可复用性与可扩展性，SnowGraph对知识图谱构造过程中的解析（Parse）、融合（Fusion）与提炼（Refinement）技术进行了插件化。
+PFR是这些插件的统一接口，它只包含一个方法：
+
+    public void run(GraphDatabaseService graphDB);
+
+即：一个插件需要实现的是该插件在被类KnowledgeGraphBuilder运行时应该对知识图谱做什么操作。
+
+此外，插件的编写者还应当保证插件能够满足如下约束，以使得该插件在SnowGraph中能够安全运行：
+
+- 一个插件只能往知识图谱中添加数据，而不能删改数据；
+- 一个插件必须定义自己会往知识图谱中添加的数据的模型，不同插件的模型不允许有重合，且插件只能往知识图谱中添加符合自己定义的模型的数据。
+
+用于定义模型的元素包括：
+- pfr.annotations.ConceptDeclaration;
+- pfr.annotations.PropertyDeclaration;
+- pfr.annotations.RelationDeclaration.
+
+例如，对于邮件列表解析插件pfr.plugins.parsers.mail.PfrPluginForMailList，我们这样定义该插件的数据模型：
+
+    public class PfrPluginForMailList implements PFR {
+    
+    @ConceptDeclaration public static final String MAIL = "Mail";
+    @PropertyDeclaration(parent=MAIL)public static final String MAIL_ID = "mailId";
+    @PropertyDeclaration(parent=MAIL)public static final String MAIL_SUBJECT = "subject";
+    @PropertyDeclaration(parent=MAIL)public static final String MAIL_SENDER_NAME = "senderName";
+    @PropertyDeclaration(parent=MAIL)public static final String MAIL_SENDER_MAIL = "senderMail";
+    @PropertyDeclaration(parent=MAIL)public static final String MAIL_RECEIVER_NAMES = "receiverNames";
+    @PropertyDeclaration(parent=MAIL)public static final String MAIL_RECEIVER_MAILS = "receiverMails";
+    @PropertyDeclaration(parent=MAIL)public static final String MAIL_DATE = "date";
+    @PropertyDeclaration(parent=MAIL)public static final String MAIL_BODY = "body";
+    
+    @ConceptDeclaration public static final String MAILUSER = "MailUser";
+    @PropertyDeclaration(parent=MAILUSER)public static final String MAILUSER_NAME = "name";
+    @PropertyDeclaration(parent=MAILUSER)public static final String MAILUSER_MAIL = "mail";
+    
+    @RelationDeclaration public static final String MAIL_IN_REPLY_TO="mailInReplyTo";
+    @RelationDeclaration public static final String MAIL_SENDER="mailSender";
+    @RelationDeclaration public static final String MAIL_RECEIVER="mailReceiver";
+    
+    ...
+    

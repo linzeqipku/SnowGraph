@@ -160,3 +160,16 @@ PFR是这些插件的统一接口，它只包含一个方法：
     
     ...
     
+目前已实现的插件
+----------------------------------------
+
+### pfr.plugins.parsers.javacode.PfrPluginForJavaCode
+
+Java源代码解析插件，输入项目的Java源代码文件，向知识图谱中添加以类、接口、方法、域为实体，以其间的继承、包含、调用、抛出、参数、返回等关系类型连接的代码结构图。
+
+配置示例：
+
+    <bean id="codegraph" class="pfr.plugins.parsers.javacode.PfrPluginForJavaCode">
+        <property name="srcPath" value="E:/data/jfreechart/src" />
+    </bean>
+

@@ -90,3 +90,5 @@ SnowGraph以Java语言编写，在Eclipse中进行开发，通过Maven进行依�
 该知识图谱通过Neo4j图数据库系统进行存储、管理与查询支持。
 
 下图是这个知识图谱中的一个子图：
+
+![image](https://github.com/linzeqipku/SnowGraph/blob/master/pic/graph-example.png?raw=true)

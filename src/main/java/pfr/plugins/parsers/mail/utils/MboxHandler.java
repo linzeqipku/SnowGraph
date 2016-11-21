@@ -2,6 +2,7 @@ package pfr.plugins.parsers.mail.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -197,8 +198,8 @@ public class MboxHandler extends AbstractContentHandler
 		node.setProperty(PfrPluginForMailList.MAIL_ID, id);
 		node.setProperty(PfrPluginForMailList.MAIL_SENDER_NAME, senderName);
 		node.setProperty(PfrPluginForMailList.MAIL_SENDER_MAIL, senderMail);
-		node.setProperty(PfrPluginForMailList.MAIL_RECEIVER_NAMES, receiverNames);
-		node.setProperty(PfrPluginForMailList.MAIL_RECEIVER_MAILS, receiverMails);
+		node.setProperty(PfrPluginForMailList.MAIL_RECEIVER_NAMES, String.join(", ", receiverNames));
+		node.setProperty(PfrPluginForMailList.MAIL_RECEIVER_MAILS, String.join(", ", receiverMails));
 		node.setProperty(PfrPluginForMailList.MAIL_DATE, date);
 		node.setProperty(PfrPluginForMailList.MAIL_BODY, body);
 	}

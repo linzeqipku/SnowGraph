@@ -10,3 +10,5 @@ SnowGraph旨在从三个方面对软件数据研究者提供帮助：
 - SnowGraph实现了插件机制，使得知识提炼具有很高的可扩展性与可复用性。
 
 项目文档：https://github.com/linzeqipku/SnowGraph/wiki
+
+License: Apache.

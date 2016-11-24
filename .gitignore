@@ -1,2 +1,4 @@
 /target/
 /.apt_generated/
+/.idea/
+/.settings

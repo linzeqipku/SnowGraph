@@ -95,7 +95,7 @@ public class PfrPluginForMailList implements PFR {
 				Pair<MailUserInfo, Node> mailUserSchema = new ImmutablePair<MailUserInfo, Node>(mailUserInfo, node);
 				mailUserMap.put(mailAddr, mailUserSchema);
 			}
-			
+			System.out.println("num of mails:" + mailMap.size() + "\nnum of users:" + mailUserMap.size() + "\nnum of mailusermap:" + mailAddrToMailNameMap.size());
 			buildRelationships();
 			tx.success();
 		}
@@ -143,10 +143,26 @@ public class PfrPluginForMailList implements PFR {
 	public void buildRelationships() {
 		for (String id:mailMap.keySet()){
 			Pair<MailInfo, Node> mailSchema=mailMap.get(id);
+			if(mailSchema == null) {
+				System.out.println("mailSchema is null");
+				return;
+			}
 			//建立邮件之间的回复关系（MAIL_IN_REPLY_TO）
 			if (!mailSchema.getLeft().replyTo.equals("")){
 				if (mailMap.containsKey(mailSchema.getLeft().replyTo)){
-					mailSchema.getRight().createRelationshipTo(mailMap.get(mailSchema.getLeft().replyTo).getRight(),RelationshipType.withName(MAIL_IN_REPLY_TO));
+					if(mailSchema.getRight() == null) {
+						System.out.println("mailSchema.getRight() is null");
+					}
+					else if(mailSchema.getLeft() == null) {
+						System.out.println("mailSchema.getLeft() is null");
+					}
+					else if(mailSchema.getLeft().replyTo == null) {
+						System.out.println("mailSchema.getLeft().replyTo is null");
+					}
+					else if(mailMap.get(mailSchema.getLeft().replyTo) == null) {
+						System.out.println("mailMap.get(mailSchema.getLeft().replyTo) is null");
+					}
+					else mailSchema.getRight().createRelationshipTo(mailMap.get(mailSchema.getLeft().replyTo).getRight(),RelationshipType.withName(MAIL_IN_REPLY_TO));
 				}
 			}
 			
@@ -154,7 +170,13 @@ public class PfrPluginForMailList implements PFR {
 			String senderMail = mailSchema.getLeft().senderMail;
 			if(mailUserMap.containsKey(senderMail)){
 				Pair<MailUserInfo, Node> mailUserSchema = mailUserMap.get(senderMail);
-				mailUserSchema.getRight().createRelationshipTo(mailSchema.getRight(), RelationshipType.withName(MAIL_SENDER));
+				if(mailUserSchema.getRight() == null) {
+					System.out.println("mailUserSchema.getRight() is null");
+				}
+				else if(mailSchema.getRight() == null) {
+					System.out.println("mailSchema.getRight() is null");
+				}
+				else mailUserSchema.getRight().createRelationshipTo(mailSchema.getRight(), RelationshipType.withName(MAIL_SENDER));
 			}
 			
 			String[] receiverMails = mailSchema.getLeft().receiverMails;
@@ -164,7 +186,13 @@ public class PfrPluginForMailList implements PFR {
 				}
 				
 				Pair<MailUserInfo, Node> mailUserSchema = mailUserMap.get(receiverMail);
-				mailSchema.getRight().createRelationshipTo(mailUserSchema.getRight(), RelationshipType.withName(MAIL_RECEIVER));
+				if(mailUserSchema.getRight() == null) {
+					System.out.println("mailUserSchema.getRight() is null");
+				}
+				else if(mailSchema.getRight() == null) {
+					System.out.println("mailSchema.getRight() is null");
+				}
+				else mailSchema.getRight().createRelationshipTo(mailUserSchema.getRight(), RelationshipType.withName(MAIL_RECEIVER));
 			}
 		}
 	}

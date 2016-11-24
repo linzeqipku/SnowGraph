@@ -183,6 +183,7 @@ public class MboxHandler extends AbstractContentHandler
 	{
 		Node node = db.createNode();
 		createMailNode(node, mailInfo.subject, mailInfo.id, mailInfo.senderName, mailInfo.senderMail, mailInfo.receiverNames, mailInfo.receiverMails, mailInfo.replyTo, mailInfo.date, mailInfo.body);
+		mailNode = node;
 	}
 
 	@Override

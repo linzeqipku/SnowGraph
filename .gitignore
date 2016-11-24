@@ -1,2 +1,11 @@
-/target/
-/.apt_generated/
+target/
+.apt_generated/
+log/
+
+.classpath
+.project
+.settings/
+
+.idea/
+*.iml
+*.iws

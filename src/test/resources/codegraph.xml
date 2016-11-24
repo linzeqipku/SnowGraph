@@ -4,14 +4,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="graph" class="pfr.framework.KnowledgeGraphBuilder">
-        <property name="graphPath" value="E:/graphdb-poi-code"/>
+        <property name="graphPath" value="E:/graphdb"/>
         <property name="pfrPlugins">
             <list>
-            	<ref bean="codegraph" />
+            	<ref bean="mailgraph" />
             </list>
         </property>
     </bean>
-    <bean id="codegraph" class="pfr.plugins.parsers.javacode.PfrPluginForJavaCode">
-        <property name="srcPath" value="E:/data/apache-lucene/src" />
+    <bean id="mailgraph" class="pfr.plugins.parsers.mail.PfrPluginForMailList">
+        <property name="mboxPath" value="E:/data/mbox/Lucene" />
     </bean>
 </beans>

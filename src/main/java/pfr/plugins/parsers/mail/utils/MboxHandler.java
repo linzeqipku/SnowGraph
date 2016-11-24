@@ -2,7 +2,6 @@ package pfr.plugins.parsers.mail.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -182,6 +181,7 @@ public class MboxHandler extends AbstractContentHandler
 	public void endMessage() throws MimeException
 	{
 		Node node = db.createNode();
+		mailNode=node;
 		createMailNode(node, mailInfo.subject, mailInfo.id, mailInfo.senderName, mailInfo.senderMail, mailInfo.receiverNames, mailInfo.receiverMails, mailInfo.replyTo, mailInfo.date, mailInfo.body);
 	}
 

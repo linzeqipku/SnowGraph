@@ -78,8 +78,8 @@ public class PfrPluginForTokenizer implements PFR
 					tokensLine += token + " ";
 				tokensLine = tokensLine.trim();
 				node.setProperty(TOKENS, tokensLine);
-				tx.success();
 			}
+			tx.success();
 		}
 	}
 

@@ -2,7 +2,9 @@ package pfr.framework;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -39,7 +41,7 @@ public class KnowledgeGraphBuilder
 		GraphDatabaseService db=new GraphDatabaseFactory().newEmbeddedDatabase(f);
 		for (PFR pfr:pfrPlugins){
 			pfr.run(db);
-			System.out.println(pfr.getClass().getName()+" finished.");
+			System.out.println(pfr.getClass().getName()+" finished. ["+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+"]");
 		}
 		db.shutdown();
 	}

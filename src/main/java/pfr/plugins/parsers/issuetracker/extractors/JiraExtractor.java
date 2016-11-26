@@ -2,197 +2,348 @@ package pfr.plugins.parsers.issuetracker.extractors;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.Transaction;
 
 import pfr.plugins.parsers.issuetracker.IssueTrackerExtractor;
+import pfr.plugins.parsers.issuetracker.PfrPluginForIssueTracker;
+import pfr.plugins.parsers.issuetracker.PfrPluginForIssueTrackerUtils;
 import pfr.plugins.parsers.issuetracker.entity.IssueCommentInfo;
 import pfr.plugins.parsers.issuetracker.entity.IssueInfo;
-import pfr.plugins.parsers.issuetracker.entity.IssueLink;
 import pfr.plugins.parsers.issuetracker.entity.IssueUserInfo;
 import pfr.plugins.parsers.issuetracker.entity.PatchInfo;
 import pfr.plugins.parsers.mail.utils.EmailAddressDecoder;
 
-public class JiraExtractor implements IssueTrackerExtractor{
-	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-	
-	private Map<String,IssueUserInfo> userMap = new HashMap<String,IssueUserInfo>();
-	private Map<String,String> patchContentMap = new HashMap<String,String>();
-	String issueFolderPath=null;
-	
-	public void setIssueFolderPath(String path){
-		this.issueFolderPath=path;
+public class JiraExtractor implements IssueTrackerExtractor
+{
+
+	GraphDatabaseService db = null;
+
+	String issueFolderPath = null;
+
+	private Map<String, Node> userNodeMap = new HashMap<String, Node>();
+	private List<String> duplicateList = new ArrayList<String>();// "a b"代表a指向b
+	private Map<String, Node> issueNodeMap = new HashMap<String, Node>();
+	private Map<String, Node> patchNodeMap = new HashMap<String, Node>();
+
+	public void setIssueFolderPath(String path)
+	{
+		this.issueFolderPath = path;
 	}
-	
-	public List<IssueInfo> extract(){
-		List<IssueInfo> issues = new ArrayList<>();
-		
+
+	@Override
+	public void extract(GraphDatabaseService db)
+	{
+		this.db = db;
 		File issuesFolder = new File(issueFolderPath);
-		for(File oneIssueFolder: issuesFolder.listFiles()){//An issue folder
-			//handle with an issue
-			for(File issueFileOrPatchesFolder: oneIssueFolder.listFiles()){				
+
+		for (File oneIssueFolder : issuesFolder.listFiles())
+		{
+			for (File issueFileOrPatchesFolder : oneIssueFolder.listFiles())
+			{
 				String fileName = issueFileOrPatchesFolder.getName();
-				if(fileName.endsWith(".json")){//issue file
-					System.out.println(fileName);
-					IssueInfo issueInfo = handleWithAnIssue(issueFileOrPatchesFolder);
-					issues.add(issueInfo);
-				}else if(fileName.equals("patches")){//patches folder
-					for(File onePatchFolder: issueFileOrPatchesFolder.listFiles()){
+				if (fileName.endsWith(".json"))
+				{
+					try (Transaction tx = db.beginTx())
+					{
+						jsonHandler(issueFileOrPatchesFolder);
+						tx.success();
+					}
+				}
+			}
+		}
+		//System.out.println("json文件处理完毕.");
+
+		for (File oneIssueFolder : issuesFolder.listFiles())
+		{
+			for (File issueFileOrPatchesFolder : oneIssueFolder.listFiles())
+			{
+				String fileName = issueFileOrPatchesFolder.getName();
+				if (fileName.equals("patches"))
+				{
+					for (File onePatchFolder : issueFileOrPatchesFolder.listFiles())
+					{
 						String patchId = onePatchFolder.getName();
-						System.out.print(patchId + "\t");
-						for(File patchFile: onePatchFolder.listFiles()){
-							String patchName = patchFile.getName();
-							System.out.println(patchName);
-							
-							//handle with a patch
-							handleWithAPatch(patchId,patchFile);
+						for (File patchFile : onePatchFolder.listFiles())
+						{
+							if (patchNodeMap.containsKey(patchId))
+								try
+								{
+									try (Transaction tx = db.beginTx())
+									{
+										patchNodeMap.get(patchId).setProperty(PfrPluginForIssueTracker.PATCH_CONTENT, FileUtils.readFileToString(patchFile));
+										tx.success();
+									}
+								}
+								catch (IOException e)
+								{
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 						}
 					}
 				}
 			}
 		}
-		
-		//update patch content
-		for(IssueInfo issue:issues){
-			for(PatchInfo patch: issue.getPatchList()){
-				String patchId = patch.getPatchId();
-				String patchContent = patchContentMap.get(patchId);
-				patch.setContent(patchContent);
-			}
-		}
-		
-		return issues;
-	}
-	
-	private IssueInfo handleWithAnIssue(File issueFile) {
-		IssueInfo issueInfo = new IssueInfo();
+		//System.out.println("patch文件处理完毕.");
 
+		try (Transaction tx = db.beginTx())
+		{
+			// 建立DUPLICATE关联
+			for (String line : duplicateList)
+			{
+				String[] eles = line.trim().split("\\s+");
+				String id1 = eles[0];
+				String id2 = eles[1];
+				if (issueNodeMap.containsKey(id1) && issueNodeMap.containsKey(id2))
+					issueNodeMap.get(id1).createRelationshipTo(issueNodeMap.get(id2), RelationshipType.withName(PfrPluginForIssueTracker.ISSUE_DUPLICATE));
+			}
+			tx.success();
+		}
+		//System.out.println("Duplicate关联处理完毕.");
+
+	}
+
+	private void jsonHandler(File issueFile)
+	{
 		String jsonContent = null;
-		try {
+		try
+		{
 			jsonContent = FileUtils.readFileToString(issueFile);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
-		
-		if(jsonContent == null){
-			return null;
+
+		if (jsonContent == null)
+		{
+			return;
 		}
-		
+
+		// 建立Issue实体
+		IssueInfo issueInfo = getIssueInfo(jsonContent);
+		Node node = db.createNode();
+		issueNodeMap.put(issueInfo.getIssueId(), node);
+		PfrPluginForIssueTrackerUtils.createIssueNode(issueInfo, node);
+
+		// 建立用户实体
+		JSONObject fields = new JSONObject(jsonContent).getJSONObject("fields");
+		Pair<String, Node> assignee = createUserNode(fields, "assignee");
+		Pair<String, Node> creator = createUserNode(fields, "creator");
+		Pair<String, Node> reporter = createUserNode(fields, "reporter");
+		// 建立用户实体与Issue实体之间的关联
+		if (assignee != null)
+		{
+			node.setProperty(PfrPluginForIssueTracker.ISSUE_ASSIGNEE_NAME, assignee.getLeft());
+			assignee.getRight().createRelationshipTo(node, RelationshipType.withName(PfrPluginForIssueTracker.IS_ASSIGNEE_OF_ISSUE));
+		}
+		if (creator != null)
+		{
+			node.setProperty(PfrPluginForIssueTracker.ISSUE_CREATOR_NAME, creator.getLeft());
+			creator.getRight().createRelationshipTo(node, RelationshipType.withName(PfrPluginForIssueTracker.IS_CREATOR_OF_ISSUE));
+		}
+		if (reporter != null)
+		{
+			node.setProperty(PfrPluginForIssueTracker.ISSUE_REPORTER_NAME, reporter.getLeft());
+			reporter.getRight().createRelationshipTo(node, RelationshipType.withName(PfrPluginForIssueTracker.IS_REPORTER_OF_ISSUE));
+		}
+
+		// 记录DUPLICATE关系
+		JSONArray jsonIssueLinks = fields.getJSONArray("issuelinks");
+		int issueLinkNum = jsonIssueLinks.length();
+		for (int i = 0; i < issueLinkNum; i++)
+		{
+			JSONObject jsonIssueLink = jsonIssueLinks.getJSONObject(i);
+			if (jsonIssueLink.has("inwardIssue"))
+			{
+				String linkIssueId = jsonIssueLink.getJSONObject("inwardIssue").getString("id");
+				duplicateList.add(linkIssueId + " " + issueInfo.getIssueId());
+			}
+		}
+
+		// 建立评论实体并关联到ISSUE
+		JSONArray jsonCommentArr = null;
+		if (!fields.isNull("comment"))
+		{
+			jsonCommentArr = fields.getJSONObject("comment").optJSONArray("comments");
+			if (jsonCommentArr != null)
+			{
+				int len = jsonCommentArr.length();
+				for (int i = 0; i < len; i++)
+				{
+					JSONObject jsonComment = jsonCommentArr.getJSONObject(i);
+					String id = jsonComment.optString("id");
+					String body = jsonComment.optString("body");
+					Pair<String, Node> author = createUserNode(jsonComment, "author");
+					Pair<String, Node> updateAuthor = createUserNode(jsonComment, "updateAuthor");
+					String createdDate = jsonComment.optString("created");
+					String updatedDate = jsonComment.optString("updated");
+					IssueCommentInfo comment = new IssueCommentInfo(id, body, author.getLeft(), updateAuthor.getLeft(), createdDate, updatedDate);
+					Node commentNode = db.createNode();
+					PfrPluginForIssueTrackerUtils.createIssueCommentNode(comment, commentNode);
+					node.createRelationshipTo(commentNode, RelationshipType.withName(PfrPluginForIssueTracker.HAVE_ISSUE_COMMENT));
+					if (author != null)
+					{
+						commentNode.setProperty(PfrPluginForIssueTracker.ISSUECOMMENT_CREATOR_NAME, author.getLeft());
+						author.getRight().createRelationshipTo(commentNode, RelationshipType.withName(PfrPluginForIssueTracker.IS_CREATOR_OF_ISSUECOMMENT));
+					}
+					if (updateAuthor != null)
+					{
+						commentNode.setProperty(PfrPluginForIssueTracker.ISSUECOMMENT_UPDATER_NAME, updateAuthor.getLeft());
+						updateAuthor.getRight().createRelationshipTo(commentNode, RelationshipType.withName(PfrPluginForIssueTracker.IS_UPDATER_OF_ISSUECOMMENT));
+					}
+				}
+			}
+		}
+
+		// 建立补丁实体并关联到ISSUE
+		JSONArray jsonHistoryArr = null;
+		JSONObject root = new JSONObject(jsonContent);
+		if (!root.isNull("changelog"))
+		{
+			jsonHistoryArr = root.getJSONObject("changelog").optJSONArray("histories");
+			if (jsonHistoryArr != null)
+			{
+				int hisNum = jsonHistoryArr.length();
+				for (int i = 0; i < hisNum; i++)
+				{
+					JSONObject history = jsonHistoryArr.getJSONObject(i);
+					JSONArray items = history.optJSONArray("items");
+					if (items == null)
+						continue;
+					int itemNum = items.length();
+					for (int j = 0; j < itemNum; j++)
+					{
+						JSONObject item = items.getJSONObject(j);
+						String to = item.optString("to");
+						String toString = item.optString("toString");
+						// not a patch
+						if (!to.matches("^\\d{1,19}$") || !toString.endsWith(".patch"))
+						{
+							continue;
+						}
+						String patchId = to;
+						String patchName = toString;
+						Pair<String, Node> author = createUserNode(history, "author");
+						String createdDate = history.optString("created");
+						if (createdDate == null)
+							createdDate = "";
+
+						PatchInfo patchInfo = new PatchInfo(patchId, patchName, "", createdDate);
+						Node patchNode = db.createNode();
+						patchNodeMap.put(patchId, patchNode);
+						PfrPluginForIssueTrackerUtils.createPatchNode(patchInfo, patchNode);
+						node.createRelationshipTo(patchNode, RelationshipType.withName(PfrPluginForIssueTracker.HAVE_PATCH));
+						if (author != null)
+						{
+							patchNode.setProperty(PfrPluginForIssueTracker.PATCH_CREATOR_NAME, author.getLeft());
+							author.getRight().createRelationshipTo(patchNode, RelationshipType.withName(PfrPluginForIssueTracker.IS_CREATOR_OF_PATCH));
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * 解析.json文件，返回IssueInfo。 返回的IssueInfo中不包含crearorName, assigneeName,
+	 * reporterName
+	 * 
+	 * @param jsonContent
+	 * @return
+	 */
+	private IssueInfo getIssueInfo(String jsonContent)
+	{
+
+		IssueInfo issueInfo = new IssueInfo();
+
 		JSONObject root = new JSONObject(jsonContent);
 		String issueId = root.getString("id");
 		String issueName = root.getString("key");
-		
+
 		JSONObject fields = root.getJSONObject("fields");
-		
+
 		String type = "";
-		if(!fields.isNull("issuetype")){
+		if (!fields.isNull("issuetype"))
+		{
 			type = fields.getJSONObject("issuetype").optString("name");
 		}
-		
-		String fixVersions = getVersions(fields,"fixVersions");
-		String versions = getVersions(fields,"versions");
+
+		String fixVersions = getVersions(fields, "fixVersions");
+		String versions = getVersions(fields, "versions");
 		String resolution = "";
-		if(!fields.isNull("resolution")){
+		if (!fields.isNull("resolution"))
+		{
 			resolution = fields.getJSONObject("resolution").optString("name");
 		}
-	
+
 		String priority = "";
-		if(!fields.isNull("priority")){
-			priority = fields.getJSONObject("priority").optString("name");;
+		if (!fields.isNull("priority"))
+		{
+			priority = fields.getJSONObject("priority").optString("name");
+			;
 		}
-			
-		
+
 		String status = "";
-		if(!fields.isNull("status")){
+		if (!fields.isNull("status"))
+		{
 			status = fields.getJSONObject("status").optString("name");
 		}
-		
-		//LUCENE-658 no description
+
 		String description = fields.optString("description");
 		String summary = fields.optString("summary");
-		
+
 		String resolutionDate = fields.optString("resolutiondate");
 		String createDate = fields.optString("created");
 		String updateDate = fields.optString("updated");
-		
-		IssueUserInfo assignee = getUser(fields,"assignee");
-		IssueUserInfo creator = getUser(fields,"creator");
-		IssueUserInfo reporter = getUser(fields,"reporter");
-		
-		//labels
+
+		// labels
 		String labels = "";
 		JSONArray jsonLabels = fields.optJSONArray("labels");
-		if(jsonLabels != null){
+		if (jsonLabels != null)
+		{
 			int len = jsonLabels.length();
-			for(int i=0;i<len;i++){
+			for (int i = 0; i < len; i++)
+			{
 				String label = jsonLabels.optString(i);
 				labels += label;
-				if(i != len - 1){
+				if (i != len - 1)
+				{
 					labels += ",";
 				}
 			}
 		}
-		
-		
-		//components
+
+		// components
 		String components = "";
 		JSONArray jsonComponents = fields.optJSONArray("components");
-		if(jsonComponents != null){
+		if (jsonComponents != null)
+		{
 			int len = jsonComponents.length();
-			for(int i=0;i<len;i++){
+			for (int i = 0; i < len; i++)
+			{
 				String component = jsonComponents.getJSONObject(i).optString("name");
 				components += component;
-				if(i != len-1){
+				if (i != len - 1)
+				{
 					components += ",";
 				}
 			}
 		}
-		
-		JSONArray jsonIssueLinks = fields.getJSONArray("issuelinks");
-		int issueLinkNum = jsonIssueLinks.length();
-		for(int i=0;i<issueLinkNum;i++){
-			JSONObject jsonIssueLink = jsonIssueLinks.getJSONObject(i);
-			String name = jsonIssueLink.getJSONObject("type").getString("name");
-			String linkIssueId = "";
-			if(jsonIssueLink.has("inwardIssue")){
-				linkIssueId = jsonIssueLink.getJSONObject("inwardIssue").getString("id");
-				issueInfo.addInwardIssueLink(new IssueLink(name,linkIssueId));
-//				System.out.printf("InwardIssue: name:%s,linkIssueId:%s\n",name,linkIssueId);
-			}else if(jsonIssueLink.has("outwardIssue")){
-				linkIssueId = jsonIssueLink.getJSONObject("outwardIssue").getString("id");
-				issueInfo.addOutwardIssueLink(new IssueLink(name,linkIssueId));
-//				System.out.printf("outwardIssue: name:%s,linkIssueId:%s\n",name,linkIssueId);
-			}else{
-				//do nothing
-			}
-		}
-		
-		JSONArray jsonCommentArr = null;
-		if(!fields.isNull("comment")){
-			jsonCommentArr = fields.getJSONObject("comment").optJSONArray("comments");	
-		}
-		
-		List<IssueCommentInfo> commentList = getComments(jsonCommentArr);
-		
-		JSONArray jsonHistoryArr = null;
-		if(!root.isNull("changelog")){
-			jsonHistoryArr = root.getJSONObject("changelog").optJSONArray("histories");	
-		}
-		List<PatchInfo> patchList = getPatches(jsonHistoryArr);
-		for(PatchInfo patch:patchList){
-			patch.setIssueId(issueId);
-		}
-		
+
 		issueInfo.setIssueId(issueId);
 		issueInfo.setIssueName(issueName);
 		issueInfo.setType(type);
@@ -206,163 +357,55 @@ public class JiraExtractor implements IssueTrackerExtractor{
 		issueInfo.setComponents(components);
 		issueInfo.setDescription(description);
 		issueInfo.setSummary(summary);
-		
-		if(assignee != null){
-			issueInfo.setAssigneeName(assignee.getName());
-		}
-		if(creator != null){
-			issueInfo.setCrearorName(creator.getName());	
-		}
-		if(reporter != null){
-			issueInfo.setReporterName(reporter.getName());	
-		}
-		
 		issueInfo.setCreatedDate(createDate);
 		issueInfo.setUpdatedDate(updateDate);
-		
-		issueInfo.setCommentList(commentList);
-		issueInfo.setPatchList(patchList);
-		
 		return issueInfo;
 	}
-	
-	private List<IssueCommentInfo> getComments(JSONArray jsonCommentArr){
-		if(jsonCommentArr == null){
-			return Collections.emptyList();
-		}
-		
-		List<IssueCommentInfo> commentList = new ArrayList<>();
-		int len = jsonCommentArr.length();
-		for(int i=0;i<len;i++){
-			JSONObject jsonComment = jsonCommentArr.getJSONObject(i);
-			String id = jsonComment.optString("id");
-			String body = jsonComment.optString("body");
-			
-			IssueUserInfo author = getUser(jsonComment,"author");
-			IssueUserInfo updateAuthor = getUser(jsonComment,"updateAuthor");
-			
-			String createdDate = jsonComment.optString("created");
-			String updatedDate = jsonComment.optString("updated");
-			
-			String authorName = null, updateAuthorName = null;
-			if(author != null){
-				authorName = author.getName();
-			}
-			if(updateAuthor != null){
-				updateAuthorName = updateAuthor.getName();
-			}
-			IssueCommentInfo comment = new IssueCommentInfo(id,body,authorName,updateAuthorName,createdDate,updatedDate);
-			commentList.add(comment);
-		}
-		return commentList;
-	}
-	
-	private List<PatchInfo> getPatches(JSONArray jsonHistoryArr){
-		if(jsonHistoryArr == null){
-			return Collections.emptyList();
-		}
-		
-		List<PatchInfo> patches = new ArrayList<>();
-		int hisNum = jsonHistoryArr.length();
-		for(int i=0;i<hisNum;i++){
-			JSONObject history = jsonHistoryArr.getJSONObject(i);
-			JSONArray items = history.optJSONArray("items");
-			if(items == null) continue;
-			
-			int itemNum = items.length();
-			for(int j=0;j<itemNum;j++){
-				JSONObject item = items.getJSONObject(j);
-				String to = item.optString("to");
-				String toString = item.optString("toString");
-				
-				//not a patch
-				if(!to.matches("^\\d{1,19}$") || !toString.endsWith(".patch")){
-					continue;
-				}
-				
-				String patchId = to;
-				String patchName = toString;
-				
-				IssueUserInfo author = getUser(history,"author");
-				String createdDate = history.optString("created");
-				
-				String authorName = null;
-				if(author != null){
-					authorName = author.getName();
-				}
-				PatchInfo patchInfo = new PatchInfo(patchId,patchName,authorName,createdDate);
-				patches.add(patchInfo);
-			}
-		}
-		return patches;
-	}
-	
-	private String getVersions(JSONObject jsonObj, String key){
+
+	private String getVersions(JSONObject jsonObj, String key)
+	{
 		String versions = "";
 		JSONArray jsonVersions = jsonObj.optJSONArray(key);
-		if(jsonVersions == null){
+		if (jsonVersions == null)
+		{
 			return versions;
 		}
-		
+
 		int versionNum = jsonVersions.length();
-		for(int i=0;i<versionNum;i++){
+		for (int i = 0; i < versionNum; i++)
+		{
 			JSONObject fixVersion = jsonVersions.getJSONObject(i);
 			String version = fixVersion.optString("name");
 			versions += version;
-			
-			if(i != versionNum-1){
+
+			if (i != versionNum - 1)
+			{
 				versions += ",";
 			}
 		}
 		return versions;
 	}
-	
-	@Deprecated
-	private Date getDate(JSONObject jsonObj,String key){
-		if(jsonObj.isNull(key)){
+
+	private Pair<String, Node> createUserNode(JSONObject jsonObj, String key)
+	{
+		if (jsonObj.isNull(key))
+		{
 			return null;
 		}
-		
-		String strDate = jsonObj.optString(key); 
-		try {
-			Date date = FORMATTER.parse(strDate);
-			return date;
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	
-	private IssueUserInfo getUser(JSONObject jsonObj, String key){
-		if(jsonObj.isNull(key)){
-			return null;
-		}
-		
+
 		JSONObject userJsonObj = jsonObj.getJSONObject(key);
 		String name = userJsonObj.optString("name");
 		String emailAddress = userJsonObj.optString("emailAddress");
 		String displayName = userJsonObj.optString("displayName");
 		boolean active = userJsonObj.optBoolean("active");
-		
-		IssueUserInfo user = new IssueUserInfo(name,EmailAddressDecoder.decode(emailAddress),displayName,active);
-		userMap.put(name, user);
-		return user;
+
+		IssueUserInfo user = new IssueUserInfo(name, EmailAddressDecoder.decode(emailAddress), displayName, active);
+		if (userNodeMap.containsKey(name))
+			return new ImmutablePair<String, Node>(name, userNodeMap.get(name));
+		Node node = db.createNode();
+		PfrPluginForIssueTrackerUtils.createIssueUserNode(user, node);
+		userNodeMap.put(name, node);
+		return new ImmutablePair<String, Node>(name, userNodeMap.get(name));
 	}
-	
-	/*
-	 * Get patch file's content, then put (patchId, patchContent) to patchContentMap.
-	 */
-	private void handleWithAPatch(String patchId,File patchFile){
-		try {
-			String patchContent = FileUtils.readFileToString(patchFile);
-			patchContentMap.put(patchId, patchContent);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public Map<String, IssueUserInfo> getUserMap() {
-		return userMap;
-	}
+
 }

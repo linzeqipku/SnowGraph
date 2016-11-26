@@ -8,13 +8,13 @@ import java.util.UUID;
 public class PatchInfo {
 	private String uuid = UUID.randomUUID().toString();
 	
-	private String projectName;// the project which current patch belongs to
-	private String issueId;// the issue which current patch belongs to
-	private String patchId;
-	private String patchName;
-	private String content;
-	private String creatorName;
-	private String createdDate;
+	private String projectName="";// the project which current patch belongs to
+	private String issueId="";// the issue which current patch belongs to
+	private String patchId="";
+	private String patchName="";
+	private String content="";
+	private String creatorName="";
+	private String createdDate="";
 	
 	public PatchInfo() { }
 	

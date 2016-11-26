@@ -4,49 +4,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.neo4j.graphdb.Node;
+
 /*
  * An issue entity which contains the information about an issue.
  */
 public class IssueInfo {
+	
 	private String uuid = UUID.randomUUID().toString();
 
-	private String issueId;
-	private String issueName;
+	private String issueId="";
+	private String issueName="";
 	
-	private String summary;
-	private String type;
-	private String status;
-	private String priority;
-	private String resolution;
-	private String versions;
-	private String fixVersions;
-	private String components;
-	private String labels;
-	private String description;
+	private String summary="";
+	private String type="";
+	private String status="";
+	private String priority="";
+	private String resolution="";
+	private String versions="";
+	private String fixVersions="";
+	private String components="";
+	private String labels="";
+	private String description="";
 
-	private String crearorName;
-	private String assigneeName;
-	private String reporterName;
+	private String crearorName="";
+	private String assigneeName="";
+	private String reporterName="";
 
 	//possible to be null
-	private String createdDate;
-	private String updatedDate;
-	private String resolutionDate;
-
-	private List<PatchInfo> patchList = new ArrayList<PatchInfo>();
-	private List<IssueCommentInfo> commentList = new ArrayList<IssueCommentInfo>();
-	
-	private List<IssueLink> inwardIssueLinks = new ArrayList<IssueLink>();
-	private List<IssueLink> outwardIssueLinks = new ArrayList<IssueLink>();
-	
-
-	public void addInwardIssueLink(IssueLink inwardIssueLink){
-		inwardIssueLinks.add(inwardIssueLink);
-	}
-	
-	public void addOutwardIssueLink(IssueLink outwardIssueLink){
-		outwardIssueLinks.add(outwardIssueLink);
-	}
+	private String createdDate="";
+	private String updatedDate="";
+	private String resolutionDate="";
 
 	public String getIssueId() {
 		return issueId;
@@ -194,29 +182,5 @@ public class IssueInfo {
 
 	public String getUuid() {
 		return uuid;
-	}
-
-	public List<PatchInfo> getPatchList() {
-		return patchList;
-	}
-
-	public void setPatchList(List<PatchInfo> patchList) {
-		this.patchList = patchList;
-	}
-
-	public List<IssueCommentInfo> getCommentList() {
-		return commentList;
-	}
-
-	public void setCommentList(List<IssueCommentInfo> commentList) {
-		this.commentList = commentList;
-	}
-	
-	public List<IssueLink> getInwardIssueLinks() {
-		return inwardIssueLinks;
-	}
-
-	public List<IssueLink> getOutwardIssueLinks() {
-		return outwardIssueLinks;
 	}
 }

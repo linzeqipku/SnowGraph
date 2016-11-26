@@ -8,6 +8,6 @@ package pfr.plugins.parsers.mail.entity;
  *  												        邮件地址为"scott.ganyo@eTapestry.com"
  */
 public class MailUserInfo{
-	public String name;
+	public String names;
 	public String mail;
 }

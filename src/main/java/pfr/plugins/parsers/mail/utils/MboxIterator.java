@@ -59,7 +59,7 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
                          final String regexpPattern,
                          final int regexpFlags,
                          final int MAX_MESSAGE_SIZE)
-            throws FileNotFoundException, IOException, CharConversionException {
+            throws IOException, CharConversionException {
         //TODO: do better exception handling - try to process some of them maybe?
         this.maxMessageSize = MAX_MESSAGE_SIZE;
         this.MESSAGE_START = Pattern.compile(regexpPattern, regexpFlags);
@@ -87,7 +87,7 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
             String path = "";
             if (mbox != null)
                 path = mbox.getPath();
-            throw new IllegalArgumentException("File " + path + " does not contain From_ lines that match the pattern '"
+            throw new IOException("File " + path + " does not contain From_ lines that match the pattern '"
                     + MESSAGE_START.pattern() + "'! Maybe not be a valid Mbox or wrong matcher.");
         }
     }
@@ -248,7 +248,7 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
             return this;
         }
 
-        public MboxIterator build() throws FileNotFoundException, IOException {
+        public MboxIterator build() throws IOException {
             return new MboxIterator(file, charset, regexpPattern, flags, maxMessageSize);
         }
     }

@@ -16,8 +16,9 @@ import pfr.PFR;
 public class KnowledgeGraphBuilder
 {
 
-	List<PFR> pfrPlugins=null;
+	List<PFR> pfrPlugins=new ArrayList<PFR>();
 	public String graphPath=null;
+	public String baseGraphPath=null;
 	
 	public void setPfrPlugins(List<PFR> plugins){
 		pfrPlugins=new ArrayList<PFR>(plugins);
@@ -27,11 +28,16 @@ public class KnowledgeGraphBuilder
 		this.graphPath=graphPath;
 	}
 	
+	public void setBaseGraphPath(String baseGraphPath){
+		this.baseGraphPath=baseGraphPath;
+	}
+	
 	public void buildGraph(){
 		File f=new File(graphPath);
 		try
 		{
 			FileUtils.deleteDirectory(f);
+			FileUtils.copyDirectory(new File(baseGraphPath), f);
 		}
 		catch (IOException e)
 		{

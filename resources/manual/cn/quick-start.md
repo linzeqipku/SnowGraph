@@ -7,7 +7,7 @@
 
 示例数据准备
 --------------------------------
-开发团队成员可到内网文件服务器的 SnowGraph/testdata/lucene 文件夹中下载示例数据。
+开发团队成员可到内网文件服务器的 SnowGraph/testdata/lucene/rawdata.rar 文件处下载示例数据。
 
 这一测试数据集包含开源项目Apache Lucene的源代码、邮件归档、缺陷库、StackOverflow归档这四类数据。
 
@@ -79,4 +79,4 @@ config-copy.xml则示例了在开发过程中如何避免因为做重复的解�
 - 耗时估计：1小时左右
 
 通过Neo4j图数据库提供的客户端工具(https://neo4j.com/, 3.0以上版本)，可以对生成的软件知识图谱进行概览。
-运行结果示例见内网文件服务器的 SnowGraph/testdata/lucene/graphdb-primitive 文件夹。
+运行结果示例见内网文件服务器的 SnowGraph/testdata/lucene/graphdb-primitive.rar 文件夹。

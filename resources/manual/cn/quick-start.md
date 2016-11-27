@@ -70,3 +70,12 @@ config-copy.xml则示例了在开发过程中如何避免做大量的重复解�
 </beans>
 
 即：为graph这个bean注入baseGraphPath属性，则知识图谱不再是从零开始构建，而是会先复制一个已有的软件知识图谱（"C:/Users/Lin/Desktop/testdata/graphdb-primitive"），再基于其继续添加新的软件知识。
+
+运行示例
+--------------------------------------------------
+运行类pfr.framework.KnowledgeGraphBuilder.Main的main函数
+- 运行参数：{config-primitive.xml文件的地址}
+- VM参数：-Xms3096m -Xmx3096m
+- 耗时估计：1小时左右
+
+通过Neo4j图数据库提供的客户端工具(https://neo4j.com/, 3.0以上版本)，可以对生成的软件知识图谱进行概览。

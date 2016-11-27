@@ -79,3 +79,4 @@ config-copy.xml则示例了在开发过程中如何避免因为做重复的解�
 - 耗时估计：1小时左右
 
 通过Neo4j图数据库提供的客户端工具(https://neo4j.com/, 3.0以上版本)，可以对生成的软件知识图谱进行概览。
+运行结果示例见内网文件服务器的 SnowGraph/testdata/lucene/graphdb-primitive 文件夹。

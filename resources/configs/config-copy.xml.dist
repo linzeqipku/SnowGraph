@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="graph" class="pfr.framework.KnowledgeGraphBuilder">
-        <property name="graphPath" value="C:/Users/Lin/Desktop/testdata/graphdb"/>
-		<property name="baseGraphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-primitive-copy"/>
+        <property name="graphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-copy"/>
+		<property name="baseGraphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-primitive"/>
     </bean>
 </beans>

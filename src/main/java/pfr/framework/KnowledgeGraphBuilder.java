@@ -37,7 +37,8 @@ public class KnowledgeGraphBuilder
 		try
 		{
 			FileUtils.deleteDirectory(f);
-			FileUtils.copyDirectory(new File(baseGraphPath), f);
+			if (baseGraphPath!=null)
+				FileUtils.copyDirectory(new File(baseGraphPath), f);
 		}
 		catch (IOException e)
 		{

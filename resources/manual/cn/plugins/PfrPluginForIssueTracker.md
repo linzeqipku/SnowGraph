@@ -80,9 +80,13 @@ ISSUEUSER实体
 
 关联类型
 -------------------------------------
+
 - HAVE_PATCH：补丁与缺陷报告之间的从属关系，(a)-[HAVE_PATCH]->(b)代表补丁b是缺陷报告a中的一个补丁；
 - HAVE_ISSUE_COMMENT：评论与缺陷报告之间的从属关系，(a)-[HAVE_ISSUE_COMMENT]->(b)代表评论b是缺陷报告a中的一个补丁；
 - ISSUE_DUPLICATE：由管理者标出的重复缺陷，(a)-[ISSUE_DUPLICATE]->(b)代表缺陷报告a与之前的缺陷报告b重复；
-- ISSUE_AUTHOR：缺陷报告的相关用户关系，(a)-[ISSUE_AUTHOR]->(b)代表用户a是缺陷报告b的一个相关用户。该关联类型拥有属性ISSUE_AUTHOR_ROLES，意为该用户的具体角色，可以是"creator", "assigneer"和"reporter"。一个相关用户可能有多个角色，这种情况下角色用逗号分隔；
-- PATCH_AUTHOR：补丁的创建者，(a)-[PATCH_AUTHOR]->(b)代表补丁b是用户a写的；
-- ISSUECOMMENT_AUTHOR，缺陷报告评论的相关用户关系，(a)-[ISSUECOMMENT_AUTHOR]->(b)代表用户a是评论b的一个相关用户。该关联类型拥有属性ISSUECOMMENT_AUTHOR_ROLES，意为该用户的具体角色，可以是"creator"和"updater"。一个相关用户可能有多个角色，这种情况下角色用逗号分隔。
+- IS_ASSIGNEE_OF_ISSUE：缺陷报告的负责人关系，(a)-[IS_ASSIGNEE_OF_ISSUE]->(b)代表用户a被指定为修复缺陷报告b的负责人；
+- IS_CREATOR_OF_ISSUE：缺陷报告的创建者关系，(a)-[IS_CREATOR_OF_ISSUE]->(b)代表用户a是缺陷报告b的创建者；
+- IS_REPORTER_OF_ISSUE：缺陷报告的报告者关系，(a)-[IS_REPORTER_OF_ISSUE]->(b)代表用户a是缺陷报告b的报告者；
+- IS_CREATOR_OF_PATCH：补丁的创建者，(a)-[IS_CREATOR_OF_PATCH]->(b)代表补丁b是用户a写的；
+- IS_CREATOR_OF_ISSUECOMMENT：缺陷报告评论的创建者关系，(a)-[IS_CREATOR_OF_ISSUECOMMENT]->(b)代表用户a是缺陷报告评论b的创建者；
+- IS_UPDATER_OF_ISSUECOMMENT：缺陷报告评论的更新者关系，(a)-[IS_UPDATER_OF_ISSUECOMMENT]->(b)代表用户a是缺陷报告评论b的更新者；

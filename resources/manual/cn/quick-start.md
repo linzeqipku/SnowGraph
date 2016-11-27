@@ -60,7 +60,7 @@
 - 缺陷库归档存放在哪个文件夹中（"C:/Users/Lin/Desktop/testdata/jira"）
 - 邮件归档存放在哪个文件夹中（"C:/Users/Lin/Desktop/testdata/mbox"）
 
-config-copy.xml则示例了在开发过程中如何避免做大量的重复解析：
+config-copy.xml则示例了在开发过程中如何避免因为做重复的解析而耗费大量的运行时间：
 
 <beans>
     <bean id="graph" class="pfr.framework.KnowledgeGraphBuilder">

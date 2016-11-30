@@ -10,177 +10,177 @@ import org.neo4j.graphdb.Node;
  * An issue entity which contains the information about an issue.
  */
 public class IssueInfo {
-	
-	private String uuid = UUID.randomUUID().toString();
 
-	private String issueId="";
-	private String issueName="";
-	
-	private String summary="";
-	private String type="";
-	private String status="";
-	private String priority="";
-	private String resolution="";
-	private String versions="";
-	private String fixVersions="";
-	private String components="";
-	private String labels="";
-	private String description="";
+    private String uuid = UUID.randomUUID().toString();
 
-	private String crearorName="";
-	private String assigneeName="";
-	private String reporterName="";
+    private String issueId = "";
+    private String issueName = "";
 
-	//possible to be null
-	private String createdDate="";
-	private String updatedDate="";
-	private String resolutionDate="";
+    private String summary = "";
+    private String type = "";
+    private String status = "";
+    private String priority = "";
+    private String resolution = "";
+    private String versions = "";
+    private String fixVersions = "";
+    private String components = "";
+    private String labels = "";
+    private String description = "";
 
-	public String getIssueId() {
-		return issueId;
-	}
+    private String crearorName = "";
+    private String assigneeName = "";
+    private String reporterName = "";
 
-	public void setIssueId(String issueId) {
-		this.issueId = issueId;
-	}
+    //possible to be null
+    private String createdDate = "";
+    private String updatedDate = "";
+    private String resolutionDate = "";
 
-	public String getIssueName() {
-		return issueName;
-	}
+    public String getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueName(String issueName) {
-		this.issueName = issueName;
-	}
+    public void setIssueId(String issueId) {
+        this.issueId = issueId;
+    }
 
-	public String getSummary() {
-		return summary;
-	}
+    public String getIssueName() {
+        return issueName;
+    }
 
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
+    public void setIssueName(String issueName) {
+        this.issueName = issueName;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getSummary() {
+        return summary;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getPriority() {
-		return priority;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setPriority(String priority) {
-		this.priority = priority;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public String getResolution() {
-		return resolution;
-	}
+    public String getPriority() {
+        return priority;
+    }
 
-	public void setResolution(String resolution) {
-		this.resolution = resolution;
-	}
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
 
-	public String getVersions() {
-		return versions;
-	}
+    public String getResolution() {
+        return resolution;
+    }
 
-	public void setVersions(String versions) {
-		this.versions = versions;
-	}
+    public void setResolution(String resolution) {
+        this.resolution = resolution;
+    }
 
-	public String getFixVersions() {
-		return fixVersions;
-	}
+    public String getVersions() {
+        return versions;
+    }
 
-	public void setFixVersions(String fixVersions) {
-		this.fixVersions = fixVersions;
-	}
+    public void setVersions(String versions) {
+        this.versions = versions;
+    }
 
-	public String getComponents() {
-		return components;
-	}
+    public String getFixVersions() {
+        return fixVersions;
+    }
 
-	public void setComponents(String components) {
-		this.components = components;
-	}
+    public void setFixVersions(String fixVersions) {
+        this.fixVersions = fixVersions;
+    }
 
-	public String getLabels() {
-		return labels;
-	}
+    public String getComponents() {
+        return components;
+    }
 
-	public void setLabels(String labels) {
-		this.labels = labels;
-	}
+    public void setComponents(String components) {
+        this.components = components;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getLabels() {
+        return labels;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setLabels(String labels) {
+        this.labels = labels;
+    }
 
-	public String getCrearorName() {
-		return crearorName;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setCrearorName(String crearorName) {
-		this.crearorName = crearorName;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getAssigneeName() {
-		return assigneeName;
-	}
+    public String getCrearorName() {
+        return crearorName;
+    }
 
-	public void setAssigneeName(String assigneeName) {
-		this.assigneeName = assigneeName;
-	}
+    public void setCrearorName(String crearorName) {
+        this.crearorName = crearorName;
+    }
 
-	public String getReporterName() {
-		return reporterName;
-	}
+    public String getAssigneeName() {
+        return assigneeName;
+    }
 
-	public void setReporterName(String reporterName) {
-		this.reporterName = reporterName;
-	}
+    public void setAssigneeName(String assigneeName) {
+        this.assigneeName = assigneeName;
+    }
 
-	public String getCreatedDate() {
-		return createdDate;
-	}
+    public String getReporterName() {
+        return reporterName;
+    }
 
-	public void setCreatedDate(String createdDate) {
-		this.createdDate = createdDate;
-	}
+    public void setReporterName(String reporterName) {
+        this.reporterName = reporterName;
+    }
 
-	public String getUpdatedDate() {
-		return updatedDate;
-	}
+    public String getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setUpdatedDate(String updatedDate) {
-		this.updatedDate = updatedDate;
-	}
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	public String getResolutionDate() {
-		return resolutionDate;
-	}
+    public String getUpdatedDate() {
+        return updatedDate;
+    }
 
-	public void setResolutionDate(String resolutionDate) {
-		this.resolutionDate = resolutionDate;
-	}
+    public void setUpdatedDate(String updatedDate) {
+        this.updatedDate = updatedDate;
+    }
 
-	public String getUuid() {
-		return uuid;
-	}
+    public String getResolutionDate() {
+        return resolutionDate;
+    }
+
+    public void setResolutionDate(String resolutionDate) {
+        this.resolutionDate = resolutionDate;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
 }

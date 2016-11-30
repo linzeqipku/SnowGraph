@@ -7,7 +7,7 @@ package pfr.plugins.parsers.mail.entity;
  *  如："From: Scott Ganyo <scott.ganyo@eTapestry.com>"中用户昵称为"Scott Ganyo"，
  *  												        邮件地址为"scott.ganyo@eTapestry.com"
  */
-public class MailUserInfo{
-	public String names;
-	public String mail;
+public class MailUserInfo {
+    public String names;
+    public String mail;
 }

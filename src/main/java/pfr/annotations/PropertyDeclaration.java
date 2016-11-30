@@ -7,9 +7,8 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PropertyDeclaration
-{
+public @interface PropertyDeclaration {
 
-	public String parent() default "";
-	
+    public String parent() default "";
+
 }

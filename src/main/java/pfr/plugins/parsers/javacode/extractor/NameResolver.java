@@ -18,20 +18,18 @@ import org.eclipse.jdt.core.dom.ImportDeclaration;
  * Evaluates fully qualified name of TypeDeclaration, Type and Name objects.
  */
 public class NameResolver {
-	
-	public static String getSrcDir()
-	{
-		return srcDir;
-	}
 
-	public static void setSrcDir(String srcDir)
-	{
-		NameResolver.srcDir = srcDir;
-	}
+    public static String getSrcDir() {
+        return srcDir;
+    }
+
+    public static void setSrcDir(String srcDir) {
+        NameResolver.srcDir = srcDir;
+    }
 
 
-	private static String srcDir="";
-    
+    private static String srcDir = "";
+
     /**
      * Evaluates fully qualified name of the TypeDeclaration object.
      */
@@ -40,12 +38,12 @@ public class NameResolver {
         ASTNode parent = decl.getParent();
         // resolve full name e.g.: A.B
         while (parent != null && parent.getClass() == TypeDeclaration.class) {
-            name = ((TypeDeclaration)parent).getName().getIdentifier() + "." + name;
+            name = ((TypeDeclaration) parent).getName().getIdentifier() + "." + name;
             parent = parent.getParent();
         }
         // resolve fully qualified name e.g.: some.package.A.B
         if (decl.getRoot().getClass() == CompilationUnit.class) {
-            CompilationUnit root = (CompilationUnit)decl.getRoot();
+            CompilationUnit root = (CompilationUnit) decl.getRoot();
             if (root.getPackage() != null) {
                 PackageDeclaration pack = root.getPackage();
                 name = pack.getName().getFullyQualifiedName() + "." + name;
@@ -53,30 +51,27 @@ public class NameResolver {
         }
         return name;
     }
-    
+
     /**
      * Evaluates fully qualified name of the Type object.
      */
     public static String getFullName(Type t) {
-    	if (t==null)
-    		return null;
+        if (t == null)
+            return null;
         if (t.isParameterizedType()) {
-            ParameterizedType t0 = (ParameterizedType)t;
+            ParameterizedType t0 = (ParameterizedType) t;
             return getFullName(t0.getType());
-        }
-        else if (t.isQualifiedType()) {
-            QualifiedType t0 = (QualifiedType)t;
+        } else if (t.isQualifiedType()) {
+            QualifiedType t0 = (QualifiedType) t;
             return getFullName(t0.getQualifier()) + "." + t0.getName().getIdentifier();
-        }
-        else if (t.isSimpleType()) {
-            SimpleType t0 = (SimpleType)t;
+        } else if (t.isSimpleType()) {
+            SimpleType t0 = (SimpleType) t;
             return getFullName(t0.getName());
-        }
-        else {
+        } else {
             return "?";
         }
     }
-    
+
     /**
      * Evaluates fully qualified name of the Name object.
      */
@@ -87,7 +82,7 @@ public class NameResolver {
             return name.getFullyQualifiedName();
         }
         // get the root node
-        CompilationUnit root = (CompilationUnit)name.getRoot();
+        CompilationUnit root = (CompilationUnit) name.getRoot();
         // check if the name is declared in the same file
         TypeDeclVisitor tdVisitor = new TypeDeclVisitor(name.getFullyQualifiedName());
         root.accept(tdVisitor);
@@ -105,20 +100,20 @@ public class NameResolver {
         // could be a class from the java.lang (String) or a param name (T, E,...)
         return name.getFullyQualifiedName();
     }
-    
-    
+
+
     private static class PckgImprtVisitor extends ASTVisitor {
         private boolean found = false;
         private String fullName;
         private String name;
         private String[] nameParts;
-        
+
         PckgImprtVisitor(String aName) {
             super();
             name = aName;
             nameParts = name.split("\\.");
         }
-        
+
         private void checkInDir(String dirName) {
             File path = getPath(dirName);
             String fileName = nameParts[0] + ".java";
@@ -131,19 +126,18 @@ public class NameResolver {
                 found = true;
             }
         }
-        
+
         public boolean visit(PackageDeclaration node) {
             String pckgName = node.getName().getFullyQualifiedName();
             checkInDir(pckgName);
             return true;
         }
-        
+
         public boolean visit(ImportDeclaration node) {
             if (node.isOnDemand()) {
                 String pckgName = node.getName().getFullyQualifiedName();
                 checkInDir(pckgName);
-            }
-            else {
+            } else {
                 String importName = node.getName().getFullyQualifiedName();
                 if (importName.endsWith("." + nameParts[0])) {
                     fullName = importName;
@@ -155,46 +149,44 @@ public class NameResolver {
             }
             return true;
         }
-        
+
         public boolean getFound() {
             return found;
         }
-        
+
         public String getFullName() {
             return fullName;
         }
-        
+
         public File getPath(String name) {
             String[] parts = name.split("\\.");
             File path = new File(srcDir);
             for (int i = 0; i < parts.length; i++) {
                 if (parts[i].equals("")) {
                     break;
-                }
-                else if (Character.isUpperCase(parts[i].charAt(0))) {
+                } else if (Character.isUpperCase(parts[i].charAt(0))) {
                     path = new File(path, parts[i] + ".java");
                     break;
-                }
-                else {
+                } else {
                     path = new File(path, parts[i]);
                 }
             }
             return path;
         }
-        
+
     }
-    
-    
+
+
     private static class TypeDeclVisitor extends ASTVisitor {
         private boolean found = false;
         private TypeDeclaration typeDecl;
         private String name;
-        
+
         TypeDeclVisitor(String aName) {
             super();
             name = aName;
         }
-        
+
         public boolean visit(TypeDeclaration node) {
             if (getFullName(node).endsWith("." + name)) {
                 found = true;
@@ -202,11 +194,11 @@ public class NameResolver {
             }
             return true;
         }
-        
+
         public boolean getFound() {
             return found;
         }
-        
+
         public TypeDeclaration getTypeDecl() {
             return typeDecl;
         }

@@ -13,44 +13,40 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import pfr.PFR;
 
-public class KnowledgeGraphBuilder
-{
+public class KnowledgeGraphBuilder {
 
-	List<PFR> pfrPlugins=new ArrayList<PFR>();
-	public String graphPath=null;
-	public String baseGraphPath=null;
-	
-	public void setPfrPlugins(List<PFR> plugins){
-		pfrPlugins=new ArrayList<PFR>(plugins);
-	}
-	
-	public void setGraphPath(String graphPath){
-		this.graphPath=graphPath;
-	}
-	
-	public void setBaseGraphPath(String baseGraphPath){
-		this.baseGraphPath=baseGraphPath;
-	}
-	
-	public void buildGraph(){
-		File f=new File(graphPath);
-		try
-		{
-			FileUtils.deleteDirectory(f);
-			if (baseGraphPath!=null)
-				FileUtils.copyDirectory(new File(baseGraphPath), f);
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		GraphDatabaseService db=new GraphDatabaseFactory().newEmbeddedDatabase(f);
-		for (PFR pfr:pfrPlugins){
-			pfr.run(db);
-			System.out.println(pfr.getClass().getName()+" finished. ["+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+"]");
-		}
-		db.shutdown();
-	}
-	
+    List<PFR> pfrPlugins = new ArrayList<PFR>();
+    public String graphPath = null;
+    public String baseGraphPath = null;
+
+    public void setPfrPlugins(List<PFR> plugins) {
+        pfrPlugins = new ArrayList<PFR>(plugins);
+    }
+
+    public void setGraphPath(String graphPath) {
+        this.graphPath = graphPath;
+    }
+
+    public void setBaseGraphPath(String baseGraphPath) {
+        this.baseGraphPath = baseGraphPath;
+    }
+
+    public void buildGraph() {
+        File f = new File(graphPath);
+        try {
+            FileUtils.deleteDirectory(f);
+            if (baseGraphPath != null)
+                FileUtils.copyDirectory(new File(baseGraphPath), f);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(f);
+        for (PFR pfr : pfrPlugins) {
+            pfr.run(db);
+            System.out.println(pfr.getClass().getName() + " finished. [" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "]");
+        }
+        db.shutdown();
+    }
+
 }

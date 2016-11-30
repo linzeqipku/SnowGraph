@@ -1,29 +1,28 @@
 package pfr.plugins.parsers.mail.utils;
 
-/****************************************************************
- * Licensed to the Apache Software Foundation (ASF) under one   *
- * or more contributor license agreements.  See the NOTICE file *
- * distributed with this work for additional information        *
- * regarding copyright ownership.  The ASF licenses this file   *
- * to you under the Apache License, Version 2.0 (the            *
- * "License"); you may not use this file except in compliance   *
- * with the License.  You may obtain a copy of the License at   *
- *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
- *                                                              *
- * Unless required by applicable law or agreed to in writing,   *
- * software distributed under the License is distributed on an  *
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
- * KIND, either express or implied.  See the License for the    *
- * specific language governing permissions and limitations      *
- * under the License.                                           *
- ****************************************************************/
+/***************************************************************
+ Licensed to the Apache Software Foundation (ASF) under one   *
+ or more contributor license agreements.  See the NOTICE file *
+ distributed with this work for additional information        *
+ regarding copyright ownership.  The ASF licenses this file   *
+ to you under the Apache License, Version 2.0 (the            *
+ "License"); you may not use this file except in compliance   *
+ with the License.  You may obtain a copy of the License at   *
+ *
+ http://www.apache.org/licenses/LICENSE-2.0                 *
+ *
+ Unless required by applicable law or agreed to in writing,   *
+ software distributed under the License is distributed on an  *
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ KIND, either express or implied.  See the License for the    *
+ specific language governing permissions and limitations      *
+ under the License.                                           *
+ */
 
 import java.io.CharConversionException;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.CharBuffer;
@@ -45,7 +44,8 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
     private final MappedByteBuffer byteBuffer;
     private final CharsetDecoder DECODER;
     /**
-     * Flag to signal end of input to {@link java.nio.charset.CharsetDecoder#decode(java.nio.ByteBuffer)} .
+     * Flag to signal end of input to {@link java.nio.charset.CharsetDecoder#decode(java.nio.ByteBuffer)}
+     * .
      */
     private boolean endOfInputFlag = false;
     private final int maxMessageSize;
@@ -59,7 +59,7 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
                          final String regexpPattern,
                          final int regexpFlags,
                          final int MAX_MESSAGE_SIZE)
-            throws IOException, CharConversionException {
+            throws IOException {
         //TODO: do better exception handling - try to process some of them maybe?
         this.maxMessageSize = MAX_MESSAGE_SIZE;
         this.MESSAGE_START = Pattern.compile(regexpPattern, regexpFlags);
@@ -73,11 +73,8 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
 
     /**
      * initialize the Mailbox iterator
-     *
-     * @throws IOException
-     * @throws CharConversionException
      */
-    protected void initMboxIterator() throws IOException {
+    private void initMboxIterator() throws IOException {
         decodeNextCharBuffer();
         fromLineMatcher = MESSAGE_START.matcher(mboxCharBuffer);
         fromLineFound = fromLineMatcher.find();
@@ -96,13 +93,6 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
         CoderResult coderResult = DECODER.decode(byteBuffer, mboxCharBuffer, endOfInputFlag);
         updateEndOfInputFlag();
         mboxCharBuffer.flip();
-        if (coderResult.isError()) {
-            if (coderResult.isMalformed()) {
-                //throw new CharConversionException("Malformed input!");
-            } else if (coderResult.isUnmappable()) {
-                //throw new CharConversionException("Unmappable character!");
-            }
-        }
     }
 
     private void updateEndOfInputFlag() {
@@ -117,19 +107,19 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
     }
 
     @Override
-	public Iterator<CharBufferWrapper> iterator() {
+    public Iterator<CharBufferWrapper> iterator() {
         return new MessageIterator();
     }
 
     @Override
-	public void close() throws IOException {
+    public void close() throws IOException {
         theFile.close();
     }
 
     private class MessageIterator implements Iterator<CharBufferWrapper> {
 
         @Override
-		public boolean hasNext() {
+        public boolean hasNext() {
             if (!fromLineFound) {
                 try {
                     close();
@@ -147,7 +137,7 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
          * @return CharBuffer instance
          */
         @Override
-		public CharBufferWrapper next() {
+        public CharBufferWrapper next() {
             final CharBuffer message;
             fromLineFound = fromLineMatcher.find();
             if (fromLineFound) {
@@ -195,7 +185,7 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
         }
 
         @Override
-		public void remove() {
+        public void remove() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
@@ -215,8 +205,8 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
         private String regexpPattern = FromLinePatterns.DEFAULT;
         private int flags = Pattern.MULTILINE;
         /**
-         * Default max message size in chars: ~ 10MB chars. If the mbox file contains larger messages they
-         * will not be decoded correctly.
+         * Default max message size in chars: ~ 10MB chars. If the mbox file contains larger
+         * messages they will not be decoded correctly.
          */
         private int maxMessageSize = 10 * 1024 * 1024;
 
@@ -255,8 +245,6 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
 
     /**
      * Utility method to log important details about buffers.
-     *
-     * @param buffer
      */
     public static String bufferDetailsToString(final Buffer buffer) {
         StringBuilder sb = new StringBuilder("Buffer details: ");

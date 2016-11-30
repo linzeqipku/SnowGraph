@@ -1,7 +1,7 @@
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import pfr.framework.KnowledgeGraphBuilder;
+import framework.KnowledgeGraphBuilder;
 
 
 public class Main {

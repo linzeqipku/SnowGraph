@@ -55,14 +55,12 @@ public class IssueUserInfo {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
-        result.append("*****************************\n")
-                .append("An Issue User:\n")
-                .append("name:").append(name).append("\n")
-                .append("displayName:").append(displayName).append("\n")
-                .append("email:").append(emailAddress).append("\n")
-                .append("active:").append(active).append("\n")
-                .append("*****************************\n");
-        return result.toString();
+        return "*****************************\n" +
+                "An Issue User:\n" +
+                "name:" + name + "\n" +
+                "displayName:" + displayName + "\n" +
+                "email:" + emailAddress + "\n" +
+                "active:" + active + "\n" +
+                "*****************************\n";
     }
 }

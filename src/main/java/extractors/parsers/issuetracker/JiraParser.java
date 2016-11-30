@@ -144,7 +144,7 @@ public class JiraParser implements IssueTrackerParser {
         }
 
         // 建立评论实体并关联到ISSUE
-        JSONArray jsonCommentArr = null;
+        JSONArray jsonCommentArr;
         if (!fields.isNull("comment")) {
             jsonCommentArr = fields.getJSONObject("comment").optJSONArray("comments");
             if (jsonCommentArr != null) {
@@ -157,14 +157,14 @@ public class JiraParser implements IssueTrackerParser {
                     Pair<String, Node> updateAuthor = createUserNode(jsonComment, "updateAuthor");
                     String createdDate = jsonComment.optString("created");
                     String updatedDate = jsonComment.optString("updated");
+                    if (author==null)
+                        continue;
                     IssueCommentInfo comment = new IssueCommentInfo(id, body, author.getLeft(), updateAuthor.getLeft(), createdDate, updatedDate);
                     Node commentNode = db.createNode();
                     IssueTrackerUtils.createIssueCommentNode(comment, commentNode);
                     node.createRelationshipTo(commentNode, RelationshipType.withName(IssueTrackerKnowledgeExtractor.HAVE_ISSUE_COMMENT));
-                    if (author != null) {
-                        commentNode.setProperty(IssueTrackerKnowledgeExtractor.ISSUECOMMENT_CREATOR_NAME, author.getLeft());
-                        author.getRight().createRelationshipTo(commentNode, RelationshipType.withName(IssueTrackerKnowledgeExtractor.IS_CREATOR_OF_ISSUECOMMENT));
-                    }
+                    commentNode.setProperty(IssueTrackerKnowledgeExtractor.ISSUECOMMENT_CREATOR_NAME, author.getLeft());
+                    author.getRight().createRelationshipTo(commentNode, RelationshipType.withName(IssueTrackerKnowledgeExtractor.IS_CREATOR_OF_ISSUECOMMENT));
                     if (updateAuthor != null) {
                         commentNode.setProperty(IssueTrackerKnowledgeExtractor.ISSUECOMMENT_UPDATER_NAME, updateAuthor.getLeft());
                         updateAuthor.getRight().createRelationshipTo(commentNode, RelationshipType.withName(IssueTrackerKnowledgeExtractor.IS_UPDATER_OF_ISSUECOMMENT));
@@ -174,7 +174,7 @@ public class JiraParser implements IssueTrackerParser {
         }
 
         // 建立补丁实体并关联到ISSUE
-        JSONArray jsonHistoryArr = null;
+        JSONArray jsonHistoryArr;
         JSONObject root = new JSONObject(jsonContent);
         if (!root.isNull("changelog")) {
             jsonHistoryArr = root.getJSONObject("changelog").optJSONArray("histories");
@@ -194,16 +194,16 @@ public class JiraParser implements IssueTrackerParser {
                         if (!to.matches("^\\d{1,19}$") || !toString.endsWith(".patch")) {
                             continue;
                         }
-                        String patchId = to;
-                        String patchName = toString;
+                        String patchName;
+                        patchName = toString;
                         Pair<String, Node> author = createUserNode(history, "author");
                         String createdDate = history.optString("created");
                         if (createdDate == null)
                             createdDate = "";
 
-                        PatchInfo patchInfo = new PatchInfo(patchId, patchName, "", createdDate);
+                        PatchInfo patchInfo = new PatchInfo(to, patchName, "", createdDate);
                         Node patchNode = db.createNode();
-                        patchNodeMap.put(patchId, patchNode);
+                        patchNodeMap.put(to, patchNode);
                         IssueTrackerUtils.createPatchNode(patchInfo, patchNode);
                         node.createRelationshipTo(patchNode, RelationshipType.withName(IssueTrackerKnowledgeExtractor.HAVE_PATCH));
                         if (author != null) {
@@ -245,7 +245,6 @@ public class JiraParser implements IssueTrackerParser {
         String priority = "";
         if (!fields.isNull("priority")) {
             priority = fields.getJSONObject("priority").optString("name");
-            ;
         }
 
         String status = "";

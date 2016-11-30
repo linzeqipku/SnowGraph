@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
 import framework.annotations.PropertyDeclaration;
@@ -24,15 +23,13 @@ public class NodeToTextUtil {
             String fieldName = str.substring(p + 1, str.length());
             Class pluginClass = Class.forName(className);
             Field field = pluginClass.getField(fieldName);
-            String concept = ((PropertyDeclaration) field.getAnnotation(PropertyDeclaration.class)).parent();
+            String concept = field.getAnnotation(PropertyDeclaration.class).parent();
             if (!propMap.containsKey(concept))
                 propMap.put(concept, new HashSet<String>());
             propMap.get(concept).add((String) field.get(null));
         }
         try (Transaction tx = db.beginTx()) {
-            ResourceIterator<Node> nodes = db.getAllNodes().iterator();
-            while (nodes.hasNext()) {
-                Node node = nodes.next();
+            for (Node node : db.getAllNodes()) {
                 if (!node.getLabels().iterator().hasNext())
                     continue;
                 String label = node.getLabels().iterator().next().name();
@@ -41,14 +38,14 @@ public class NodeToTextUtil {
                 if (propMap.containsKey(label))
                     for (String property : propMap.get(label)) {
                         if (node.hasProperty(property)) {
-                            content += ((String) node.getProperty(property)) + " ";
+                            content += node.getProperty(property) + " ";
                             flag = true;
                         }
                     }
                 if (propMap.containsKey(""))
                     for (String property : propMap.get("")) {
                         if (node.hasProperty(property)) {
-                            content += ((String) node.getProperty(property)) + " ";
+                            content += node.getProperty(property) + " ";
                             flag = true;
                         }
                     }

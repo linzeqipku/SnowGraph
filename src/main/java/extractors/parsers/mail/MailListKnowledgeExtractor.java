@@ -73,7 +73,7 @@ public class MailListKnowledgeExtractor implements KnowledgeExtractor {
         MboxHandler myHandler = new MboxHandler();
         myHandler.setDb(db);
         parser = new MimeStreamParser(new MimeConfig());
-        parser.setContentHandler((ContentHandler) myHandler);
+        parser.setContentHandler(myHandler);
         parse(new File(mboxPath));
         try (Transaction tx = db.beginTx()) {
             for (String address : myHandler.getMailUserNameMap().keySet()) {
@@ -101,7 +101,7 @@ public class MailListKnowledgeExtractor implements KnowledgeExtractor {
         }
         if (!mboxFile.getName().endsWith(".mbox"))
             return;
-        MboxIterator iterator = null;
+        MboxIterator iterator;
         try {
             iterator = MboxIterator.fromFile(mboxFile).charset(DECODER.charset()).build();
         } catch (IOException e) {

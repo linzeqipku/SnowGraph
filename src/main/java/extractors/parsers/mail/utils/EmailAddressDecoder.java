@@ -19,12 +19,11 @@ public class EmailAddressDecoder {
         //e.g.,"jianbin dot dot wang dot at pku dot edu dot cn"
         decodeATandDOTRes = decodeATandDOTRes.replaceAll(" dot ", " . ");//decode 'dot' to '.'
 
-        String emailAddr = decodeATandDOTRes.replaceAll(" ", "");//remove blanks
-        return emailAddr;
+        return decodeATandDOTRes.replaceAll(" ", "");
     }
 
     public static void main(String[] args) {
-        String encodedMailAddr = null;
+        String encodedMailAddr;
 
         encodedMailAddr = "jpountz at gmail dot com";
         System.out.println(encodedMailAddr + "\t:" + decode(encodedMailAddr));
@@ -47,7 +46,6 @@ public class EmailAddressDecoder {
         encodedMailAddr = "jianbin dot  dot wang dot at pku dot edu dot cn";
         System.out.println(encodedMailAddr + "\t:" + decode(encodedMailAddr));
 
-        /****************************special case: sequential dots***********************************/
         encodedMailAddr = "jianbin dot dot wang dot at pku dot edu dot cn";
         System.out.println(encodedMailAddr + "\t:" + decode(encodedMailAddr));
 

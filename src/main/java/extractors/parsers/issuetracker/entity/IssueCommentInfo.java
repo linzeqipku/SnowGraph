@@ -78,16 +78,14 @@ public class IssueCommentInfo {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
-        result.append("*****************************************\n")
-                .append("A comment:\n")
-                .append("id:").append(commentId).append("\n")
-                .append("body:").append(body).append("\n")
-                .append("creator:").append(creatorName).append("\n")
-                .append("updater:").append(updaterName).append("\n")
-                .append("created:").append(createdDate).append("\n")
-                .append("updated:").append(updatedDate).append("\n")
-                .append("*****************************************\n");
-        return result.toString();
+        return "*****************************************\n" +
+                "A comment:\n" +
+                "id:" + commentId + "\n" +
+                "body:" + body + "\n" +
+                "creator:" + creatorName + "\n" +
+                "updater:" + updaterName + "\n" +
+                "created:" + createdDate + "\n" +
+                "updated:" + updatedDate + "\n" +
+                "*****************************************\n";
     }
 }

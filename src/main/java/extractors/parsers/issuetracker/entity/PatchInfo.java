@@ -88,17 +88,15 @@ public class PatchInfo {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
-        result.append("*****************************\n")
-                .append("A patch:\n")
-                .append("projectname:").append(projectName).append("\n")
-                .append("issueId:").append(issueId).append("\n")
-                .append("patchId:").append(patchId).append("\n")
-                .append("patchName:").append(patchName).append("\n")
-                .append("content:").append(content).append("\n")
-                .append("creatorName:").append(creatorName).append("\n")
-                .append("createdDate:").append(createdDate).append("\n")
-                .append("*****************************\n");
-        return result.toString();
+        return "*****************************\n" +
+                "A patch:\n" +
+                "projectname:" + projectName + "\n" +
+                "issueId:" + issueId + "\n" +
+                "patchId:" + patchId + "\n" +
+                "patchName:" + patchName + "\n" +
+                "content:" + content + "\n" +
+                "creatorName:" + creatorName + "\n" +
+                "createdDate:" + createdDate + "\n" +
+                "*****************************\n";
     }
 }

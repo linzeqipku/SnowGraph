@@ -26,7 +26,7 @@ import framework.annotations.PropertyDeclaration;
 import framework.annotations.RelationshipDeclaration;
 
 
-public class PfrPluginForCommits {
+public class VersionControlKnowledgeExtractor {
     @EntityDeclaration
     public static final String COMMIT = "commit";
     @PropertyDeclaration(parent = COMMIT)
@@ -120,7 +120,7 @@ public class PfrPluginForCommits {
     }
 
     public static void main(String args[]) throws Exception {
-        PfrPluginForCommits test = new PfrPluginForCommits();
+        VersionControlKnowledgeExtractor test = new VersionControlKnowledgeExtractor();
         //获取commits
         //test.getCommitsFromGit("https://api.github.com/repos/apache/lucenenet/commits", "C:\\Users\\Liwp\\Desktop\\知识库\\test\\out.txt");
         //解析commits文件

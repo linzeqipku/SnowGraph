@@ -85,15 +85,13 @@ public class MboxHandler extends AbstractContentHandler {
             IOException {
         String r = "";
         byte[] buffer = new byte[200];
-        String s = null;
+        String s;
         int len;
         try {
             while ((len = is.read(buffer)) != -1) {
                 if (len != 200) {
                     byte buffer2[] = new byte[len];
-                    for (int i = 0; i < len; i++) {
-                        buffer2[i] = buffer[i];
-                    }
+                    System.arraycopy(buffer, 0, buffer2, 0, len);
                     s = new String(buffer2);
                 } else {
                     s = new String(buffer);
@@ -160,7 +158,7 @@ public class MboxHandler extends AbstractContentHandler {
     }
 
     private void createUserNode(Node mailNode, String userName, String userAddress, boolean sender) {
-        Node userNode = null;
+        Node userNode;
         if (!mailUserMap.containsKey(userAddress)) {
             userNode = db.createNode();
             userNode.addLabel(Label.label(MailListKnowledgeExtractor.MAILUSER));

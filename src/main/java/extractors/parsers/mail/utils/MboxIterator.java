@@ -1,6 +1,6 @@
 package extractors.parsers.mail.utils;
 
-/***************************************************************
+/**************************************************************
  Licensed to the Apache Software Foundation (ASF) under one   *
  or more contributor license agreements.  See the NOTICE file *
  distributed with this work for additional information        *
@@ -8,9 +8,9 @@ package extractors.parsers.mail.utils;
  to you under the Apache License, Version 2.0 (the            *
  "License"); you may not use this file except in compliance   *
  with the License.  You may obtain a copy of the License at   *
- *
+
  http://www.apache.org/licenses/LICENSE-2.0                 *
- *
+
  Unless required by applicable law or agreed to in writing,   *
  software distributed under the License is distributed on an  *
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
@@ -247,13 +247,11 @@ public class MboxIterator implements Iterable<CharBufferWrapper>, Closeable {
      * Utility method to log important details about buffers.
      */
     public static String bufferDetailsToString(final Buffer buffer) {
-        StringBuilder sb = new StringBuilder("Buffer details: ");
-        sb.append("\ncapacity:\t").append(buffer.capacity())
-                .append("\nlimit:\t").append(buffer.limit())
-                .append("\nremaining:\t").append(buffer.remaining())
-                .append("\nposition:\t").append(buffer.position())
-                .append("\nbuffer:\t").append(buffer.isReadOnly())
-                .append("\nclass:\t").append(buffer.getClass());
-        return sb.toString();
+        return "Buffer details: " + "\ncapacity:\t" + buffer.capacity() +
+                "\nlimit:\t" + buffer.limit() +
+                "\nremaining:\t" + buffer.remaining() +
+                "\nposition:\t" + buffer.position() +
+                "\nbuffer:\t" + buffer.isReadOnly() +
+                "\nclass:\t" + buffer.getClass();
     }
 }

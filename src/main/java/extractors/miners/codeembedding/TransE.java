@@ -223,8 +223,7 @@ public class TransE {
 
     public static double vec_len(double[] a) {
         double res = 0;
-        for (int i = 0; i < a.length; i++)
-            res += a[i] * a[i];
+        for (double anA : a) res += anA * anA;
         res = Math.sqrt(res);
         return res;
     }

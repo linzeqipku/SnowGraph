@@ -120,8 +120,8 @@ public class NameResolver {
             File f = new File(path, fileName);
             if (path.isDirectory() && f.isFile()) {
                 fullName = dirName;
-                for (int i = 0; i < nameParts.length; i++) {
-                    fullName += "." + nameParts[i];
+                for (String namePart : nameParts) {
+                    fullName += "." + namePart;
                 }
                 found = true;
             }
@@ -161,14 +161,14 @@ public class NameResolver {
         public File getPath(String name) {
             String[] parts = name.split("\\.");
             File path = new File(srcDir);
-            for (int i = 0; i < parts.length; i++) {
-                if (parts[i].equals("")) {
+            for (String part : parts) {
+                if (part.equals("")) {
                     break;
-                } else if (Character.isUpperCase(parts[i].charAt(0))) {
-                    path = new File(path, parts[i] + ".java");
+                } else if (Character.isUpperCase(part.charAt(0))) {
+                    path = new File(path, part + ".java");
                     break;
                 } else {
-                    path = new File(path, parts[i]);
+                    path = new File(path, part);
                 }
             }
             return path;

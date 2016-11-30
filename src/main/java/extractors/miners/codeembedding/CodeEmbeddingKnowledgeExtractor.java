@@ -1,21 +1,20 @@
 package extractors.miners.codeembedding;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import extractors.parsers.javacode.JavaCodeKnowledgeExtractor;
 import framework.KnowledgeExtractor;
 import framework.annotations.PropertyDeclaration;
-import extractors.parsers.javacode.JavaCodeKnowledgeExtractor;
 
 public class CodeEmbeddingKnowledgeExtractor implements KnowledgeExtractor {
 
@@ -38,9 +37,7 @@ public class CodeEmbeddingKnowledgeExtractor implements KnowledgeExtractor {
         List<String> relations = new ArrayList<String>();
         List<Triple<String, String, String>> triples = new ArrayList<Triple<String, String, String>>();
         try (Transaction tx = db.beginTx()) {
-            ResourceIterator<Node> nodes = db.getAllNodes().iterator();
-            while (nodes.hasNext()) {
-                Node node = nodes.next();
+            for (Node node : db.getAllNodes()) {
                 if (!node.hasLabel(Label.label(JavaCodeKnowledgeExtractor.CLASS)) &&
                         !node.hasLabel(Label.label(JavaCodeKnowledgeExtractor.INTERFACE)) &&
                         !node.hasLabel(Label.label(JavaCodeKnowledgeExtractor.METHOD)) &&
@@ -49,9 +46,7 @@ public class CodeEmbeddingKnowledgeExtractor implements KnowledgeExtractor {
                 entities.add("" + node.getId());
             }
 
-            ResourceIterator<Relationship> rels = db.getAllRelationships().iterator();
-            while (rels.hasNext()) {
-                Relationship rel = rels.next();
+            for (Relationship rel : db.getAllRelationships()) {
                 Node node1 = rel.getStartNode();
                 if (!node1.hasLabel(Label.label(JavaCodeKnowledgeExtractor.CLASS)) &&
                         !node1.hasLabel(Label.label(JavaCodeKnowledgeExtractor.INTERFACE)) &&

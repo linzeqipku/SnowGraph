@@ -42,7 +42,7 @@ public class CodeIndexes {
                 if (codeNode.hasLabel(Label.label(JavaCodeKnowledgeExtractor.INTERFACE)))
                     name = (String) codeNode.getProperty(JavaCodeKnowledgeExtractor.INTERFACE_FULLNAME);
                 if (codeNode.hasLabel(Label.label(JavaCodeKnowledgeExtractor.METHOD))) {
-                    name = (String) codeNode.getProperty(JavaCodeKnowledgeExtractor.METHOD_BELONGTO) + "." + codeNode.getProperty(JavaCodeKnowledgeExtractor.METHOD_NAME);
+                    name = codeNode.getProperty(JavaCodeKnowledgeExtractor.METHOD_BELONGTO) + "." + codeNode.getProperty(JavaCodeKnowledgeExtractor.METHOD_NAME);
                     type = false;
                 }
                 if (name.contains("$"))
@@ -64,7 +64,7 @@ public class CodeIndexes {
                     idToMethodNameMap.put(codeNode.getId(), name);
                     int p1 = name.lastIndexOf('.');
                     int p2 = name.lastIndexOf('.', p1 - 1);
-                    String midName = "", shortName = "";
+                    String midName, shortName;
                     if (p2 > 0) {
                         midName = name.substring(p2 + 1);
                         shortName = name.substring(p1 + 1);

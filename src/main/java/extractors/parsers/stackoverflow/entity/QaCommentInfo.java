@@ -3,7 +3,7 @@ package extractors.parsers.stackoverflow.entity;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 
-import extractors.parsers.stackoverflow.PfrPluginForStackOverflow;
+import extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor;
 
 public class QaCommentInfo {
 
@@ -18,14 +18,14 @@ public class QaCommentInfo {
         this.parentId = parentId;
         this.userId = userId;
 
-        node.addLabel(Label.label(PfrPluginForStackOverflow.COMMENT));
+        node.addLabel(Label.label(StackOverflowKnowledgeExtractor.COMMENT));
 
-        node.setProperty(PfrPluginForStackOverflow.COMMENT_ID, id);
-        node.setProperty(PfrPluginForStackOverflow.COMMENT_PARENT_ID, parentId);
-        node.setProperty(PfrPluginForStackOverflow.COMMENT_SCORE, score);
-        node.setProperty(PfrPluginForStackOverflow.COMMENT_TEXT, text);
-        node.setProperty(PfrPluginForStackOverflow.COMMENT_CREATION_DATE, creationDate);
-        node.setProperty(PfrPluginForStackOverflow.COMMENT_USER_ID, userId);
+        node.setProperty(StackOverflowKnowledgeExtractor.COMMENT_ID, id);
+        node.setProperty(StackOverflowKnowledgeExtractor.COMMENT_PARENT_ID, parentId);
+        node.setProperty(StackOverflowKnowledgeExtractor.COMMENT_SCORE, score);
+        node.setProperty(StackOverflowKnowledgeExtractor.COMMENT_TEXT, text);
+        node.setProperty(StackOverflowKnowledgeExtractor.COMMENT_CREATION_DATE, creationDate);
+        node.setProperty(StackOverflowKnowledgeExtractor.COMMENT_USER_ID, userId);
 
     }
 

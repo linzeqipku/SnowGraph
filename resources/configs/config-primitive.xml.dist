@@ -4,8 +4,8 @@
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="graph" class="framework.KnowledgeGraphBuilder">
-        <property name="graphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-primitive"/>
-        <property name="pfrPlugins">
+        <property name="graphPath" value="E:/SnowGraphData/graphdb-primitive"/>
+        <property name="extractors">
             <list>
                 <ref bean="codegraph" />
                 <ref bean="sograph" />
@@ -15,19 +15,19 @@
         </property>
     </bean>
     <bean id="codegraph" class="extractors.parsers.javacode.JavaCodeKnowledgeExtractor">
-        <property name="srcPath" value="C:/Users/Lin/Desktop/testdata/sourcecode" />
+        <property name="srcPath" value="E:/SnowGraphData/sourcecode" />
     </bean>
-    <bean id="sograph" class="extractors.parsers.stackoverflow.PfrPluginForStackOverflow">
-        <property name="folderPath" value="C:/Users/Lin/Desktop/testdata/stackoverflow" />
+    <bean id="sograph" class="extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor">
+        <property name="folderPath" value="E:/SnowGraphData/stackoverflow" />
     </bean>
     <bean id="issuegraph" class="extractors.parsers.issuetracker.IssueTrackerKnowledgeExtractor">
 		<property name="parser">
 			<bean id="jiraParser" class="extractors.parsers.issuetracker.JiraParser">
-				<property name="issueFolderPath" value="C:/Users/Lin/Desktop/testdata/jira" />
+				<property name="issueFolderPath" value="E:/SnowGraphData/jira" />
 			</bean>
 		</property>
 	</bean>
 	<bean id="mailgraph" class="extractors.parsers.mail.MailListKnowledgeExtractor">
-		<property name="mboxPath" value="C:/Users/Lin/Desktop/testdata/mbox" />
+		<property name="mboxPath" value="E:/SnowGraphData/mbox" />
 	</bean>
 </beans>

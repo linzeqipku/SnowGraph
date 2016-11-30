@@ -3,7 +3,7 @@ package extractors.parsers.stackoverflow.entity;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 
-import extractors.parsers.stackoverflow.PfrPluginForStackOverflow;
+import extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor;
 
 public class QuestionInfo {
 
@@ -19,16 +19,16 @@ public class QuestionInfo {
         this.acceptedAnswerId = acceptedAnswerId;
         this.ownerUserId = ownerUserId;
 
-        node.addLabel(Label.label(PfrPluginForStackOverflow.QUESTION));
+        node.addLabel(Label.label(StackOverflowKnowledgeExtractor.QUESTION));
 
-        node.setProperty(PfrPluginForStackOverflow.QUESTION_ID, id);
-        node.setProperty(PfrPluginForStackOverflow.QUESTION_CREATION_DATE, creationDate);
-        node.setProperty(PfrPluginForStackOverflow.QUESTION_SCORE, score);
-        node.setProperty(PfrPluginForStackOverflow.QUESTION_VIEW_COUNT, viewCount);
-        node.setProperty(PfrPluginForStackOverflow.QUESTION_BODY, body);
-        node.setProperty(PfrPluginForStackOverflow.QUESTION_OWNER_USER_ID, ownerUserId);
-        node.setProperty(PfrPluginForStackOverflow.QUESTION_TITLE, title);
-        node.setProperty(PfrPluginForStackOverflow.QUESTION_TAGS, tags);
+        node.setProperty(StackOverflowKnowledgeExtractor.QUESTION_ID, id);
+        node.setProperty(StackOverflowKnowledgeExtractor.QUESTION_CREATION_DATE, creationDate);
+        node.setProperty(StackOverflowKnowledgeExtractor.QUESTION_SCORE, score);
+        node.setProperty(StackOverflowKnowledgeExtractor.QUESTION_VIEW_COUNT, viewCount);
+        node.setProperty(StackOverflowKnowledgeExtractor.QUESTION_BODY, body);
+        node.setProperty(StackOverflowKnowledgeExtractor.QUESTION_OWNER_USER_ID, ownerUserId);
+        node.setProperty(StackOverflowKnowledgeExtractor.QUESTION_TITLE, title);
+        node.setProperty(StackOverflowKnowledgeExtractor.QUESTION_TAGS, tags);
 
     }
 

@@ -35,7 +35,7 @@ import extractors.parsers.stackoverflow.entity.QuestionInfo;
  * @author Zeqi Lin
  */
 
-public class PfrPluginForStackOverflow implements KnowledgeExtractor {
+public class StackOverflowKnowledgeExtractor implements KnowledgeExtractor {
 
     @EntityDeclaration
     public static final String QUESTION = "StackOverflowQuestion";

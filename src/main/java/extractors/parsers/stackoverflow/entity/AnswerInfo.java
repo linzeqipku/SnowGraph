@@ -2,8 +2,7 @@ package extractors.parsers.stackoverflow.entity;
 
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
-
-import extractors.parsers.stackoverflow.PfrPluginForStackOverflow;
+import extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor;
 
 public class AnswerInfo {
 
@@ -18,15 +17,15 @@ public class AnswerInfo {
         this.parentQuestionId = parentId;
         this.ownerUserId = ownerUserId;
 
-        node.addLabel(Label.label(PfrPluginForStackOverflow.ANSWER));
+        node.addLabel(Label.label(StackOverflowKnowledgeExtractor.ANSWER));
 
-        node.setProperty(PfrPluginForStackOverflow.ANSWER_ID, id);
-        node.setProperty(PfrPluginForStackOverflow.ANSWER_PARENT_QUESTION_ID, parentId);
-        node.setProperty(PfrPluginForStackOverflow.ANSWER_CREATION_DATE, creationDate);
-        node.setProperty(PfrPluginForStackOverflow.ANSWER_SCORE, score);
-        node.setProperty(PfrPluginForStackOverflow.ANSWER_BODY, body);
-        node.setProperty(PfrPluginForStackOverflow.ANSWER_OWNER_USER_ID, ownerUserId);
-        node.setProperty(PfrPluginForStackOverflow.ANSWER_ACCEPTED, false);
+        node.setProperty(StackOverflowKnowledgeExtractor.ANSWER_ID, id);
+        node.setProperty(StackOverflowKnowledgeExtractor.ANSWER_PARENT_QUESTION_ID, parentId);
+        node.setProperty(StackOverflowKnowledgeExtractor.ANSWER_CREATION_DATE, creationDate);
+        node.setProperty(StackOverflowKnowledgeExtractor.ANSWER_SCORE, score);
+        node.setProperty(StackOverflowKnowledgeExtractor.ANSWER_BODY, body);
+        node.setProperty(StackOverflowKnowledgeExtractor.ANSWER_OWNER_USER_ID, ownerUserId);
+        node.setProperty(StackOverflowKnowledgeExtractor.ANSWER_ACCEPTED, false);
 
     }
 
@@ -39,7 +38,7 @@ public class AnswerInfo {
     }
 
     public void setAccepted(boolean accepted) {
-        node.setProperty(PfrPluginForStackOverflow.ANSWER_ACCEPTED, accepted);
+        node.setProperty(StackOverflowKnowledgeExtractor.ANSWER_ACCEPTED, accepted);
     }
 
     public int getOwnerUserId() {

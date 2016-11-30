@@ -3,7 +3,7 @@ package extractors.parsers.stackoverflow.entity;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 
-import extractors.parsers.stackoverflow.PfrPluginForStackOverflow;
+import extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor;
 
 public class QaUserInfo {
 
@@ -16,16 +16,16 @@ public class QaUserInfo {
         this.userId = id;
         this.displayName = displayName;
 
-        node.addLabel(Label.label(PfrPluginForStackOverflow.USER));
+        node.addLabel(Label.label(StackOverflowKnowledgeExtractor.USER));
 
-        node.setProperty(PfrPluginForStackOverflow.USER_ID, id);
-        node.setProperty(PfrPluginForStackOverflow.USER_REPUTATION, reputation);
-        node.setProperty(PfrPluginForStackOverflow.USER_CREATION_DATE, creationDate);
-        node.setProperty(PfrPluginForStackOverflow.USER_DISPLAY_NAME, displayName);
-        node.setProperty(PfrPluginForStackOverflow.USER_LAST_ACCESS_dATE, lastAccessDate);
-        node.setProperty(PfrPluginForStackOverflow.USER_VIEWS, views);
-        node.setProperty(PfrPluginForStackOverflow.USER_UP_VOTES, upVotes);
-        node.setProperty(PfrPluginForStackOverflow.USER_DOWN_VOTES, downVotes);
+        node.setProperty(StackOverflowKnowledgeExtractor.USER_ID, id);
+        node.setProperty(StackOverflowKnowledgeExtractor.USER_REPUTATION, reputation);
+        node.setProperty(StackOverflowKnowledgeExtractor.USER_CREATION_DATE, creationDate);
+        node.setProperty(StackOverflowKnowledgeExtractor.USER_DISPLAY_NAME, displayName);
+        node.setProperty(StackOverflowKnowledgeExtractor.USER_LAST_ACCESS_dATE, lastAccessDate);
+        node.setProperty(StackOverflowKnowledgeExtractor.USER_VIEWS, views);
+        node.setProperty(StackOverflowKnowledgeExtractor.USER_UP_VOTES, upVotes);
+        node.setProperty(StackOverflowKnowledgeExtractor.USER_DOWN_VOTES, downVotes);
     }
 
     public int getUserId() {

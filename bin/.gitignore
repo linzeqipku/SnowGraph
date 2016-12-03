@@ -1,0 +1,15 @@
+target/
+.apt_generated/
+log/
+
+.classpath
+.project
+.settings/
+
+.DS_Store
+
+.idea/
+*.iml
+*.iws
+
+resources/configs/*.xml

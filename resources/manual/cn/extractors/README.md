@@ -9,7 +9,7 @@
 
 关联与融合
 -----------------------------------
-//TODO
+- [代码元素引用关联插件](https://github.com/linzeqipku/SnowGraph/blob/master/resources/manual/cn/linkers/CodeInDoc.md)
 
 理解与挖掘
 ------------------------------------

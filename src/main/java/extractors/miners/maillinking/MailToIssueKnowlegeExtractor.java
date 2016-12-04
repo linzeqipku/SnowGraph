@@ -1,22 +1,19 @@
-package pfr.plugins.refiners.maillinking;
+package extractors.miners.maillinking;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import extractors.parsers.issuetracker.IssueTrackerKnowledgeExtractor;
+import extractors.parsers.mail.MailListKnowledgeExtractor;
+import framework.KnowledgeExtractor;
 import org.neo4j.graphdb.*;
-
-import pfr.PFR;
-import pfr.annotations.PropertyDeclaration;
-import pfr.annotations.RelationDeclaration;
-import pfr.plugins.parsers.issuetracker.PfrPluginForIssueTracker;
-import pfr.plugins.parsers.mail.PfrPluginForMailList;
-
+import framework.annotations.RelationshipDeclaration;
 /**
  * Created by laurence on 16-11-27.
  */
-public class MailToIssueLinker implements PFR{
-    @RelationDeclaration
+public class MailToIssueKnowlegeExtractor implements KnowledgeExtractor{
+    @RelationshipDeclaration
     public static final String MAIL_TO_ISSUE = "mailToIssue";
 
     GraphDatabaseService db = null;
@@ -44,7 +41,6 @@ public class MailToIssueLinker implements PFR{
                 Node node = nameToIssueMap.get(name);
                 if (node != null) {
                     issueList.add(node);
-                    //System.out.println("found in issue map");
                 }
             }
             mailToIssueMap.put(mailMap.get(content), issueList);
@@ -66,12 +62,12 @@ public class MailToIssueLinker implements PFR{
                 Node node = nodes.next();
                 if (!node.getLabels().iterator().hasNext())
                     continue;
-                if (node.hasLabel(Label.label(PfrPluginForMailList.MAIL))){
-                    String content = (String)node.getProperty(PfrPluginForMailList.MAIL_BODY);
+                if (node.hasLabel(Label.label(MailListKnowledgeExtractor.MAIL))){
+                    String content = (String)node.getProperty(MailListKnowledgeExtractor.MAIL_BODY);
                     mailMap.put(content, node);
                 }
-                else if (node.hasLabel(Label.label(PfrPluginForIssueTracker.ISSUE))) {
-                    String name = (String)node.getProperty(PfrPluginForIssueTracker.ISSUE_NAME);
+                else if (node.hasLabel(Label.label(IssueTrackerKnowledgeExtractor.ISSUE))) {
+                    String name = (String)node.getProperty(IssueTrackerKnowledgeExtractor.ISSUE_NAME);
                     nameToIssueMap.put(name, node);
                     //System.out.println(node.getProperty(PfrPluginForIssueTracker.ISSUE_NAME));
                 }

@@ -3,8 +3,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean id="graph" class="pfr.framework.KnowledgeGraphBuilder">
-        <property name="graphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-copy"/>
-		<property name="baseGraphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-primitive"/>
+    <bean id="graph" class="framework.KnowledgeGraphBuilder">
+        <property name="graphPath" value="E:/SnowGraphData/lucene/graphdb-copy"/>
+		<property name="baseGraphPath" value="E:/SnowGraphData/lucene/graphdb-primitive"/>
     </bean>
 </beans>

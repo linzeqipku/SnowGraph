@@ -19,39 +19,7 @@
 
 请勿更改这两个配置文件，而应当复制它们（可以复制到项目外的任意位置，建议复制在原目录下），并去除.dist后缀，再进行更改。
 
-起示例作用的主要是config-primitive.xml：
-
-    <beans>
-        <bean id="graph" class="pfr.framework.KnowledgeGraphBuilder">
-            <property name="graphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-primitive"/>
-            <property name="pfrPlugins">
-                <list>
-                    <ref bean="codegraph" />
-                    <ref bean="sograph" />
-	    		        	<ref bean="mailgraph" />
-                    <ref bean="issuegraph" />
-                </list>
-            </property>
-        </bean>
-        <bean id="codegraph" class="pfr.plugins.parsers.javacode.PfrPluginForJavaCode">
-            <property name="srcPath" value="C:/Users/Lin/Desktop/testdata/sourcecode" />
-        </bean>
-        <bean id="sograph" class="pfr.plugins.parsers.stackoverflow.PfrPluginForStackOverflow">
-            <property name="folderPath" value="C:/Users/Lin/Desktop/testdata/stackoverflow" />
-        </bean>
-        <bean id="issuegraph" class="pfr.plugins.parsers.issuetracker.PfrPluginForIssueTracker">
-	    	<property name="extractor">
-	    		<bean id="jiraExtractor" class="pfr.plugins.parsers.issuetracker.extractors.JiraExtractor">
-	    			<property name="issueFolderPath" value="C:/Users/Lin/Desktop/testdata/jira" />
-	    		</bean>
-	    	</property>
-	    </bean>
-    	<bean id="mailgraph" class="pfr.plugins.parsers.mail.PfrPluginForMailList">
-	    	<property name="mboxPath" value="C:/Users/Lin/Desktop/testdata/mbox" />
-    	</bean>
-    </beans>
-
-该配置文件用于解析源代码、邮件归档、缺陷库、StackOverflow归档这四类数据，并生成相应的软件知识图谱。
+起示例作用的主要是config-primitive.xml，该配置文件用于解析源代码、邮件归档、缺陷库、StackOverflow归档这四类数据，并生成相应的软件知识图谱。
 
 需要配置的参数包括：
 - 生成的知识图谱存放在哪个文件夹中（"C:/Users/Lin/Desktop/testdata/graphdb-primitive"）
@@ -63,7 +31,7 @@
 config-copy.xml则示例了在开发过程中如何避免因为做重复的解析而耗费大量的运行时间：
 
 <beans>
-    <bean id="graph" class="pfr.framework.KnowledgeGraphBuilder">
+    <bean id="graph" class="framework.KnowledgeGraphBuilder">
         <property name="graphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-copy"/>
 		    <property name="baseGraphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-primitive"/>
     </bean>

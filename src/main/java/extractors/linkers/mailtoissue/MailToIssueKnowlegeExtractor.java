@@ -1,4 +1,4 @@
-package extractors.miners.maillinking;
+package extractors.linkers.mailtoissue;
 
 import java.util.*;
 import java.util.regex.Matcher;

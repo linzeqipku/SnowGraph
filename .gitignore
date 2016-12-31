@@ -13,3 +13,4 @@ log/
 *.iws
 
 resources/configs/*.xml
+out/

@@ -1,5 +1,7 @@
 package extractors.miners.mailcode;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,8 +31,8 @@ public class Segment {
         return sentences.size();
     }
 
-    public List<String> getSubSentences(int start, int end) {
-        return sentences.subList(start, end);
+    public ImmutableList<String> getSentences() {
+        return ImmutableList.copyOf(sentences);
     }
 
     public String getText() {

@@ -85,10 +85,10 @@ public class CodeMerge {
 					ASTNode ret = astParser.createAST(null);
 					if (ret.toString().length() > 5){
 						flag = true;
-						Segment newSeg1 = new Segment(seg.getSubSentences(0, start));
-						Segment newSeg2 = new Segment(seg.getSubSentences(start, end));
+						Segment newSeg1 = new Segment(seg.getSentences().subList(0, start));
+						Segment newSeg2 = new Segment(seg.getSentences().subList(start, end));
                         newSeg2.setCode(true);
-						Segment newSeg3 = new Segment(seg.getSubSentences(end, seg.getSentenceNumber()));
+						Segment newSeg3 = new Segment(seg.getSentences().subList(end, seg.getSentenceNumber()));
 						result.add(newSeg1);
 						result.add(newSeg2);
 						result.add(newSeg3);

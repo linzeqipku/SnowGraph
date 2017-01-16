@@ -6,9 +6,7 @@ import framework.KnowledgeGraphBuilder;
 
 public class Main {
 
-    public static void main(String[] args) {
-        run(args[0]);
-    }
+    public static void main(String[] args) { run(args[0]); }
 
     public static void run(String configPath) {
         @SuppressWarnings("resource")

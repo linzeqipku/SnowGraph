@@ -1,12 +1,10 @@
 package extractors.parsers.issuetracker;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import extractors.parsers.issuetracker.entity.IssueCommentInfo;
+import extractors.parsers.issuetracker.entity.IssueInfo;
+import extractors.parsers.issuetracker.entity.IssueUserInfo;
+import extractors.parsers.issuetracker.entity.PatchInfo;
+import extractors.parsers.mail.utils.EmailAddressDecoder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,11 +15,12 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 
-import extractors.parsers.issuetracker.entity.IssueCommentInfo;
-import extractors.parsers.issuetracker.entity.IssueInfo;
-import extractors.parsers.issuetracker.entity.IssueUserInfo;
-import extractors.parsers.issuetracker.entity.PatchInfo;
-import extractors.parsers.mail.utils.EmailAddressDecoder;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JiraParser implements IssueTrackerParser {
 

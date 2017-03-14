@@ -1,7 +1,7 @@
 /**
  * @author Fang Lu, fanglupku@gmail.com 2011-4-13
  */
-package extractors.miners.mailcode;
+package extractors.miners.codesnippet.mail;
 
 import java.io.BufferedReader;
 import java.io.StringReader;

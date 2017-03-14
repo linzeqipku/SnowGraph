@@ -1,4 +1,4 @@
-package extractors.miners.mailcode;
+package extractors.miners.codesnippet.mail;
 
 import com.google.common.collect.ImmutableList;
 
@@ -27,7 +27,7 @@ public class Segment {
         return isCode;
     }
 
-    int getSentenceNumber() {
+    public int getSentenceNumber() {
         return sentences.size();
     }
 

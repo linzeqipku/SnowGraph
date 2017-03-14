@@ -1,4 +1,4 @@
-package extractors.miners.mailcode;
+package extractors.miners.codesnippet.mail;
 
 /**
  * @ClassName: CodeMerge

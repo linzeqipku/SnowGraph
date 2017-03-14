@@ -1,4 +1,4 @@
-package extractors.miners.mailcode;
+package extractors.miners.codesnippet.mail;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -41,7 +41,7 @@ config-copy.xml则示例了在开发过程中如何避免因为做重复的解�
 
 运行示例
 --------------------------------------------------
-运行类pfr.framework.KnowledgeGraphBuilder.Main的main函数
+运行类pfr.framework.Main的main函数
 - 运行参数：{config-primitive.xml文件的地址}
 - VM参数：-Xms3096m -Xmx3096m
 - 耗时估计：1小时左右

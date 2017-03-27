@@ -28,12 +28,13 @@ public class MailToIssueKnowlegeExtractor implements KnowledgeExtractor{
     }
     public void extractIssueLink() {
         for (String content : mailMap.keySet()) {
-            String patternForLucene = "https?://issues\\.apache\\.org(.*?)/(LUCENE-(\\d+))";
-            Pattern regex = Pattern.compile(patternForLucene);
+            String patternForJira = "https?://issues\\.apache\\.org/jira/.*/([a-zA-Z]+-(\\d+))";
+            String patternForBugzilla = "https?://issues\\.apache\\.org/bugzilla/.*?cgi\\?(id=(\\d+))";
+            Pattern regex = Pattern.compile(patternForJira);
             Matcher idMatcher = regex.matcher(content);
             HashSet<String> issueNameSet = new HashSet<>();
             while (idMatcher.find()) {
-                String issueName = idMatcher.group(2);
+                String issueName = idMatcher.group(1);
                 issueNameSet.add(issueName);
             }
             ArrayList<Node> issueList = new ArrayList<>();
@@ -66,7 +67,7 @@ public class MailToIssueKnowlegeExtractor implements KnowledgeExtractor{
                 } else if (node.hasLabel(Label.label(JiraKnowledgeExtractor.ISSUE))) {
                     String name = (String) node.getProperty(JiraKnowledgeExtractor.ISSUE_NAME);
                     nameToIssueMap.put(name, node);
-                    //System.out.println(node.getProperty(PfrPluginForIssueTracker.ISSUE_NAME));
+                    //System.out.println(node.getProperty(IssueTrackerKnowledgeExtractor.ISSUE_NAME));
                 }
             }
             tx.success();

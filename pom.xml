@@ -2,20 +2,21 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>cn.edu.pku.sei</groupId>
   <artifactId>SnowGraph</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<version>0.0.1-SNAPSHOT</version>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-    <dependencies>
+	<dependencies>
 	  	<dependency>
 	  		<groupId>commons-dbutils</groupId>
 	  		<artifactId>commons-dbutils</artifactId>

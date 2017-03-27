@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import extractors.parsers.issuetracker.IssueTrackerKnowledgeExtractor;
+import extractors.parsers.jira.JiraKnowledgeExtractor;
 import extractors.parsers.mail.MailListKnowledgeExtractor;
 import framework.KnowledgeExtractor;
 import org.neo4j.graphdb.*;
@@ -57,17 +57,14 @@ public class MailToIssueKnowlegeExtractor implements KnowledgeExtractor{
 
     public void getMailAndIssueMap() {
         try (Transaction tx = db.beginTx()){
-            ResourceIterator<Node> nodes = db.getAllNodes().iterator();
-            while (nodes.hasNext()){
-                Node node = nodes.next();
+            for (Node node : db.getAllNodes()) {
                 if (!node.getLabels().iterator().hasNext())
                     continue;
-                if (node.hasLabel(Label.label(MailListKnowledgeExtractor.MAIL))){
-                    String content = (String)node.getProperty(MailListKnowledgeExtractor.MAIL_BODY);
+                if (node.hasLabel(Label.label(MailListKnowledgeExtractor.MAIL))) {
+                    String content = (String) node.getProperty(MailListKnowledgeExtractor.MAIL_BODY);
                     mailMap.put(content, node);
-                }
-                else if (node.hasLabel(Label.label(IssueTrackerKnowledgeExtractor.ISSUE))) {
-                    String name = (String)node.getProperty(IssueTrackerKnowledgeExtractor.ISSUE_NAME);
+                } else if (node.hasLabel(Label.label(JiraKnowledgeExtractor.ISSUE))) {
+                    String name = (String) node.getProperty(JiraKnowledgeExtractor.ISSUE_NAME);
                     nameToIssueMap.put(name, node);
                     //System.out.println(node.getProperty(PfrPluginForIssueTracker.ISSUE_NAME));
                 }

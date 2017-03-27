@@ -1,4 +1,4 @@
-package extractors.parsers.issuetracker;
+package extractors.parsers.jira;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import framework.KnowledgeExtractor;
+import framework.annotations.EntityDeclaration;
+import framework.annotations.PropertyDeclaration;
+import framework.annotations.RelationshipDeclaration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,20 +21,119 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 
-import extractors.parsers.issuetracker.entity.IssueCommentInfo;
-import extractors.parsers.issuetracker.entity.IssueInfo;
-import extractors.parsers.issuetracker.entity.IssueUserInfo;
-import extractors.parsers.issuetracker.entity.PatchInfo;
+import extractors.parsers.jira.entity.IssueCommentInfo;
+import extractors.parsers.jira.entity.IssueInfo;
+import extractors.parsers.jira.entity.IssueUserInfo;
+import extractors.parsers.jira.entity.PatchInfo;
 import extractors.parsers.mail.utils.EmailAddressDecoder;
 
-public class JiraParser implements IssueTrackerParser {
+public class JiraKnowledgeExtractor implements KnowledgeExtractor {
+
+    @EntityDeclaration
+    public static final String ISSUE = "JiraIssue";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_ID = "id";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_NAME = "name";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_SUMMARY = "summary";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_TYPE = "type";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_STATUS = "status";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_PRIORITY = "priority";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_RESOLUTION = "resolution";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_VERSIONS = "versions";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_FIX_VERSIONS = "fixVersions";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_COMPONENTS = "components";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_LABELS = "labels";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_DESCRIPTION = "description";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_CREATOR_NAME = "crearorName";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_ASSIGNEE_NAME = "assigneeName";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_REPORTER_NAME = "reporterName";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_CREATED_DATE = "createdDate";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_UPDATED_DATE = "updatedDate";
+    @PropertyDeclaration(parent = ISSUE)
+    public static final String ISSUE_RESOLUTION_DATE = "resolutionDate";
+
+    @EntityDeclaration
+    public static final String PATCH = "JiraPatch";
+    @PropertyDeclaration(parent = PATCH)
+    public static final String PATCH_ISSUE_ID = "issueId";
+    @PropertyDeclaration(parent = PATCH)
+    public static final String PATCH_ID = "id";
+    @PropertyDeclaration(parent = PATCH)
+    public static final String PATCH_NAME = "name";
+    @PropertyDeclaration(parent = PATCH)
+    public static final String PATCH_CONTENT = "content";
+    @PropertyDeclaration(parent = PATCH)
+    public static final String PATCH_CREATOR_NAME = "creatorName";
+    @PropertyDeclaration(parent = PATCH)
+    public static final String PATCH_CREATED_DATE = "createdDate";
+
+    @EntityDeclaration
+    public static final String ISSUECOMMENT = "JiraIssueComment";
+    @PropertyDeclaration(parent = ISSUECOMMENT)
+    public static final String ISSUECOMMENT_ID = "id";
+    @PropertyDeclaration(parent = ISSUECOMMENT)
+    public static final String ISSUECOMMENT_BODY = "body";
+    @PropertyDeclaration(parent = ISSUECOMMENT)
+    public static final String ISSUECOMMENT_CREATOR_NAME = "creatorName";
+    @PropertyDeclaration(parent = ISSUECOMMENT)
+    public static final String ISSUECOMMENT_UPDATER_NAME = "updaterName";
+    @PropertyDeclaration(parent = ISSUECOMMENT)
+    public static final String ISSUECOMMENT_CREATED_DATE = "createdDate";
+    @PropertyDeclaration(parent = ISSUECOMMENT)
+    public static final String ISSUECOMMENT_UPDATED_DATE = "updatedDate";
+
+    @EntityDeclaration
+    public static final String ISSUEUSER = "JiraIssueUser";
+    @PropertyDeclaration(parent = ISSUEUSER)
+    public static final String ISSUEUSER_NAME = "name";
+    @PropertyDeclaration(parent = ISSUEUSER)
+    public static final String ISSUEUSER_EMAIL_ADDRESS = "emailAddress";
+    @PropertyDeclaration(parent = ISSUEUSER)
+    public static final String ISSUEUSER_DISPLAY_NAME = "displayName";
+    @PropertyDeclaration(parent = ISSUEUSER)
+    public static final String ISSUEUSER_ACTIVE = "active";
+
+    @RelationshipDeclaration
+    public static final String HAVE_PATCH = "jira_have_patch";
+    @RelationshipDeclaration
+    public static final String HAVE_ISSUE_COMMENT = "jira_have_issue_comment";
+    @RelationshipDeclaration
+    public static final String ISSUE_DUPLICATE = "jira_issue_duplicate";
+    @RelationshipDeclaration
+    public static final String IS_ASSIGNEE_OF_ISSUE = "jira_is_assignee_of_issue";
+    @RelationshipDeclaration
+    public static final String IS_CREATOR_OF_ISSUE = "jira_is_creator_of_issue";
+    @RelationshipDeclaration
+    public static final String IS_REPORTER_OF_ISSUE = "jira_is_reporter_of_issue";
+    @RelationshipDeclaration
+    public static final String IS_CREATOR_OF_ISSUECOMMENT = "jira_is_creator_of_issueComment";
+    @RelationshipDeclaration
+    public static final String IS_UPDATER_OF_ISSUECOMMENT = "jira_is_updater_of_issueComment";
+    @RelationshipDeclaration
+    public static final String IS_CREATOR_OF_PATCH = "jira_is_creator_of_patch";
 
     GraphDatabaseService db = null;
 
     String issueFolderPath = null;
 
-    private Map<String, Node> userNodeMap = new HashMap<String, Node>();
-    private List<String> duplicateList = new ArrayList<String>();// "a b"代表a指向b
+    private Map<String, Node> userNodeMap = new HashMap<>();
+    private List<String> duplicateList = new ArrayList<>();// "a b"代表a指向b
     private Map<String, Node> issueNodeMap = new HashMap<String, Node>();
     private Map<String, Node> patchNodeMap = new HashMap<String, Node>();
 
@@ -39,7 +142,7 @@ public class JiraParser implements IssueTrackerParser {
     }
 
     @Override
-    public void parse(GraphDatabaseService db) {
+    public void run(GraphDatabaseService db) {
         this.db = db;
         File issuesFolder = new File(issueFolderPath);
 
@@ -66,7 +169,7 @@ public class JiraParser implements IssueTrackerParser {
                             if (patchNodeMap.containsKey(patchId))
                                 try {
                                     try (Transaction tx = db.beginTx()) {
-                                        patchNodeMap.get(patchId).setProperty(IssueTrackerKnowledgeExtractor.PATCH_CONTENT, FileUtils.readFileToString(patchFile));
+                                        patchNodeMap.get(patchId).setProperty(JiraKnowledgeExtractor.PATCH_CONTENT, FileUtils.readFileToString(patchFile));
                                         tx.success();
                                     }
                                 } catch (IOException e) {
@@ -87,7 +190,7 @@ public class JiraParser implements IssueTrackerParser {
                 String id1 = eles[0];
                 String id2 = eles[1];
                 if (issueNodeMap.containsKey(id1) && issueNodeMap.containsKey(id2))
-                    issueNodeMap.get(id1).createRelationshipTo(issueNodeMap.get(id2), RelationshipType.withName(IssueTrackerKnowledgeExtractor.ISSUE_DUPLICATE));
+                    issueNodeMap.get(id1).createRelationshipTo(issueNodeMap.get(id2), RelationshipType.withName(JiraKnowledgeExtractor.ISSUE_DUPLICATE));
             }
             tx.success();
         }
@@ -111,7 +214,7 @@ public class JiraParser implements IssueTrackerParser {
         IssueInfo issueInfo = getIssueInfo(jsonContent);
         Node node = db.createNode();
         issueNodeMap.put(issueInfo.getIssueId(), node);
-        IssueTrackerUtils.createIssueNode(issueInfo, node);
+        JiraUtils.createIssueNode(issueInfo, node);
 
         // 建立用户实体
         JSONObject fields = new JSONObject(jsonContent).getJSONObject("fields");
@@ -120,16 +223,16 @@ public class JiraParser implements IssueTrackerParser {
         Pair<String, Node> reporter = createUserNode(fields, "reporter");
         // 建立用户实体与Issue实体之间的关联
         if (assignee != null) {
-            node.setProperty(IssueTrackerKnowledgeExtractor.ISSUE_ASSIGNEE_NAME, assignee.getLeft());
-            assignee.getRight().createRelationshipTo(node, RelationshipType.withName(IssueTrackerKnowledgeExtractor.IS_ASSIGNEE_OF_ISSUE));
+            node.setProperty(JiraKnowledgeExtractor.ISSUE_ASSIGNEE_NAME, assignee.getLeft());
+            assignee.getRight().createRelationshipTo(node, RelationshipType.withName(JiraKnowledgeExtractor.IS_ASSIGNEE_OF_ISSUE));
         }
         if (creator != null) {
-            node.setProperty(IssueTrackerKnowledgeExtractor.ISSUE_CREATOR_NAME, creator.getLeft());
-            creator.getRight().createRelationshipTo(node, RelationshipType.withName(IssueTrackerKnowledgeExtractor.IS_CREATOR_OF_ISSUE));
+            node.setProperty(JiraKnowledgeExtractor.ISSUE_CREATOR_NAME, creator.getLeft());
+            creator.getRight().createRelationshipTo(node, RelationshipType.withName(JiraKnowledgeExtractor.IS_CREATOR_OF_ISSUE));
         }
         if (reporter != null) {
-            node.setProperty(IssueTrackerKnowledgeExtractor.ISSUE_REPORTER_NAME, reporter.getLeft());
-            reporter.getRight().createRelationshipTo(node, RelationshipType.withName(IssueTrackerKnowledgeExtractor.IS_REPORTER_OF_ISSUE));
+            node.setProperty(JiraKnowledgeExtractor.ISSUE_REPORTER_NAME, reporter.getLeft());
+            reporter.getRight().createRelationshipTo(node, RelationshipType.withName(JiraKnowledgeExtractor.IS_REPORTER_OF_ISSUE));
         }
 
         // 记录DUPLICATE关系
@@ -161,13 +264,13 @@ public class JiraParser implements IssueTrackerParser {
                         continue;
                     IssueCommentInfo comment = new IssueCommentInfo(id, body, author.getLeft(), updateAuthor.getLeft(), createdDate, updatedDate);
                     Node commentNode = db.createNode();
-                    IssueTrackerUtils.createIssueCommentNode(comment, commentNode);
-                    node.createRelationshipTo(commentNode, RelationshipType.withName(IssueTrackerKnowledgeExtractor.HAVE_ISSUE_COMMENT));
-                    commentNode.setProperty(IssueTrackerKnowledgeExtractor.ISSUECOMMENT_CREATOR_NAME, author.getLeft());
-                    author.getRight().createRelationshipTo(commentNode, RelationshipType.withName(IssueTrackerKnowledgeExtractor.IS_CREATOR_OF_ISSUECOMMENT));
+                    JiraUtils.createIssueCommentNode(comment, commentNode);
+                    node.createRelationshipTo(commentNode, RelationshipType.withName(JiraKnowledgeExtractor.HAVE_ISSUE_COMMENT));
+                    commentNode.setProperty(JiraKnowledgeExtractor.ISSUECOMMENT_CREATOR_NAME, author.getLeft());
+                    author.getRight().createRelationshipTo(commentNode, RelationshipType.withName(JiraKnowledgeExtractor.IS_CREATOR_OF_ISSUECOMMENT));
                     if (updateAuthor != null) {
-                        commentNode.setProperty(IssueTrackerKnowledgeExtractor.ISSUECOMMENT_UPDATER_NAME, updateAuthor.getLeft());
-                        updateAuthor.getRight().createRelationshipTo(commentNode, RelationshipType.withName(IssueTrackerKnowledgeExtractor.IS_UPDATER_OF_ISSUECOMMENT));
+                        commentNode.setProperty(JiraKnowledgeExtractor.ISSUECOMMENT_UPDATER_NAME, updateAuthor.getLeft());
+                        updateAuthor.getRight().createRelationshipTo(commentNode, RelationshipType.withName(JiraKnowledgeExtractor.IS_UPDATER_OF_ISSUECOMMENT));
                     }
                 }
             }
@@ -204,11 +307,11 @@ public class JiraParser implements IssueTrackerParser {
                         PatchInfo patchInfo = new PatchInfo(to, patchName, "", createdDate);
                         Node patchNode = db.createNode();
                         patchNodeMap.put(to, patchNode);
-                        IssueTrackerUtils.createPatchNode(patchInfo, patchNode);
-                        node.createRelationshipTo(patchNode, RelationshipType.withName(IssueTrackerKnowledgeExtractor.HAVE_PATCH));
+                        JiraUtils.createPatchNode(patchInfo, patchNode);
+                        node.createRelationshipTo(patchNode, RelationshipType.withName(JiraKnowledgeExtractor.HAVE_PATCH));
                         if (author != null) {
-                            patchNode.setProperty(IssueTrackerKnowledgeExtractor.PATCH_CREATOR_NAME, author.getLeft());
-                            author.getRight().createRelationshipTo(patchNode, RelationshipType.withName(IssueTrackerKnowledgeExtractor.IS_CREATOR_OF_PATCH));
+                            patchNode.setProperty(JiraKnowledgeExtractor.PATCH_CREATOR_NAME, author.getLeft());
+                            author.getRight().createRelationshipTo(patchNode, RelationshipType.withName(JiraKnowledgeExtractor.IS_CREATOR_OF_PATCH));
                         }
                     }
                 }
@@ -340,7 +443,7 @@ public class JiraParser implements IssueTrackerParser {
         if (userNodeMap.containsKey(name))
             return new ImmutablePair<String, Node>(name, userNodeMap.get(name));
         Node node = db.createNode();
-        IssueTrackerUtils.createIssueUserNode(user, node);
+        JiraUtils.createIssueUserNode(user, node);
         userNodeMap.put(name, node);
         return new ImmutablePair<String, Node>(name, userNodeMap.get(name));
     }

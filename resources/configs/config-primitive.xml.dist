@@ -20,9 +20,9 @@
     <bean id="sograph" class="extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor">
         <property name="folderPath" value="E:/SnowGraphData/lucene/stackoverflow" />
     </bean>
-    <bean id="issuegraph" class="extractors.parsers.issuetracker.IssueTrackerKnowledgeExtractor">
+    <bean id="issuegraph" class="extractors.parsers.jira.JiraKnowledgeExtractor">
 		<property name="parser">
-			<bean id="jiraParser" class="extractors.parsers.issuetracker.JiraParser">
+			<bean id="jiraParser" class="extractors.parsers.jira.JiraKnowledgeExtractor">
 				<property name="issueFolderPath" value="E:/SnowGraphData/lucene/jira" />
 			</bean>
 		</property>

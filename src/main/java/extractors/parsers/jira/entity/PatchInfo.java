@@ -1,4 +1,4 @@
-package extractors.parsers.issuetracker.entity;
+package extractors.parsers.jira.entity;
 
 import java.util.UUID;
 

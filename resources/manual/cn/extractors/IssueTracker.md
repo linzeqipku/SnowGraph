@@ -1,10 +1,10 @@
-缺陷追踪系统解析插件：extractors.parsers.issuetracker.IssueTrackerKnowledgeExtractor
+缺陷追踪系统解析插件：extractors.parsers.jira.JiraKnowledgeExtractor
 
 插件配置
 ----------------------------------
-    <bean id="xxxx" class="extractors.parsers.issuetracker.IssueTrackerKnowledgeExtractor">
+    <bean id="xxxx" class="extractors.parsers.jira.JiraKnowledgeExtractor">
         <property name="parser">
-            <bean id="jiraParser" class="extractors.parsers.issuetracker.JiraParser">
+            <bean id="jiraParser" class="extractors.parsers.jira.JiraKnowledgeExtractor">
                 <property name="issueFolderPath" value="E:/data/.../jira" />
             </bean>
         </property>
@@ -13,7 +13,7 @@
 插件可注入的参数包括：
 - parser: 一个对象，这个对象的类实现了extractors.parsers.issuetracker.IssueTrackerParser接口。不同的类用于解析不同格式的缺陷追踪系统（如jira与BugZilla）。
 
-目前，缺陷追踪系统解析插件仅支持对存放在本地文件夹中的jira数据文件进行解析，对应的parser类为pfr.extractors.parsers.issuetracker.JiraParser。该类有一个可注入的参数：issueFolderPath，用于指定jira数据文件存放的根目录。
+目前，缺陷追踪系统解析插件仅支持对存放在本地文件夹中的jira数据文件进行解析，对应的parser类为pfr.extractors.parsers.jira.JiraKnowledgeExtractor。该类有一个可注入的参数：issueFolderPath，用于指定jira数据文件存放的根目录。
 
 对于jira数据文件而言，其组织结构应为：
 - 根目录下应包含多个文件夹，每个文件夹对应一个缺陷报告，文件夹名不影响解析结果；

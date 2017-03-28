@@ -21,11 +21,7 @@
         <property name="folderPath" value="E:/SnowGraphData/lucene/stackoverflow" />
     </bean>
     <bean id="issuegraph" class="extractors.parsers.jira.JiraKnowledgeExtractor">
-		<property name="parser">
-			<bean id="jiraParser" class="extractors.parsers.jira.JiraKnowledgeExtractor">
-				<property name="issueFolderPath" value="E:/SnowGraphData/lucene/jira" />
-			</bean>
-		</property>
+		<property name="issueFolderPath" value="E:/SnowGraphData/lucene/jira" />
 	</bean>
 	<bean id="mailgraph" class="extractors.parsers.mail.MailListKnowledgeExtractor">
 		<property name="mboxPath" value="E:/SnowGraphData/lucene/mbox" />

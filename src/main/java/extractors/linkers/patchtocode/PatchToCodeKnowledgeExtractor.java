@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import extractors.parsers.issuetracker.IssueTrackerKnowledgeExtractor;
+import extractors.parsers.jira.JiraKnowledgeExtractor;
 import extractors.parsers.javacode.JavaCodeKnowledgeExtractor;
 import framework.KnowledgeExtractor;
 import framework.annotations.RelationshipDeclaration;
@@ -31,19 +31,16 @@ public class PatchToCodeKnowledgeExtractor implements KnowledgeExtractor {
 
     public void getPatchAndCodeNode(){
         try (Transaction tx = db.beginTx()){
-            ResourceIterator<Node> nodeIter = db.getAllNodes().iterator();
-            while (nodeIter.hasNext()){
-                Node node = nodeIter.next();
+            for (Node node : db.getAllNodes()) {
                 if (!node.getLabels().iterator().hasNext())
                     continue;
-                if (node.hasLabel(Label.label(IssueTrackerKnowledgeExtractor.PATCH))){
-                    String content = (String)node.getProperty(IssueTrackerKnowledgeExtractor.PATCH_CONTENT);
+                if (node.hasLabel(Label.label(JiraKnowledgeExtractor.PATCH))) {
+                    String content = (String) node.getProperty(JiraKnowledgeExtractor.PATCH_CONTENT);
                     if (content != null) {
                         patchMap.put(content, node);
                     }
-                }
-                else if(node.hasLabel(Label.label(JavaCodeKnowledgeExtractor.CLASS))){
-                    String name = (String)node.getProperty(JavaCodeKnowledgeExtractor.CLASS_NAME);
+                } else if (node.hasLabel(Label.label(JavaCodeKnowledgeExtractor.CLASS))) {
+                    String name = (String) node.getProperty(JavaCodeKnowledgeExtractor.CLASS_NAME);
                     nameForClassMap.put(name, node);
                 }
             }

@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean id="graph" class="framework.KnowledgeGraphBuilder">
+    <bean id="graph" class="KnowledgeGraphBuilder">
         <property name="graphPath" value="E:/SnowGraphData/lucene/graphdb-primitive"/>
         <property name="extractors">
             <list>
@@ -14,16 +14,16 @@
             </list>
         </property>
     </bean>
-    <bean id="codegraph" class="extractors.parsers.javacode.JavaCodeKnowledgeExtractor">
+    <bean id="codegraph" class="graphdb.extractors.parsers.jira.JavaCodeExtractor">
         <property name="srcPath" value="E:/SnowGraphData/lucene/sourcecode" />
     </bean>
-    <bean id="sograph" class="extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor">
+    <bean id="sograph" class="graphdb.extractors.parsers.jira.StackOverflowExtractor">
         <property name="folderPath" value="E:/SnowGraphData/lucene/stackoverflow" />
     </bean>
-    <bean id="issuegraph" class="extractors.parsers.jira.JiraKnowledgeExtractor">
+    <bean id="issuegraph" class="graphdb.extractors.parsers.jira.JiraExtractor">
 		<property name="issueFolderPath" value="E:/SnowGraphData/lucene/jira" />
 	</bean>
-	<bean id="mailgraph" class="extractors.parsers.mail.MailListKnowledgeExtractor">
+	<bean id="mailgraph" class="graphdb.extractors.parsers.jira.MailListExtractor">
 		<property name="mboxPath" value="E:/SnowGraphData/lucene/mbox" />
 	</bean>
 </beans>

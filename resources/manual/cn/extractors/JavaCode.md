@@ -1,11 +1,11 @@
-Java源代码解析插件：extractors.parsers.javacode.JavaCodeKnowledgeExtractor
+Java源代码解析插件：JavaCodeKnowledgeExtractor
 
 插件配置
 ------------------------
 
 插件配置示例：
 
-    <bean id="xxxx" class="extractors.parsers.javacode.JavaCodeKnowledgeExtractor">
+    <bean id="xxxx" class="JavaCodeKnowledgeExtractor">
         <property name="srcPath" value="E:/data/.../src" />
     </bean>
 

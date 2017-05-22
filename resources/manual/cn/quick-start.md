@@ -31,7 +31,7 @@
 config-copy.xml则示例了在开发过程中如何避免因为做重复的解析而耗费大量的运行时间：
 
 <beans>
-    <bean id="graph" class="framework.KnowledgeGraphBuilder">
+    <bean id="graph" class="KnowledgeGraphBuilder">
         <property name="graphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-copy"/>
 		    <property name="baseGraphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-primitive"/>
     </bean>

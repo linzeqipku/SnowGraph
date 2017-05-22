@@ -1,16 +1,16 @@
-代码元素引用关联插件：extractors.linkers.codeindoc.CodeInDocKnowledgeExtractor
+代码元素引用关联插件：CodeInDocKnowledgeExtractor
 
 插件配置
 -----------------------------------------------------
 插件配置示例：
 
-    <bean id="xxxxx" class="extractors.linkers.codeindoc.CodeInDocKnowledgeExtractor">
+    <bean id="xxxxx" class="CodeInDocKnowledgeExtractor">
         <property name="focusSet">
             <set>
-                <value>extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor.QUESTION_BODY</value>
-                <value>extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor.QUESTION_TITLE</value>
-                <value>extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor.ANSWER_BODY</value>
-                <value>extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor.COMMENT_TEXT</value>
+                <value>StackOverflowKnowledgeExtractor.QUESTION_BODY</value>
+                <value>StackOverflowKnowledgeExtractor.QUESTION_TITLE</value>
+                <value>StackOverflowKnowledgeExtractor.ANSWER_BODY</value>
+                <value>StackOverflowKnowledgeExtractor.COMMENT_TEXT</value>
                 <value>....</value>
             </set>
         </property>

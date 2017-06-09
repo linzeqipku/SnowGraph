@@ -58,7 +58,6 @@ public class JavaASTVisitor extends ASTVisitor {
     public JavaASTVisitor(ElementInfoPool elementInfoPool, String sourceContent) {
         this.elementInfoPool = elementInfoPool;
         this.sourceContent = sourceContent;
-        NameResolver.setSrcDir(elementInfoPool.srcDir);
     }
 
     @Override

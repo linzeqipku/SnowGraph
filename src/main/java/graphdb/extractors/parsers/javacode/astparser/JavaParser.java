@@ -31,6 +31,7 @@ public class JavaParser {
         }
         String[] srcPaths = new String[srcPathSet.size()];
         srcPathSet.toArray(srcPaths);
+        NameResolver.setSrcPathSet(srcPathSet);
         String[] srcFolderPaths = new String[srcFolderSet.size()];
         srcFolderSet.toArray(srcFolderPaths);
 

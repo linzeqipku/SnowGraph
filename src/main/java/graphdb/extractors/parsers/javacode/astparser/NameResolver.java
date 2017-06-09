@@ -1,6 +1,7 @@
 package graphdb.extractors.parsers.javacode.astparser;
 
 import java.io.File;
+import java.util.Set;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -19,16 +20,7 @@ import org.eclipse.jdt.core.dom.ImportDeclaration;
  */
 public class NameResolver {
 
-    public static String getSrcDir() {
-        return srcDir;
-    }
-
-    public static void setSrcDir(String srcDir) {
-        NameResolver.srcDir = srcDir;
-    }
-
-
-    private static String srcDir = "";
+    private static Set<String> srcPathSet=null;
 
     /**
      * Evaluates fully qualified name of the TypeDeclaration object.
@@ -102,7 +94,16 @@ public class NameResolver {
     }
 
 
-    private static class PckgImprtVisitor extends ASTVisitor {
+    public static Set<String> getSrcPathSet() {
+		return srcPathSet;
+	}
+
+	public static void setSrcPathSet(Set<String> srcPathSet) {
+		NameResolver.srcPathSet = srcPathSet;
+	}
+
+
+	private static class PckgImprtVisitor extends ASTVisitor {
         private boolean found = false;
         private String fullName;
         private String name;
@@ -115,15 +116,16 @@ public class NameResolver {
         }
 
         private void checkInDir(String dirName) {
-            File path = getPath(dirName);
-            String fileName = nameParts[0] + ".java";
-            File f = new File(path, fileName);
-            if (path.isDirectory() && f.isFile()) {
-                fullName = dirName;
-                for (String namePart : nameParts) {
-                    fullName += "." + namePart;
-                }
-                found = true;
+            String name=dirName+"."+nameParts[0] + ".java";
+            for (String fileName:srcPathSet){
+            	fileName=fileName.replace("\\", ".").replace("/", ".");
+            	if (fileName.contains(name)){
+            		fullName = dirName;
+                    for (String namePart : nameParts) {
+                        fullName += "." + namePart;
+                    }
+                    found = true;
+            	}
             }
         }
 
@@ -156,22 +158,6 @@ public class NameResolver {
 
         public String getFullName() {
             return fullName;
-        }
-
-        public File getPath(String name) {
-            String[] parts = name.split("\\.");
-            File path = new File(srcDir);
-            for (String part : parts) {
-                if (part.equals("")) {
-                    break;
-                } else if (Character.isUpperCase(part.charAt(0))) {
-                    path = new File(path, part + ".java");
-                    break;
-                } else {
-                    path = new File(path, part);
-                }
-            }
-            return path;
         }
 
     }

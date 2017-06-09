@@ -217,8 +217,6 @@ public class JavaCodeExtractor implements Extractor {
         // extend
         try (Transaction tx = db.beginTx()) {
             for (Pair<ClassInfo, Node> classSchema : classDecMap.values()) {
-            	if (classSchema.getLeft().name.equals("FSDirectory"))
-            		System.out.println(classSchema.getLeft().superClassType);
                 Pair<ClassInfo, Node> superClass = classDecMap.get(classSchema.getLeft().superClassType);
                 if (superClass != null)
                     classSchema.getRight().createRelationshipTo(superClass.getRight(), RelationshipType.withName(EXTEND));

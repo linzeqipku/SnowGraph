@@ -1,4 +1,4 @@
-package graphdb.extractors.miners.codesnippet.stackoverflow;
+package graphdb.extractors.utils;
 
 import com.google.common.collect.Lists;
 import org.eclipse.jdt.core.JavaCore;
@@ -41,12 +41,13 @@ public class ParseUtil {
 			.collect(Collectors.toList());
 	}
 
-	private static ASTNode parse(String code, int kind) {
+	public static ASTNode parse(String code, int kind) {
 		Hashtable options = JavaCore.getOptions();
 		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
 		parser.setCompilerOptions(options);
 		parser.setSource(code.toCharArray());
 		parser.setKind(kind);
+		parser.setResolveBindings(true);
 		final ASTNode node = parser.createAST(null);
 		return node;
 	}

@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>RELEASE</version>
+			<version>22.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>
@@ -91,6 +91,13 @@
 			<groupId>fr.opensagres.xdocreport</groupId>
 			<artifactId>org.apache.poi.xwpf.converter.xhtml</artifactId>
 			<version>1.0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>parsemis</groupId>
+			<artifactId>de.parsemis</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/parsemis.jar</systemPath>
 		</dependency>
 	</dependencies>
 </project>

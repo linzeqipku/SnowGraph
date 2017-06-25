@@ -1,5 +1,7 @@
 package graphdb.extractors.parsers.javacode;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +9,8 @@ import java.util.Set;
 
 import graphdb.extractors.parsers.javacode.astparser.JavaParser;
 import graphdb.extractors.parsers.javacode.entity.InterfaceInfo;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -14,6 +18,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import graphdb.framework.Extractor;
 import graphdb.framework.annotations.EntityDeclaration;
@@ -140,6 +145,19 @@ public class JavaCodeExtractor implements Extractor {
 
     String srcPath = "";
     GraphDatabaseService db = null;
+    
+    public static void main(String[] args){
+    	try {
+			FileUtils.deleteDirectory(new File("E:\\test\\graph"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(new File("E:\\test\\graph"));
+    	JavaCodeExtractor p=new JavaCodeExtractor();
+    	p.setSrcPath("E:\\SnowGraphData\\lucene\\sourcecode");
+    	p.run(db);
+    }
 
     public void setSrcPath(String srcPath) {
         this.srcPath = srcPath;

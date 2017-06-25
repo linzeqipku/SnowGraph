@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean id="graph" class="KnowledgeGraphBuilder">
+    <bean id="graph" class="graphdb.framework.GraphBuilder">
         <property name="graphPath" value="E:/SnowGraphData/lucene/graphdb-primitive"/>
         <property name="extractors">
             <list>

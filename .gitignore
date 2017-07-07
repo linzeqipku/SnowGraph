@@ -15,3 +15,4 @@ log/
 resources/configs/*.xml
 out/
 mywork/
+bin/

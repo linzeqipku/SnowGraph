@@ -1,14 +1,14 @@
 package statistics;
 
-import framework.KnowledgeExtractor;
-import framework.KnowledgeGraphBuilder;
+import graphdb.framework.Extractor;
+import graphdb.framework.GraphBuilder;
 import org.neo4j.graphdb.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.util.*;
 
-public class Runner implements KnowledgeExtractor {
+public class Runner implements Extractor {
 
     GraphDatabaseService db = null;
 
@@ -78,7 +78,7 @@ public class Runner implements KnowledgeExtractor {
     public static void run(String configPath) {
         @SuppressWarnings("resource")
         ApplicationContext context = new FileSystemXmlApplicationContext(configPath);
-        KnowledgeGraphBuilder graphBuilder = (KnowledgeGraphBuilder) context.getBean("graph");
+        GraphBuilder graphBuilder = (GraphBuilder) context.getBean("graph");
         graphBuilder.buildGraph();
     }
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="graph" class="graphdb.framework.GraphBuilder">
+        <property name="graphPath" value="E:/SnowGraphData/lucene/graphdb-quickstart"/>
+        <property name="extractors">
+            <list>
+                <ref bean="codegraph" />
+                <ref bean="sograph" />
+                <ref bean="linker" />
+            </list>
+        </property>
+    </bean>
+    <bean id="codegraph" class="graphdb.extractors.parsers.jira.JavaCodeExtractor">
+        <property name="srcPath" value="E:/SnowGraphData/lucene/sourcecode" />
+    </bean>
+    <bean id="sograph" class="graphdb.extractors.parsers.jira.StackOverflowExtractor">
+        <property name="folderPath" value="E:/SnowGraphData/lucene/stackoverflow" />
+    </bean>
+	<bean id="linker" class="graphdb.extractors.linkers.codeindoc.CodeInDocExtractor">
+        <property name="focusSet" >
+			<set>
+				<value>graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor.QUESTION_TITLE</value>
+				<value>graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor.QUESTION_BODY</value>
+				<value>graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor.ANSWER_BODY</value>
+			</set>
+		</property>
+    </bean>
+</beans>

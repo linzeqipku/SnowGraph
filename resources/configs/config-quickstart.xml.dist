@@ -13,10 +13,10 @@
             </list>
         </property>
     </bean>
-    <bean id="codegraph" class="graphdb.extractors.parsers.jira.JavaCodeExtractor">
+    <bean id="codegraph" class="graphdb.extractors.parsers.javacode.JavaCodeExtractor">
         <property name="srcPath" value="E:/SnowGraphData/lucene/sourcecode" />
     </bean>
-    <bean id="sograph" class="graphdb.extractors.parsers.jira.StackOverflowExtractor">
+    <bean id="sograph" class="graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor">
         <property name="folderPath" value="E:/SnowGraphData/lucene/stackoverflow" />
     </bean>
 	<bean id="linker" class="graphdb.extractors.linkers.codeindoc.CodeInDocExtractor">

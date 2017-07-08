@@ -1,10 +1,10 @@
-代码元素引用关联插件：CodeInDocKnowledgeExtractor
+代码元素引用关联插件：graphdb.extractors.linkers.codeindoc.CodeInDocKnowledgeExtractor
 
 插件配置
 -----------------------------------------------------
 插件配置示例：
 
-    <bean id="xxxxx" class="CodeInDocKnowledgeExtractor">
+    <bean id="xxxxx" class="graphdb.extractors.linkers.codeindoc.CodeInDocKnowledgeExtractor">
         <property name="focusSet">
             <set>
                 <value>StackOverflowKnowledgeExtractor.QUESTION_BODY</value>

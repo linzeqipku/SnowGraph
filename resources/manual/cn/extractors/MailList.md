@@ -1,11 +1,11 @@
-邮件列表解析插件：MailListKnowledgeExtractor
+邮件列表解析插件：graphdb.extractors.parsers.mail.MailListKnowledgeExtractor
 
 插件配置
 ------------------
 
 插件配置示例：
 
-    <bean id="xxxx" class="MailListKnowledgeExtractor">
+    <bean id="xxxx" class="graphdb.extractors.parsers.mail.MailListKnowledgeExtractor">
         <property name="mboxPath" value="E:/data/.../mbox" />
     </bean>
 

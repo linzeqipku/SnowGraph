@@ -15,6 +15,11 @@
 --------------------------------
 示例配置文件为：resources/configs/config-quickstart.xml.dist
 
+该配置文件描述了应该如何生成一个知识图谱：
+- 解析源代码中的实体和关联
+- 解析StackOverflow数据中的实体和关联
+- 解析StackOverflow数据中的自然语言文本是否提到了代码元素，并建立相应的关联
+
 将该文件复制到项目外的任意位置，并对复制的文件进行修改，在其中定义好如下参数：
 - 生成知识图谱的目标位置（原配置文件夹中的"C:/Users/Lin/Desktop/testdata/graphdb-primitive"处）
 - 源代码存放在哪个文件夹中（原配置文件夹中的"C:/Users/Lin/Desktop/testdata/sourcecode"处）

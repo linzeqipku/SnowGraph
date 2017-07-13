@@ -3,6 +3,8 @@ package graphdb.extractors.parsers.javacode;
 import graphdb.extractors.parsers.javacode.entity.ClassInfo;
 import graphdb.extractors.parsers.javacode.entity.InterfaceInfo;
 import graphdb.extractors.parsers.javacode.entity.MethodInfo;
+import scala.annotation.meta.field;
+
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 
@@ -21,6 +23,7 @@ public class JavaCodeUtils {
         node.setProperty(JavaCodeExtractor.CLASS_ACCESS, classInfo.visibility);
         node.setProperty(JavaCodeExtractor.CLASS_COMMENT, classInfo.comment);
         node.setProperty(JavaCodeExtractor.CLASS_CONTENT, classInfo.content);
+        node.setProperty(JavaCodeExtractor.SIGNATURE, classInfo.fullName);
     }
 
     public static void createInterfaceNode(InterfaceInfo interfaceInfo, Node node) {
@@ -31,6 +34,7 @@ public class JavaCodeUtils {
         node.setProperty(JavaCodeExtractor.INTERFACE_ACCESS, interfaceInfo.visibility);
         node.setProperty(JavaCodeExtractor.INTERFACE_COMMENT, interfaceInfo.comment);
         node.setProperty(JavaCodeExtractor.INTERFACE_CONTENT, interfaceInfo.content);
+        node.setProperty(JavaCodeExtractor.SIGNATURE, interfaceInfo.fullName);
     }
 
     public static void createMethodNode(MethodInfo methodInfo, Node node) {
@@ -48,6 +52,7 @@ public class JavaCodeUtils {
         node.setProperty(JavaCodeExtractor.METHOD_BELONGTO, methodInfo.belongTo);
         node.setProperty(JavaCodeExtractor.METHOD_PARAMS, methodInfo.paramString);
         node.setProperty(JavaCodeExtractor.METHOD_THROWS, String.join(", ", methodInfo.throwSet));
+        node.setProperty(JavaCodeExtractor.SIGNATURE, methodInfo.belongTo+"."+methodInfo.name+"("+methodInfo.paramString+")");
     }
 
     public static void createFieldNode(FieldInfo fieldInfo, Node node) {
@@ -59,6 +64,7 @@ public class JavaCodeUtils {
         node.setProperty(JavaCodeExtractor.FIELD_IS_FINAL, fieldInfo.isFinal);
         node.setProperty(JavaCodeExtractor.FIELD_ACCESS, fieldInfo.visibility);
         node.setProperty(JavaCodeExtractor.FIELD_COMMENT, fieldInfo.comment);
+        node.setProperty(JavaCodeExtractor.SIGNATURE, fieldInfo.belongTo+"."+fieldInfo.name);
     }
 
 }

@@ -1,25 +1,34 @@
 package graphdb.extractors.miners.codesnippet;
 
+import de.parsemis.graph.Graph;
+import graphdb.extractors.miners.codesnippet.code.cfg.ddg.DDG;
+import graphdb.extractors.miners.codesnippet.code.mining.Miner;
+import graphdb.extractors.miners.codesnippet.code.mining.MiningNode;
 import graphdb.extractors.miners.codesnippet.mail.MailBodyProcessor;
 import graphdb.extractors.miners.codesnippet.mail.Segment;
-import graphdb.extractors.utils.ParseUtil;
 import graphdb.extractors.miners.codesnippet.stackoverflow.StackOverflowParser;
 import graphdb.extractors.miners.codesnippet.stackoverflow.entity.ContentInfo;
+import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import graphdb.extractors.parsers.mail.MailListExtractor;
 import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
+import graphdb.extractors.utils.ParseUtil;
 import graphdb.framework.Extractor;
-import graphdb.framework.GraphBuilder;
 import graphdb.framework.annotations.EntityDeclaration;
 import graphdb.framework.annotations.PropertyDeclaration;
 import graphdb.framework.annotations.RelationshipDeclaration;
+import org.apache.commons.lang3.tuple.Pair;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.neo4j.graphdb.*;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class CodeSnippetExtractor implements Extractor {
 
@@ -29,18 +38,47 @@ public class CodeSnippetExtractor implements Extractor {
 	public static final String CODE_SNIPPET_BODY = "body";
 	@RelationshipDeclaration
 	public static final String CONTAIN_SNIPPET = "containSnippet";
+	@RelationshipDeclaration
+	public static final String CONTAINS_API = "containsAPI";
+	@RelationshipDeclaration
+	public static final String CODE_EXAMPLE = "codeExample";
+
 	private boolean parseMail = true;
 	private boolean parseStackoverflow = true;
 
-	public static void main(String[] args) {
-		run("resources/configs/config.xml");
+	public void createContainsAPILink(GraphDatabaseService db) {
+		try (Transaction tx = db.beginTx()) {
+			ResourceIterator<Node> ite = db.findNodes(Label.label(CodeSnippetExtractor.CODE_SNIPPET));
+			while (ite.hasNext()) {
+				Node node = ite.next();
+				String code = node.getProperty(CodeSnippetExtractor.CODE_SNIPPET_BODY).toString();
+				System.out.println(code);
+				ASTNode root = ParseUtil.parse(code, ASTParser.K_STATEMENTS);
+				root.accept(new APIVisitor(node, db));
+			}
+			tx.success();
+		}
 	}
 
-	public static void run(String configPath) {
-		@SuppressWarnings("resource")
-		ApplicationContext context = new FileSystemXmlApplicationContext(configPath);
-		GraphBuilder graphBuilder = (GraphBuilder) context.getBean("graph");
-		graphBuilder.buildGraph();
+	public void createCodeExampleLink(GraphDatabaseService db) {
+		try (Transaction tx = db.beginTx()) {
+			ResourceIterator<Node> ite = db.findNodes(Label.label(JavaCodeExtractor.METHOD));
+			while (ite.hasNext()) {
+				Node node = ite.next();
+				Iterable<Relationship> edges = node.getRelationships(RelationshipType.withName(CONTAINS_API));
+				List<Pair<Node, String>> snippets = StreamSupport.stream(edges.spliterator(), false)
+					.map(r -> r.getOtherNode(node))
+					.map(n -> Pair.of(n, n.getProperty(CodeSnippetExtractor.CODE_SNIPPET_BODY).toString()))
+					.collect(Collectors.toList());
+
+				Map<Node, DDG> ddgs = new HashMap<>();
+				snippets.forEach(p -> ddgs.put(p.getLeft(), DDG.createCFG(p.getRight())));
+				List<Graph<MiningNode, Integer>> frequents = Miner.mineGraphFromDDG(ddgs.values(), Miner.createSetting(3, 3));
+				List<Node> result = Sorter.sort(ddgs, frequents);
+				result.stream().limit(5).forEach(r -> node.createRelationshipTo(r, RelationshipType.withName(CODE_EXAMPLE)));
+			}
+			tx.success();
+		}
 	}
 
 	public boolean isParseMail() {
@@ -59,9 +97,12 @@ public class CodeSnippetExtractor implements Extractor {
 		this.parseStackoverflow = parseStackoverflow;
 	}
 
+	@Override
 	public void run(GraphDatabaseService db) {
 		if (parseMail) extractFromMail(db);
 		if (parseStackoverflow) extractFromStackoverflow(db);
+		createContainsAPILink(db);
+		createCodeExampleLink(db);
 	}
 
 	public void extractFromMail(GraphDatabaseService db) {

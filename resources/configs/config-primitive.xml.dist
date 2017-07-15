@@ -14,16 +14,16 @@
             </list>
         </property>
     </bean>
-    <bean id="codegraph" class="graphdb.extractors.parsers.jira.JavaCodeExtractor">
+    <bean id="codegraph" class="graphdb.extractors.parsers.javacode.JavaCodeExtractor">
         <property name="srcPath" value="E:/SnowGraphData/lucene/sourcecode" />
     </bean>
-    <bean id="sograph" class="graphdb.extractors.parsers.jira.StackOverflowExtractor">
+    <bean id="sograph" class="graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor">
         <property name="folderPath" value="E:/SnowGraphData/lucene/stackoverflow" />
     </bean>
     <bean id="issuegraph" class="graphdb.extractors.parsers.jira.JiraExtractor">
 		<property name="issueFolderPath" value="E:/SnowGraphData/lucene/jira" />
 	</bean>
-	<bean id="mailgraph" class="graphdb.extractors.parsers.jira.MailListExtractor">
+	<bean id="mailgraph" class="graphdb.extractors.parsers.mail.MailListExtractor">
 		<property name="mboxPath" value="E:/SnowGraphData/lucene/mbox" />
 	</bean>
 </beans>

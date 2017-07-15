@@ -1,11 +1,11 @@
-StackOverflow解析插件：StackOverflowKnowledgeExtractor
+StackOverflow解析插件：graphdb.extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor
 
 插件配置
 -------------------------------
 
 插件配置示例：
 
-    <bean id="xxxx" class="StackOverflowKnowledgeExtractor">
+    <bean id="xxxx" class="graphdb.extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor">
         <property name="folderPath" value="E:/data/.../qa" />
     </bean>
 

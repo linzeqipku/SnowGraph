@@ -112,6 +112,9 @@ public class JavaCodeExtractor implements Extractor {
     public static final String FIELD_ACCESS = "access";
     @PropertyDeclaration(parent = FIELD)
     public static final String FIELD_COMMENT = "comment";
+    
+    @PropertyDeclaration
+    public static final String SIGNATURE= "signature";
 
     @RelationshipDeclaration
     public static final String EXTEND = "extend";

@@ -14,5 +14,5 @@ log/
 
 resources/configs/*.xml
 out/
-mywork/
+utils/mywork/
 bin/

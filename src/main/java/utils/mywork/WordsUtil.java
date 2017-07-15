@@ -1,4 +1,4 @@
-package extractors.utils.mywork;
+package utils.mywork;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -10,15 +10,15 @@ import java.util.*;
 
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.StringUtils;
-import extractors.parsers.javacode.JavaCodeKnowledgeExtractor;
-import extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor;
-import framework.KnowledgeExtractor;
+import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
+import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
+import graphdb.framework.Extractor;
 import org.neo4j.graphdb.*;
 
 /**
  * Created by laurence on 17-3-9.
  */
-public class WordsUtil implements KnowledgeExtractor{
+public class WordsUtil implements Extractor{
     GraphDatabaseService db = null;
     StanfordCoreNLP pipeline = null;
     Set<String> stopwords = new HashSet<>();
@@ -127,8 +127,8 @@ public class WordsUtil implements KnowledgeExtractor{
             ResourceIterator<Node> nodeIter = db.getAllNodes().iterator();
             while(nodeIter.hasNext()){
                 Node node = nodeIter.next();
-                if (node.hasLabel(Label.label(JavaCodeKnowledgeExtractor.CLASS))){
-                    String text = (String)node.getProperty(JavaCodeKnowledgeExtractor.CLASS_CONTENT);
+                if (node.hasLabel(Label.label(JavaCodeExtractor.CLASS))){
+                    String text = (String)node.getProperty(JavaCodeExtractor.CLASS_CONTENT);
                     tokenize(text, wordsInCode);
                 }
             }
@@ -153,9 +153,9 @@ public class WordsUtil implements KnowledgeExtractor{
             while(nodeIter.hasNext()) {
                 Node node = nodeIter.next();
                 String text = "";
-                if (node.hasLabel(Label.label(StackOverflowKnowledgeExtractor.QUESTION))){
-                    text = (String)node.getProperty(StackOverflowKnowledgeExtractor.QUESTION_TITLE);
-                    text += " " + node.getProperty(StackOverflowKnowledgeExtractor.QUESTION_BODY);
+                if (node.hasLabel(Label.label(StackOverflowExtractor.QUESTION))){
+                    text = (String)node.getProperty(StackOverflowExtractor.QUESTION_TITLE);
+                    text += " " + node.getProperty(StackOverflowExtractor.QUESTION_BODY);
                 }
                 if (!text.equals("")){
                    tokenize(text, wordsInStackoverflow);

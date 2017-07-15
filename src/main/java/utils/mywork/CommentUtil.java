@@ -1,9 +1,9 @@
-package extractors.utils.mywork;
+package utils.mywork;
 
-import extractors.parsers.javacode.JavaCodeKnowledgeExtractor;
-import extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor;
+import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
+import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import org.neo4j.graphdb.*;
-import framework.KnowledgeExtractor;
+import graphdb.framework.Extractor;
 
 import java.io.*;
 import java.util.*;
@@ -12,7 +12,7 @@ import java.util.*;
  * Created by laurence on 17-4-22.
  */
 
-public class CommentUtil implements KnowledgeExtractor {
+public class CommentUtil implements Extractor {
     GraphDatabaseService db = null;
     HashMap<String, String> classComment;
     HashMap<String, String> classFuncMap;
@@ -55,9 +55,9 @@ public class CommentUtil implements KnowledgeExtractor {
             ResourceIterator<Node> nodeIter = db.getAllNodes().iterator();
             while (nodeIter.hasNext()) {
                 Node node = nodeIter.next();
-                if (node.hasLabel(Label.label(JavaCodeKnowledgeExtractor.CLASS))) {
-                    String className = (String)node.getProperty(JavaCodeKnowledgeExtractor.CLASS_NAME);
-                    String text = (String) node.getProperty(JavaCodeKnowledgeExtractor.CLASS_COMMENT);
+                if (node.hasLabel(Label.label(JavaCodeExtractor.CLASS))) {
+                    String className = (String)node.getProperty(JavaCodeExtractor.CLASS_NAME);
+                    String text = (String) node.getProperty(JavaCodeExtractor.CLASS_COMMENT);
                     text = text.replaceAll("\\n|\\*", "");
                     text = text.replaceAll("<pre.*?>.+?</pre>", "");
                     if (className.equals("QueryBuilder"))
@@ -94,12 +94,12 @@ public class CommentUtil implements KnowledgeExtractor {
             while(nodeIter.hasNext()) {
                 Node node = nodeIter.next();
                 String text = "";
-                if (node.hasLabel(Label.label(StackOverflowKnowledgeExtractor.QUESTION))){
-                    text = (String)node.getProperty(StackOverflowKnowledgeExtractor.QUESTION_TITLE);
-                    text += " " + node.getProperty(StackOverflowKnowledgeExtractor.QUESTION_BODY);
+                if (node.hasLabel(Label.label(StackOverflowExtractor.QUESTION))){
+                    text = (String)node.getProperty(StackOverflowExtractor.QUESTION_TITLE);
+                    text += " " + node.getProperty(StackOverflowExtractor.QUESTION_BODY);
                 }
-                if (node.hasLabel(Label.label(StackOverflowKnowledgeExtractor.ANSWER))){
-                    text = (String)node.getProperty(StackOverflowKnowledgeExtractor.ANSWER_BODY);
+                if (node.hasLabel(Label.label(StackOverflowExtractor.ANSWER))){
+                    text = (String)node.getProperty(StackOverflowExtractor.ANSWER_BODY);
                 }
                 if (text.length() > 0){
                     text = stackFileter(text);

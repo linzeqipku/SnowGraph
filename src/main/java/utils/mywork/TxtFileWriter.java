@@ -1,10 +1,9 @@
-package extractors.utils.mywork;
+package utils.mywork;
 
-import extractors.miners.mailcode.MailCodeExtractor;
-import extractors.parsers.javacode.JavaCodeKnowledgeExtractor;
-import extractors.parsers.mail.MailListKnowledgeExtractor;
-import extractors.parsers.stackoverflow.StackOverflowKnowledgeExtractor;
-import framework.KnowledgeExtractor;
+import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
+import graphdb.extractors.parsers.mail.MailListExtractor;
+import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
+import graphdb.framework.Extractor;
 import org.neo4j.graphdb.*;
 
 import java.io.DataOutputStream;
@@ -16,7 +15,7 @@ import java.util.Map;
 /**
  * Created by laurence on 17-6-5.
  */
-public class TxtFileWriter implements KnowledgeExtractor {
+public class TxtFileWriter implements Extractor {
     GraphDatabaseService db;
     int classCount = 0;
     int mailCount = 0;
@@ -40,7 +39,7 @@ public class TxtFileWriter implements KnowledgeExtractor {
             ResourceIterator<Node> nodeIter = db.getAllNodes().iterator();
             while (nodeIter.hasNext()) {
                 Node node = nodeIter.next();
-                if (node.hasLabel(Label.label(JavaCodeKnowledgeExtractor.CLASS))) {
+                if (node.hasLabel(Label.label(JavaCodeExtractor.CLASS))) {
                     classCount ++;
                     String text = "";
                     Map<String, Object> map = node.getAllProperties();
@@ -53,10 +52,10 @@ public class TxtFileWriter implements KnowledgeExtractor {
                         System.out.println(text);
                     }
                 }
-                else if (node.hasLabel(Label.label(MailListKnowledgeExtractor.MAIL))){
+                else if (node.hasLabel(Label.label(MailListExtractor.MAIL))){
                     mailCount++;
                 }
-                else if (node.hasLabel(Label.label(StackOverflowKnowledgeExtractor.QUESTION))){
+                else if (node.hasLabel(Label.label(StackOverflowExtractor.QUESTION))){
                     stackCount++;
                 }
             }

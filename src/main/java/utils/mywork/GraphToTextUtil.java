@@ -55,13 +55,14 @@ public class GraphToTextUtil implements Extractor {
         embedding = new HashMap<>();
         Scanner scanner = null;
         try {
-            scanner = new Scanner(new FileInputStream("/home/laurence/Desktop/graph_embedding"));
+            scanner = new Scanner(new FileInputStream("/home/laurence/Desktop/graph_embedding.bak"));
         }catch (IOException e){
             e.printStackTrace();
         }
         int m = scanner.nextInt();
         int n = scanner.nextInt();
         for (int i = 0; i < m; ++i){
+        //while(scanner.hasNext()){
             int key = scanner.nextInt();
             double[] vector = new double[n];
             for (int j = 0; j < n; ++j)
@@ -103,10 +104,12 @@ public class GraphToTextUtil implements Extractor {
                 return (String)node.getProperty(JavaCodeExtractor.INTERFACE_FULLNAME);
             }
             else if (node.hasLabel(Label.label(JavaCodeExtractor.METHOD))){
-                return (String)node.getProperty(JavaCodeExtractor.METHOD_NAME);
+                String s = (String)node.getProperty(JavaCodeExtractor.METHOD_BELONGTO);
+                return s + " " + node.getProperty(JavaCodeExtractor.METHOD_NAME);
             }
             else if (node.hasLabel(Label.label(JavaCodeExtractor.FIELD))){
-                return (String)node.getProperty(JavaCodeExtractor.FIELD_NAME);
+                String s = (String)node.getProperty(JavaCodeExtractor.FIELD_BELONGTO);
+                return s + " " + node.getProperty(JavaCodeExtractor.FIELD_NAME);
             }
             tx.success();
             return null;

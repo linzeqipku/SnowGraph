@@ -9,7 +9,7 @@ import org.neo4j.graphdb.*;
  */
 public class LINEExtracter implements Extractor{
     @PropertyDeclaration
-    public static final String CODE_TRANSE_VEC = "lineVec";
+    public static final String LINE_VEC = "lineVec";
     LINE line = null;
     GraphDatabaseService db = null;
 
@@ -29,7 +29,7 @@ public class LINEExtracter implements Extractor{
                     line += x + " ";
                 line = line.trim();
                 Node node = db.getNodeById(key);
-                node.setProperty(LINEExtracter.CODE_TRANSE_VEC, line);
+                node.setProperty(LINEExtracter.LINE_VEC, line);
             }
             tx.success();
         }

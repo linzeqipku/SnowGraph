@@ -18,11 +18,13 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
+import graphdb.extractors.miners.codeembedding.line.LINEExtracter;
 import graphdb.extractors.miners.codeembedding.trans.TransExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 
 public class GraphSearcher {
 
+	static EnglishStemmer stemmer=new EnglishStemmer();
 	Map<Long, List<Double>> id2Vec = new HashMap<>();
 	Map<Long, Set<String>> id2Words = new HashMap<>();
 	Map<Long, String> id2Sig = new HashMap<>();
@@ -43,7 +45,8 @@ public class GraphSearcher {
 	public Set<Long> query(List<String> queryWordList) {
 
 		Set<String> queryWordSet = new HashSet<>();
-		queryWordSet.addAll(queryWordList);
+		for (String queryWord:queryWordList)
+			queryWordSet.add(stem(queryWord));
 
 		Map<String, Set<Long>> word2Nodes = new HashMap<>();
 		for (String queryWord : queryWordSet) {
@@ -102,9 +105,9 @@ public class GraphSearcher {
 						&&!node.hasLabel(Label.label(JavaCodeExtractor.INTERFACE))
 						&&!node.hasLabel(Label.label(JavaCodeExtractor.METHOD)))
 					continue;
-				if (!node.hasProperty(TransExtractor.CODE_TRANSE_VEC))
+				if (!node.hasProperty(LINEExtracter.LINE_VEC))
 					continue;
-				String[] eles=((String)node.getProperty(TransExtractor.CODE_TRANSE_VEC)).trim().split("\\s+");
+				String[] eles=((String)node.getProperty(LINEExtracter.LINE_VEC)).trim().split("\\s+");
 				List<Double> vec=new ArrayList<Double>();
 				for (String e:eles)
 					vec.add(Double.parseDouble(e));
@@ -120,6 +123,7 @@ public class GraphSearcher {
 					name=(String)node.getProperty(JavaCodeExtractor.METHOD_NAME);
 				for (String e:name.split("[^A-Za-z]+"))
 					for (String word:camelSplit(e)){
+						word=stem(word);
 						words.add(word);
 					}
 				id2Vec.put(id, vec);
@@ -131,17 +135,6 @@ public class GraphSearcher {
 	}
 
 	static boolean match(String word1, String word2) {
-		EnglishStemmer stemmer = new EnglishStemmer();
-		if (word1.matches("\\w+")){
-			stemmer.setCurrent(word1);
-			stemmer.stem();
-			word1=stemmer.getCurrent();
-		}
-		if (word2.matches("\\w+")){
-			stemmer.setCurrent(word2);
-			stemmer.stem();
-			word2=stemmer.getCurrent();
-		}
 		return word1.equals(word2);
 	}
 	
@@ -163,6 +156,15 @@ public class GraphSearcher {
 			r+=(id2Vec.get(node1).get(i)-id2Vec.get(node2).get(i))*(id2Vec.get(node1).get(i)-id2Vec.get(node2).get(i));
 		r=Math.sqrt(r);
 		return r;
+	}
+	
+	String stem(String word){
+		if (word.matches("\\w+")){
+			stemmer.setCurrent(word);
+			stemmer.stem();
+			word=stemmer.getCurrent();
+		}
+		return word;
 	}
 
 }

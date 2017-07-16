@@ -1,6 +1,9 @@
 package graphdb.extractors.miners.codeembedding.line;
 
 import org.neo4j.graphdb.*;
+
+import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,6 +35,8 @@ public class LINE {
             while (nodeIter.hasNext()) {
                 Node start = nodeIter.next();
                 for (Relationship relationship : start.getRelationships(Direction.OUTGOING)) {
+                	if (!JavaCodeExtractor.isJavaCodeRelationship(relationship))
+                		continue;
                     Node end = relationship.getEndNode();
                     long src = start.getId();
                     long tgt = end.getId();

@@ -1,6 +1,5 @@
 package graphdb.extractors.miners.codeembedding.line;
 
-import graphdb.extractors.miners.codeembedding.trans.TransE;
 import graphdb.framework.Extractor;
 import graphdb.framework.annotations.PropertyDeclaration;
 import org.neo4j.graphdb.*;
@@ -19,6 +18,20 @@ public class LINEExtracter implements Extractor{
         line = new LINE();
         line.readData(db);
         line.run();
-        line.writeData(db);
+        writeData();
+    }
+    public void writeData(){
+        try(Transaction tx = db.beginTx()){
+            for (long key : line.vertex.keySet()){
+                double[] embedding = line.vertex.get(key).emb_vertex;
+                String line = "";
+                for (double x : embedding)
+                    line += x + " ";
+                line = line.trim();
+                Node node = db.getNodeById(key);
+                node.setProperty(LINEExtracter.CODE_TRANSE_VEC, line);
+            }
+            tx.success();
+        }
     }
 }

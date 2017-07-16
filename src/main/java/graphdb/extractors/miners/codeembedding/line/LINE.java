@@ -1,8 +1,6 @@
 package graphdb.extractors.miners.codeembedding.line;
 
 import org.neo4j.graphdb.*;
-import org.neo4j.time.SystemNanoClock;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,10 +15,10 @@ public class LINE {
     static final int SIGMOID_BOUND = 6;
     static final double NEG_SAMPLING_POWER = 0.75;
 
-    int is_binary = 0, num_threads = 1, order = 2, dim = 200, num_negative = 5;
+    int num_threads = 1, order = 2, dim = 200, num_negative = 5;
     double init_rho = 0.025, rho;
-    int max_num_vertices = 1000, num_vertices = 0;
-    int total_samples = 100, current_sample_count = 0, num_edges = 0;
+    int  num_vertices = 0, num_edges = 0;
+    int total_samples = 100, current_sample_count = 0;
 
     List<Edge> edges = new ArrayList<>();
     Map<Long, Vertex> vertex = new HashMap<>();
@@ -121,6 +119,7 @@ public class LINE {
             neg_table[k] = vid;
         }
     }
+
     public void initSigmoidTable(){
         double x;
         sigmoid_table = new double[sigmoid_table_size + 1];
@@ -129,16 +128,19 @@ public class LINE {
             sigmoid_table[k] = 1 / (1 + Math.exp(-x));
         }
     }
+
     public double fastSigmoid(double x){
         if (x > SIGMOID_BOUND) return 1;
         else if (x < -SIGMOID_BOUND) return 0;
         int k = (int)((x + SIGMOID_BOUND) * sigmoid_table_size / SIGMOID_BOUND / 2);
         return sigmoid_table[k];
     }
+
     public long sampleAnEdge(double rand_value1, double rand_value2){
         int k = (int)(num_edges * rand_value1);
         return rand_value2 < prob[k] ? k : alias[k];
     }
+
     public void update(double[] vec_u, double[] vec_v, double[] vec_error, long label){
         double x = 0, g;
         for (int c = 0; c != dim; ++c)
@@ -149,8 +151,9 @@ public class LINE {
         for (int c = 0; c != dim; ++c)
             vec_v[c] += g * vec_u[c];
     }
+
     public void trainLINE(){
-        long u, v, lu, lv, target, label;
+        long u, v, target, label;
         long count = 0, last_count = 0;
         int curedge;
 
@@ -161,8 +164,7 @@ public class LINE {
             if (count - last_count > 10000){
                 current_sample_count += count - last_count;
                 last_count = count;
-                System.out.println("Rho: "+rho+"Progress: "+(double)current_sample_count/(double)(total_samples+1)*100+'%');
-                System.out.flush();
+                //System.out.println("Rho: "+rho+"Progress: "+(double)current_sample_count/(double)(total_samples+1)*100+'%');
                 rho = init_rho * (1 - current_sample_count / (double)(total_samples + 1));
                 if (rho < init_rho * 0.0001)
                     rho = init_rho * 0.0001;
@@ -170,7 +172,6 @@ public class LINE {
             curedge = (int)sampleAnEdge(randomGenerator.nextDouble(), randomGenerator.nextDouble());
             u = edges.get(curedge).src;
             v = edges.get(curedge).tgt;
-            lu = u * dim;
             for (int c = 0; c != dim; ++c)
                 vec_error[c] = 0;
             double[] emb = vertex.get(u).emb_vertex;
@@ -185,7 +186,6 @@ public class LINE {
                     target = neg_table[idx];
                     label = 0;
                 }
-                lv = target * dim;
                 if (order == 1)
                     update(emb, vertex.get(target).emb_vertex, vec_error, label);
                 if (order == 2)
@@ -197,20 +197,7 @@ public class LINE {
             count++;
         }
     }
-    public void writeData(GraphDatabaseService db){
-        try(Transaction tx = db.beginTx()){
-            for (long key : vertex.keySet()){
-                double[] embedding = vertex.get(key).emb_vertex;
-                String line = "";
-                for (double x : embedding)
-                    line += x + " ";
-                line = line.trim();
-                Node node = db.getNodeById(key);
-                node.setProperty(LINEExtracter.CODE_TRANSE_VEC, line);
-            }
-            tx.success();
-        }
-    }
+
     public void writeToTxt() {
         try {
             PrintWriter writer = new PrintWriter(new FileOutputStream("/home/laurence/Desktop/graph_embedding"));
@@ -241,7 +228,7 @@ public class LINE {
         trainLINE();
         long endTime = System.currentTimeMillis();
         System.out.println("Total time: " + (endTime-startTime)/1000 + "s.\n");
-        writeToTxt();
+        //writeToTxt();
     }
 
     class Edge {

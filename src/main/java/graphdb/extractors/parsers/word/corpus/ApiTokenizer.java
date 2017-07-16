@@ -2,6 +2,7 @@ package graphdb.extractors.parsers.word.corpus;
 
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import graphdb.extractors.parsers.word.utils.ApiJudge;
+import graphdb.extractors.parsers.word.utils.Config;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
@@ -15,7 +16,7 @@ import java.util.HashSet;
  * Created by maxkibble on 2017/7/9.
  */
 public class ApiTokenizer {
-    private static String graphPath = "E:\\data\\graphdb-mgr";
+    private static String graphPath = Config.getProjectGraphPath();
     private static HashSet<String> tokens = new HashSet<>();
 
     public static void main(String[] args) throws IOException {
@@ -44,7 +45,7 @@ public class ApiTokenizer {
         System.out.println("API NUM: " + apiNum);
         System.out.println("TOKEN NUM: " + tokens.size());
         StringBuilder toPrint = new StringBuilder();
-        FileOutputStream fout = new FileOutputStream(new File("E:\\data\\企业中文知识图谱\\csp-copy-all\\样例\\词汇表\\csp-mgr\\corpus_en.txt"));
+        FileOutputStream fout = new FileOutputStream(new File(Config.getProjectApiTokenPath()));
         for(String token : tokens) {
             toPrint.append(token + "\n");
         }

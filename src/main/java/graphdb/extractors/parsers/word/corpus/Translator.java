@@ -1,5 +1,6 @@
 package graphdb.extractors.parsers.word.corpus;
 
+import graphdb.extractors.parsers.word.utils.Config;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -57,7 +58,7 @@ public class Translator {
     public static void main(String[] args) throws IOException {
         List<String> lines=
                 //FileUtils.readLines(new File(Config.getApiTokensPath()));
-                FileUtils.readLines(new File("E:\\data\\企业中文知识图谱\\csp-copy-all\\样例\\词汇表\\csp-mgr\\corpus_en.txt"));
+                FileUtils.readLines(new File(Config.getProjectApiTokenPath()));
         int tot = 0, errCnt = 0;
         StringBuilder toPrint = new StringBuilder();
         for (String line : lines) {
@@ -78,7 +79,7 @@ public class Translator {
             toPrint.append("\n");
         }
 
-        FileOutputStream fout = new FileOutputStream("E:\\data\\企业中文知识图谱\\csp-copy-all\\样例\\词汇表\\csp-mgr\\corpus_trans.txt");
+        FileOutputStream fout = new FileOutputStream(Config.getProjectTranslationPath());
         fout.write(toPrint.toString().getBytes());
         System.out.println("TOTAL TOKENS: " + tot);
         System.out.println("TOKENS FAILED TO TRANSLATE: " + errCnt);

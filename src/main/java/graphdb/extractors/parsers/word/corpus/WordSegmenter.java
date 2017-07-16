@@ -1,8 +1,9 @@
-package graphdb.extractors.parsers.word.segment;
+package graphdb.extractors.parsers.word.corpus;
 
 import graphdb.extractors.parsers.word.document.DocumentParser;
 import graphdb.extractors.parsers.word.entity.utils.DocumentInfo;
 import graphdb.extractors.parsers.word.entity.word.WordDocumentInfo;
+import graphdb.extractors.parsers.word.utils.Config;
 import org.ansj.domain.Result;
 import org.ansj.splitWord.analysis.ToAnalysis;
 import org.neo4j.cypher.internal.frontend.v2_3.ast.functions.Has;
@@ -76,13 +77,13 @@ public class WordSegmenter {
     }
 
     public static void main(String[] args) throws IOException {
-        String rootPath = "E:\\data\\企业中文知识图谱\\csp-copy-all\\样例\\文档\\csp-mgr";
+        String rootPath = Config.getProjectDocumentPath();
         traverseFolder(rootPath);
         System.out.println("TOTAL CHINESE TOKENS: " + wordsCN.size());
 
         StringBuilder toPrint = new StringBuilder();
         for(String str : wordsCN) toPrint.append(str + "\n");
-        FileOutputStream fout = new FileOutputStream("E:\\data\\企业中文知识图谱\\csp-copy-all\\样例\\词汇表\\csp-mgr\\corpus_ch.txt");
+        FileOutputStream fout = new FileOutputStream(Config.getProjectChineseTokenPath());
         fout.write(toPrint.toString().getBytes());
     }
 

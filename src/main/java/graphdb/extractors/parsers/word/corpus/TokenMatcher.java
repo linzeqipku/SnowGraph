@@ -1,5 +1,6 @@
-package graphdb.extractors.parsers.word.segment;
+package graphdb.extractors.parsers.word.corpus;
 
+import graphdb.extractors.parsers.word.utils.Config;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -16,8 +17,8 @@ public class TokenMatcher {
 
     public static void init() {
         try {
-            corpusCh = FileUtils.readLines(new File("E:\\data\\企业中文知识图谱\\csp-copy-all\\样例\\词汇表\\csp-mgr\\corpus_ch.txt"));
-            corpusTrans = FileUtils.readLines(new File("E:\\data\\企业中文知识图谱\\csp-copy-all\\样例\\词汇表\\csp-mgr\\corpus_trans.txt"));
+            corpusCh = FileUtils.readLines(new File(Config.getProjectChineseTokenPath()));
+            corpusTrans = FileUtils.readLines(new File(Config.getProjectTranslationPath()));
         }
         catch (IOException e) {
             e.printStackTrace();

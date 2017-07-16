@@ -14,6 +14,7 @@ import graphdb.extractors.parsers.word.entity.table.TableInfo;
 import graphdb.extractors.parsers.word.entity.utils.*;
 import graphdb.extractors.parsers.word.entity.word.WordDocumentInfo;
 import graphdb.extractors.parsers.word.utils.ApiJudge;
+import graphdb.extractors.parsers.word.utils.Config;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -364,7 +365,7 @@ public class WordDocxParser {
     }
 
     public static void main(String args[]) {
-        File file = new File("E:\\data\\企业中文知识图谱\\csp-copy-all\\样例\\文档\\csp-msg\\设计\\市民综合服务平台V1.0-短信服务管理系统-Dubbo API定义.docx");
+        File file = new File(Config.getSampleDocumentPath());
         if(file.isFile()){
             testFile(file);
         } else if(file.isDirectory()){

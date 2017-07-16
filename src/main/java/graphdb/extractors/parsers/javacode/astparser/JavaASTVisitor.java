@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import graphdb.extractors.parsers.javacode.entity.InterfaceInfo;
+import graphdb.extractors.parsers.word.utils.ApiJudge;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
@@ -95,6 +96,7 @@ public class JavaASTVisitor extends ASTVisitor {
                 elementInfoPool.fieldInfoMap.put(fieldInfo.hashName(), fieldInfo);
         }
 
+        interfaceInfo.chineseTokens = ApiJudge.lookUpProjectDictionary(interfaceInfo.name);
         return true;
     }
 
@@ -128,6 +130,7 @@ public class JavaASTVisitor extends ASTVisitor {
                 elementInfoPool.fieldInfoMap.put(fieldInfo.hashName(), fieldInfo);
         }
 
+        classInfo.chineseTokens = ApiJudge.lookUpProjectDictionary(classInfo.name);
         return true;
     }
 
@@ -162,6 +165,7 @@ public class JavaASTVisitor extends ASTVisitor {
         MethodInfo methodInfo = new MethodInfo();
         methodInfo.methodBinding = node.resolveBinding();
         methodInfo.name = node.getName().getFullyQualifiedName();
+        methodInfo.chineseTokens = ApiJudge.lookUpProjectDictionary(methodInfo.name);
         Type returnType = node.getReturnType2();
         methodInfo.returnString = returnType == null ? "void" : returnType.toString();
         methodInfo.returnTypes = getTypes(returnType);

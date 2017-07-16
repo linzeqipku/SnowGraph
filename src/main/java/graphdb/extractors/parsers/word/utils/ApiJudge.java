@@ -134,6 +134,26 @@ public class ApiJudge {
         return ret;
     }
 
+    public static ArrayList<String> lookUpProjectDictionary(String apiName) {
+        ArrayList<String> tokens = ApiJudge.splitCamelCase(apiName);
+        ArrayList<String> chineseTokens = new ArrayList<>();
+        try {
+            List<String> translations = FileUtils.readLines(new File(Config.getProjectTranslationPath()));
+            for(String token : tokens) {
+                for(String trans : translations) {
+                    String[] tokensCh = trans.split(" ");
+                    if(!token.equals(tokensCh[0])) continue;
+                    for(int i = 1; i < tokensCh.length; i++) chineseTokens.add(tokensCh[i]);
+                }
+            }
+        }
+        catch (IOException e) {
+            System.out.println("构建代码图时需要对API进行驼峰切词和翻译，请确保已将翻译结果存在指定路径下");
+            e.printStackTrace();
+        }
+        return chineseTokens;
+    }
+
     public static void main(String[] args) {
         String[] test = {"A", "a", "SendMessage", "sendSMSMessage", "SMS", "SMSSender", "senderSMS"};
         for(String str : test) {

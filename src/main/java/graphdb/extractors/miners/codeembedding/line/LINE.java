@@ -31,27 +31,28 @@ public class LINE {
 
     public void readData(GraphDatabaseService db){
         try (Transaction tx = db.beginTx()) {
-            ResourceIterator<Node> nodeIter = db.getAllNodes().iterator();
-            while (nodeIter.hasNext()) {
-                Node start = nodeIter.next();
-                for (Relationship relationship : start.getRelationships(Direction.OUTGOING)) {
-                	if (!JavaCodeExtractor.isJavaCodeRelationship(relationship))
-                		continue;
-                    Node end = relationship.getEndNode();
-                    long src = start.getId();
-                    long tgt = end.getId();
-                    edges.add(new Edge(src, tgt, 1));
-                    Vertex cur = new Vertex(1.0);
-                    Vertex oldv = vertex.put(src, cur);
-                    if (oldv != null){
-                        cur.degree += oldv.degree;
-                    }
-                    cur = new Vertex(1.0);
-                    oldv = vertex.put(tgt, cur);
-                    if (oldv != null){
-                        cur.degree += oldv.degree;
-                    }
+            ResourceIterator<Relationship> relIter = db.getAllRelationships().iterator();
+            while (relIter.hasNext()) {
+                Relationship relation = relIter.next();
+                if (!JavaCodeExtractor.isJavaCodeRelationship(relation))
+                    continue;
+                Node start = relation.getStartNode();
+                Node end = relation.getEndNode();
+                long src = start.getId();
+                long tgt = end.getId();
+                edges.add(new Edge(src, tgt, 1));
+                edges.add(new Edge(tgt, src, 1));
+                Vertex cur = new Vertex(2.0);
+                Vertex oldv = vertex.put(src, cur);
+                if (oldv != null){
+                    cur.degree += oldv.degree;
                 }
+                cur = new Vertex(1.0);
+                oldv = vertex.put(tgt, cur);
+                if (oldv != null){
+                    cur.degree += oldv.degree;
+                }
+
             }
             tx.success();
             num_edges = edges.size();
@@ -233,7 +234,7 @@ public class LINE {
         trainLINE();
         long endTime = System.currentTimeMillis();
         System.out.println("Total time: " + (endTime-startTime)/1000 + "s.\n");
-        //writeToTxt();
+        writeToTxt();
     }
 
     class Edge {

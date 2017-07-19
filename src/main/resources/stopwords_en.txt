@@ -1,0 +1,9 @@
+lucene
+how
+why
+what
+when
+which
+base
+value
+result

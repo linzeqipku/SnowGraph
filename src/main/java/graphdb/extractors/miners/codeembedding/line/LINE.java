@@ -18,7 +18,7 @@ public class LINE {
     static final int SIGMOID_BOUND = 6;
     static final double NEG_SAMPLING_POWER = 0.75;
 
-    int num_threads = 1, order = 2, dim = 200, num_negative = 5;
+    int num_threads = 1, order = 1, dim = 200, num_negative = 5;
     double init_rho = 0.025, rho;
     int  num_vertices = 0, num_edges = 0;
     int total_samples = 100, current_sample_count = 0;

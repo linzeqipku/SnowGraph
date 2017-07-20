@@ -185,6 +185,7 @@ public class JavaCodeExtractor implements Extractor {
             e.printStackTrace();
         }
         elementInfoPool = JavaParser.parse(srcPath);
+        dictionary.printQuery();
         //System.out.println("源代码解析完毕...");
         //System.out.println("开始构建图数据库中的结点...");
         try (Transaction tx = db.beginTx()) {

@@ -16,7 +16,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.neo4j.graphdb.*;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import graphdb.framework.Extractor;
@@ -389,6 +394,7 @@ public class JavaCodeExtractor implements Extractor {
         }
 
     }
+
     public static boolean isJavaCodeRelationship(Relationship rel){
         return rel.isType(RelationshipType.withName(EXTEND))
                 ||rel.isType(RelationshipType.withName(IMPLEMENT))
@@ -401,6 +407,7 @@ public class JavaCodeExtractor implements Extractor {
                 ||rel.isType(RelationshipType.withName(CALL_FIELD))
                 ||rel.isType(RelationshipType.withName(TYPE))
                 ||rel.isType(RelationshipType.withName(VARIABLE));
+
     }
 
 }

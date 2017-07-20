@@ -5,7 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import graphdb.extractors.parsers.javacode.entity.InterfaceInfo;
+import graphdb.extractors.parsers.word.utils.ApiJudge;
+import graphdb.extractors.parsers.word.utils.Config;
+import org.apache.lucene.analysis.ar.ArabicAnalyzer;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
@@ -68,6 +72,19 @@ public class JavaASTVisitor extends ASTVisitor {
             return visitClass(node);
     }
 
+    private ArrayList<String> setChineseTokens(String comment, String name) {
+        ArrayList<String> ret;
+        ret = ApiJudge.commentParser(comment);
+        if (ret.isEmpty()) {
+            ArrayList<String> tokens = ApiJudge.splitCamelCase(name);
+            for (String token : tokens) {
+                ArrayList<String> trans = JavaCodeExtractor.dictionary.getTranslation(token);
+                ret.addAll(trans);
+            }
+        }
+        return ret;
+    }
+
     private boolean visitInterface(TypeDeclaration node) {
 
         InterfaceInfo interfaceInfo = new InterfaceInfo();
@@ -94,7 +111,9 @@ public class JavaASTVisitor extends ASTVisitor {
             for (FieldInfo fieldInfo : fieldInfos)
                 elementInfoPool.fieldInfoMap.put(fieldInfo.hashName(), fieldInfo);
         }
-
+        if(Config.getProjectType().equals("Chinese")) {
+            interfaceInfo.chineseTokens = setChineseTokens(interfaceInfo.comment, interfaceInfo.name);
+        }
         return true;
     }
 
@@ -128,6 +147,9 @@ public class JavaASTVisitor extends ASTVisitor {
                 elementInfoPool.fieldInfoMap.put(fieldInfo.hashName(), fieldInfo);
         }
 
+        if(Config.getProjectType().equals("Chinese")) {
+            classInfo.chineseTokens = setChineseTokens(classInfo.comment, classInfo.name);
+        }
         return true;
     }
 
@@ -191,6 +213,10 @@ public class JavaASTVisitor extends ASTVisitor {
             methodInfo.throwSet.add(name);
         }
         parseMethodBody(methodInfo, node.getBody());
+
+        if(Config.getProjectType().equals("Chinese")) {
+            methodInfo.chineseTokens = setChineseTokens(methodInfo.comment, methodInfo.name);
+        }
         return methodInfo;
     }
 

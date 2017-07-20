@@ -10,10 +10,13 @@ import java.util.Set;
 import graphdb.extractors.parsers.javacode.astparser.JavaParser;
 import graphdb.extractors.parsers.javacode.entity.InterfaceInfo;
 
+import graphdb.extractors.parsers.word.corpus.Dictionary;
+import graphdb.extractors.parsers.word.utils.Config;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.IMethodBinding;
+
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -29,6 +32,7 @@ import graphdb.extractors.parsers.javacode.entity.ClassInfo;
 import graphdb.extractors.parsers.javacode.entity.FieldInfo;
 import graphdb.extractors.parsers.javacode.entity.MethodInfo;
 import graphdb.extractors.parsers.javacode.astparser.ElementInfoPool;
+
 
 public class JavaCodeExtractor implements Extractor {
 
@@ -52,6 +56,8 @@ public class JavaCodeExtractor implements Extractor {
     public static final String CLASS_COMMENT = "comment";
     @PropertyDeclaration(parent = CLASS)
     public static final String CLASS_CONTENT = "content";
+    @PropertyDeclaration(parent = CLASS)
+    public static final String CLASS_CHINESE_TOKENS = "tokensCN";
 
     @EntityDeclaration
     public static final String INTERFACE = "Interface";
@@ -67,6 +73,8 @@ public class JavaCodeExtractor implements Extractor {
     public static final String INTERFACE_COMMENT = "comment";
     @PropertyDeclaration(parent = INTERFACE)
     public static final String INTERFACE_CONTENT = "content";
+    @PropertyDeclaration(parent = INTERFACE)
+    public static final String INTERFACE_CHINESE_TOKENS = "tokensCN";
 
     @EntityDeclaration
     public static final String METHOD = "Method";
@@ -96,6 +104,8 @@ public class JavaCodeExtractor implements Extractor {
     public static final String METHOD_COMMENT = "comment";
     @PropertyDeclaration(parent = METHOD)
     public static final String METHOD_CONTENT = "content";
+    @PropertyDeclaration(parent = METHOD)
+    public static final String METHOD_CHINESE_TOKENS = "tokensCN";
 
     @EntityDeclaration
     public static final String FIELD = "Field";
@@ -113,7 +123,7 @@ public class JavaCodeExtractor implements Extractor {
     public static final String FIELD_ACCESS = "access";
     @PropertyDeclaration(parent = FIELD)
     public static final String FIELD_COMMENT = "comment";
-    
+
     @PropertyDeclaration
     public static final String SIGNATURE= "signature";
 
@@ -149,6 +159,7 @@ public class JavaCodeExtractor implements Extractor {
 
     String srcPath = "";
     GraphDatabaseService db = null;
+    public static Dictionary dictionary = new Dictionary();
     
     public static void main(String[] args){
     	try {
@@ -159,7 +170,7 @@ public class JavaCodeExtractor implements Extractor {
 		}
     	GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(new File("E:\\test\\graph"));
     	JavaCodeExtractor p=new JavaCodeExtractor();
-    	p.setSrcPath("E:\\SnowGraphData\\lucene\\sourcecode");
+        p.setSrcPath("E:\\SnowGraphData\\lucene\\sourcecode");
     	p.run(db);
     }
 
@@ -169,7 +180,14 @@ public class JavaCodeExtractor implements Extractor {
 
     public void run(GraphDatabaseService db) {
         this.db = db;
+        try {
+            if(Config.getProjectType().equals("Chinese")) dictionary.init();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
         elementInfoPool = JavaParser.parse(srcPath);
+        dictionary.printQuery();
         //System.out.println("源代码解析完毕...");
         //System.out.println("开始构建图数据库中的结点...");
         try (Transaction tx = db.beginTx()) {
@@ -376,19 +394,20 @@ public class JavaCodeExtractor implements Extractor {
         }
 
     }
-    
+
     public static boolean isJavaCodeRelationship(Relationship rel){
-    	return rel.isType(RelationshipType.withName(EXTEND))
-    			||rel.isType(RelationshipType.withName(IMPLEMENT))
-    			||rel.isType(RelationshipType.withName(THROW))
-    			||rel.isType(RelationshipType.withName(PARAM))
-    			||rel.isType(RelationshipType.withName(RT))
-    			||rel.isType(RelationshipType.withName(HAVE_METHOD))
-    			||rel.isType(RelationshipType.withName(HAVE_FIELD))
-    			||rel.isType(RelationshipType.withName(CALL_METHOD))
-    			||rel.isType(RelationshipType.withName(CALL_FIELD))
-    			||rel.isType(RelationshipType.withName(TYPE))
-    			||rel.isType(RelationshipType.withName(VARIABLE));
+        return rel.isType(RelationshipType.withName(EXTEND))
+                ||rel.isType(RelationshipType.withName(IMPLEMENT))
+                ||rel.isType(RelationshipType.withName(THROW))
+                ||rel.isType(RelationshipType.withName(PARAM))
+                ||rel.isType(RelationshipType.withName(RT))
+                ||rel.isType(RelationshipType.withName(HAVE_METHOD))
+                ||rel.isType(RelationshipType.withName(HAVE_FIELD))
+                ||rel.isType(RelationshipType.withName(CALL_METHOD))
+                ||rel.isType(RelationshipType.withName(CALL_FIELD))
+                ||rel.isType(RelationshipType.withName(TYPE))
+                ||rel.isType(RelationshipType.withName(VARIABLE));
+
     }
 
 }

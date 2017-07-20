@@ -30,6 +30,12 @@ public class QueryStringToQueryWordsConverter {
 	}
 	
 	public Set<String> convert(String queryString){
+		if (!isChinese(queryString))
+			return englishConvert(queryString);
+		return chineseConvert(queryString);
+	}
+	
+	Set<String> englishConvert(String queryString){
 		Set<String> r=new HashSet<>();
 		
 		for (String token:queryString.toLowerCase().split("[^a-z]+")){
@@ -45,9 +51,37 @@ public class QueryStringToQueryWordsConverter {
 		return r;
 	}
 	
+	Set<String> chineseConvert(String queryString){
+		Set<String> r=new HashSet<>();
+		//TODO
+		return r;
+	}
+	
 	public static void main(String[] args){
 		new QueryStringToQueryWordsConverter().convert("how to sort search results based on a field value in lucene-3.0.2?")
 			.forEach(n->{System.out.println(n);});
 	}
+	
+    private static boolean isChinese(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
+                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS
+                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isChinese(String strName) {
+        char[] ch = strName.toCharArray();
+        for (int i = 0; i < ch.length; i++) {
+            char c = ch[i];
+            if (isChinese(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
 	
 }

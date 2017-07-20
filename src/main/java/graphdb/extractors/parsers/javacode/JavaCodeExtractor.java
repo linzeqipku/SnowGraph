@@ -16,10 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import graphdb.framework.Extractor;
@@ -30,6 +27,7 @@ import graphdb.extractors.parsers.javacode.entity.ClassInfo;
 import graphdb.extractors.parsers.javacode.entity.FieldInfo;
 import graphdb.extractors.parsers.javacode.entity.MethodInfo;
 import graphdb.extractors.parsers.javacode.astparser.ElementInfoPool;
+
 
 public class JavaCodeExtractor implements Extractor {
 
@@ -178,7 +176,6 @@ public class JavaCodeExtractor implements Extractor {
     public void run(GraphDatabaseService db) {
         this.db = db;
         try {
-            System.out.println("MUST SEE THIS");
             if(Config.getProjectType().equals("Chinese")) dictionary.init();
         }
         catch (IOException e) {
@@ -391,6 +388,19 @@ public class JavaCodeExtractor implements Extractor {
             tx.success();
         }
 
+    }
+    public static boolean isJavaCodeRelationship(Relationship rel){
+        return rel.isType(RelationshipType.withName(EXTEND))
+                ||rel.isType(RelationshipType.withName(IMPLEMENT))
+                ||rel.isType(RelationshipType.withName(THROW))
+                ||rel.isType(RelationshipType.withName(PARAM))
+                ||rel.isType(RelationshipType.withName(RT))
+                ||rel.isType(RelationshipType.withName(HAVE_METHOD))
+                ||rel.isType(RelationshipType.withName(HAVE_FIELD))
+                ||rel.isType(RelationshipType.withName(CALL_METHOD))
+                ||rel.isType(RelationshipType.withName(CALL_FIELD))
+                ||rel.isType(RelationshipType.withName(TYPE))
+                ||rel.isType(RelationshipType.withName(VARIABLE));
     }
 
 }

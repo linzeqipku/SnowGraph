@@ -1,5 +1,6 @@
 package graphdb.extractors.parsers.word.utils;
 
+import graphdb.extractors.parsers.word.corpus.WordSegmenter;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -8,6 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by maxkibble on 2017/5/25.
@@ -134,24 +137,22 @@ public class ApiJudge {
         return ret;
     }
 
-    public static ArrayList<String> lookUpProjectDictionary(String apiName) {
-        ArrayList<String> tokens = ApiJudge.splitCamelCase(apiName);
-        ArrayList<String> chineseTokens = new ArrayList<>();
-        try {
-            List<String> translations = FileUtils.readLines(new File(Config.getProjectTranslationPath()));
-            for(String token : tokens) {
-                for(String trans : translations) {
-                    String[] tokensCh = trans.split(" ");
-                    if(!token.equals(tokensCh[0])) continue;
-                    for(int i = 1; i < tokensCh.length; i++) chineseTokens.add(tokensCh[i]);
-                }
-            }
+    public static ArrayList<String> commentParser(String comment) {
+        ArrayList<String> tokens = new ArrayList<>();
+        if(comment == null) return tokens;
+
+        String[] lines = comment.split("\n");
+        for(String line : lines) {
+            line = line.replaceAll("/|\\*| ", "");
+            if(line.equals("") || line.startsWith("@")) continue;
+            line = line.replaceAll("类描述:|方法描述:|接口描述:", "");
+            String description = "";
+            Matcher matcher = Pattern.compile("([\u4e00-\u9fa5]+)").matcher(line);
+            while(matcher.find()) description += matcher.group(0);
+            ArrayList<String> lineTokens = WordSegmenter.demo(description);
+            for(String token : lineTokens) tokens.add(token);
         }
-        catch (IOException e) {
-            System.out.println("构建代码图时需要对API进行驼峰切词和翻译，请确保已将翻译结果存在指定路径下");
-            e.printStackTrace();
-        }
-        return chineseTokens;
+        return tokens;
     }
 
     public static void main(String[] args) {

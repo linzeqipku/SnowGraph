@@ -1,8 +1,6 @@
 package cn.edu.pku.sei.SnowView.servlet;
-import cn.edu.pku.sei.SnowView.utils.PostUtil;
 import graphdb.extractors.parsers.word.corpus.WordSegmenter;
 import graphsearcher.SearchResult;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -13,11 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.File;
 
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import graphsearcher.GraphSearcher;
-
-import java.util.Set;
 
 /**
  * Created by Administrator on 2017/5/26.

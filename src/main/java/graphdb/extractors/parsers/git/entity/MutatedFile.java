@@ -1,8 +1,10 @@
 package graphdb.extractors.parsers.git.entity;
 
 import graphdb.extractors.parsers.git.GitExtractor;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 
 /**
@@ -18,6 +20,7 @@ public class MutatedFile {
         MODECHANGED
     }
     private String apiName = "";
+    private String apiQualifiedName = "";
     private String formerName = "";
     private String latterName = "";
     private String fileName = "";
@@ -31,6 +34,13 @@ public class MutatedFile {
     }
     public String getApiName(){
         return apiName;
+    }
+
+    public void setApiQualifiedName(String apiQualifiedName){
+        this.apiQualifiedName = apiQualifiedName;
+    }
+    public String getApiQualifiedName(){
+        return apiQualifiedName;
     }
 
     public void setFormerName (String formerName){
@@ -110,6 +120,7 @@ public class MutatedFile {
     public void createMutatedFileNode(Node node){
         node.addLabel(Label.label(GitExtractor.MUTATEDFILE));
         node.setProperty(GitExtractor.MUTATEDFILE_API_NAME , apiName);
+        node.setProperty(GitExtractor.MUTATEDFILE_API_QUALIFIEDNAME , apiQualifiedName);
         node.setProperty(GitExtractor.MUTATEDFILE_TYPE , type.toString());
         node.setProperty(GitExtractor.MUTATEDFILE_FILE_NAME , fileName);
         node.setProperty(GitExtractor.MUTATEDFILE_FORMER_NAME , formerName);
@@ -117,7 +128,7 @@ public class MutatedFile {
         //node.setProperty(GitExtractor.  );
     }
 
-    public static boolean createrRelationshipTo(Node fileNode , Node commitNode , String relationName){
+    public static boolean createrRelationshipTo(Node fileNode , Node endNode , String relationName){
         boolean isFileNode = false;
         boolean isCommitNode = false;
         Iterable<Label> labels = fileNode.getLabels();
@@ -132,21 +143,21 @@ public class MutatedFile {
         if(!isFileNode )
             return false;
 
-        labels = commitNode.getLabels();
-        if(labels != null) {
-            for (Label label : labels) {
-                if(label.name().compareTo(GitExtractor.COMMIT) == 0){
-                    isCommitNode = true;
-                    break;
-                }
+        boolean hasRelation =false;
+        Iterable<Relationship> it = fileNode.getRelationships(RelationshipType.withName(relationName));
+        for(Relationship re : it) {
+            if ( re.getEndNode().equals(endNode) ){
+                hasRelation = true;
+                break;
             }
         }
-        if(!isCommitNode){
+
+        if(!hasRelation) {
+            fileNode.createRelationshipTo(endNode , RelationshipType.withName(relationName));
+            return true;
+        }else{
             return false;
         }
-
-        fileNode.createRelationshipTo(commitNode , RelationshipType.withName(relationName));
-        return true;
     }
 }
 

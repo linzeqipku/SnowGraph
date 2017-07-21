@@ -148,7 +148,16 @@ public class GraphSearcher {
 		}
 	}
 	
-	SearchResult query(String queryString){
+	public SearchResult query(String queryString){
+		/*SearchResult result = new SearchResult();
+		result.nodes.add((long)19);
+		result.nodes.add((long)1542);
+		result.nodes.add((long)221);
+		result.edges.add((long)1489);
+		result.edges.add((long)3);
+
+		return result;*/
+		System.out.println(queryString);
 		Set<Long> anchors=computeAnchors(queryString);
 		SearchResult r=new SearchResult();
 		r.nodes.addAll(anchors);

@@ -77,6 +77,8 @@ public class WordSegmenter {
     }
 
     public static void main(String[] args) throws IOException {
+        WordSegmenter.demo("邮件").forEach(n->{System.out.println(n);});
+        /*
         String rootPath = Config.getProjectDocumentPath();
         traverseFolder(rootPath);
         System.out.println("TOTAL CHINESE TOKENS: " + wordsCN.size());
@@ -85,6 +87,7 @@ public class WordSegmenter {
         for(String str : wordsCN) toPrint.append(str + "\n");
         FileOutputStream fout = new FileOutputStream(Config.getProjectChineseTokenPath());
         fout.write(toPrint.toString().getBytes());
+        */
     }
 
 }

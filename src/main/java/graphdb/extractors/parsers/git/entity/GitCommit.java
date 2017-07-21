@@ -1,17 +1,17 @@
 package graphdb.extractors.parsers.git.entity;
 
 import graphdb.extractors.parsers.git.GitExtractor;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.*;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Created by oliver on 2017/5/23.
@@ -25,7 +25,6 @@ public class GitCommit {
     private String parentUUID = "";
     private String commitSvnUrl = "";
     private List<MutatedFile> mutatedFiles = null;
-
 
     public String getUUID(){
         return UUID;
@@ -59,10 +58,14 @@ public class GitCommit {
 
     public static void main(String[] args){
 
-        System.out.println(MutatedFile.MutatedType.ADDED.toString());
+        GitCommit c = new GitCommit();
+        //System.out.println(MutatedFile.MutatedType.ADDED.toString());
         //GitCommit commit = new GitCommit("I:\\lucene-solr\\commitffdfceba5371b1c3f96b44c727025f2f27bbf12b");
     }
 
+    public GitCommit(){
+        ;
+    }
 
     public GitCommit(File commitFile){
         try {
@@ -188,7 +191,20 @@ public class GitCommit {
                             apiName = apiName.substring(apiName.lastIndexOf('/') + 1); // remove the file path
                             apiName = apiName.substring(0, apiName.length() - 5);
                             file.setApiName(apiName);
+
+                            String  apiQualifiedName = file.getAbsolutePath();
+                            apiQualifiedName = apiQualifiedName.replace("/" , ".");
+                            if(apiQualifiedName.indexOf(".org.") > -1) {
+                                apiQualifiedName = apiQualifiedName.substring(apiQualifiedName.indexOf(".org.") + 1);
+                                apiQualifiedName = apiQualifiedName.substring(0 , apiQualifiedName.length() - ".java".length());
+                            }
+                            else{
+                                System.out.println("there are some class of which the qualified name can not be found.");
+                                System.out.println("the absolute path is: " + file.getAbsolutePath() + " creater:"  + file.getCreaterUUID() +"   modifier:" + file.getModifierUUID() + "  deleter:" + file.getDeleterUUID());
+                            }
+                            file.setApiQualifiedName(apiQualifiedName);
                         }
+
                     }
                     addMutatedFile(file);
                 }
@@ -227,23 +243,21 @@ public class GitCommit {
             return false;
         }
 
-        isCommitNode = false;
-
-        labels = endNode.getLabels();
-        if(labels != null){
-            for(Label label : labels){
-                if(label.name().compareTo(GitExtractor.COMMIT) == 0){
-                    isCommitNode = true;
-                    break;
-                }
+        boolean hasRelation = false;
+        Iterable<Relationship> it = sourceNode.getRelationships(RelationshipType.withName(relationName));
+        for(Relationship re : it){
+            if(re.getEndNode().equals(endNode)){
+                hasRelation = true;
+                break;
             }
         }
-        if(!isCommitNode){
+
+        if(!hasRelation){
+            sourceNode.createRelationshipTo(endNode , RelationshipType.withName(relationName));
+            return true;
+        }else{
             return false;
         }
-
-        sourceNode.createRelationshipTo(endNode , RelationshipType.withName(relationName));
-        return true;
     }
 
     //public void createRelationTo(NODE)

@@ -1,5 +1,6 @@
 package graphdb.extractors.parsers.git;
 
+import graphdb.extractors.linkers.codeindoc.CodeIndexes;
 import graphdb.extractors.parsers.git.entity.GitCommit;
 import graphdb.extractors.parsers.git.entity.GitCommitAuthor;
 import graphdb.extractors.parsers.git.entity.MutatedFile;
@@ -13,10 +14,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by oliver on 2017/5/22.
@@ -54,6 +52,8 @@ public class GitExtractor implements Extractor {
     @PropertyDeclaration
     public static final String MUTATEDFILE_FILE_NAME = "fileName";
     @PropertyDeclaration
+    public static final String MUTATEDFILE_API_QUALIFIEDNAME = "apiQualifiedName";
+    @PropertyDeclaration
     public static final String MUTATEDFILE_API_NAME = "apiName";
     @PropertyDeclaration
     public static final String MUTATEDFILE_FORMER_NAME = "formerName";
@@ -74,6 +74,10 @@ public class GitExtractor implements Extractor {
     public static final String MODIFIER_OF_FILE = "modifier_of_file";
     @RelationshipDeclaration
     public static final String PARENT_OF_COMMIT = "parent_of_commit";
+    @RelationshipDeclaration
+    public static final String COMMIT_CHANGE_THE_CLASS ="commit_change_the_class" ;
+    @RelationshipDeclaration
+    public static final String FILE_CONTAIN_THE_CLASS = "file_contain_the_class";
 
 
     GraphDatabaseService db = null;
@@ -92,6 +96,12 @@ public class GitExtractor implements Extractor {
 
     public void run(GraphDatabaseService db) {
         this.db = db;
+
+        Map<String , Node> APIs = getNodes("Class");
+
+        for(String key : commitNodeMap.keySet()){
+            Node commit = commitNodeMap.get(key);
+        }
 
         File gitFolder = new File(gitFolderPath);
         for(File gitFile : gitFolder.listFiles()){
@@ -126,10 +136,11 @@ public class GitExtractor implements Extractor {
                     //region <build the relationship between commit and mutated file>
                     List<MutatedFile> files = commit.getMutatedFiles();
                     if(files != null) {
-                        for (MutatedFile file : files) {
 
+                        for (MutatedFile file : files) {
+                            Node fileNode = null;
+                            //region<build the relation between commit and mutated file>
                             try {
-                                Node fileNode = null;
                                 String fileName = file.getAbsolutePath();
                                 if(fileName.length() > 0) {
                                     if (fileNodeMap.containsKey(fileName)) {
@@ -161,7 +172,18 @@ public class GitExtractor implements Extractor {
                                 System.out.println("when bulid a mutated file node fail.");
                                 System.out.println("the commit uuid is :" + commit.getUUID());
                             }
+                            //endregion<build the relation between commit and mutated file>
+
+                            String apiQualifiedName = file.getApiQualifiedName();
+                            if(apiQualifiedName.length() > 0){
+                                Node apiNode = APIs.get(apiQualifiedName);
+                                if(apiNode != null){
+                                    GitCommit.createRelationshipTo(commitNode , apiNode , GitExtractor.COMMIT_CHANGE_THE_CLASS);
+                                    MutatedFile.createrRelationshipTo(fileNode , apiNode , GitExtractor.FILE_CONTAIN_THE_CLASS );
+                                }
+                            }
                         }
+
                     }
 
                     //endregion
@@ -193,6 +215,28 @@ public class GitExtractor implements Extractor {
             }
             tx.success();
         }
+
+
+    }
+
+    private Map<String , Node> getNodes(String nodeType){
+        Map<String , Node> result = new HashMap<String , Node>();
+        switch (nodeType){
+            case "Class":
+            case "Interface":{
+                CodeIndexes codeIndexs = new CodeIndexes(this.db);
+                for(String key : codeIndexs.typeMap.keySet()){
+                    try(Transaction tx = db.beginTx()){
+                        Node node = db.getNodeById(codeIndexs.typeMap.get(key));
+                        result.put(key , node);
+                        tx.success();
+                    }
+
+                }
+                break;
+            }
+        }
+        return result;
     }
 }
 

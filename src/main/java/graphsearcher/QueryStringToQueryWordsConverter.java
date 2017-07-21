@@ -63,15 +63,16 @@ public class QueryStringToQueryWordsConverter {
 	
 	Set<String> chineseConvert(String queryString){
 		Set<String> r=new HashSet<>();
-		for (String queryWord:WordSegmenter.demo(queryString)){
-			if (isChinese(queryWord)&&!chineseStopWords.contains(queryWord))
+		WordSegmenter.demo(queryString);
+		for (String queryWord:WordSegmenter.demo(queryString)) {
+			if (isChinese(queryWord) && !chineseStopWords.contains(queryWord))
 				r.add(queryWord);
 			else {
-				if (queryWord.length()<=2)
+				if (queryWord.length() <= 2)
 					continue;
 				stemmer.setCurrent(queryWord);
 				stemmer.stem();
-				queryWord=stemmer.getCurrent();
+				queryWord = stemmer.getCurrent();
 				if (!englishStopWords.contains(queryWord))
 					r.add(queryWord);
 			}

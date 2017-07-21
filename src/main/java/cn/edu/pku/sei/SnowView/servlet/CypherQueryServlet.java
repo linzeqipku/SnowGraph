@@ -4,6 +4,7 @@ import graphsearcher.SearchResult;
 import org.json.JSONObject;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,14 @@ import graphsearcher.GraphSearcher;
  * Created by Administrator on 2017/5/26.
  */
 public class CypherQueryServlet extends HttpServlet {
+	
+	GraphDatabaseService db=null;
+	
+	public void init(ServletConfig config) throws ServletException{
+		File databasePath = new File("E:\\SnowGraphData\\dc\\graphdb");
+        db = new GraphDatabaseFactory().newEmbeddedDatabase(databasePath);
+	}
+	
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request, response);
@@ -25,16 +34,13 @@ public class CypherQueryServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        WordSegmenter.demo("邮件").forEach(n->{System.out.println(n);});
+
         request.setCharacterEncoding("UTF-8");
         System.out.println("start query");
         String query = request.getParameter("query");
         String type = request.getParameter("params");
        /* type = new String(type.getBytes("GBK") , "GBK");
         System.out.println(type);*/
-
-        File databasePath = new File("I:\\graphdb\\graphdb");
-        GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(databasePath);
 
         GraphSearcher searcher = new GraphSearcher(db);
         SearchResult results = searcher.query(type);

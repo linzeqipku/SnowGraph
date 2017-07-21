@@ -9,10 +9,13 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
+import graphdb.extractors.parsers.word.corpus.WordSegmenter;
+
 public class QueryStringToQueryWordsConverter {
 	
 	static EnglishStemmer stemmer=new EnglishStemmer();
-	static Set<String> stopWords=new HashSet<>();
+	static Set<String> englishStopWords=new HashSet<>();
+	static Set<String> chineseStopWords=new HashSet<>();
 	
 	public QueryStringToQueryWordsConverter(){
 		List<String> lines=new ArrayList<>();
@@ -25,8 +28,15 @@ public class QueryStringToQueryWordsConverter {
 		lines.forEach(n->{
 			stemmer.setCurrent(n);
 			stemmer.stem();
-			stopWords.add(stemmer.getCurrent());
+			englishStopWords.add(stemmer.getCurrent());
 		});
+		try {
+			lines=IOUtils.readLines(this.getClass().getResourceAsStream("/stopwords_cn.txt"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		lines.forEach(n->{chineseStopWords.add(n);});
 	}
 	
 	public Set<String> convert(String queryString){
@@ -44,7 +54,7 @@ public class QueryStringToQueryWordsConverter {
 			stemmer.setCurrent(token);
 			stemmer.stem();
 			token=stemmer.getCurrent();
-			if (!stopWords.contains(token))
+			if (!englishStopWords.contains(token))
 				r.add(token);
 		}
 		
@@ -53,12 +63,24 @@ public class QueryStringToQueryWordsConverter {
 	
 	Set<String> chineseConvert(String queryString){
 		Set<String> r=new HashSet<>();
-		//TODO
+		for (String queryWord:WordSegmenter.demo(queryString)){
+			if (isChinese(queryWord)&&!chineseStopWords.contains(queryWord))
+				r.add(queryWord);
+			else {
+				if (queryWord.length()<=2)
+					continue;
+				stemmer.setCurrent(queryWord);
+				stemmer.stem();
+				queryWord=stemmer.getCurrent();
+				if (!englishStopWords.contains(queryWord))
+					r.add(queryWord);
+			}
+		}
 		return r;
 	}
 	
 	public static void main(String[] args){
-		new QueryStringToQueryWordsConverter().convert("how to sort search results based on a field value in lucene-3.0.2?")
+		new QueryStringToQueryWordsConverter().convert("获取所有人的Email信息")
 			.forEach(n->{System.out.println(n);});
 	}
 	

@@ -4,15 +4,23 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.neo4j.graphalgo.GraphAlgoFactory;
+import org.neo4j.graphalgo.PathFinder;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Path;
+import org.neo4j.graphdb.PathExpanders;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
@@ -22,6 +30,22 @@ import graphdb.extractors.miners.codeembedding.line.LINEExtracter;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 
 public class GraphSearcher {
+	
+	GraphDatabaseService db=null;
+	PathFinder<Path> pathFinder=GraphAlgoFactory.shortestPath(
+			PathExpanders.forTypesAndDirections(
+					RelationshipType.withName(JavaCodeExtractor.EXTEND), Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.IMPLEMENT), Direction.BOTH,
+					//RelationshipType.withName(JavaCodeExtractor.THROW), Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.PARAM), Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.RT), Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.HAVE_METHOD), Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.HAVE_FIELD), Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.CALL_METHOD), Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.CALL_FIELD), Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.TYPE), Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.VARIABLE), Direction.BOTH),
+			5);
 	
 	boolean debug=true;
 	
@@ -40,11 +64,11 @@ public class GraphSearcher {
 	Set<String> queryWordSet=new HashSet<>();
 	
 	public static void main(String[] args){
-		String testQuery="get all field names in an index reader";
-		String graphPath="E:\\SnowGraphData\\lucene\\graphdb";
+		String testQuery="获取所有人的邮件信息";
+		String graphPath="E:/SnowGraphData/dc/graphdb";
 		GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(new File(graphPath));
 		GraphSearcher graphSearcher=new GraphSearcher(db);
-		Set<Long> res=graphSearcher.query(testQuery);
+		Set<Long> res=graphSearcher.computeAnchors(testQuery);
 
 		for (long id:res)
 			System.out.println(graphSearcher.id2Sig.get(id));
@@ -63,6 +87,7 @@ public class GraphSearcher {
 	}
 	
 	public GraphSearcher(GraphDatabaseService db){
+		this.db=db;
 		try (Transaction tx = db.beginTx()) {
 			ResourceIterable<Node> nodes=db.getAllNodes();
 			for (Node node:nodes){
@@ -98,6 +123,19 @@ public class GraphSearcher {
 						word2Ids.get(word).add(id);
 						words.add(word);
 					}
+				if (node.hasProperty(JavaCodeExtractor.CLASS_CHINESE_TOKENS)||
+						node.hasProperty(JavaCodeExtractor.INTERFACE_CHINESE_TOKENS)||
+						node.hasProperty(JavaCodeExtractor.METHOD_CHINESE_TOKENS)){
+					String cTokenString=node.hasProperty(JavaCodeExtractor.CLASS_CHINESE_TOKENS)?((String)node.getProperty(JavaCodeExtractor.CLASS_CHINESE_TOKENS)):
+						node.hasProperty(JavaCodeExtractor.METHOD_CHINESE_TOKENS)?((String)node.getProperty(JavaCodeExtractor.METHOD_CHINESE_TOKENS)):
+							((String)node.getProperty(JavaCodeExtractor.INTERFACE_CHINESE_TOKENS));
+					for (String word:cTokenString.trim().split("\\s+")){
+						if (!word2Ids.containsKey(word))
+							word2Ids.put(word, new HashSet<>());
+						word2Ids.get(word).add(id);
+						words.add(word);
+					}
+				}
 				id2Words.put(id, words);
 				id2Vec.put(id, vec);
 				id2Sig.put(id, sig);
@@ -110,7 +148,33 @@ public class GraphSearcher {
 		}
 	}
 	
-	public Set<Long> query(String queryString){
+	SearchResult query(String queryString){
+		Set<Long> anchors=computeAnchors(queryString);
+		SearchResult r=new SearchResult();
+		r.nodes.addAll(anchors);
+		try (Transaction tx=db.beginTx()){
+			for (long anchor:anchors){
+				Iterator<Relationship> classInter=db.getNodeById(anchor).getRelationships(RelationshipType.withName(JavaCodeExtractor.HAVE_METHOD),Direction.INCOMING).iterator();
+				if (!classInter.hasNext())
+					continue;
+				Relationship edge=classInter.next();
+				r.nodes.add(edge.getStartNodeId());
+				r.edges.add(edge.getId());
+			}
+			for (long anchor1:anchors)
+				for (long anchor2:anchors){
+					Path path=pathFinder.findSinglePath(db.getNodeById(anchor1), db.getNodeById(anchor2));
+					for (Node node:path.nodes())
+						r.nodes.add(node.getId());
+					for (Relationship edge:path.relationships())
+						r.edges.add(edge.getId());
+			}
+			tx.success();
+		}
+		return r;
+	}
+	
+	Set<Long> computeAnchors(String queryString){
 
 		queryWord2Ids=new HashMap<>();
 		queryWordSet=new HashSet<>();
@@ -169,12 +233,12 @@ public class GraphSearcher {
 			if (queryWordSet.contains(id2Name.get(node)))
 				candidateNodes.add(node);
 		
-		for (long node:typeSet){
+		for (long node:id2Name.keySet()){
 			double count=0;
 			for (String word:id2Words.get(node))
 				if (queryWordSet.contains(word))
 					count++;
-			if (count/id2Words.get(node).size()>=0.75)
+			if (count>=2)
 				candidateNodes.add(node);
 		}
 		
@@ -185,7 +249,17 @@ public class GraphSearcher {
 			for (long node:queryWord2Ids.get(queryWord)){
 				if (!typeSet.contains(node))
 					continue;
+				candidateNodes.add(node);
 			}
+		
+		if (candidateNodes.size()>0)
+			return candidateNodes;
+		
+		for (String queryWord:queryWordSet)
+			for (long node:queryWord2Ids.get(queryWord)){
+				candidateNodes.add(node);
+			}
+		
 		return candidateNodes;
 	}
 	

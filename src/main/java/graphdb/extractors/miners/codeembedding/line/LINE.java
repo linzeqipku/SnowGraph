@@ -234,7 +234,7 @@ public class LINE {
         trainLINE();
         long endTime = System.currentTimeMillis();
         System.out.println("Total time: " + (endTime-startTime)/1000 + "s.\n");
-        writeToTxt();
+        //writeToTxt();
     }
 
     class Edge {

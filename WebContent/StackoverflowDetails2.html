@@ -90,7 +90,7 @@
 
     <![endif]-->
 </head>
-<body style="background:#cfcfcf"> <!--#cfcfcf-->
+<body style="background:#cfcfcf" onkeydown="keyLogin()"> <!--#cfcfcf-->
 	<!-- Fixed navbar -->
 	<div class="navbar navbar-fixed-top navbar-inverse">
 		<div class="navbar-header">
@@ -126,12 +126,10 @@
 
 			</div>
 
-			<div class="col-sm-12 col-md-12">
-				<img src="images/loadding.gif">
-			</div>
-
-
-			<div class="row" style = "margin-top:10px">
+			<p></p>
+			<p></p>
+			<p></p>
+			<!--<div class="row" style = "margin-top:10px">
 				<div class="col-md-12">
 				<div class="btn-group">
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -141,7 +139,7 @@
 					</ul>
 				</div>
 				</div>
-			</div>
+			</div>-->
 
 	</div>
 	<div id="down" class="row">
@@ -171,6 +169,12 @@
         var dataset = [];
         var relationset = [];
         var times = [];
+        function keyLogin(){
+        	if(event.keyCode == 13 && document.getElementById("search").val() != "") {
+        		document.getElementById("search").click();
+        	}
+        }
+        
 		function getdata(node){
 		    var node_ID = node;
 		    for (var i = 0; i < dataset.length; i++) if (dataset[i].metadata.id == node) return i;
@@ -348,10 +352,10 @@
 				},
 				minCollision: 60,
 				neo4jData: orijson,
-				nodeRadius: 25,
+				nodeRadius: 40,
                 focusid : node_ID,
 				zoomFit: false,
-                infoPanel : true,
+                infoPanel : false,
 
 				lineColor:"black",//"#E6E6FA", // LightBlue
 				lineWidth:"3",

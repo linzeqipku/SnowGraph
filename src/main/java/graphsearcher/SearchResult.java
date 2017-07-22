@@ -38,7 +38,7 @@ public class SearchResult {
 				node = db.getNodeById(nodeID);
 				JSONObject temp = new JSONObject();
 				temp.put("id" , nodeID);
-				temp.put("labels" , node.getLabels());
+				temp.put("labels" , node.getLabels().iterator().next().toString());
 				Map<String , Object>properties = node.getAllProperties();
 				JSONObject jsonProperties = new JSONObject();
 				for(Entry<String , Object> entry : properties.entrySet()){
@@ -53,10 +53,10 @@ public class SearchResult {
 		for(long edgeID : edges){
 			Relationship edge;
 			try(Transaction tx = db.beginTx()) {
-				 edge = db.getRelationshipById(edgeID);
-				 JSONObject temp = new JSONObject();
+				edge = db.getRelationshipById(edgeID);
+				JSONObject temp = new JSONObject();
 				temp.put("id" , edgeID);
-				temp.put("type" , edge.getType());
+				temp.put("type" , edge.getType().toString());
 				temp.put("startNode" , edge.getStartNode().getId());
 				temp.put("endNode" , edge.getEndNode().getId());
 				relationshipsArray.put(temp);

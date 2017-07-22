@@ -306,21 +306,40 @@
                                 .attr('class', function(d) {
                                     return 'text' + (icon(d) ? ' icon' : '');
                                 })
-                                .attr('fill', '#000000')
+                                .attr('fill', '#000111')
                                 .attr('font-size', function(d) {
-                                    return icon(d) ? (options.nodeRadius + 'px') : '14px';
+                                    return icon(d) ? (options.nodeRadius + 'px') : '10px';
                                 })
                                 .attr('pointer-events', 'none')
                                 .attr('text-anchor', 'middle')
+                                .attr('x' , '0px')
                                 .attr('y', function(d) {
-                                    return icon(d) ? (parseInt(Math.round(options.nodeRadius * 0.32)) + 'px') : '4px';
+                                    return icon(d) ? (parseInt(Math.round(options.nodeRadius * 0.32)) + 'px') : '-12px';
+                                }).html(function(d){
+                                	var result;
+                                	if(d.labels == "Class")
+                                		result = "类";
+                                	else if(d.labels == "Method")
+                                		result = "方法";
+                                	else if(d.labels == "Interface")
+                                		result == "接口";
+                                	else if(d.labels == "Field")
+                                		result == "域";
+                                	else 
+                                		result = "null";
+                                	return result;//'&lt' + d.labels + '&gt';
                                 })
+                                .append("tspan")
+                                .attr('x' , '0px')
+                                .attr('y' , '15px')
+                                .attr('font-size' , '20')
                                 .html(function(d) {
                                     var _icon = icon(d);
                                     var show = showtext(d);
                                     if (show == undefined) show = "";
                                     return _icon ? '&#x' + _icon : show;
                                 });
+                            
                         }
 
                         function showtext(d){

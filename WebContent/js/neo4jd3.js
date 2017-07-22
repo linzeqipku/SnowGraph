@@ -308,7 +308,7 @@
                                 })
                                 .attr('fill', '#000111')
                                 .attr('font-size', function(d) {
-                                    return icon(d) ? (options.nodeRadius + 'px') : '10px';
+                                    return icon(d) ? (options.nodeRadius + 'px') : '15px';
                                 })
                                 .attr('pointer-events', 'none')
                                 .attr('text-anchor', 'middle')
@@ -322,9 +322,9 @@
                                 	else if(d.labels == "Method")
                                 		result = "方法";
                                 	else if(d.labels == "Interface")
-                                		result == "接口";
+                                		result = "接口";
                                 	else if(d.labels == "Field")
-                                		result == "域";
+                                		result = "域";
                                 	else 
                                 		result = "null";
                                 	return result;//'&lt' + d.labels + '&gt';

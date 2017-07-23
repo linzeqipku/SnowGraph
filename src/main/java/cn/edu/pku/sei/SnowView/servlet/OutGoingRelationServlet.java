@@ -58,6 +58,7 @@ public class OutGoingRelationServlet extends HttpServlet {
             }
         }
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.getWriter().print(rejsarr.toString());
     }
     public static void main(String args[]){

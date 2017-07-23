@@ -83,6 +83,7 @@ public class GetExtendsTreeServlet extends HttpServlet {
         jsobj.put("relationships",relsarr);
         //System.out.println(jsobj.toString());
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.getWriter().print(jsobj.toString());
     }
     public static void main(String args[]){

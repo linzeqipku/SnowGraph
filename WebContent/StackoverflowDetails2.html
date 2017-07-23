@@ -68,9 +68,6 @@
 		}
 		#center{
 			text-align: center;
-			width: 1536px;
-			height : 855px;
-			margin : 0 auto;
 		}
 
 
@@ -90,7 +87,7 @@
 
     <![endif]-->
 </head>
-<body style="background:#cfcfcf" onkeydown="keyLogin()"> <!--#cfcfcf-->
+<body style="background:#cfcfcf" "> <!--#cfcfcf-->
 	<!-- Fixed navbar -->
 	<div class="navbar navbar-fixed-top navbar-inverse">
 		<div class="navbar-header">
@@ -111,14 +108,13 @@
 	</div>
 <div id="all" >
 	<div id="up">
-
 			<div class="row ">
 				<div class = "col-md-6"></div>
 				<div class="col-md-4">
 					<div class="input-group col-md-12">
-						<input type="text" class="form-control" placeholder="Search for..." id="queryText" style="height:35px">
+						<input type="text" class="form-control" placeholder="Search for..." id="queryText" style="height:35px" />
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" onclick="queryByText();" id="search" style="width:50px;height:35px"></button>
+							<button class="btn btn-default" type="button" onkeydown="keyLogin();" onclick="queryByText();" id="search" style="width:50px;height:35px"></button>
 						</span>
 					</div><!-- /input-group -->
 				</div><!-- /.col-lg-6 -->
@@ -126,33 +122,82 @@
 
 			</div>
 
-			<p></p>
-			<p></p>
-			<p></p>
-			<!--<div class="row" style = "margin-top:10px">
-				<div class="col-md-12">
-				<div class="btn-group">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						Choose One <span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu" id="ListSelect">
-					</ul>
-				</div>
-				</div>
-			</div>-->
-
 	</div>
-	<div id="down" class="row">
-
-	<div id="center" class="panel panel-default" style="background: #dfdfdf">
-			<div class="panel-heading" style="background: white; color : white">
-				<h3 class="panel-title " style="color:black">neo4jd3</h3>
+	<div class="col-md-12 col-sm-12" style="height:30px"></div>
+	<div id="down" class="row">	
+		<div id="center" class="col-md-12 col-sm-12" style="padding:30px;background: #dfdfdf">
+			<div id="graphDisplayer" class="col-md-7 col-sm-7 panel panel-default">
+				<div class="panel-heading" style="background: white; color : white">
+					<h3 class="panel-title " style="color:black">neo4jd3</h3>
+					<button class="btn btn-lg" style="background-image:url(images/first.png);width:43px;height:43px" value="test" ></button>
+					<button class="btn btn-lg" style="background-image:url(images/former.png);width:43px;height:43px" value="test" ></button>
+					<button class="btn btn-lg" style="background-image:url(images/latter.png);width:43px;height:43px" value="test" ></button>
+					<button class="btn btn-lg" style="background-image:url(images/last.png);width:43px;height:43px" value="test" ></button>
+				</div>
+				<div id ="neo4jd3" class="col-md-12 col-sm-12"style="background-color:#F0F8FF; height:866px">
+					
+				</div>
 			</div>
-			<div id="neo4jd3" style="width:1536px;heigth:855px;background-color:#F0F8FF; background-repeat: no-repeat ; background-position:center">
+			<div class="col-md-5 col-sm-5">
+			
+				<div class="panel panel-default" style="background: #dfdfdf">
+					<!-- Table -->
+					<div class="panel-heading" style="background: black; color : white">
+						<h3 class="panel-title">ECHARTS</h3>
+					</div>
+					<!--<div id = "echarts" style="width: 500px;height:400px;">
+	
+					</div>-->
+					<div class="page-header">
+						<div class="form-horizontal">
+							<div class="control-label col-lg-0">
+							</div>
+							<div class="col-lg-2">
+								<select id="relationSelect" class="form-control">
+									<option>NONE</option>
+								</select>
+							</div>
+					  	</div>
+						<table id="relationTypes" class="table">
+		
+						</table>
+					</div>
 
+				</div>
+				
+				
+				<div class="panel panel-default" style="background: #dfdfdf">
+					<div class="panel panel-default" style="background: #dfdfdf">
+						<div class="panel-heading" style="background: black; color : white">
+							<h3 class="panel-title">Node Information</h3>
+						</div>
+			
+						<!-- Single button -->
+						<div class="panel panel-default" style="margin: 10px 10px 10px 10px">
+							<!-- Table -->
+							<table id="otherinfo" class="table">
+				
+							</table>
+						</div>
+						<div class="panel panel-default" style="margin: 10px 10px 10px 10px;height:300px;overflow:auto">
+						  <!-- Table -->
+						  <table id="data" class="table">
+				
+						  </table>
+						</div>
+						<div class="panel panel-default" style="margin: 10px 10px 10px 10px">
+							<!-- Table -->
+							<table id="relation" class="table">
+				
+							</table>
+						</div>
+					</div>
+
+				</div>
+				
 			</div>
+		</div>
 	</div>
-</div>
 	
     <script src="js/jquery-1.10.2.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -170,7 +215,9 @@
         var relationset = [];
         var times = [];
         function keyLogin(){
-        	if(event.keyCode == 13 && document.getElementById("search").val() != "") {
+        	var e = window.event || arguments.callee.caller.arguments[0];
+        	if(e && e.keyCode == 13) {
+        		
         		document.getElementById("search").click();
         	}
         }
@@ -351,7 +398,7 @@
 //                        'zoomOut': 'img/twemoji/1f50e.svg'
 				},
 				minCollision: 60,
-				neo4jData: orijson,
+				neo4jData: orijson.graphData,
 				nodeRadius: 40,
                 focusid : node_ID,
 				zoomFit: false,
@@ -365,6 +412,19 @@
 				//nodeOutlineFillColor:"black",
 				nodeFillColor:"#F0F8FF" // ALICEBLUE
 
+				
+				functionSection:{
+				    function :"",
+					imagesUrl :{
+				        first : "images/first.png",
+						former : "images/former.png",
+						latter : "images/latter.png",
+						last : "images/last.png"
+					},
+					id: "functionSection"
+					current: orijson.current,
+					max : orijson.current				
+				}
 			});
 		}
 
@@ -473,6 +533,6 @@
         }
         //start();
 	</script>
-</div>>
+</div>
 </body>
 </html>

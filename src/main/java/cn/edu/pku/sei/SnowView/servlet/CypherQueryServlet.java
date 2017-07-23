@@ -23,7 +23,7 @@ public class CypherQueryServlet extends HttpServlet {
 	GraphDatabaseService db=null;
 	
 	public void init(ServletConfig config) throws ServletException{
-		File databasePath = new File("E:/SnowGraphData/dc/graphdb");
+		File databasePath = new File("I:\\graphdb\\graphdb");
         db = new GraphDatabaseFactory().newEmbeddedDatabase(databasePath);
 	}
 	
@@ -50,7 +50,7 @@ public class CypherQueryServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         response.getWriter().print(result.toString());
-
+        System.out.println(result.toString());
 
         //region original code
         /*try {

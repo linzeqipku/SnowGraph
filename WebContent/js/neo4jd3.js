@@ -93,6 +93,77 @@
                         },
                         VERSION = '0.0.1';
 
+                        function appendFunctionSec(container){
+                        	/*var first , former , latter , last;
+                        	var current , max;
+                        	current = option.functionSection.current;
+                        	max = option.functionSection.max;
+                        	first = 0;
+                        	former = current > 1 ? current - 1 : -1; 
+                        	latter = current < max - 1 ? current + 1 : -1;
+                        	latter = max - 1;
+                        	
+                        	
+                        	var div = container.append(div);
+                        	
+                        	var firstBtn = div.append("button")
+                        		.attr("class" , "btn btn-lg")
+                        		.attr("id" , "first")
+                        		.style("background-image" , "url(" + option.functionSection.imagesUrl.first) + ")"
+                        		.style("width" , "43px")
+                        		.style("height" , "43px")
+                        		.attr("value" , first)
+                        		.attr("onClick=" , option.functionSection.funtion + "(" + first + ")" );
+                        	if(current!=0){
+                        		firstBtn.attr("onClick=" , option.functionSection.funtion + "(" + first + ")" );
+                        	}else if(current != 0){
+                        		firstBtn.attr("class" , "active");
+                        	}
+                        	
+                        	
+                        	
+                        	var formerBtn = div.append("button")
+	                        	.attr("class" , "btn btn-lg")
+	                    		.attr("id" , "former")
+	                    		.style("background-image" , "url(" + option.functionSection.imagesUrl.former) + ")"
+	                    		.style("width" , "43px")
+	                    		.style("height" , "43px")
+	                    		.attr("value" , former);
+                        	if(former != -1)
+                        	{
+	                    		formerBtn.attr("onClick=" , option.functionSection.funtion + "(" + former + ")" );
+	                    	}else{
+	                    		formerBtn.attr("class" , "active");
+                        	}
+                       
+                        	var latterBtn = div.append("button")
+	                        	.attr("class" , "btn btn-lg")
+	                    		.attr("id" , "latter")
+	                    		.style("background-image" , "url(" + option.functionSection.imagesUrl.latter) + ")"
+	                    		.style("width" , "43px")
+	                    		.style("height" , "43px")
+	                    		.attr("value" , latter);
+                        	if(latter != -1){
+                        		latterBtn.attr("onClick=" , option.functionSection.funtion + "(" + latter + ")" );
+                        	}else if(latter == -1){
+                        		latterBtn.attr("class"  , "active");
+                        	}
+                        	
+                        	var lastBtn = div.append("button")
+	                        	.attr("class" , "btn btn-lg")
+	                    		.attr("id" , "last")
+	                    		.style("background-image" , "url(" + option.functionSection.imagesUrl.last) + ")"
+	                    		.style("width" , "43px")
+	                    		.style("height" , "43px")
+	                    		.attr("value" , last);
+	                    	if(current != max - 1){
+	                    		lastBtn.attr("onClick=" , option.functionSection.funtion + "(" + last + ")" );
+	                    	}else if(latter == -1){
+	                    		lastBtn.attr("class"  , "active");
+	                    	}
+                        	*/
+                        }
+                        
                         function appendGraph(container) {
                             svg = container.append('svg')
                                 .attr('width', '100%')

@@ -23,6 +23,7 @@ public class GetNodeServlet extends HttpServlet {
         String p = PostUtil.sendGet("http://neo4j:1@127.0.0.1:7474/db/data/node/"+id);
         System.out.println(p);
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.getWriter().print(p);
     }
 }

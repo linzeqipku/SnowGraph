@@ -177,7 +177,11 @@ public class GraphSearcher {
 			tx.success();
 		}
 		Collections.sort(r,(r1, r2) -> Double.compare(r1.cost, r2.cost));
-		return r;
+		int K=5;
+		if (r.size()<K)
+			return r;
+		else
+			return r.subList(0, K);
 	}
 
 	Map<Set<Long>, Double> computeAnchors(String queryString) {

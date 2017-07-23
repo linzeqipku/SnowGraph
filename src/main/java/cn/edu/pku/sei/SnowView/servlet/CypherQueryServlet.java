@@ -23,7 +23,7 @@ public class CypherQueryServlet extends HttpServlet {
 	GraphDatabaseService db=null;
 	
 	public void init(ServletConfig config) throws ServletException{
-		File databasePath = new File("I:\\graphdb\\graphdb");
+		File databasePath = new File("E:/SnowGraphData/dc/graphdb");
         db = new GraphDatabaseFactory().newEmbeddedDatabase(databasePath);
 	}
 	

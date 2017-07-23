@@ -150,28 +150,12 @@ public class GraphSearcher {
 	}
 
 	public SearchResult query(String queryString) {
-		/*
-		 * SearchResult result = new SearchResult(); result.nodes.add((long)19);
-		 * result.nodes.add((long)1542); result.nodes.add((long)221);
-		 * result.edges.add((long)1489); result.edges.add((long)3);
-		 * 
-		 * return result;
-		 */
+
 		System.out.println(queryString);
 		Set<Long> anchors = computeAnchors(queryString);
 		SearchResult r = new SearchResult();
 		r.nodes.addAll(anchors);
 		try (Transaction tx = db.beginTx()) {
-			for (long anchor : anchors) {
-				Iterator<Relationship> classInter = db.getNodeById(anchor)
-						.getRelationships(RelationshipType.withName(JavaCodeExtractor.HAVE_METHOD), Direction.INCOMING)
-						.iterator();
-				if (!classInter.hasNext())
-					continue;
-				Relationship edge = classInter.next();
-				r.nodes.add(edge.getStartNodeId());
-				r.edges.add(edge.getId());
-			}
 			for (long anchor1 : anchors)
 				for (long anchor2 : anchors) {
 					Path path = pathFinder.findSinglePath(db.getNodeById(anchor1), db.getNodeById(anchor2));
@@ -182,6 +166,18 @@ public class GraphSearcher {
 							r.edges.add(edge.getId());
 					}
 				}
+			Set<Long> tmpSet=new HashSet<>();
+			tmpSet.addAll(r.nodes);
+			for (long node : tmpSet) {
+				Iterator<Relationship> classInter = db.getNodeById(node)
+						.getRelationships(RelationshipType.withName(JavaCodeExtractor.HAVE_METHOD), Direction.INCOMING)
+						.iterator();
+				if (!classInter.hasNext())
+					continue;
+				Relationship edge = classInter.next();
+				r.nodes.add(edge.getStartNodeId());
+				r.edges.add(edge.getId());
+			}
 			tx.success();
 		}
 		return r;
@@ -221,6 +217,8 @@ public class GraphSearcher {
 						minDistNode = node;
 					}
 				}
+				if (minDistNode==-1)
+					continue;
 				minDistNodeSet.add(minDistNode);
 				if (debug)
 					System.out.println(queryWord + " " + id2Sig.get(minDistNode) + " " + minDist);

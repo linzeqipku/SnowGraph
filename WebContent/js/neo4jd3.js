@@ -396,7 +396,15 @@
                                 		result = "接口";
                                 	else if(d.labels == "Field")
                                 		result = "域";
-                                	else 
+                                	else if(d.lables == "DocxFile")
+                                		result = "docx文件";
+                                	else if(d.labels == "DocxPlainText")
+                                		result = "docx文本";
+                                	else if(d.labels == "DocxSection")
+                                		result = "docx章节";
+                                	else if(d.labels == "DocxTable")
+                                		result = "docx表格";
+                                	else
                                 		result = "null";
                                 	return result;//'&lt' + d.labels + '&gt';
                                 })
@@ -415,11 +423,18 @@
 
                         function showtext(d){
                             var show;
-                            if (d.labels[0] == "Class" || d.labels[0] == "Interface" || d.labels[0] == "Method" || d.labels[0] == "Field") {
+                            if (d.labels == "Class" || d.labels == "Interface" || d.labels == "Method" || d.labels == "Field") {
                                 show = d.properties.name;
-                                return show;
+                            }else if(d.labels[0] == "DocxFile"){
+                            	show = d.properties.docxName;
+                            }else if(d.labels[0] == "DoxcPlainText"){
+                            	//show = d.properties.plainTextContent;
+                            	show = d.id;
+                            }else if(d.labels[0] == "DocxSection"){
+                            	show = d.properties.sectionTitle;
+                            }else if(d.labels[0] == "DocxTable"){
+                            	show = d.id;
                             }
-                            show = d.properties.name;
                             if (show == undefined)  show = d.properties.displayName;
                             return show;
                         }

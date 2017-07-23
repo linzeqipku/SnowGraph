@@ -724,12 +724,10 @@
             var index = getdata(node_ID);
             for (var i = 0; i < edgelist[index].length; i++){
                 var edgeele = edgelist[index][i];
-                //$("#relationTypes").append("<tr> <td class = title>&nbsp;&nbsp;"+edgeele.cata+
+                //$(" #relationTypes").append("<tr> <td class = title>&nbsp;&nbsp;"+edgeele.cata+
                 //    ":</td> <td>" + "<button type=\"button\" class=\"btn btn-default\" onclick=\"addRelations(\'"+edgeele.cata+"\',"+node_ID+");\">Submit</button>" +"</td> </tr>");
                 $("#relationSelect").append("<option value=\""+edgeele.cata+"\">"+rename(edgeele.cata)+"</option>");
             }
-
-
 
 		}
         

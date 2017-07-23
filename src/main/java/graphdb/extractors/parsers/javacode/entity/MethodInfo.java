@@ -1,8 +1,6 @@
 package graphdb.extractors.parsers.javacode.entity;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -29,7 +27,6 @@ public class MethodInfo {
     public Set<IMethodBinding> methodCalls = new HashSet<IMethodBinding>();
     public Set<String> fieldUsesSet = new HashSet<String>();
     public Set<String> throwSet = new HashSet<String>();
-    public List<String> chineseTokens = new ArrayList<>();
 
     public String hashName() {
         return belongTo + "." + name + "(" + paramString + ")";

@@ -1,30 +1,15 @@
-package graphdb.extractors.parsers.word.corpus;
+package graphdb.extractors.miners.tokenization_ch;
 
-import graphdb.extractors.parsers.word.utils.Config;
-import org.apache.commons.io.FileUtils;
+import graphdb.extractors.parsers.word.corpus.Translator;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Dictionary {
-    private static HashMap<String, String> dic;
+    private static HashMap<String, String> dic = new HashMap<>();
     private int hitCacheNum = 0;
     private int totQueryNum = 0;
-
-    public void init() throws IOException {
-        dic = new HashMap<>();
-        List<String> lines =
-                FileUtils.readLines(new File(Config.getProjectTranslationPath()));
-        for(String line : lines) {
-            int idx = line.indexOf(' ');
-            String key = line.substring(0, idx);
-            String value = line.substring(idx + 1, line.length());
-            dic.put(key, value);
-        }
-    }
 
     public ArrayList<String> getTranslation(String word) {
         ArrayList<String> ret = new ArrayList<>();
@@ -47,8 +32,8 @@ public class Dictionary {
             String[] tokens = result.split("；|，| ");
             for(String token : tokens) {
                 token = token.replaceAll(
-                        " |\t|\\.|[(A-Za-z)]|\\(.*\\)|\\[.*]|（.*）|（.*|.*）", "");
-                toPrint.append(token + " ");
+                        " |\t|\\.|\\w|\\(.*\\)|（.*）|（.*|.*）|人名", "");
+                if(!token.equals("")) toPrint.append(token + " ");
                 ret.add(token);
             }
             dic.put(word, toPrint.toString());

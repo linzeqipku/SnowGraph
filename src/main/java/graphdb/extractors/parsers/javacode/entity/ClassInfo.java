@@ -14,5 +14,4 @@ public class ClassInfo {
     public List<String> superInterfaceTypeList = new ArrayList<String>();
     public String comment = "";
     public String content;
-    public List<String> chineseTokens = new ArrayList<>();
 }

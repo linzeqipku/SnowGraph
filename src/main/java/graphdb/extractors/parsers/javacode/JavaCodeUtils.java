@@ -24,7 +24,6 @@ public class JavaCodeUtils {
         node.setProperty(JavaCodeExtractor.CLASS_COMMENT, classInfo.comment);
         node.setProperty(JavaCodeExtractor.CLASS_CONTENT, classInfo.content);
         node.setProperty(JavaCodeExtractor.SIGNATURE, classInfo.fullName);
-        node.setProperty(JavaCodeExtractor.CLASS_CHINESE_TOKENS, String.join(" ", classInfo.chineseTokens));
     }
 
     public static void createInterfaceNode(InterfaceInfo interfaceInfo, Node node) {
@@ -36,7 +35,6 @@ public class JavaCodeUtils {
         node.setProperty(JavaCodeExtractor.INTERFACE_COMMENT, interfaceInfo.comment);
         node.setProperty(JavaCodeExtractor.INTERFACE_CONTENT, interfaceInfo.content);
         node.setProperty(JavaCodeExtractor.SIGNATURE, interfaceInfo.fullName);
-        node.setProperty(JavaCodeExtractor.INTERFACE_CHINESE_TOKENS, String.join(" ", interfaceInfo.chineseTokens));
     }
 
     public static void createMethodNode(MethodInfo methodInfo, Node node) {
@@ -55,7 +53,6 @@ public class JavaCodeUtils {
         node.setProperty(JavaCodeExtractor.METHOD_PARAMS, methodInfo.paramString);
         node.setProperty(JavaCodeExtractor.METHOD_THROWS, String.join(", ", methodInfo.throwSet));
         node.setProperty(JavaCodeExtractor.SIGNATURE, methodInfo.belongTo+"."+methodInfo.name+"("+methodInfo.paramString+")");
-        node.setProperty(JavaCodeExtractor.METHOD_CHINESE_TOKENS, String.join(" ", methodInfo.chineseTokens));
     }
 
     public static void createFieldNode(FieldInfo fieldInfo, Node node) {

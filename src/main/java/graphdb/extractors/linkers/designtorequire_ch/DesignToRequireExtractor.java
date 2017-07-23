@@ -26,6 +26,7 @@ public class DesignToRequireExtractor implements Extractor {
     HashSet<Node> requireSectionList = new HashSet<>();
     HashSet<Node> designLeafSectionList = new HashSet<>();
     HashSet<Node> requireLeafSectionList = new HashSet<>();
+    HashSet<String> designRequirePair = new HashSet<>();
     static HashSet<String> sectionNameStopWords = new HashSet<>();
     static HashSet<String> subSectionStopWords = new HashSet<>();
 
@@ -121,16 +122,21 @@ public class DesignToRequireExtractor implements Extractor {
     }
 
     public void buildRelationship(Node dNode, Node rNode) {
+        String designId = Long.toString(dNode.getId());
+        String requireId = Long.toString(rNode.getId());
+        String pairId = designId + requireId;
+        if(designRequirePair.contains(pairId)) return;
+        designRequirePair.add(pairId);
         if(!dNode.hasLabel(Label.label(WordKnowledgeExtractor.DOCX_SECTION))) return;
         try(Transaction tx = db.beginTx()) {
             dNode.createRelationshipTo(rNode, RelationshipType.withName(DesignToRequireExtractor.DESIGNED_BY));
             System.out.println(rNode.getProperty(WordKnowledgeExtractor.SECTION_TITLE) +  " " + dNode.getProperty(WordKnowledgeExtractor.SECTION_TITLE));
-//            for(Relationship relationship : dNode.getRelationships(Direction.OUTGOING)) {
-//                if(!relationship.isType(RelationshipType.withName(WordKnowledgeExtractor.HAVE_SUB_ELEMENT)))
-//                    continue;
-//                Node nextNode = relationship.getEndNode();
-//                buildRelationship(nextNode, rNode);
-//            }
+            for(Relationship relationship : dNode.getRelationships(Direction.OUTGOING)) {
+                if(!relationship.isType(RelationshipType.withName(WordKnowledgeExtractor.HAVE_SUB_ELEMENT)))
+                    continue;
+                Node nextNode = relationship.getEndNode();
+                buildRelationship(nextNode, rNode);
+            }
             tx.success();
             tx.close();
         }
@@ -140,7 +146,7 @@ public class DesignToRequireExtractor implements Extractor {
         this.db = db;
         initSectionList();
         try(Transaction tx = db.beginTx()) {
-            for (Node dNode : designLeafSectionList) {
+            for (Node dNode : designSectionList) {
                 String dNodeName = (String) dNode.getProperty(WordKnowledgeExtractor.SECTION_TITLE);
                 String dNodeProjectName = (String) dNode.getProperty(WordKnowledgeExtractor.SECTION_PROJECT_NAME);
                 for (Node rNode : requireSectionList) {

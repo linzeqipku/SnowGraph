@@ -10,8 +10,6 @@ import java.util.Set;
 import graphdb.extractors.parsers.javacode.astparser.JavaParser;
 import graphdb.extractors.parsers.javacode.entity.InterfaceInfo;
 
-import graphdb.extractors.parsers.word.corpus.Dictionary;
-import graphdb.extractors.parsers.word.utils.Config;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -159,7 +157,6 @@ public class JavaCodeExtractor implements Extractor {
 
     String srcPath = "";
     GraphDatabaseService db = null;
-    public static Dictionary dictionary = new Dictionary();
     
     public static void main(String[] args){
     	try {
@@ -180,14 +177,7 @@ public class JavaCodeExtractor implements Extractor {
 
     public void run(GraphDatabaseService db) {
         this.db = db;
-        try {
-            if(Config.getProjectType().equals("Chinese")) dictionary.init();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
         elementInfoPool = JavaParser.parse(srcPath);
-        dictionary.printQuery();
         //System.out.println("源代码解析完毕...");
         //System.out.println("开始构建图数据库中的结点...");
         try (Transaction tx = db.beginTx()) {

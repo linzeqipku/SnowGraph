@@ -2,6 +2,7 @@ package graphsearcher;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,18 +62,6 @@ public class GraphSearcher {
 
 	Map<String, Set<Long>> queryWord2Ids = new HashMap<>();
 	Set<String> queryWordSet = new HashSet<>();
-
-	public static void main(String[] args) {
-		String testQuery = "获取所有人的邮件信息";
-		String graphPath = "E:/SnowGraphData/dc/graphdb";
-		GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(new File(graphPath));
-		GraphSearcher graphSearcher = new GraphSearcher(db);
-		Set<Long> res = graphSearcher.computeAnchors(testQuery);
-
-		for (long id : res)
-			System.out.println(graphSearcher.id2Sig.get(id));
-
-	}
 
 	void testDist() {
 		long node1 = 0;
@@ -149,41 +138,51 @@ public class GraphSearcher {
 		}
 	}
 
-	public SearchResult query(String queryString) {
+	public SearchResult querySingle(String queryString) {
+		return query(queryString).get(0);
+	}
 
-		System.out.println(queryString);
-		Set<Long> anchors = computeAnchors(queryString);
-		SearchResult r = new SearchResult();
-		r.nodes.addAll(anchors);
+	public List<SearchResult> query(String queryString) {
+
+		List<SearchResult> r=new ArrayList<>();
+		Map<Set<Long>, Double> anchorMap = computeAnchors(queryString);
 		try (Transaction tx = db.beginTx()) {
-			for (long anchor1 : anchors)
-				for (long anchor2 : anchors) {
-					Path path = pathFinder.findSinglePath(db.getNodeById(anchor1), db.getNodeById(anchor2));
-					if (path != null) {
-						for (Node node : path.nodes())
-							r.nodes.add(node.getId());
-						for (Relationship edge : path.relationships())
-							r.edges.add(edge.getId());
+			for (Set<Long> anchors : anchorMap.keySet()) {
+				SearchResult searchResult = new SearchResult();
+				searchResult.nodes.addAll(anchors);
+				for (long anchor1 : anchors)
+					for (long anchor2 : anchors) {
+						Path path = pathFinder.findSinglePath(db.getNodeById(anchor1), db.getNodeById(anchor2));
+						if (path != null) {
+							for (Node node : path.nodes())
+								searchResult.nodes.add(node.getId());
+							for (Relationship edge : path.relationships())
+								searchResult.edges.add(edge.getId());
+						}
 					}
+				Set<Long> tmpSet = new HashSet<>();
+				tmpSet.addAll(searchResult.nodes);
+				for (long node : tmpSet) {
+					Iterator<Relationship> classInter = db.getNodeById(node).getRelationships(
+							RelationshipType.withName(JavaCodeExtractor.HAVE_METHOD), Direction.INCOMING).iterator();
+					if (!classInter.hasNext())
+						continue;
+					Relationship edge = classInter.next();
+					searchResult.nodes.add(edge.getStartNodeId());
+					searchResult.edges.add(edge.getId());
 				}
-			Set<Long> tmpSet=new HashSet<>();
-			tmpSet.addAll(r.nodes);
-			for (long node : tmpSet) {
-				Iterator<Relationship> classInter = db.getNodeById(node)
-						.getRelationships(RelationshipType.withName(JavaCodeExtractor.HAVE_METHOD), Direction.INCOMING)
-						.iterator();
-				if (!classInter.hasNext())
-					continue;
-				Relationship edge = classInter.next();
-				r.nodes.add(edge.getStartNodeId());
-				r.edges.add(edge.getId());
+				searchResult.cost=anchorMap.get(anchors);
+				r.add(searchResult);
 			}
 			tx.success();
 		}
+		Collections.sort(r,(r1, r2) -> Double.compare(r1.cost, r2.cost));
 		return r;
 	}
 
-	Set<Long> computeAnchors(String queryString) {
+	Map<Set<Long>, Double> computeAnchors(String queryString) {
+
+		Map<Set<Long>, Double> r = new HashMap<>();
 
 		queryWord2Ids = new HashMap<>();
 		queryWordSet = new HashSet<>();
@@ -198,11 +197,7 @@ public class GraphSearcher {
 
 		Set<Long> candidateNodes = candidate();
 
-		double minCost = Double.MAX_VALUE;
-		Set<Long> minCostNodeSet = new HashSet<>();
 		for (long cNode : candidateNodes) {
-			if (debug)
-				System.out.println("cNode: " + id2Sig.get(cNode));
 			Set<Long> minDistNodeSet = new HashSet<>();
 			minDistNodeSet.add(cNode);
 			for (String queryWord : queryWordSet) {
@@ -217,22 +212,15 @@ public class GraphSearcher {
 						minDistNode = node;
 					}
 				}
-				if (minDistNode==-1)
+				if (minDistNode == -1)
 					continue;
 				minDistNodeSet.add(minDistNode);
-				if (debug)
-					System.out.println(queryWord + " " + id2Sig.get(minDistNode) + " " + minDist);
 			}
 			double cost = sumDist(cNode, minDistNodeSet);
-			if (cost < minCost) {
-				minCost = cost;
-				minCostNodeSet = minDistNodeSet;
-			}
-			if (debug)
-				System.out.println();
+			r.put(minDistNodeSet, cost);
 		}
 
-		return minCostNodeSet;
+		return r;
 
 	}
 

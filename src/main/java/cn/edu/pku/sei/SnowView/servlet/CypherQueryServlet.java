@@ -43,7 +43,7 @@ public class CypherQueryServlet extends HttpServlet {
         System.out.println(type);*/
 
         GraphSearcher searcher = new GraphSearcher(db);
-        SearchResult results = searcher.query(type);
+        SearchResult results = searcher.querySingle(type);
         JSONObject result = results.toJSON(db);
 
         System.out.println("end query");

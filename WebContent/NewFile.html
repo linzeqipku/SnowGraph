@@ -134,7 +134,7 @@
 		<div id="center" class="col-md-12 col-sm-12" style="background: #dfdfdf">
 				<div id="graphDisplayer" class="col-md-7 col-sm-7 panel panel-default">
 					<div class="panel-heading" style="background: white; color : white">
-						<h3 class="panel-title " style="color:black">neo4jd3</h3>
+						<h3 class="panel-title " style="color:black">相关的代码结构子图</h3>
 						<button class="btn btn-lg" style="background-image:url(images/first.png);width:43px;height:43px" value="test" ></button>
 						<button class="btn btn-lg" style="background-image:url(images/former.png);width:43px;height:43px" value="test" ></button>
 						<button class="btn btn-lg" style="background-image:url(images/latter.png);width:43px;height:43px" value="test" ></button>
@@ -149,7 +149,7 @@
 					<div class="panel panel-default" style="background: #dfdfdf">
 						<!-- Table -->
 						<div class="panel-heading" style="background: black; color : white">
-							<h3 class="panel-title">ECHARTS</h3>
+							<h3 class="panel-title">查找关联实体</h3>
 						</div>
 						<!--<div id = "echarts" style="width: 500px;height:400px;">
 		
@@ -175,7 +175,7 @@
 					<div class="panel panel-default" style="background: #dfdfdf">
 						<div class="panel panel-default" style="background: #dfdfdf">
 							<div class="panel-heading" style="background: black; color : white">
-								<h3 class="panel-title">Node Information</h3>
+								<h3 class="panel-title">实体详细信息</h3>
 							</div>
 				
 							<!-- Single button -->
@@ -669,16 +669,19 @@
         }
         
         function rename(str){
-        	if (str == "extend") return "父类 \ 子类";
-        	if (str == "implement") return "实现的接口 \ 实现本接口的类";
-        	if (str == "throw") return "抛出异常 \ 抛出本异常的方法";
-        	if (str == "param") return "参数 \ 以本类型为参数的方法";
-        	if (str == "rt") return "返回类型 \ 以本类型为返回类型的方法";
-        	if (str == "have_method") return "声明方法 \ 所属类型";
-        	if (str == "have_field") return "声明域 \ 所属域";
-        	if (str == "type") return "域的类型 \ 定义为本类型的域";
-        	if (str == "variable") return "引用 \ 引用本类型的方法";
-        	if (str == "have_sub_element") return "下级文档元素 \ 上级文档元素";
+        	if (str == "extend") return "父类 / 子类";
+        	if (str == "implement") return "实现的接口 / 实现本接口的类";
+        	if (str == "throw") return "抛出异常 / 抛出本异常的方法";
+        	if (str == "param") return "参数 / 以本类型为参数的方法";
+        	if (str == "rt") return "返回类型 / 以本类型为返回类型的方法";
+        	if (str == "have_method") return "声明方法 / 所属类型";
+        	if (str == "have_field") return "声明域 / 所属域";
+        	if (str == "call_method") return "本方法调用的方法 / 调用本方法的方法";
+        	if (str == "type") return "域的类型 / 定义为本类型的域";
+        	if (str == "variable") return "引用 / 引用本类型的方法";
+        	if (str == "have_sub_element") return "下级文档元素 / 上级文档元素";
+        	if (str == "api_explained_by") return "设计文档 / 本文档对应的代码元素";
+        	if (str == "have_sub_element") return "需求文档 / 设计文档";
 			return str;
             //return str + "rename";
 		}

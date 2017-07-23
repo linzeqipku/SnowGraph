@@ -296,14 +296,14 @@
                                     return classes;
                                 })
                                 .on('click', function(d) {
-                                    d.fx = d.fy = null;
+                                    //d.fx = d.fy = null;
 
                                     if (typeof options.onNodeClick === 'function') {
                                         options.onNodeClick(d);
                                     }
                                 })
                                 .on('dblclick', function(d) {
-                                    //if (d.fx == null) stickNode(d); else d.fx = d.fy = null;
+                                    if (d.fx == null) stickNode(d); 
                                     if (typeof options.onNodeDoubleClick === 'function') {
                                         options.onNodeDoubleClick(d);
                                     }

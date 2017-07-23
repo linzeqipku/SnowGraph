@@ -159,7 +159,7 @@
 								<div class="control-label col-lg-0">
 								</div>
 								<div class="col-lg-2">
-									<select id="relationSelect" class="form-control">
+									<select id="relationSelect" class="form-control" style="width:150px">
 										<option>NONE</option>
 									</select>
 								</div>
@@ -185,7 +185,7 @@
 					
 								</table>
 							</div>
-							<div class="panel panel-default" style="margin: 10px 10px 10px 10px;height:300px;overflow:auto">
+							<div class="panel panel-default" style="margin: 10px 10px 10px 10px;height:500px;overflow:auto">
 							  <!-- Table -->
 							  <table id="data" class="table">
 					
@@ -730,7 +730,24 @@
             }
 
 		}
-        
+        function getGraph(element){
+       		var list; 	
+        	var parameters={
+        			"type":"getGraph",
+        			index: element.val()
+        	}
+        	$.ajax({
+        		type:'Post',
+        		url:'CypherQuery',
+        		data:parameters,
+        		async:false,
+        		success:function(data){
+        			list = data;
+        		}
+        	});
+        	
+        	init(list , 19);
+        }
         //start();
 	</script>
 </div>>

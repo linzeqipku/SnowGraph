@@ -134,11 +134,11 @@
 		<div id="center" class="col-md-12 col-sm-12" style="background: #dfdfdf">
 				<div id="graphDisplayer" class="col-md-7 col-sm-7 panel panel-default">
 					<div class="panel-heading" style="background: white; color : white">
-						<h3 class="panel-title " style="color:black">neo4jd3</h3>
-						<button class="btn btn-lg" style="background-image:url(images/first.png);width:43px;height:43px" value="test" ></button>
-						<button class="btn btn-lg" style="background-image:url(images/former.png);width:43px;height:43px" value="test" ></button>
-						<button class="btn btn-lg" style="background-image:url(images/latter.png);width:43px;height:43px" value="test" ></button>
-						<button class="btn btn-lg" style="background-image:url(images/last.png);width:43px;height:43px" value="test" ></button>
+						<h3 class="panel-title " style="color:black">相关的代码结构子图</h3>
+						<button id="first" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/first.png);width:43px;height:43px" value=-1 ></button>
+						<button id="former" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/former.png);width:43px;height:43px" value=-1 ></button>
+						<button id="latter" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/latter.png);width:43px;height:43px" value=-1 ></button>
+						<button id="last" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/last.png);width:43px;height:43px" value=-1 ></button>
 					</div>
 					<div id ="neo4jd3" class="col-md-12 col-sm-12"style="background-color:#F0F8FF; height:866px">
 						
@@ -149,7 +149,7 @@
 					<div class="panel panel-default" style="background: #dfdfdf">
 						<!-- Table -->
 						<div class="panel-heading" style="background: black; color : white">
-							<h3 class="panel-title">ECHARTS</h3>
+							<h3 class="panel-title">查找关联实体</h3>
 						</div>
 						<!--<div id = "echarts" style="width: 500px;height:400px;">
 		
@@ -175,7 +175,7 @@
 					<div class="panel panel-default" style="background: #dfdfdf">
 						<div class="panel panel-default" style="background: #dfdfdf">
 							<div class="panel-heading" style="background: black; color : white">
-								<h3 class="panel-title">Node Information</h3>
+								<h3 class="panel-title">实体详细信息</h3>
 							</div>
 				
 							<!-- Single button -->
@@ -255,7 +255,6 @@
             var list = relationset[index];
             var edge = [];
             for (var i = 0; i < list.length; i++){
-
                 if (i == 0){
                     edge.push({nums : 1, begin : 0, end : 0, cata : list[i].type});
                 }else{
@@ -271,10 +270,8 @@
 		}
 		function getd3GraphById(node_ID,type){
             var index = getdata(node_ID);
-
             var list = relationset[index];
             var obj = dataset[index];
-
             var json = {nodes : [], relationships : []};
             json.nodes.push({id : obj.metadata.id, labels : obj.metadata.labels, properties : obj.data});
             var edgeindex = 0;
@@ -331,6 +328,18 @@
             var ret = {results: [jsonfa]};
             return ret;
 		}
+		
+		function anotherInit(oriJson , node_ID){
+			var current = oriJson.index;
+			var max = oriJson.max;
+			
+			document.getElementById("first").value = 0;
+			document.getElementById("last").value = max - 1;
+			document.getElementById("former").value = current - 1 > -1 ? current - 1 : 0;
+			document.getElementById("latter").value = current + 1 < max ? current + 1 : max - 1;
+			init(oriJson.searchResult , node_ID);
+		} 
+		
 		function init(orijson,node_ID) {
 			//for (var i = 0;  i < times.length; i++) times[i] = 0;
 			dataset = [];
@@ -429,9 +438,7 @@
 				    if (node.id == node_ID){
                     	var checkText=$("#relationSelect").find("option:selected").val();
                     node_ID = node.id;
-
                     var ret = getd3GraphById(node_ID,checkText);
-
                     neo4jd3.focusid = node_ID;
                     //relationsNumsDisplay(node_ID);
                     neo4jd3.updateWithNeo4jData(ret);
@@ -489,7 +496,6 @@
 //                        neo4jd3.focusid = node_ID;
 //                    	relationsNumsDisplay(node_ID);
 //                        neo4jd3.updateWithNeo4jData(ret);
-
 				},
                 onNodeClick : function(d){
                     //var index = getdata(d.id);
@@ -578,7 +584,7 @@
                     //alert(project.name)
                 }
             });
-            init(list , 19);
+            anotherInit(list , 19);
             return list;
         }
         function queryByText(){
@@ -642,10 +648,8 @@
             });
             init(ret, node_ID);
         }
-
         function addRelations(type,node_ID){
             var ret = getd3GraphById(node_ID,type);
-
 				neo4jd3.focusid = node_ID;
 				relationsNumsDisplay(node_ID);
 				neo4jd3.updateWithNeo4jData(ret);
@@ -656,7 +660,6 @@
             {name : "hasMethod", show_name : "Method Map", types : ["Class", "Interface"]},
             {name : "hasField", show_name : "Field Map", types : ["Class", "Interface"]},
 			{name : "hasModifiedCode", show_name : "Modified Code", types : ["Class","Interface"]}];
-
         
         Array.prototype.contains = function(obj) {
             var i = this.length;
@@ -691,8 +694,6 @@
                         ":</td> <td>" + "<button type=\"button\" class=\"btn btn-default\" onclick=\""+otherInfoTypes[i].name+"("+obj.metadata.id+");\">Submit</button>" +"</td> </tr>")
                 }
 			}
-
-
             $("#relation").empty();
             for (var i = 0; i < list.length; i++){
                 var ele = list[i];
@@ -701,7 +702,6 @@
                         ":</td> <td>" + ele.end +"</td> </tr>");
 				}
 			}
-
             for (var i = 0; i < list.length; i++){
                 var ele = list[i];
                 if (ele.type == "soAuthor"){
@@ -717,7 +717,6 @@
                     ":</td> <td>" + content +"</td> </tr>");
             }
 		}
-
 		function listsplay(node_ID){
             $("#relationTypes").empty();
             $("#relationSelect").empty();
@@ -728,13 +727,12 @@
                 //    ":</td> <td>" + "<button type=\"button\" class=\"btn btn-default\" onclick=\"addRelations(\'"+edgeele.cata+"\',"+node_ID+");\">Submit</button>" +"</td> </tr>");
                 $("#relationSelect").append("<option value=\""+edgeele.cata+"\">"+rename(edgeele.cata)+"</option>");
             }
-
 		}
         function getGraph(element){
        		var list; 	
         	var parameters={
         			"type":"getGraph",
-        			index: element.val()
+        			index: element.value
         	}
         	$.ajax({
         		type:'Post',
@@ -745,8 +743,11 @@
         			list = data;
         		}
         	});
+        	$("#relationSelect").empty();
+        	$("#relationSelect").append("<option>NONE</option>");
         	
-        	init(list , 19);
+        	$("#data").empty();
+        	anotherInit(list , 19);
         }
         //start();
 	</script>

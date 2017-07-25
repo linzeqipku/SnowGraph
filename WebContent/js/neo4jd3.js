@@ -74,6 +74,8 @@
                         numClasses = 0,
                         focusid = 0,
                         options = {
+                        		
+                        	classes:{},
                             arrowSize: 2,
                             colors: colors(),
                             highlight: undefined,
@@ -353,7 +355,8 @@
                                 .attr('class', 'outline')
                                 .attr('r', options.nodeRadius)
                                 .style('fill', function(d) {
-                                    return options.nodeOutlineFillColor ? options.nodeOutlineFillColor : class2color(d.labels[0]);
+                                	return options.classes[d.labels]["nodeFillColor"];
+                                    //return options.nodeOutlineFillColor ? options.nodeOutlineFillColor : class2color(d.labels[0]);
                                 })
                                 .style('stroke', function(d) {
                                     return options.nodeOutlineFillColor ? class2darkenColor(options.nodeOutlineFillColor) : class2darkenColor(d.labels[0]);
@@ -387,26 +390,7 @@
                                 .attr('y', function(d) {
                                     return icon(d) ? (parseInt(Math.round(options.nodeRadius * 0.32)) + 'px') : '-12px';
                                 }).html(function(d){
-                                	var result;
-                                	if(d.labels == "Class")
-                                		result = "类";
-                                	else if(d.labels == "Method")
-                                		result = "方法";
-                                	else if(d.labels == "Interface")
-                                		result = "接口";
-                                	else if(d.labels == "Field")
-                                		result = "域";
-                                	else if(d.lables == "DocxFile")
-                                		result = "docx文件";
-                                	else if(d.labels == "DocxPlainText")
-                                		result = "docx文本";
-                                	else if(d.labels == "DocxSection")
-                                		result = "docx章节";
-                                	else if(d.labels == "DocxTable")
-                                		result = "docx表格";
-                                	else
-                                		result = "null";
-                                	return result;//'&lt' + d.labels + '&gt';
+                                	return options.classes[d.labels]["chnName"];
                                 })
                                 .append("tspan")
                                 .attr('x' , '0px')

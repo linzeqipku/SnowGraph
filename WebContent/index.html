@@ -341,11 +341,53 @@
 		} 
 		
 		function init(orijson,node_ID) {
-			//for (var i = 0;  i < times.length; i++) times[i] = 0;
 			dataset = [];
 	    	relationset = [];
 			edgelist = [];
-			neo4jd3 = new Neo4jd3('#neo4jd3', {
+			neo4jd3 = new Neo4jd3('#neo4jd3', {			
+				classes: {
+					"Class":{
+						'enlipseName':"Class",
+						"chnName":"类",
+						"nodeFillColor":"#68bdf6" // light blue
+					},
+					"Method":{
+						'enlipseName':"Method",
+						'chnName':"方法",
+						"nodeFillColor":'#6dce9e' // green #1
+					},
+					'Interface':{
+						'enlipseName':"Interface",
+						'chnName':"接口",
+						"nodeFillColor":'#faafc2' // light pink
+					},
+					'Field':{
+						'enlipseName':"Field",
+						'chnName':"域",
+						"nodeFillColor":'#f2baf6' // purple
+					},
+					'DocxFile':{
+						'enlipseName':"DocxFile",
+						'chnName':"docx文件",
+						"nodeFillColor":'#ff928c' // light red
+					},
+					'DocxPlainText':{
+						'enlipseName':"DocxPlainText",
+						'chnName':"docx文本",
+						"nodeFillColor":'#fcea7e' // light yellow
+					},
+					'DocxSection':{
+						'enlipseName':"DocxSection",
+						'chnName':"docx章节",
+						"nodeFillColor":'#ffc766' // light orange
+					},
+					'DocxTable':{
+						'enlipseName':"DocxTable",
+						'chnName':"docx表格",
+						"nodeFillColor":'#405f9e' // navy blue
+					}
+					
+				},
 				highlight: [
 					{
 						class: 'Project',
@@ -357,6 +399,7 @@
 						value: 'eisman'
 					}
 				],
+				//region
 				icons: {
 //                        'Address': 'home',
 					'Api': 'gear',
@@ -392,6 +435,7 @@
 					'zoomIn': 'search-plus',
 					'zoomOut': 'search-minus'
 				},
+				//endregion
 				images: {
 					'Address': 'img/twemoji/1f3e0.svg',
 					'Api': 'img/twemoji/1f527.svg',

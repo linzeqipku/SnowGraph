@@ -127,52 +127,114 @@ function anotherInit(oriJson , node_ID){
 } 
 
 function init(orijson,node_ID) {
+	console.log("asd");
 	dataset = [];
 	relationset = [];
 	edgelist = [];
-	neo4jd3 = new Neo4jd3('#neo4jd3', {			
+	neo4jd3 = new Neo4jd3('#neo4jd3', {	
+		showClassChnName : false,
 		classes: {
 			"Class":{
-				'enlipseName':"Class",
+				'englishName':"Class",
 				"chnName":"类",
 				"nodeFillColor":"#68bdf6" // light blue
 			},
 			"Method":{
-				'enlipseName':"Method",
+				'englishName':"Method",
 				'chnName':"方法",
 				"nodeFillColor":'#6dce9e' // green #1
 			},
 			'Interface':{
-				'enlipseName':"Interface",
+				'englishName':"Interface",
 				'chnName':"接口",
 				"nodeFillColor":'#faafc2' // light pink
 			},
 			'Field':{
-				'enlipseName':"Field",
+				'englishName':"Field",
 				'chnName':"域",
 				"nodeFillColor":'#f2baf6' // purple
 			},
 			'DocxFile':{
-				'enlipseName':"DocxFile",
+				'englishName':"DocxFile",
 				'chnName':"docx文件",
 				"nodeFillColor":'#ff928c' // light red
 			},
 			'DocxPlainText':{
-				'enlipseName':"DocxPlainText",
+				'englishName':"DocxPlainText",
 				'chnName':"docx文本",
 				"nodeFillColor":'#fcea7e' // light yellow
 			},
 			'DocxSection':{
-				'enlipseName':"DocxSection",
+				'englishName':"DocxSection",
 				'chnName':"docx章节",
 				"nodeFillColor":'#ffc766' // light orange
 			},
 			'DocxTable':{
-				'enlipseName':"DocxTable",
+				'englishName':"DocxTable",
 				'chnName':"docx表格",
 				"nodeFillColor":'#405f9e' // navy blue
 			}
 			
+		},
+		showRlationshipsChnName: false,
+		relationships:{
+			"api_explained_by":{
+				"englishName":"api_explained_by",
+				"chnName":"设计文档 / 本文档对应的代码元素"
+			},
+			"call_field":{
+				"englishName":"call_field",
+				"chnName":"call_field未定义"
+			},
+			"call_method":{
+				"englishName":"call_method",
+				"chnName":"本方法调用的方法 / 调用本方法的方法"
+			},
+			"extend":{
+				"englishName":"extend",
+				"chnName":"子类  / 父类"
+			},
+			"function_designed_by":{
+				"englishName":"function_designed_by",
+				"chnName":"该用户设计的方法  / 设计该方法的人"
+			},
+			"hava_field":{
+				"englishName":"hava_field",
+				"chnName":"本方法拥有的域  / 拥有该域的方法"
+			},
+			"have_method":{
+				"englishName":"have_method",
+				"chnName":"本类拥有的方法  / 拥有本方法的类"
+			},
+			"have_sub_element":{
+				"englishName":"have_sub_element",
+				"chnName":"需求文档 / 设计文档"
+			},
+			"implement":{
+				"englishName":"implement",
+				"chnName":"实现的接口  / 实现的接口的类"
+			},
+			"param":{
+				"englishName":"param",
+				"chnName":"参数  / 以本类型为参数的方法"
+			},
+			"rt":{
+				"englishName":"rt",
+				"chnName":"返回类型  / 以本类型为返回类型的方法"
+			},
+			"throw":{
+				"englishName":"throw",
+				"chnName":"抛出异常  / 抛出本异常的方法"
+			},
+			"type":{
+				"englishName":"type",
+				"chnName":"域的类型  / 定义本类型的方法"
+			},
+			"variable":{
+				"englishName":"variable",
+				"chnName":"引用  / 引用本类型的方法"
+			}
+		
 		},
 		highlight: [
 			{
@@ -302,7 +364,7 @@ function init(orijson,node_ID) {
 //                        var endid = parseInt(ele.end.substr(35));
 //                        var startid = parseInt(ele.start.substr(35));
 //                        json.relationships.push({
-//                            id: ele.metadata.id, type: ele.type.substr(3), startNode: startid,
+//                            id: ele.metadata.id, type: rename(ele.type.substr(3)), startNode: startid,
 //                            endNode: endid, properties: {}
 //                        });
 //                        var otherid = endid;
@@ -314,7 +376,7 @@ function init(orijson,node_ID) {
 //                            var endid = parseInt(ele.end.substr(35));
 //                            var startid = parseInt(ele.start.substr(35));
 //                            json.relationships.push({
-//                                id: ele.metadata.id, type: ele.type.substr(3), startNode: startid,
+//                                id: ele.metadata.id, type: rename(ele.type.substr(3)), startNode: startid,
 //                                endNode: endid, properties: {}
 //                            });
 //                        }
@@ -370,6 +432,7 @@ function sendid(node_ID){
 			}
 			}
 		)
+		console.log(relation.metadata.type);
 		json.nodes.push({id : temp.metadata.id , labels : temp.metadata.labels , properties:temp.data});
 	    json.relationships.push({id : relation.metadata.id , type : relation.metadata.type , startNode : node_ID , endNode : node_id});
 	}
@@ -377,6 +440,7 @@ function sendid(node_ID){
 	var jsonfa = {data: [jsonson]};
 	var ret = {results: [jsonfa]};
     //relationsNumsDisplay(node_ID);
+	console.log("etry");
 	init(ret, node_ID);
 }
 
@@ -502,6 +566,20 @@ Array.prototype.contains = function(obj) {
 }
 
 function rename(str){
+	console.log("haha");
+	if (str == "extend") return "父类 / 子类";
+	if (str == "implement") return "实现的接口 / 实现本接口的类";
+	if (str == "throw") return "抛出异常 / 抛出本异常的方法";
+	if (str == "param") return "参数 / 以本类型为参数的方法";
+	if (str == "rt") return "返回类型 / 以本类型为返回类型的方法";
+	if (str == "have_method") return "声明方法 / 所属类型";
+	if (str == "have_field") return "声明域 / 所属域";
+	if (str == "call_method") return "本方法调用的方法 / 调用本方法的方法";
+	if (str == "type") return "域的类型 / 定义为本类型的域";
+	if (str == "variable") return "引用 / 引用本类型的方法";
+	if (str == "have_sub_element") return "下级文档元素 / 上级文档元素";
+	if (str == "api_explained_by") return "设计文档 / 本文档对应的代码元素";
+	if (str == "have_sub_element") return "需求文档 / 设计文档";
 	if (str.substr(3) == "extend" && str[0] == 'i') return "子类";
 	if (str.substr(3) == "extend" && str[0] == 'o') return "父类 ";
 	if (str.substr(3) == "implement" && str[0] == 'i') return "实现本接口的类";

@@ -390,7 +390,11 @@
                                 .attr('y', function(d) {
                                     return icon(d) ? (parseInt(Math.round(options.nodeRadius * 0.32)) + 'px') : '-12px';
                                 }).html(function(d){
-                                	return options.classes[d.labels]["chnName"];
+                                	if (options.classes[d.labels] == undefined) return d.labels;
+                                	if(options.showClassChnName)
+                                		return options.classes[d.labels]["chnName"];
+                                	else 
+                                		return options.classes[d.labels]["englishName"];
                                 })
                                 .append("tspan")
                                 .attr('x' , '0px')
@@ -465,7 +469,11 @@
                                 .attr('pointer-events', 'none')
                                 .attr('text-anchor', 'middle')
                                 .text(function(d) {
-                                    return d.type;
+                                	if (options.relationships[d.type] == undefined) return d.type;
+                                	if(options.showRlationshipsChnName)
+                                		return options.relationships[d.type]["chnName"];
+                                	else 
+                                		return options.relationships[d.type]["englishName"];
                                 });
                         }
 

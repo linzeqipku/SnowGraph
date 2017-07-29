@@ -16,7 +16,7 @@ function getdata(node){
     var node_ID = node;
     for (var i = 0; i < dataset.length; i++) if (dataset[i].metadata.id == node) return i;
         $.ajax({
-            type: 'POST',
+            type: 'POST', 
             url: "GetNode",
             data: {id: node_ID},
             async: false,
@@ -74,7 +74,7 @@ function getd3GraphById(node_ID,type){
         var endid = parseInt(ele.end.substr(35));
         var startid = parseInt(ele.start.substr(35));
         json.relationships.push({
-            id: ele.metadata.id, type: ele.type, startNode: startid,
+            id: ele.metadata.id, type: ele.type.substr(3), startNode: startid,
             endNode: endid, properties: {}
         });
         var otherid = endid;
@@ -86,7 +86,7 @@ function getd3GraphById(node_ID,type){
             var endid = parseInt(ele.end.substr(35));
             var startid = parseInt(ele.start.substr(35));
             json.relationships.push({
-                id: ele.metadata.id, type: ele.type, startNode: startid,
+                id: ele.metadata.id, type: ele.type.substr(3), startNode: startid,
                 endNode: endid, properties: {}
             });
         }
@@ -106,7 +106,7 @@ function getd3Graph(obj){
         ele = obj.relationships[i];
         var endid = parseInt(ele.end.substr(35));
         var startid = parseInt(ele.start.substr(35));
-        json.relationships.push({id : ele.metadata.id, type : ele.type, startNode : startid,
+        json.relationships.push({id : ele.metadata.id, type : ele.type.substr(3), startNode : startid,
             endNode : endid, properties : {}});
     }
     var jsonson = {graph: json};
@@ -302,7 +302,7 @@ function init(orijson,node_ID) {
 //                        var endid = parseInt(ele.end.substr(35));
 //                        var startid = parseInt(ele.start.substr(35));
 //                        json.relationships.push({
-//                            id: ele.metadata.id, type: ele.type, startNode: startid,
+//                            id: ele.metadata.id, type: ele.type.substr(3), startNode: startid,
 //                            endNode: endid, properties: {}
 //                        });
 //                        var otherid = endid;
@@ -314,7 +314,7 @@ function init(orijson,node_ID) {
 //                            var endid = parseInt(ele.end.substr(35));
 //                            var startid = parseInt(ele.start.substr(35));
 //                            json.relationships.push({
-//                                id: ele.metadata.id, type: ele.type, startNode: startid,
+//                                id: ele.metadata.id, type: ele.type.substr(3), startNode: startid,
 //                                endNode: endid, properties: {}
 //                            });
 //                        }
@@ -502,19 +502,32 @@ Array.prototype.contains = function(obj) {
 }
 
 function rename(str){
-	if (str == "extend") return "父类 / 子类";
-	if (str == "implement") return "实现的接口 / 实现本接口的类";
-	if (str == "throw") return "抛出异常 / 抛出本异常的方法";
-	if (str == "param") return "参数 / 以本类型为参数的方法";
-	if (str == "rt") return "返回类型 / 以本类型为返回类型的方法";
-	if (str == "have_method") return "声明方法 / 所属类型";
-	if (str == "have_field") return "声明域 / 所属域";
-	if (str == "call_method") return "本方法调用的方法 / 调用本方法的方法";
-	if (str == "type") return "域的类型 / 定义为本类型的域";
-	if (str == "variable") return "引用 / 引用本类型的方法";
-	if (str == "have_sub_element") return "下级文档元素 / 上级文档元素";
-	if (str == "api_explained_by") return "设计文档 / 本文档对应的代码元素";
-	if (str == "have_sub_element") return "需求文档 / 设计文档";
+	if (str.substr(3) == "extend" && str[0] == 'i') return "子类";
+	if (str.substr(3) == "extend" && str[0] == 'o') return "父类 ";
+	if (str.substr(3) == "implement" && str[0] == 'i') return "实现本接口的类";
+	if (str.substr(3) == "implement" && str[0] == 'o') return "实现的接口";
+	if (str.substr(3) == "throw" && str[0] == 'i') return "抛出本异常的方法";
+	if (str.substr(3) == "throw" && str[0] == 'o') return "抛出异常";
+	if (str.substr(3) == "param" && str[0] == 'i') return "以本类型为参数的方法";
+	if (str.substr(3) == "param" && str[0] == 'o') return "参数";
+	if (str.substr(3) == "rt" && str[0] == 'i') return "以本类型为返回类型的方法";
+	if (str.substr(3) == "rt" && str[0] == 'o') return "返回类型";
+	if (str.substr(3) == "have_method" && str[0] == 'i') return "所属类型";
+	if (str.substr(3) == "have_method" && str[0] == 'o') return "声明方法";
+	if (str.substr(3) == "have_field" && str[0] == 'i') return "所属域";
+	if (str.substr(3) == "have_field" && str[0] == 'o') return "声明域";
+	if (str.substr(3) == "call_method" && str[0] == 'i') return "调用本方法的方法";
+	if (str.substr(3) == "call_method" && str[0] == 'o') return "本方法调用的方法";
+	if (str.substr(3) == "type" && str[0] == 'i') return "定义为本类型的域";
+	if (str.substr(3) == "type" && str[0] == 'o') return "域的类型";
+	if (str.substr(3) == "variable" && str[0] == 'i') return "引用本类型的方法";
+	if (str.substr(3) == "variable" && str[0] == 'o') return "引用";
+	if (str.substr(3) == "have_sub_element" && str[0] == 'i') return "上级文档元素";
+	if (str.substr(3) == "have_sub_element" && str[0] == 'o') return "下级文档元素";
+	if (str.substr(3) == "api_explained_by" && str[0] == 'i') return "本文档对应的代码元素";
+	if (str.substr(3) == "api_explained_by" && str[0] == 'o') return "设计文档";
+	if (str.substr(3) == "have_sub_element" && str[0] == 'i') return "设计文档";
+	if (str.substr(3) == "have_sub_element" && str[0] == 'o') return "需求文档";
 	return str;
     //return str + "rename";
 }

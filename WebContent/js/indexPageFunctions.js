@@ -633,8 +633,10 @@ function view(obj,list){
                 ":</td> <td>" + ele.start +"</td> </tr>");
         }
     }
+	var notIntrested = ["lineVec", "transVec"]
     $("#data").empty();
     for(key in obj.data) {
+		if (key in notIntrested) continue;
         var content = obj.data[key];
         if (key == "content" || key == "comment") content = "<pre>" + content + "</pre>";
         $("#data").append("<tr> <td class = title>&nbsp;&nbsp;"+rename(key)+

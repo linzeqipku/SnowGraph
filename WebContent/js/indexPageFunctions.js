@@ -327,6 +327,7 @@ function init(orijson,node_ID) {
 		nodeRadius: 40,
         focusid : node_ID,
         onNodeDoubleClick: function(node) {
+        	console.log("dd");
 		    if (node.id == node_ID){
             	var checkText=$("#relationSelect").find("option:selected").val();
             node_ID = node.id;
@@ -636,7 +637,7 @@ function view(obj,list){
 	var notIntrested = ["lineVec", "transVec"]
     $("#data").empty();
     for(key in obj.data) {
-		if (key in notIntrested) continue;
+		if ($.inArray(key,notIntrested) != -1) continue;
         var content = obj.data[key];
         if (key == "content" || key == "comment") content = "<pre>" + content + "</pre>";
         $("#data").append("<tr> <td class = title>&nbsp;&nbsp;"+rename(key)+

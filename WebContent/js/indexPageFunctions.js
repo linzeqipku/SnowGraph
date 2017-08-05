@@ -6,6 +6,9 @@ var neo4jd3;
 var dataset = [];
 var relationset = [];
 var edgelist = [];
+var propertyCnName = {"access": "访问修饰符", "superClass": "父类", "implements":"实现接口", "name": "名称",
+	"fullName": "全名",  "extends": "父接口", "isAbstract": "是否抽象类(abstract)", "isFinal": "是否不可变(final)",
+	"isStatic": "是否静态", "comment": "注释", "content": "内容"};
 function keyLogin(){
 	if(event.keyCode == 13 && document.getElementById("search").val() != "") {
 		document.getElementById("search").click();
@@ -634,13 +637,19 @@ function view(obj,list){
                 ":</td> <td>" + ele.start +"</td> </tr>");
         }
     }
-	var notIntrested = ["lineVec", "transVec"]
+	var notIntrested = ["lineVec", "transVec", "userId", "ownerUserId"]
+	var label = obj.metadata.labels[0]
+	var name = obj.data["name"]
+	if (name == null)
+		name = obj.metadata.id
     $("#data").empty();
+	$("#data").append("<tr> <td class = 'title' style='color: blue'>&nbsp;&nbsp;"+label+
+		"</td> <td class = title>" + name +"</td> </tr>");
     for(key in obj.data) {
 		if ($.inArray(key,notIntrested) != -1) continue;
         var content = obj.data[key];
         if (key == "content" || key == "comment") content = "<pre>" + content + "</pre>";
-        $("#data").append("<tr> <td class = title>&nbsp;&nbsp;"+rename(key)+
+        $("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;"+rename(key)+
             ":</td> <td>" + content +"</td> </tr>");
     }
 }

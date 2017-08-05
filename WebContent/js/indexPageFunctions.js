@@ -6,9 +6,11 @@ var neo4jd3;
 var dataset = [];
 var relationset = [];
 var edgelist = [];
-var propertyCnName = {"access": "访问修饰符", "superClass": "父类", "implements":"实现接口", "name": "名称",
+var codePropertyCnName = {"access": "访问修饰符", "superClass": "父类", "implements":"实现接口", "name": "名称",
 	"fullName": "全名",  "extends": "父接口", "isAbstract": "是否抽象类(abstract)", "isFinal": "是否不可变(final)",
-	"isStatic": "是否静态", "comment": "注释", "content": "内容"};
+	"isStatic": "是否静态", "belongTo":"所属类", "comment": "注释", "content": "内容"};
+var docPropertyCnName = {"sectionTitle": "标题", "sectionContent": "内容", "tableContent": "表格内容"};
+
 function keyLogin(){
 	if(event.keyCode == 13 && document.getElementById("search").val() != "") {
 		document.getElementById("search").click();
@@ -616,12 +618,12 @@ function rename(str){
 //based on
 function view(obj,list){
     $("#otherinfo").empty();
-    for (var i = 0; i < otherInfoTypes.length; i++){
-        if (otherInfoTypes[i].types.contains(obj.metadata.labels[0])){
-            $("#otherinfo").append("<tr> <td class = title>&nbsp;&nbsp;"+otherInfoTypes[i].show_name+
-                ":</td> <td>" + "<button type=\"button\" class=\"btn btn-default\" onclick=\""+otherInfoTypes[i].name+"("+obj.metadata.id+");\">Submit</button>" +"</td> </tr>")
-        }
-	}
+    // for (var i = 0; i < otherInfoTypes.length; i++){
+     //    if (otherInfoTypes[i].types.contains(obj.metadata.labels[0])){
+     //        $("#otherinfo").append("<tr> <td class = title>&nbsp;&nbsp;"+otherInfoTypes[i].show_name+
+     //            ":</td> <td>" + "<button type=\"button\" class=\"btn btn-default\" onclick=\""+otherInfoTypes[i].name+"("+obj.metadata.id+");\">Submit</button>" +"</td> </tr>")
+     //    }
+	// }
     $("#relation").empty();
     for (var i = 0; i < list.length; i++){
         var ele = list[i];
@@ -637,22 +639,33 @@ function view(obj,list){
                 ":</td> <td>" + ele.start +"</td> </tr>");
         }
     }
-	var notIntrested = ["lineVec", "transVec", "userId", "ownerUserId"]
+
 	var label = obj.metadata.labels[0]
 	var name = obj.data["name"]
 	if (name == null)
 		name = obj.metadata.id
     $("#data").empty();
-	$("#data").append("<tr> <td class = 'title' style='color: blue'>&nbsp;&nbsp;"+label+
-		"</td> <td class = title>" + name +"</td> </tr>");
-    for(key in obj.data) {
-		if ($.inArray(key,notIntrested) != -1) continue;
-        var content = obj.data[key];
-        if (key == "content" || key == "comment") content = "<pre>" + content + "</pre>";
-        $("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;"+rename(key)+
-            ":</td> <td>" + content +"</td> </tr>");
-    }
+	$("#data").append("<tr> <td class = 'title' style='color: dodgerblue'>&nbsp;&nbsp;"+label+
+		"</td> <td style='color: dodgerblue'>" + name +"</td> </tr>");
+    if (label == "Class" || label == "Interface" || label == "Method" || label == "Field"){
+		showProperty(obj, codePropertyCnName)
+	} else {
+		showProperty(obj, docPropertyCnName)
+	}
 }
+
+function showProperty(obj, propertyCnName){
+	for (key in propertyCnName){
+		if (obj.data.hasOwnProperty(key)){
+			var content = obj.data[key];
+			if (key == "content" || key == "comment")
+				content = "<pre>" + content + "</pre>";
+			$("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;"+propertyCnName.key+
+				":</td> <td>" + content +"</td> </tr>");
+		}
+	}
+}
+
 function listsplay(node_ID){
     $("#relationTypes").empty();
     $("#relationSelect").empty();

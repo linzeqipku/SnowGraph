@@ -6,10 +6,7 @@ var neo4jd3;
 var dataset = [];
 var relationset = [];
 var edgelist = [];
-var codePropertyCnName = {"access": "访问修饰符", "superClass": "父类", "implements":"实现接口", "name": "名称",
-	"fullName": "全名",  "extends": "父接口", "isAbstract": "是否抽象类(abstract)", "isFinal": "是否不可变(final)",
-	"isStatic": "是否静态", "belongTo":"所属类", "comment": "注释", "content": "内容"};
-var docPropertyCnName = {"sectionTitle": "标题", "sectionContent": "内容", "tableContent": "表格内容"};
+
 
 function keyLogin(){
 	if(event.keyCode == 13 && document.getElementById("search").val() != "") {
@@ -660,12 +657,15 @@ function showProperty(obj, propertyCnName){
 			var content = obj.data[key];
 			if (key == "content" || key == "comment")
 				content = "<pre>" + content + "</pre>";
-			$("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;"+propertyCnName.key+
+			$("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;"+propertyCnName[key]+
 				":</td> <td>" + content +"</td> </tr>");
 		}
 	}
 }
-
+var codePropertyCnName = {"access": "访问修饰符", "superClass": "父类", "implements":"实现接口", "name": "名称",
+		"fullName": "全名",  "extends": "父接口", "isAbstract": "是否抽象类(abstract)", "isFinal": "是否不可变(final)",
+		"isStatic": "是否静态", "belongTo":"所属类", "comment": "注释", "content": "内容"};
+	var docPropertyCnName = {"sectionTitle": "标题", "sectionContent": "内容", "tableContent": "表格内容", "docxName" : "文档名称", "projectName" : "项目名称", "plainTextContent" : "文本内容"};
 function listsplay(node_ID){
     $("#relationTypes").empty();
     $("#relationSelect").empty();

@@ -41,7 +41,7 @@ public class CypherQueryServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
-        System.out.println("start query");
+        //System.out.println("start query");
         String query = request.getParameter("query");
         String queryText = request.getParameter("params");
         String requestType = request.getParameter("type");
@@ -66,7 +66,7 @@ public class CypherQueryServlet extends HttpServlet {
         result.put("searchResult" , searchResult);
         result.put("index", index);
         result.put("max" , resultLength);
-        System.out.println("end query");
+        //System.out.println("end query");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         response.getWriter().print(result.toString());

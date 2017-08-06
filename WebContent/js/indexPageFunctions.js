@@ -569,7 +569,6 @@ Array.prototype.contains = function(obj) {
 }
 
 function rename(str){
-	console.log("haha");
 	if (str == "extend") return "父类 / 子类";
 	if (str == "implement") return "实现的接口 / 实现本接口的类";
 	if (str == "throw") return "抛出异常 / 抛出本异常的方法";
@@ -599,6 +598,8 @@ function rename(str){
 	if (str.substr(3) == "have_field" && str[0] == 'o') return "声明域";
 	if (str.substr(3) == "call_method" && str[0] == 'i') return "调用本方法的方法";
 	if (str.substr(3) == "call_method" && str[0] == 'o') return "本方法调用的方法";
+	if (str.substr(3) == "call_field" && str[0] == 'i') return "调用这个域的方法";
+	if (str.substr(3) == "call_field" && str[0] == 'o') return "本方法调用的域";
 	if (str.substr(3) == "type" && str[0] == 'i') return "定义为本类型的域";
 	if (str.substr(3) == "type" && str[0] == 'o') return "域的类型";
 	if (str.substr(3) == "variable" && str[0] == 'i') return "引用本类型的方法";

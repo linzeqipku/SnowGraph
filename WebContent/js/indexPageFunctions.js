@@ -643,7 +643,7 @@ function view(obj,list){
 	if (name == null)
 		name = obj.metadata.id
     $("#data").empty();
-	$("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;类型:</td> <td>" + name +"</td> </tr>");
+	$("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;类型:</td> <td>" + label +"</td> </tr>");
     if (label == "Class" || label == "Interface" || label == "Method" || label == "Field"){
 		showProperty(obj, codePropertyCnName)
 	} else {

@@ -54,10 +54,26 @@ public class OutGoingRelationServlet extends HttpServlet {
         for (Object key : tmp){
             String k = (String) key;
             for (JSONObject obj : list){
-                if (obj.getString("type").equals(k)) rejsarr.put(obj);
+                if (obj.getString("type").equals(k)) {
+                    String flag = "in_";
+                    if (obj.getString("start").equals("http://127.0.0.1:7474/db/data/node/"+id)) flag = "ou_";
+                    if (flag.equals("in_")) continue;
+                    obj.put("type",flag+k);
+                    rejsarr.put(obj);
+                }
+            }
+            for (JSONObject obj : list){
+                if (obj.getString("type").equals(k)) {
+                    String flag = "in_";
+                    if (obj.getString("start").equals("http://127.0.0.1:7474/db/data/node/"+id)) flag = "ou_";
+                    if (flag.equals("ou_")) continue;
+                    obj.put("type",flag+k);
+                    rejsarr.put(obj);
+                }
             }
         }
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.getWriter().print(rejsarr.toString());
     }
     public static void main(String args[]){

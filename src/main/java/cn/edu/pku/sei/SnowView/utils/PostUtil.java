@@ -27,9 +27,9 @@ public class PostUtil {
                         ContentType.create("application/json", "UTF-8"));
                 httppost.setEntity(stringentity);
                 httppost.setHeader("Accept","application/json; charset=UTF-8");
-                System.out.println("connect");
+                //System.out.println("connect");
                 httpresponse = httpclient.execute(httppost);
-                System.out.println("connected");
+                //System.out.println("connected");
                 response = EntityUtils
                         .toString(httpresponse.getEntity());
             } finally {
@@ -55,9 +55,9 @@ public class PostUtil {
                 httpclient = HttpClients.createDefault();
                 HttpGet httppost = new HttpGet(url);
                 httppost.setHeader("Accept","application/json; charset=UTF-8");
-                System.out.println("connect");
+                //System.out.println("connect");
                 httpresponse = httpclient.execute(httppost);
-                System.out.println("connected");
+                //System.out.println("connected");
                 response = EntityUtils
                         .toString(httpresponse.getEntity());
             } catch (Exception ee) {

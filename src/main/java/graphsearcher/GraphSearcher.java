@@ -27,6 +27,8 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
+import graphdb.extractors.linkers.codeindoc_ch.CodeInDocxFileExtractor;
+import graphdb.extractors.linkers.designtorequire_ch.DesignToRequireExtractor;
 import graphdb.extractors.miners.codeembedding.line.LINEExtracter;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 
@@ -47,7 +49,7 @@ public class GraphSearcher {
 					RelationshipType.withName(JavaCodeExtractor.TYPE), Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.VARIABLE), Direction.BOTH), 5);
 
-	boolean debug = true;
+	boolean debug = false;
 
 	static EnglishStemmer stemmer = new EnglishStemmer();
 	static QueryStringToQueryWordsConverter converter = new QueryStringToQueryWordsConverter();
@@ -170,14 +172,40 @@ public class GraphSearcher {
 					Relationship edge = classInter.next();
 					searchResult.nodes.add(edge.getStartNodeId());
 					searchResult.edges.add(edge.getId());
+				}/*
+				tmpSet.clear();
+				tmpSet.addAll(searchResult.nodes);
+				for (long node:tmpSet){
+					Iterator<Relationship> iter = db.getNodeById(node).getRelationships(
+							RelationshipType.withName(CodeInDocxFileExtractor.API_EXPLAINED_BY), Direction.BOTH).iterator();
+					while (iter.hasNext()){
+						Relationship edge=iter.next();
+						searchResult.nodes.add(edge.getOtherNodeId(node));
+						searchResult.edges.add(edge.getId());
+					}
 				}
+				tmpSet.clear();
+				tmpSet.addAll(searchResult.nodes);
+				for (long node:tmpSet){
+					Iterator<Relationship> iter = db.getNodeById(node).getRelationships(
+							RelationshipType.withName(DesignToRequireExtractor.DESIGNED_BY), Direction.BOTH).iterator();
+					while (iter.hasNext()){
+						Relationship edge=iter.next();
+						searchResult.nodes.add(edge.getOtherNodeId(node));
+						searchResult.edges.add(edge.getId());
+					}
+				}*/
 				searchResult.cost=anchorMap.get(anchors);
 				r.add(searchResult);
 			}
 			tx.success();
 		}
 		Collections.sort(r,(r1, r2) -> Double.compare(r1.cost, r2.cost));
-		return r;
+		int K=5;
+		if (r.size()<K)
+			return r;
+		else
+			return r.subList(0, K);
 	}
 
 	Map<Set<Long>, Double> computeAnchors(String queryString) {

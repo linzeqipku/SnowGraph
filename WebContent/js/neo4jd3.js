@@ -74,6 +74,8 @@
                         numClasses = 0,
                         focusid = 0,
                         options = {
+                        		
+                        	classes:{},
                             arrowSize: 2,
                             colors: colors(),
                             highlight: undefined,
@@ -93,6 +95,77 @@
                         },
                         VERSION = '0.0.1';
 
+                        function appendFunctionSec(container){
+                        	/*var first , former , latter , last;
+                        	var current , max;
+                        	current = option.functionSection.current;
+                        	max = option.functionSection.max;
+                        	first = 0;
+                        	former = current > 1 ? current - 1 : -1; 
+                        	latter = current < max - 1 ? current + 1 : -1;
+                        	latter = max - 1;
+                        	
+                        	
+                        	var div = container.append(div);
+                        	
+                        	var firstBtn = div.append("button")
+                        		.attr("class" , "btn btn-lg")
+                        		.attr("id" , "first")
+                        		.style("background-image" , "url(" + option.functionSection.imagesUrl.first) + ")"
+                        		.style("width" , "43px")
+                        		.style("height" , "43px")
+                        		.attr("value" , first)
+                        		.attr("onClick=" , option.functionSection.funtion + "(" + first + ")" );
+                        	if(current!=0){
+                        		firstBtn.attr("onClick=" , option.functionSection.funtion + "(" + first + ")" );
+                        	}else if(current != 0){
+                        		firstBtn.attr("class" , "active");
+                        	}
+                        	
+                        	
+                        	
+                        	var formerBtn = div.append("button")
+	                        	.attr("class" , "btn btn-lg")
+	                    		.attr("id" , "former")
+	                    		.style("background-image" , "url(" + option.functionSection.imagesUrl.former) + ")"
+	                    		.style("width" , "43px")
+	                    		.style("height" , "43px")
+	                    		.attr("value" , former);
+                        	if(former != -1)
+                        	{
+	                    		formerBtn.attr("onClick=" , option.functionSection.funtion + "(" + former + ")" );
+	                    	}else{
+	                    		formerBtn.attr("class" , "active");
+                        	}
+                       
+                        	var latterBtn = div.append("button")
+	                        	.attr("class" , "btn btn-lg")
+	                    		.attr("id" , "latter")
+	                    		.style("background-image" , "url(" + option.functionSection.imagesUrl.latter) + ")"
+	                    		.style("width" , "43px")
+	                    		.style("height" , "43px")
+	                    		.attr("value" , latter);
+                        	if(latter != -1){
+                        		latterBtn.attr("onClick=" , option.functionSection.funtion + "(" + latter + ")" );
+                        	}else if(latter == -1){
+                        		latterBtn.attr("class"  , "active");
+                        	}
+                        	
+                        	var lastBtn = div.append("button")
+	                        	.attr("class" , "btn btn-lg")
+	                    		.attr("id" , "last")
+	                    		.style("background-image" , "url(" + option.functionSection.imagesUrl.last) + ")"
+	                    		.style("width" , "43px")
+	                    		.style("height" , "43px")
+	                    		.attr("value" , last);
+	                    	if(current != max - 1){
+	                    		lastBtn.attr("onClick=" , option.functionSection.funtion + "(" + last + ")" );
+	                    	}else if(latter == -1){
+	                    		lastBtn.attr("class"  , "active");
+	                    	}
+                        	*/
+                        }
+                        
                         function appendGraph(container) {
                             svg = container.append('svg')
                                 .attr('width', '100%')
@@ -225,14 +298,14 @@
                                     return classes;
                                 })
                                 .on('click', function(d) {
-                                    d.fx = d.fy = null;
+                                    //d.fx = d.fy = null;
 
                                     if (typeof options.onNodeClick === 'function') {
                                         options.onNodeClick(d);
                                     }
                                 })
                                 .on('dblclick', function(d) {
-                                    //if (d.fx == null) stickNode(d); else d.fx = d.fy = null;
+                                    if (d.fx == null) stickNode(d); 
                                     if (typeof options.onNodeDoubleClick === 'function') {
                                         options.onNodeDoubleClick(d);
                                     }
@@ -282,7 +355,8 @@
                                 .attr('class', 'outline')
                                 .attr('r', options.nodeRadius)
                                 .style('fill', function(d) {
-                                    return options.nodeOutlineFillColor ? options.nodeOutlineFillColor : class2color(d.labels[0]);
+                                	return options.classes[d.labels]["nodeFillColor"];
+                                    //return options.nodeOutlineFillColor ? options.nodeOutlineFillColor : class2color(d.labels[0]);
                                 })
                                 .style('stroke', function(d) {
                                     return options.nodeOutlineFillColor ? class2darkenColor(options.nodeOutlineFillColor) : class2darkenColor(d.labels[0]);
@@ -316,18 +390,11 @@
                                 .attr('y', function(d) {
                                     return icon(d) ? (parseInt(Math.round(options.nodeRadius * 0.32)) + 'px') : '-12px';
                                 }).html(function(d){
-                                	var result;
-                                	if(d.labels == "Class")
-                                		result = "类";
-                                	else if(d.labels == "Method")
-                                		result = "方法";
-                                	else if(d.labels == "Interface")
-                                		result = "接口";
-                                	else if(d.labels == "Field")
-                                		result = "域";
+                                	if (options.classes[d.labels] == undefined) return d.labels;
+                                	if(options.showClassChnName)
+                                		return options.classes[d.labels]["chnName"];
                                 	else 
-                                		result = "null";
-                                	return result;//'&lt' + d.labels + '&gt';
+                                		return options.classes[d.labels]["englishName"];
                                 })
                                 .append("tspan")
                                 .attr('x' , '0px')
@@ -344,11 +411,18 @@
 
                         function showtext(d){
                             var show;
-                            if (d.labels[0] == "Class" || d.labels[0] == "Interface" || d.labels[0] == "Method" || d.labels[0] == "Field") {
+                            if (d.labels == "Class" || d.labels == "Interface" || d.labels == "Method" || d.labels == "Field") {
                                 show = d.properties.name;
-                                return show;
+                            }else if(d.labels[0] == "DocxFile"){
+                            	show = d.properties.docxName;
+                            }else if(d.labels[0] == "DoxcPlainText"){
+                            	//show = d.properties.plainTextContent;
+                            	show = d.id;
+                            }else if(d.labels[0] == "DocxSection"){
+                            	show = d.properties.sectionTitle;
+                            }else if(d.labels[0] == "DocxTable"){
+                            	show = d.id;
                             }
-                            show = d.properties.name;
                             if (show == undefined)  show = d.properties.displayName;
                             return show;
                         }
@@ -395,7 +469,11 @@
                                 .attr('pointer-events', 'none')
                                 .attr('text-anchor', 'middle')
                                 .text(function(d) {
-                                    return d.type;
+                                	if (options.relationships[d.type] == undefined) return d.type;
+                                	if(options.showRlationshipsChnName)
+                                		return options.relationships[d.type]["chnName"];
+                                	else 
+                                		return options.relationships[d.type]["englishName"];
                                 });
                         }
 

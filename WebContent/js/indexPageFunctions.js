@@ -6,10 +6,7 @@ var neo4jd3;
 var dataset = [];
 var relationset = [];
 var edgelist = [];
-var codePropertyCnName = {"name": "名称", "fullName": "全名", "access": "访问修饰符", "superClass": "父类",
-	"implements":"实现接口", "extends": "父接口", "isAbstract": "是否抽象类(abstract)", "isFinal": "是否不可变(final)",
-	"isStatic": "是否静态", "belongTo":"所属类", "comment": "注释", "content": "内容"};
-var docPropertyCnName = {"sectionTitle": "标题", "sectionContent": "内容", "tableContent": "表格内容"};
+
 
 function keyLogin(){
 	if(event.keyCode == 13 && document.getElementById("search").val() != "") {
@@ -572,7 +569,6 @@ Array.prototype.contains = function(obj) {
 }
 
 function rename(str){
-	console.log("haha");
 	if (str == "extend") return "父类 / 子类";
 	if (str == "implement") return "实现的接口 / 实现本接口的类";
 	if (str == "throw") return "抛出异常 / 抛出本异常的方法";
@@ -602,6 +598,8 @@ function rename(str){
 	if (str.substr(3) == "have_field" && str[0] == 'o') return "声明域";
 	if (str.substr(3) == "call_method" && str[0] == 'i') return "调用本方法的方法";
 	if (str.substr(3) == "call_method" && str[0] == 'o') return "本方法调用的方法";
+	if (str.substr(3) == "call_field" && str[0] == 'i') return "调用这个域的方法";
+	if (str.substr(3) == "call_field" && str[0] == 'o') return "本方法调用的域";
 	if (str.substr(3) == "type" && str[0] == 'i') return "定义为本类型的域";
 	if (str.substr(3) == "type" && str[0] == 'o') return "域的类型";
 	if (str.substr(3) == "variable" && str[0] == 'i') return "引用本类型的方法";
@@ -645,8 +643,8 @@ function view(obj,list){
 	if (name == null)
 		name = obj.metadata.id
     $("#data").empty();
-	$("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp; 类型"+
-		"</td> <td>" + name +"</td> </tr>");
+	$("#data").append("<tr> <td class = 'title' style='color: dodgerblue'>&nbsp;&nbsp;"+label+
+		"</td> <td style='color: dodgerblue'>" + name +"</td> </tr>");
     if (label == "Class" || label == "Interface" || label == "Method" || label == "Field"){
 		showProperty(obj, codePropertyCnName)
 	} else {
@@ -660,12 +658,15 @@ function showProperty(obj, propertyCnName){
 			var content = obj.data[key];
 			if (key == "content" || key == "comment")
 				content = "<pre>" + content + "</pre>";
-			$("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;"+propertyCnName.key+
+			$("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;"+propertyCnName[key]+
 				":</td> <td>" + content +"</td> </tr>");
 		}
 	}
 }
-
+var codePropertyCnName = {"access": "访问修饰符", "superClass": "父类", "implements":"实现接口", "name": "名称",
+		"fullName": "全名",  "extends": "父接口", "isAbstract": "是否抽象类(abstract)", "isFinal": "是否不可变(final)",
+		"isStatic": "是否静态", "belongTo":"所属类", "comment": "注释", "content": "内容"};
+	var docPropertyCnName = {"sectionTitle": "标题", "sectionContent": "内容", "tableContent": "表格内容", "docxName" : "文档名称", "projectName" : "项目名称", "plainTextContent" : "文本内容"};
 function listsplay(node_ID){
     $("#relationTypes").empty();
     $("#relationSelect").empty();

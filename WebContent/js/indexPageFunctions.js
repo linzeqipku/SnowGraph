@@ -6,8 +6,8 @@ var neo4jd3;
 var dataset = [];
 var relationset = [];
 var edgelist = [];
-var codePropertyCnName = {"access": "访问修饰符", "superClass": "父类", "implements":"实现接口", "name": "名称",
-	"fullName": "全名",  "extends": "父接口", "isAbstract": "是否抽象类(abstract)", "isFinal": "是否不可变(final)",
+var codePropertyCnName = {"name": "名称", "fullName": "全名", "access": "访问修饰符", "superClass": "父类",
+	"implements":"实现接口", "extends": "父接口", "isAbstract": "是否抽象类(abstract)", "isFinal": "是否不可变(final)",
 	"isStatic": "是否静态", "belongTo":"所属类", "comment": "注释", "content": "内容"};
 var docPropertyCnName = {"sectionTitle": "标题", "sectionContent": "内容", "tableContent": "表格内容"};
 
@@ -645,8 +645,8 @@ function view(obj,list){
 	if (name == null)
 		name = obj.metadata.id
     $("#data").empty();
-	$("#data").append("<tr> <td class = 'title' style='color: dodgerblue'>&nbsp;&nbsp;"+label+
-		"</td> <td style='color: dodgerblue'>" + name +"</td> </tr>");
+	$("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp; 类型"+
+		"</td> <td>" + name +"</td> </tr>");
     if (label == "Class" || label == "Interface" || label == "Method" || label == "Field"){
 		showProperty(obj, codePropertyCnName)
 	} else {

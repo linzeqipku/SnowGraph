@@ -129,12 +129,12 @@ function anotherInit(oriJson , node_ID){
 } 
 
 function init(orijson,node_ID) {
-	console.log("asd");
+	
 	dataset = [];
 	relationset = [];
 	edgelist = [];
 	neo4jd3 = new Neo4jd3('#neo4jd3', {	
-		showClassChnName : false,
+		showClassChnName : true,
 		classes: {
 			"Class":{
 				'englishName':"Class",
@@ -329,7 +329,7 @@ function init(orijson,node_ID) {
 		nodeRadius: 40,
         focusid : node_ID,
         onNodeDoubleClick: function(node) {
-        	console.log("dd");
+        	
 		    if (node.id == node_ID){
             	var checkText=$("#relationSelect").find("option:selected").val();
             node_ID = node.id;
@@ -443,7 +443,7 @@ function sendid(node_ID){
 	var jsonfa = {data: [jsonson]};
 	var ret = {results: [jsonfa]};
     //relationsNumsDisplay(node_ID);
-	console.log("etry");
+	
 	init(ret, node_ID);
 }
 
@@ -481,7 +481,7 @@ function sendcypher(query){
             //alert(project.name)
         }
     });
-    anotherInit(list , 19);
+    anotherInit(list , 10000);
     return list;
 }
 function queryByText(){
@@ -577,11 +577,12 @@ function rename(str){
 	if (str == "have_method") return "声明方法 / 所属类型";
 	if (str == "have_field") return "声明域 / 所属域";
 	if (str == "call_method") return "本方法调用的方法 / 调用本方法的方法";
+	if (str == "call_field") return "调用这个域的方法 / 本方法调用的域";
 	if (str == "type") return "域的类型 / 定义为本类型的域";
 	if (str == "variable") return "引用 / 引用本类型的方法";
 	if (str == "have_sub_element") return "下级文档元素 / 上级文档元素";
 	if (str == "api_explained_by") return "设计文档 / 本文档对应的代码元素";
-	if (str == "have_sub_element") return "需求文档 / 设计文档";
+	if (str == "function_designed_by") return "需求文档 / 设计文档";
 	if (str.substr(3) == "extend" && str[0] == 'i') return "子类";
 	if (str.substr(3) == "extend" && str[0] == 'o') return "父类 ";
 	if (str.substr(3) == "implement" && str[0] == 'i') return "实现本接口的类";
@@ -608,8 +609,8 @@ function rename(str){
 	if (str.substr(3) == "have_sub_element" && str[0] == 'o') return "下级文档元素";
 	if (str.substr(3) == "api_explained_by" && str[0] == 'i') return "本文档对应的代码元素";
 	if (str.substr(3) == "api_explained_by" && str[0] == 'o') return "设计文档";
-	if (str.substr(3) == "have_sub_element" && str[0] == 'i') return "设计文档";
-	if (str.substr(3) == "have_sub_element" && str[0] == 'o') return "需求文档";
+	if (str.substr(3) == "function_designed_by" && str[0] == 'i') return "设计文档";
+	if (str.substr(3) == "function_designed_by" && str[0] == 'o') return "需求文档";
 	return str;
     //return str + "rename";
 }

@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.neo4j.graphalgo.GraphAlgoFactory;
 import org.neo4j.graphalgo.PathFinder;
 import org.neo4j.graphdb.Direction;
@@ -172,7 +174,7 @@ public class GraphSearcher {
 					Relationship edge = classInter.next();
 					searchResult.nodes.add(edge.getStartNodeId());
 					searchResult.edges.add(edge.getId());
-				}/*
+				}
 				tmpSet.clear();
 				tmpSet.addAll(searchResult.nodes);
 				for (long node:tmpSet){
@@ -194,7 +196,7 @@ public class GraphSearcher {
 						searchResult.nodes.add(edge.getOtherNodeId(node));
 						searchResult.edges.add(edge.getId());
 					}
-				}*/
+				}
 				searchResult.cost=anchorMap.get(anchors);
 				r.add(searchResult);
 			}
@@ -261,12 +263,20 @@ public class GraphSearcher {
 				candidateNodes.add(node);
 
 		for (long node : id2Name.keySet()) {
-			double count = 0;
+			int count = 0;
 			for (String word : id2Words.get(node))
 				if (queryWordSet.contains(word))
 					count++;
-			if (count >= 2)
-				candidateNodes.add(node);
+			Set<Pair<Long, Integer>> countSet=new HashSet<>();
+			int maxCount=0;
+			if (count >= 2){
+				countSet.add(new ImmutablePair<Long, Integer>(node, count));
+				maxCount++;
+			}
+			for (Pair<Long, Integer> pair:countSet){
+				if (pair.getValue()>=maxCount)
+					candidateNodes.add(pair.getKey());
+			}
 		}
 
 		if (candidateNodes.size() > 0)

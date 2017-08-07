@@ -413,14 +413,14 @@
                             var show;
                             if (d.labels == "Class" || d.labels == "Interface" || d.labels == "Method" || d.labels == "Field") {
                                 show = d.properties.name;
-                            }else if(d.labels[0] == "DocxFile"){
+                            }else if(d.labels == "DocxFile"){
                             	show = d.properties.docxName;
-                            }else if(d.labels[0] == "DoxcPlainText"){
+                            }else if(d.labels == "DoxcPlainText"){
                             	//show = d.properties.plainTextContent;
                             	show = d.id;
-                            }else if(d.labels[0] == "DocxSection"){
+                            }else if(d.labels == "DocxSection"){
                             	show = d.properties.sectionTitle;
-                            }else if(d.labels[0] == "DocxTable"){
+                            }else if(d.labels == "DocxTable"){
                             	show = d.id;
                             }
                             if (show == undefined)  show = d.properties.displayName;
@@ -1092,6 +1092,7 @@
 
                         function updateWithNeo4jData(neo4jData) {
                             var d3Data = neo4jDataToD3Data(neo4jData);
+                            
                             updateWithD3Data(d3Data);
                         }
 

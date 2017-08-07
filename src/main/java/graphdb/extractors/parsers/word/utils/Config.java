@@ -10,8 +10,6 @@ public class Config {
         return "/";
     }
 
-    public static String getProjectType() { return "Chinese"; }
-
     public static String getSampleDocumentPath() {
         return "E:\\data\\企业中文知识图谱\\csp-copy-all\\样例\\文档\\csp-msg\\设计\\市民综合服务平台V1.0-短信服务管理系统-Dubbo API定义.docx";
     }

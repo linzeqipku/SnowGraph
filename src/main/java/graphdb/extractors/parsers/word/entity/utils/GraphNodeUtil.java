@@ -26,20 +26,14 @@ public class GraphNodeUtil {
 
     public static void createPlainTextNode(PlainTextInfo plainText, Node node) {
         node.addLabel(Label.label(WordKnowledgeExtractor.DOCX_PLAIN_TEXT));
-        if(plainText.getText() != null) node.setProperty(WordKnowledgeExtractor.PLAIN_TEXT_CONTENT, plainText.getText());
+        if(plainText.getText() != null) node.setProperty(WordKnowledgeExtractor.PLAIN_TEXT_CONTENT, plainText.toHtml());
         else node.setProperty(WordKnowledgeExtractor.PLAIN_TEXT_CONTENT, "");
     }
 
     public static void createSectionNode(SectionInfo section, Node node) {
         node.addLabel(Label.label(WordKnowledgeExtractor.DOCX_SECTION));
-        if(section.getTitle() != null) {
-            node.setProperty(WordKnowledgeExtractor.SECTION_TITLE, section.getTitle());
-            node.setProperty(WordKnowledgeExtractor.SECTION_CONTENT, section.getTitle());
-        }
-        else {
-            node.setProperty(WordKnowledgeExtractor.SECTION_TITLE, "");
-            node.setProperty(WordKnowledgeExtractor.SECTION_CONTENT, "");
-        }
+        if(section.getTitle() != null) node.setProperty(WordKnowledgeExtractor.SECTION_TITLE, section.getTitle());
+        else node.setProperty(WordKnowledgeExtractor.SECTION_TITLE, "");
         node.setProperty(WordKnowledgeExtractor.SECTION_LAYER, section.getLayer());
         if(section.getSectionNumber() != null) node.setProperty(WordKnowledgeExtractor.SECTION_NUMBER, section.getSectionNumber());
         else node.setProperty(WordKnowledgeExtractor.SECTION_NUMBER, "");

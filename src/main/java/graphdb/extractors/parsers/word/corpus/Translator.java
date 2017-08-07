@@ -73,8 +73,8 @@ public class Translator {
             toPrint.append(line + " ");
             String[] tokens = result.split("；|，| ");
             for(String token : tokens) {
-                token = token.replaceAll(" |\t|\\.|[(A-Za-z)]|\\(.*\\)|\\[.*]|（.*）|（.*|.*）", "");
-                toPrint.append(token + " ");
+                token = token.replaceAll(" |\t|\\.|\\w|\\(.*\\)|（.*）|（.*|.*）|人名", "");
+                if(!token.equals("")) toPrint.append(token + " ");
             }
             toPrint.append("\n");
         }

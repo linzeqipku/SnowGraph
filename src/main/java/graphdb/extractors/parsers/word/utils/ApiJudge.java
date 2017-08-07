@@ -145,7 +145,7 @@ public class ApiJudge {
         for(String line : lines) {
             line = line.replaceAll("/|\\*| ", "");
             if(line.equals("") || line.startsWith("@")) continue;
-            line = line.replaceAll("类描述:|方法描述:|接口描述:", "");
+            line = line.replaceAll("类描述:|方法描述:|接口描述:|功能描述:", "");
             String description = "";
             Matcher matcher = Pattern.compile("([\u4e00-\u9fa5]+)").matcher(line);
             while(matcher.find()) description += matcher.group(0);

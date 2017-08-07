@@ -101,11 +101,12 @@ public class WordKnowledgeExtractor implements Extractor {
             GraphNodeUtil.createPlainTextNode((PlainTextInfo) ele, node);
         }
         else if(ele instanceof SectionInfo) {
-            GraphNodeUtil.createSectionNode((SectionInfo) ele, node);
+            SectionInfo sectionEle = (SectionInfo) ele;
+            GraphNodeUtil.createSectionNode(sectionEle, node);
             List<DocumentElementInfo> subElements = ele.getSubElements();
+            String currentSectionContent = "<section>\n<h" + sectionEle.getLayer() + ">" + sectionEle.getTitle() + "</h" + sectionEle.getLayer() + ">";
             for(DocumentElementInfo subEle : subElements) {
                 Node subNode = dfs_ele(subEle);
-                String currentSectionContent = (String) node.getProperty(SECTION_CONTENT);
                 if(subEle instanceof SectionInfo) {
                     currentSectionContent = currentSectionContent +
                             "\n" + subNode.getProperty(SECTION_CONTENT);
@@ -118,27 +119,13 @@ public class WordKnowledgeExtractor implements Extractor {
                     currentSectionContent = currentSectionContent +
                             "\n" + subNode.getProperty(PLAIN_TEXT_CONTENT);
                 }
-                node.setProperty(SECTION_CONTENT, currentSectionContent);
                 node.createRelationshipTo(subNode, RelationshipType.withName(HAVE_SUB_ELEMENT));
             }
+            node.setProperty(SECTION_CONTENT, currentSectionContent + "</section>\n");
         }
         else if(ele instanceof TableInfo) {
             GraphNodeUtil.createTableNode((TableInfo) ele, node);
-
-            String tableContent = "";
-            List<DocumentElementInfo> rows = ele.getSubElements();
-            for(DocumentElementInfo row:rows) {
-                List<DocumentElementInfo> cellsInARow = row.getSubElements();
-                for (DocumentElementInfo cell : cellsInARow) {
-                    if (cell instanceof TableCellInfo) {
-                        TableCellInfo cellInfo = (TableCellInfo) cell;
-                        PlainTextInfo textCell = (PlainTextInfo) cellInfo.getSubElements().get(0);
-                        tableContent = tableContent + textCell.getText() + "\t";
-                    }
-                }
-                tableContent = tableContent + "\n";
-            }
-            node.setProperty(TABLE_CONTENT, tableContent);
+            node.setProperty(TABLE_CONTENT,  ele.toHtml());
         }
         return node;
     }

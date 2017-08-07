@@ -28,4 +28,5 @@ public class PlainTextInfo extends DocumentElementInfo {
         return this.getClass().getSimpleName() + " - { text: " + this.text + " }";
     }
 
+    public String toHtml() { return "<p>" + text + "</p>\n"; }
 }

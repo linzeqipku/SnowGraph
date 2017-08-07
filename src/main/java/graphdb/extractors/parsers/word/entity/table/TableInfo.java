@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import graphdb.extractors.parsers.word.entity.utils.DocumentElementInfo;
+import graphdb.extractors.parsers.word.entity.utils.PlainTextInfo;
 
 /**
  * Created by maxkibble on 2017/5/25.
@@ -85,6 +86,26 @@ public class TableInfo extends DocumentElementInfo {
 
     public void setTableParts(List<TablePartInfo> tableParts) {
         this.tableParts = tableParts;
+    }
+
+    public String toHtml() {
+        StringBuilder html = new StringBuilder("<table border=\"1\">\n");
+        List<DocumentElementInfo> rows = getSubElements();
+
+        for(DocumentElementInfo row : rows) {
+            html.append("\n<tr>");
+            List<DocumentElementInfo> cellsInARow = row.getSubElements();
+            for(DocumentElementInfo cell: cellsInARow){
+                if (cell instanceof TableCellInfo) {
+                    TableCellInfo cellInfo = (TableCellInfo) cell;
+                    PlainTextInfo textCell = (PlainTextInfo) cellInfo.getSubElements().get(0);
+                    html.append("  <th>" + textCell.getText() + "</th>\n");
+                }
+            }
+            html.append("</tr>");
+        }
+        html.append("</table>\n");
+        return html.toString();
     }
 
 }

@@ -72,19 +72,6 @@ public class JavaASTVisitor extends ASTVisitor {
             return visitClass(node);
     }
 
-    private ArrayList<String> setChineseTokens(String comment, String name) {
-        ArrayList<String> ret;
-        ret = ApiJudge.commentParser(comment);
-        if (ret.isEmpty()) {
-            ArrayList<String> tokens = ApiJudge.splitCamelCase(name);
-            for (String token : tokens) {
-                ArrayList<String> trans = JavaCodeExtractor.dictionary.getTranslation(token);
-                ret.addAll(trans);
-            }
-        }
-        return ret;
-    }
-
     private boolean visitInterface(TypeDeclaration node) {
 
         InterfaceInfo interfaceInfo = new InterfaceInfo();
@@ -110,9 +97,6 @@ public class JavaASTVisitor extends ASTVisitor {
             List<FieldInfo> fieldInfos = createFieldInfos(fieldDeclaration, interfaceInfo.fullName);
             for (FieldInfo fieldInfo : fieldInfos)
                 elementInfoPool.fieldInfoMap.put(fieldInfo.hashName(), fieldInfo);
-        }
-        if(Config.getProjectType().equals("Chinese")) {
-            interfaceInfo.chineseTokens = setChineseTokens(interfaceInfo.comment, interfaceInfo.name);
         }
         return true;
     }
@@ -145,10 +129,6 @@ public class JavaASTVisitor extends ASTVisitor {
             List<FieldInfo> fieldInfos = createFieldInfos(fieldDeclaration, classInfo.fullName);
             for (FieldInfo fieldInfo : fieldInfos)
                 elementInfoPool.fieldInfoMap.put(fieldInfo.hashName(), fieldInfo);
-        }
-
-        if(Config.getProjectType().equals("Chinese")) {
-            classInfo.chineseTokens = setChineseTokens(classInfo.comment, classInfo.name);
         }
         return true;
     }
@@ -213,10 +193,6 @@ public class JavaASTVisitor extends ASTVisitor {
             methodInfo.throwSet.add(name);
         }
         parseMethodBody(methodInfo, node.getBody());
-
-        if(Config.getProjectType().equals("Chinese")) {
-            methodInfo.chineseTokens = setChineseTokens(methodInfo.comment, methodInfo.name);
-        }
         return methodInfo;
     }
 

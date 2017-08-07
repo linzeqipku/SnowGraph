@@ -54,8 +54,6 @@ public class JavaCodeExtractor implements Extractor {
     public static final String CLASS_COMMENT = "comment";
     @PropertyDeclaration(parent = CLASS)
     public static final String CLASS_CONTENT = "content";
-    @PropertyDeclaration(parent = CLASS)
-    public static final String CLASS_CHINESE_TOKENS = "tokensCN";
 
     @EntityDeclaration
     public static final String INTERFACE = "Interface";
@@ -71,8 +69,6 @@ public class JavaCodeExtractor implements Extractor {
     public static final String INTERFACE_COMMENT = "comment";
     @PropertyDeclaration(parent = INTERFACE)
     public static final String INTERFACE_CONTENT = "content";
-    @PropertyDeclaration(parent = INTERFACE)
-    public static final String INTERFACE_CHINESE_TOKENS = "tokensCN";
 
     @EntityDeclaration
     public static final String METHOD = "Method";
@@ -102,8 +98,6 @@ public class JavaCodeExtractor implements Extractor {
     public static final String METHOD_COMMENT = "comment";
     @PropertyDeclaration(parent = METHOD)
     public static final String METHOD_CONTENT = "content";
-    @PropertyDeclaration(parent = METHOD)
-    public static final String METHOD_CHINESE_TOKENS = "tokensCN";
 
     @EntityDeclaration
     public static final String FIELD = "Field";

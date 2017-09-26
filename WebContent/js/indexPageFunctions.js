@@ -595,7 +595,7 @@ function rename(str){
 	if (str.substr(3) == "rt" && str[0] == 'o') return "返回类型";
 	if (str.substr(3) == "have_method" && str[0] == 'i') return "所属类型";
 	if (str.substr(3) == "have_method" && str[0] == 'o') return "声明方法";
-	if (str.substr(3) == "have_field" && str[0] == 'i') return "所属域";
+	if (str.substr(3) == "have_field" && str[0] == 'i') return "所属类";
 	if (str.substr(3) == "have_field" && str[0] == 'o') return "声明域";
 	if (str.substr(3) == "call_method" && str[0] == 'i') return "调用本方法的方法";
 	if (str.substr(3) == "call_method" && str[0] == 'o') return "本方法调用的方法";

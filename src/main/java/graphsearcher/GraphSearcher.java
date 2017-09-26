@@ -32,6 +32,7 @@ import org.tartarus.snowball.ext.EnglishStemmer;
 import graphdb.extractors.linkers.codeindoc_ch.CodeInDocxFileExtractor;
 import graphdb.extractors.linkers.designtorequire_ch.DesignToRequireExtractor;
 import graphdb.extractors.miners.codeembedding.line.LINEExtracter;
+import graphdb.extractors.miners.tokenization_ch.TokenChExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 
 public class GraphSearcher {
@@ -51,7 +52,7 @@ public class GraphSearcher {
 					RelationshipType.withName(JavaCodeExtractor.TYPE), Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.VARIABLE), Direction.BOTH), 5);
 
-	boolean debug = false;
+	boolean debug = true;
 
 	static EnglishStemmer stemmer = new EnglishStemmer();
 	static QueryStringToQueryWordsConverter converter = new QueryStringToQueryWordsConverter();
@@ -115,14 +116,8 @@ public class GraphSearcher {
 						word2Ids.get(word).add(id);
 						words.add(word);
 					}
-				if (node.hasProperty(JavaCodeExtractor.CLASS_CHINESE_TOKENS)
-						|| node.hasProperty(JavaCodeExtractor.INTERFACE_CHINESE_TOKENS)
-						|| node.hasProperty(JavaCodeExtractor.METHOD_CHINESE_TOKENS)) {
-					String cTokenString = node.hasProperty(JavaCodeExtractor.CLASS_CHINESE_TOKENS)
-							? ((String) node.getProperty(JavaCodeExtractor.CLASS_CHINESE_TOKENS))
-							: node.hasProperty(JavaCodeExtractor.METHOD_CHINESE_TOKENS)
-									? ((String) node.getProperty(JavaCodeExtractor.METHOD_CHINESE_TOKENS))
-									: ((String) node.getProperty(JavaCodeExtractor.INTERFACE_CHINESE_TOKENS));
+				if (node.hasProperty(TokenChExtractor.TOKENS_CH)) {
+					String cTokenString = (String)node.getProperty(TokenChExtractor.TOKENS_CH);
 					for (String word : cTokenString.trim().split("\\s+")) {
 						if (!word2Ids.containsKey(word))
 							word2Ids.put(word, new HashSet<>());
@@ -262,21 +257,24 @@ public class GraphSearcher {
 			if (queryWordSet.contains(id2Name.get(node)))
 				candidateNodes.add(node);
 
+		Set<Pair<Long, Integer>> countSet=new HashSet<>();
+		int maxCount=0;
 		for (long node : id2Name.keySet()) {
 			int count = 0;
 			for (String word : id2Words.get(node))
 				if (queryWordSet.contains(word))
 					count++;
-			Set<Pair<Long, Integer>> countSet=new HashSet<>();
-			int maxCount=0;
+			//System.out.println(count);
 			if (count >= 2){
 				countSet.add(new ImmutablePair<Long, Integer>(node, count));
-				maxCount++;
+				if (count>maxCount)
+					maxCount=count;
 			}
-			for (Pair<Long, Integer> pair:countSet){
-				if (pair.getValue()>=maxCount)
-					candidateNodes.add(pair.getKey());
-			}
+		}
+		//System.out.println("MaxCount= "+maxCount);
+		for (Pair<Long, Integer> pair:countSet){
+			if (pair.getValue()>=maxCount)
+				candidateNodes.add(pair.getKey());
 		}
 
 		if (candidateNodes.size() > 0)

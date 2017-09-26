@@ -359,7 +359,8 @@
                                     //return options.nodeOutlineFillColor ? options.nodeOutlineFillColor : class2color(d.labels[0]);
                                 })
                                 .style('stroke', function(d) {
-                                    return options.nodeOutlineFillColor ? class2darkenColor(options.nodeOutlineFillColor) : class2darkenColor(d.labels[0]);
+                                    //return options.nodeOutlineFillColor ? class2darkenColor(options.nodeOutlineFillColor) : class2darkenColor(d.labels[0]);
+                                	return '#000000';
                                 })
                                 .append('title').text(function(d) {
                                     return toString(d);

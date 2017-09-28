@@ -4,14 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.neo4j.graphdb.*;
 
-import javax.json.Json;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.List;
-import java.util.ArrayList;
-import javax.json.*;
 
 public class SearchResult {
 	

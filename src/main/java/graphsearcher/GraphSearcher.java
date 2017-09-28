@@ -1,6 +1,5 @@
 package graphsearcher;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +25,6 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
 import graphdb.extractors.linkers.codeindoc_ch.CodeInDocxFileExtractor;
@@ -41,8 +39,8 @@ public class GraphSearcher {
 	PathFinder<Path> pathFinder = GraphAlgoFactory
 			.shortestPath(PathExpanders.forTypesAndDirections(RelationshipType.withName(JavaCodeExtractor.EXTEND),
 					Direction.BOTH, RelationshipType.withName(JavaCodeExtractor.IMPLEMENT), Direction.BOTH,
-					// RelationshipType.withName(JavaCodeExtractor.THROW),
-					// Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.THROW),
+					Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.PARAM), Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.RT), Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.HAVE_METHOD), Direction.BOTH,
@@ -57,7 +55,7 @@ public class GraphSearcher {
 	static EnglishStemmer stemmer = new EnglishStemmer();
 	static QueryStringToQueryWordsConverter converter = new QueryStringToQueryWordsConverter();
 
-	Map<Long, List<Double>> id2Vec = new HashMap<>();
+	public Map<Long, List<Double>> id2Vec = new HashMap<>();
 	Map<Long, String> id2Sig = new HashMap<>();
 	Map<Long, String> id2Name = new HashMap<>();
 	Map<Long, Set<String>> id2Words = new HashMap<>();
@@ -341,7 +339,11 @@ public class GraphSearcher {
 		return r;
 	}
 
-	double dist(long node1, long node2) {
+	public double dist(long node1, long node2) {
+		if (!id2Vec.containsKey(node1))
+			return Double.MAX_VALUE;
+		if (!id2Vec.containsKey(node2))
+			return Double.MAX_VALUE;
 		double r = 0;
 		for (int i = 0; i < id2Vec.get(node1).size(); i++)
 			r += (id2Vec.get(node1).get(i) - id2Vec.get(node2).get(i))

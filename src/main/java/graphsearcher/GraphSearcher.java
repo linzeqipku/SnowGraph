@@ -1,5 +1,6 @@
 package graphsearcher;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
 import graphdb.extractors.linkers.codeindoc_ch.CodeInDocxFileExtractor;
@@ -66,15 +68,10 @@ public class GraphSearcher {
 	Map<String, Set<Long>> queryWord2Ids = new HashMap<>();
 	Set<String> queryWordSet = new HashSet<>();
 
-	void testDist() {
-		long node1 = 0;
-		for (long id : typeSet)
-			if (id2Name.get(id).equals("indexread"))
-				node1 = id;
-		for (long id : id2Name.keySet())
-			if (id2Sig.get(id).contains("org.apache.lucene.index.IndexReader.")) {
-				System.out.println(id2Sig.get(id) + " " + dist(node1, id));
-			}
+	public static void main(String[] args){
+		GraphDatabaseService db=new GraphDatabaseFactory().newEmbeddedDatabase(new File("E:\\SnowGraphData\\lucene\\graphdb"));
+		GraphSearcher searcher=new GraphSearcher(db);
+		searcher.querySingle("Affix");
 	}
 
 	public GraphSearcher(GraphDatabaseService db) {
@@ -308,11 +305,11 @@ public class GraphSearcher {
 	void queryWord2Ids(Set<String> queryWordSet) {
 		for (String queryWord : queryWordSet) {
 			queryWord2Ids.put(queryWord, new HashSet<>());
-			queryWord2Ids.put(queryWord, word2Ids.containsKey(queryWord) ? word2Ids.get(queryWord) : new HashSet<>());
 			for (long node : id2Name.keySet())
 				if (id2Name.get(node).equals(queryWord))
 					queryWord2Ids.get(queryWord).add(node);
 		}
+		queryWordSet.clear();
 		for (String word : queryWord2Ids.keySet())
 			if (queryWord2Ids.get(word).size() > 0)
 				queryWordSet.add(word);
@@ -320,7 +317,7 @@ public class GraphSearcher {
 
 	String stem(String word) {
 		if (word.matches("\\w+")) {
-			stemmer.setCurrent(word);
+			stemmer.setCurrent(word.toLowerCase());
 			stemmer.stem();
 			word = stemmer.getCurrent();
 		}

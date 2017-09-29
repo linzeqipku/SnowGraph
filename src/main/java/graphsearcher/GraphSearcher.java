@@ -41,8 +41,8 @@ public class GraphSearcher {
 	PathFinder<Path> pathFinder = GraphAlgoFactory
 			.shortestPath(PathExpanders.forTypesAndDirections(RelationshipType.withName(JavaCodeExtractor.EXTEND),
 					Direction.BOTH, RelationshipType.withName(JavaCodeExtractor.IMPLEMENT), Direction.BOTH,
-					// RelationshipType.withName(JavaCodeExtractor.THROW),
-					// Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.THROW),
+					Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.PARAM), Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.RT), Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.HAVE_METHOD), Direction.BOTH,
@@ -57,7 +57,7 @@ public class GraphSearcher {
 	static EnglishStemmer stemmer = new EnglishStemmer();
 	static QueryStringToQueryWordsConverter converter = new QueryStringToQueryWordsConverter();
 
-	Map<Long, List<Double>> id2Vec = new HashMap<>();
+	public Map<Long, List<Double>> id2Vec = new HashMap<>();
 	Map<Long, String> id2Sig = new HashMap<>();
 	Map<Long, String> id2Name = new HashMap<>();
 	Map<Long, Set<String>> id2Words = new HashMap<>();
@@ -68,15 +68,10 @@ public class GraphSearcher {
 	Map<String, Set<Long>> queryWord2Ids = new HashMap<>();
 	Set<String> queryWordSet = new HashSet<>();
 
-	void testDist() {
-		long node1 = 0;
-		for (long id : typeSet)
-			if (id2Name.get(id).equals("indexread"))
-				node1 = id;
-		for (long id : id2Name.keySet())
-			if (id2Sig.get(id).contains("org.apache.lucene.index.IndexReader.")) {
-				System.out.println(id2Sig.get(id) + " " + dist(node1, id));
-			}
+	public static void main(String[] args){
+		GraphDatabaseService db=new GraphDatabaseFactory().newEmbeddedDatabase(new File("E:\\SnowGraphData\\lucene\\graphdb"));
+		GraphSearcher searcher=new GraphSearcher(db);
+		searcher.querySingle("Affix");
 	}
 
 	public GraphSearcher(GraphDatabaseService db) {
@@ -310,11 +305,11 @@ public class GraphSearcher {
 	void queryWord2Ids(Set<String> queryWordSet) {
 		for (String queryWord : queryWordSet) {
 			queryWord2Ids.put(queryWord, new HashSet<>());
-			queryWord2Ids.put(queryWord, word2Ids.containsKey(queryWord) ? word2Ids.get(queryWord) : new HashSet<>());
 			for (long node : id2Name.keySet())
 				if (id2Name.get(node).equals(queryWord))
 					queryWord2Ids.get(queryWord).add(node);
 		}
+		queryWordSet.clear();
 		for (String word : queryWord2Ids.keySet())
 			if (queryWord2Ids.get(word).size() > 0)
 				queryWordSet.add(word);
@@ -322,7 +317,7 @@ public class GraphSearcher {
 
 	String stem(String word) {
 		if (word.matches("\\w+")) {
-			stemmer.setCurrent(word);
+			stemmer.setCurrent(word.toLowerCase());
 			stemmer.stem();
 			word = stemmer.getCurrent();
 		}
@@ -341,7 +336,11 @@ public class GraphSearcher {
 		return r;
 	}
 
-	double dist(long node1, long node2) {
+	public double dist(long node1, long node2) {
+		if (!id2Vec.containsKey(node1))
+			return Double.MAX_VALUE;
+		if (!id2Vec.containsKey(node2))
+			return Double.MAX_VALUE;
 		double r = 0;
 		for (int i = 0; i < id2Vec.get(node1).size(); i++)
 			r += (id2Vec.get(node1).get(i) - id2Vec.get(node2).get(i))

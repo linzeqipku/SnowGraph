@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j</artifactId>
-            <version>3.2.0</version>
+            <version>3.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -174,5 +174,10 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/parsemis.jar</systemPath>
         </dependency>
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>7.0.0</version>
+		</dependency>
 	</dependencies>
 </project>

@@ -139,7 +139,17 @@ public class GraphSearcher {
 	public List<SearchResult> query(String queryString) {
 
 		List<SearchResult> r=new ArrayList<>();
+		
+		/*
+		 * anchorMap:
+		 *    - key: 定位到的代码元素结点的集合
+		 *    - value: 这个集合的离散度，离散度越低，说明这个图的质量越好
+		 */
 		Map<Set<Long>, Double> anchorMap = computeAnchors(queryString);
+		
+		/*
+		 * 将定位到的代码元素连起来，形成一个子图，从而使得用户可以看出它们之间的关联关系
+		 */
 		try (Transaction tx = db.beginTx()) {
 			for (Set<Long> anchors : anchorMap.keySet()) {
 				SearchResult searchResult = new SearchResult();
@@ -192,6 +202,10 @@ public class GraphSearcher {
 			}
 			tx.success();
 		}
+		
+		/*
+		 * 排序并取前5个子图返回
+		 */
 		Collections.sort(r,(r1, r2) -> Double.compare(r1.cost, r2.cost));
 		int K=5;
 		if (r.size()<K)
@@ -200,6 +214,11 @@ public class GraphSearcher {
 			return r.subList(0, K);
 	}
 
+	/**
+	 * 
+	 * @param queryString 用户输入的自然语言查询语句(英文)
+	 * @return 定位到各个代码元素集合，以及这些集合的离散度
+	 */
 	Map<Set<Long>, Double> computeAnchors(String queryString) {
 
 		Map<Set<Long>, Double> r = new HashMap<>();
@@ -207,16 +226,31 @@ public class GraphSearcher {
 		queryWord2Ids = new HashMap<>();
 		queryWordSet = new HashSet<>();
 
+		/*
+		 * 将查询语句切分为单词
+		 */
 		queryWordSet = converter.convert(queryString);
 		if (debug) {
 			System.out.println("queryWordSet = { " + String.join(", ", queryWordSet) + " }");
 			System.out.println();
 		}
 
+		/*
+		 * 找到能够和各个查询单词匹配得上的代码元素
+		 * queryWordSet: 有代码元素能够匹配得上的查询单词
+		 * queryWord2Ids: 这些单词到相应的代码元素的映射
+		 */
 		queryWord2Ids(queryWordSet);
 
+		/*
+		 * 判断queryWordSet中的哪些单词可以作为搜索的起点
+		 */
 		Set<Long> candidateNodes = candidate();
 
+		/*
+		 * 对于每一个候选的起点，
+		 *     从每个查询单词对应的代码元素集合中选取一个离它最近的代码元素
+		 */
 		for (long cNode : candidateNodes) {
 			Set<Long> minDistNodeSet = new HashSet<>();
 			minDistNodeSet.add(cNode);
@@ -244,14 +278,24 @@ public class GraphSearcher {
 
 	}
 
+	/**
+	 * 判断queryWordSet中的哪些单词可以作为搜索的起点
+	 * @return
+	 */
 	Set<Long> candidate() {
 
 		Set<Long> candidateNodes = new HashSet<>();
 
+		/**
+		 * 如果一个单词就是类/接口的名字，那么它可以作为搜索的起点
+		 */
 		for (long node : typeSet)
 			if (queryWordSet.contains(id2Name.get(node)))
 				candidateNodes.add(node);
 
+		/**
+		 * countSet: {<key=代码元素，value=这个代码元素对应到了几个查询单词>|value>=2}
+		 */
 		Set<Pair<Long, Integer>> countSet=new HashSet<>();
 		int maxCount=0;
 		for (long node : id2Name.keySet()) {
@@ -259,19 +303,26 @@ public class GraphSearcher {
 			for (String word : id2Words.get(node))
 				if (queryWordSet.contains(word))
 					count++;
-			//System.out.println(count);
 			if (count >= 2){
 				countSet.add(new ImmutablePair<Long, Integer>(node, count));
 				if (count>maxCount)
 					maxCount=count;
 			}
 		}
-		//System.out.println("MaxCount= "+maxCount);
+		
+		/**
+		 * 如果一个代码元素对应到了多个查询单词，且是最多的，则它可以作为搜索的起点
+		 *    例如：代码元素SoftKittyWarmKittyLittleBallOfFur, 查询单词soft,kitty, warm, little, fur
+		 */
 		for (Pair<Long, Integer> pair:countSet){
-			if (pair.getValue()>=maxCount)
+			if (pair.getValue()==maxCount)
 				candidateNodes.add(pair.getKey());
 		}
 
+		/**
+		 * 如果以上步骤能找到搜索的起点，那么就用它们
+		 * 否则的话，再去找质量可能不是那么好的起点
+		 */
 		if (candidateNodes.size() > 0)
 			return candidateNodes;
 

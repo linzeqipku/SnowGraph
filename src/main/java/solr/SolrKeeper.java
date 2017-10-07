@@ -1,9 +1,8 @@
 package solr;
 
-import graphdb.extractors.parsers.mail.MailListExtractor;
-import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import graphsearcher.GraphSearcher;
 import graphsearcher.SearchResult;
+import javafx.util.Pair;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -19,9 +18,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by laurence on 17-9-28.
@@ -41,10 +38,13 @@ public class SolrKeeper {
         GraphSearcher graphSearcher = new GraphSearcher(graphDb);
 
         List<SolrInputDocument> documentList = new ArrayList<>();
+        System.out.println("doc list size: " + documentExtractor.docIdList.size());
         for(long id : documentExtractor.docIdList){
+            System.out.println("current id: " + id);
             String org_content = documentExtractor.getOrgText(graphDb, id);
-            String content = documentExtractor.getText(graphDb, id);
-            SearchResult subGraph = graphSearcher.querySingle(content);
+            String content = Jsoup.parse("<html>" + org_content + "</html>").text();
+            List<SearchResult> queryList = graphSearcher.query(content);
+            SearchResult subGraph = queryList.size() > 0 ? queryList.get(0) : new SearchResult();
             String nodeSet = "";
             for (long nodeId : subGraph.nodes){
                 nodeSet += nodeId + " ";
@@ -58,9 +58,10 @@ public class SolrKeeper {
                 document.addField("node_set", nodeSet);
                 documentList.add(document);
             }
-            if (documentList.size() >= 500) {
+            if (documentList.size() >= 600) {
                 try {
                     client.add(coreName, documentList);
+                    System.out.println("add doc to server");
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (SolrServerException e) {
@@ -79,26 +80,32 @@ public class SolrKeeper {
         graphDb.shutdown();
     }
 
-    public void querySolr(String q, String coreName){
+    public List<Pair<Long, Set<Long>>> querySolr(String q, String coreName){
         SolrQuery solrQuery = new SolrQuery(q);
         solrQuery.setRows(100);
+        List<Pair<Long, Set<Long>>> resPairList = new ArrayList<>();
         try {
             QueryResponse response = client.query(coreName, solrQuery);
             SolrDocumentList docs = response.getResults();
             for (SolrDocument doc : docs){
-                for (String field : doc.getFieldNames()){
-                    System.out.println(field + " " + doc.getFieldValue(field));
+                Long id = Long.parseLong((String)doc.getFieldValue("id"));
+                String subGraph = (String)doc.getFieldValue("node_set");
+                Set<Long> nodeSet = new HashSet<Long>();
+                for (String node : subGraph.trim().split(" ")){
+                    nodeSet.add(Long.parseLong(node));
                 }
+                resPairList.add(new Pair<>(id, nodeSet));
             }
         } catch (SolrServerException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return resPairList;
     }
 
     public static void main(String args[]){
-        SolrKeeper keeper = new SolrKeeper("192.168.4.244:8983/solr");
-        keeper.addGraphToIndex("/media/laurence/TEMP/lucene-primitive", "myCore");
+        SolrKeeper keeper = new SolrKeeper("http://localhost:8983/solr");
+        keeper.addGraphToIndex("E:\\Ling\\graphdb-lucene-embedding", "myCore");
     }
 }

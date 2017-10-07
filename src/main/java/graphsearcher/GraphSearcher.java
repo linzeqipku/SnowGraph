@@ -134,7 +134,8 @@ public class GraphSearcher {
 	}
 
 	public SearchResult querySingle(String queryString) {
-		return query(queryString).get(0);
+		List<SearchResult> list=query(queryString);
+		return list.size()>0?list.get(0):new SearchResult();
 	}
 
 	public List<SearchResult> query(String queryString) {

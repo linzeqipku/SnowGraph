@@ -1,4 +1,4 @@
-* {
+/** {
   margin: 0px;
   padding: 0px;
 }
@@ -6,7 +6,7 @@
 body {
   font: 13px 'Helvetica Neue',Helvetica,Arial,sans-serif;
   font-size: 20px;
-}
+}*/
 
 .neo4jd3-graph {
   border: 1px solid #ddd;

@@ -56,6 +56,15 @@
         <servlet-name>GetModifiedCode</servlet-name>
         <url-pattern>/GetModifiedCode</url-pattern>
     </servlet-mapping>
-
+    <servlet>
+        <description></description>
+        <display-name>Rank</display-name>
+        <servlet-name>Rank</servlet-name>
+        <servlet-class>cn.edu.pku.sei.SnowView.servlet.RankServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Rank</servlet-name>
+        <url-pattern>/Rank</url-pattern>
+    </servlet-mapping>
 
 </web-app>

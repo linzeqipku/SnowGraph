@@ -67,10 +67,9 @@ public class GraphSearcher {
 	Map<String, Set<Long>> queryWord2Ids = new HashMap<>();
 	Set<String> queryWordSet = new HashSet<>();
 
-	public static void main(String[] args) {
-		GraphDatabaseService db = new GraphDatabaseFactory()
-				.newEmbeddedDatabase(new File("E:\\SnowGraphData\\lucene\\graphdb"));
-		GraphSearcher searcher = new GraphSearcher(db);
+	public static void main(String[] args){
+		GraphDatabaseService db=new GraphDatabaseFactory().newEmbeddedDatabase(new File("E:\\CrawlData\\SnowGraphDataBase\\graphdb-lucene-embedding"));
+		GraphSearcher searcher=new GraphSearcher(db);
 		searcher.querySingle("Affix");
 	}
 
@@ -128,6 +127,7 @@ public class GraphSearcher {
 					typeSet.add(id);
 				id2Name.put(id, stem(name.toLowerCase()));
 			}
+			System.out.println(id2Name.values());
 			tx.success();
 		}
 	}
@@ -228,10 +228,8 @@ public class GraphSearcher {
 		queryWord2Ids = new HashMap<>();
 		queryWordSet = new HashSet<>();
 
-		/*
-		 * 将查询语句切分为单词
-		 */
 		queryWordSet = converter.convert(queryString);
+
 		if (debug) {
 			System.out.println("queryWordSet = { " + String.join(", ", queryWordSet) + " }");
 			System.out.println();
@@ -272,9 +270,6 @@ public class GraphSearcher {
 			return r;
 		}
 
-		/*
-		 * 判断queryWordSet中的哪些单词可以作为搜索的起点
-		 */
 		Set<Long> candidateNodes = candidate();
 
 		/*
@@ -316,9 +311,6 @@ public class GraphSearcher {
 
 		Set<Long> candidateNodes = new HashSet<>();
 
-		/**
-		 * 如果一个单词就是类/接口的名字，那么它可以作为搜索的起点
-		 */
 		for (long node : typeSet)
 			if (queryWordSet.contains(id2Name.get(node)))
 				candidateNodes.add(node);
@@ -333,6 +325,7 @@ public class GraphSearcher {
 			for (String word : id2Words.get(node))
 				if (queryWordSet.contains(word))
 					count++;
+
 			if (count >= 2) {
 				countSet.add(new ImmutablePair<Long, Integer>(node, count));
 				if (count > maxCount)

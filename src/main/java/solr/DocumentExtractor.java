@@ -21,8 +21,8 @@ public class DocumentExtractor {
             while (iterator.hasNext()) {
                 Node node = iterator.next();
                 if (node.hasLabel(Label.label(StackOverflowExtractor.ANSWER))
-                        || node.hasLabel(Label.label(MailListExtractor.MAIL))
-                        || node.hasLabel(Label.label(JiraExtractor.ISSUE))){
+                        /*|| node.hasLabel(Label.label(MailListExtractor.MAIL))
+                        || node.hasLabel(Label.label(JiraExtractor.ISSUE))*/){
                     docIdList.add(node.getId());
                 }
             }
@@ -36,17 +36,12 @@ public class DocumentExtractor {
             if (node.hasLabel(Label.label(StackOverflowExtractor.ANSWER))) {
                 text = (String) node.getProperty(StackOverflowExtractor.ANSWER_BODY);
             } else if (node.hasLabel(Label.label(MailListExtractor.MAIL))) {
-                text = (String) node.getProperty(MailListExtractor.MAIL_SUBJECT) + '\n'
-                        + node.getProperty(MailListExtractor.MAIL_BODY);
+                text = (String)node.getProperty(MailListExtractor.MAIL_BODY);
             } else if (node.hasLabel(Label.label(JiraExtractor.ISSUE))) {
                 text = (String) node.getProperty(JiraExtractor.ISSUE_DESCRIPTION);
             }
             tx.success();
         }
         return text;
-    }
-    public String getText(GraphDatabaseService graphDb, long id){
-        String orgText = getOrgText(graphDb, id);
-        return Jsoup.parse("<html>" + orgText + "</html>").text();
     }
 }

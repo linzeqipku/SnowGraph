@@ -41,8 +41,7 @@ public class GraphSearcher {
 	PathFinder<Path> pathFinder = GraphAlgoFactory
 			.shortestPath(PathExpanders.forTypesAndDirections(RelationshipType.withName(JavaCodeExtractor.EXTEND),
 					Direction.BOTH, RelationshipType.withName(JavaCodeExtractor.IMPLEMENT), Direction.BOTH,
-					RelationshipType.withName(JavaCodeExtractor.THROW),
-					Direction.BOTH,
+					RelationshipType.withName(JavaCodeExtractor.THROW), Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.PARAM), Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.RT), Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.HAVE_METHOD), Direction.BOTH,
@@ -68,9 +67,10 @@ public class GraphSearcher {
 	Map<String, Set<Long>> queryWord2Ids = new HashMap<>();
 	Set<String> queryWordSet = new HashSet<>();
 
-	public static void main(String[] args){
-		GraphDatabaseService db=new GraphDatabaseFactory().newEmbeddedDatabase(new File("E:\\SnowGraphData\\lucene\\graphdb"));
-		GraphSearcher searcher=new GraphSearcher(db);
+	public static void main(String[] args) {
+		GraphDatabaseService db = new GraphDatabaseFactory()
+				.newEmbeddedDatabase(new File("E:\\SnowGraphData\\lucene\\graphdb"));
+		GraphSearcher searcher = new GraphSearcher(db);
 		searcher.querySingle("Affix");
 	}
 
@@ -112,7 +112,7 @@ public class GraphSearcher {
 						words.add(word);
 					}
 				if (node.hasProperty(TokenChExtractor.TOKENS_CH)) {
-					String cTokenString = (String)node.getProperty(TokenChExtractor.TOKENS_CH);
+					String cTokenString = (String) node.getProperty(TokenChExtractor.TOKENS_CH);
 					for (String word : cTokenString.trim().split("\\s+")) {
 						if (!word2Ids.containsKey(word))
 							word2Ids.put(word, new HashSet<>());
@@ -133,31 +133,29 @@ public class GraphSearcher {
 	}
 
 	public SearchResult querySingle(String queryString) {
-		List<SearchResult> list=query(queryString);
-		return list.size()>0?list.get(0):new SearchResult();
+		List<SearchResult> list = query(queryString);
+		return list.size() > 0 ? list.get(0) : new SearchResult();
 	}
 
 	public List<SearchResult> query(String queryString) {
 
-		List<SearchResult> r=new ArrayList<>();
-		
+		List<SearchResult> r = new ArrayList<>();
+
 		/*
-		 * anchorMap:
-		 *    - key: 定位到的代码元素结点的集合
-		 *    - value: 这个集合的离散度，离散度越低，说明这个图的质量越好
+		 * seedMap: - key: 定位到的代码元素结点的集合 - value: 这个集合的离散度，离散度越低，说明这个图的质量越好
 		 */
-		Map<Set<Long>, Double> anchorMap = computeAnchors(queryString);
-		
+		Map<Set<Long>, Double> seedMap = findSubGraphs(queryString);
+
 		/*
 		 * 将定位到的代码元素连起来，形成一个子图，从而使得用户可以看出它们之间的关联关系
 		 */
 		try (Transaction tx = db.beginTx()) {
-			for (Set<Long> anchors : anchorMap.keySet()) {
+			for (Set<Long> seeds : seedMap.keySet()) {
 				SearchResult searchResult = new SearchResult();
-				searchResult.nodes.addAll(anchors);
-				for (long anchor1 : anchors)
-					for (long anchor2 : anchors) {
-						Path path = pathFinder.findSinglePath(db.getNodeById(anchor1), db.getNodeById(anchor2));
+				searchResult.nodes.addAll(seeds);
+				for (long seed1 : seeds)
+					for (long seed2 : seeds) {
+						Path path = pathFinder.findSinglePath(db.getNodeById(seed1), db.getNodeById(seed2));
 						if (path != null) {
 							for (Node node : path.nodes())
 								searchResult.nodes.add(node.getId());
@@ -178,38 +176,40 @@ public class GraphSearcher {
 				}
 				tmpSet.clear();
 				tmpSet.addAll(searchResult.nodes);
-				for (long node:tmpSet){
-					Iterator<Relationship> iter = db.getNodeById(node).getRelationships(
-							RelationshipType.withName(CodeInDocxFileExtractor.API_EXPLAINED_BY), Direction.BOTH).iterator();
-					while (iter.hasNext()){
-						Relationship edge=iter.next();
+				for (long node : tmpSet) {
+					Iterator<Relationship> iter = db.getNodeById(node)
+							.getRelationships(RelationshipType.withName(CodeInDocxFileExtractor.API_EXPLAINED_BY),
+									Direction.BOTH)
+							.iterator();
+					while (iter.hasNext()) {
+						Relationship edge = iter.next();
 						searchResult.nodes.add(edge.getOtherNodeId(node));
 						searchResult.edges.add(edge.getId());
 					}
 				}
 				tmpSet.clear();
 				tmpSet.addAll(searchResult.nodes);
-				for (long node:tmpSet){
+				for (long node : tmpSet) {
 					Iterator<Relationship> iter = db.getNodeById(node).getRelationships(
 							RelationshipType.withName(DesignToRequireExtractor.DESIGNED_BY), Direction.BOTH).iterator();
-					while (iter.hasNext()){
-						Relationship edge=iter.next();
+					while (iter.hasNext()) {
+						Relationship edge = iter.next();
 						searchResult.nodes.add(edge.getOtherNodeId(node));
 						searchResult.edges.add(edge.getId());
 					}
 				}
-				searchResult.cost=anchorMap.get(anchors);
+				searchResult.cost = seedMap.get(seeds);
 				r.add(searchResult);
 			}
 			tx.success();
 		}
-		
+
 		/*
 		 * 排序并取前5个子图返回
 		 */
-		Collections.sort(r,(r1, r2) -> Double.compare(r1.cost, r2.cost));
-		int K=5;
-		if (r.size()<K)
+		Collections.sort(r, (r1, r2) -> Double.compare(r1.cost, r2.cost));
+		int K = 5;
+		if (r.size() < K)
 			return r;
 		else
 			return r.subList(0, K);
@@ -217,10 +217,11 @@ public class GraphSearcher {
 
 	/**
 	 * 
-	 * @param queryString 用户输入的自然语言查询语句(英文)
+	 * @param queryString
+	 *            用户输入的自然语言查询语句(英文)
 	 * @return 定位到各个代码元素集合，以及这些集合的离散度
 	 */
-	Map<Set<Long>, Double> computeAnchors(String queryString) {
+	Map<Set<Long>, Double> findSubGraphs(String queryString) {
 
 		Map<Set<Long>, Double> r = new HashMap<>();
 
@@ -237,11 +238,39 @@ public class GraphSearcher {
 		}
 
 		/*
-		 * 找到能够和各个查询单词匹配得上的代码元素
-		 * queryWordSet: 有代码元素能够匹配得上的查询单词
-		 * queryWord2Ids: 这些单词到相应的代码元素的映射
+		 * 找到能够和各个查询单词匹配得上的代码元素 queryWordSet: 有代码元素能够匹配得上的查询单词 queryWord2Ids:
+		 * 这些单词到相应的代码元素的映射
 		 */
 		queryWord2Ids(queryWordSet);
+
+		Set<Long> anchors = findAnchors();
+
+		if (anchors.size() > 0) {
+			Set<Long> subGraph = new HashSet<>();
+			for (String queryWord : queryWordSet) {
+				Set<Long> set = new HashSet<>();
+				set.addAll(queryWord2Ids.get(queryWord));
+				set.retainAll(anchors);
+				if (set.size() > 0)
+					continue;
+				double minDist = Double.MAX_VALUE;
+				long minDistNode = -1;
+				for (long node : queryWord2Ids.get(queryWord)) {
+					for (long anchor : anchors) {
+						double dist = dist(anchor, node);
+						if (dist < minDist) {
+							minDist = dist;
+							minDistNode = node;
+						}
+					}
+				}
+				if (minDistNode == -1)
+					continue;
+				subGraph.add(minDistNode);
+			}
+			r.put(subGraph, 1.0);
+			return r;
+		}
 
 		/*
 		 * 判断queryWordSet中的哪些单词可以作为搜索的起点
@@ -249,8 +278,7 @@ public class GraphSearcher {
 		Set<Long> candidateNodes = candidate();
 
 		/*
-		 * 对于每一个候选的起点，
-		 *     从每个查询单词对应的代码元素集合中选取一个离它最近的代码元素
+		 * 对于每一个候选的起点， 从每个查询单词对应的代码元素集合中选取一个离它最近的代码元素
 		 */
 		for (long cNode : candidateNodes) {
 			Set<Long> minDistNodeSet = new HashSet<>();
@@ -281,6 +309,7 @@ public class GraphSearcher {
 
 	/**
 	 * 判断queryWordSet中的哪些单词可以作为搜索的起点
+	 * 
 	 * @return
 	 */
 	Set<Long> candidate() {
@@ -297,32 +326,32 @@ public class GraphSearcher {
 		/**
 		 * countSet: {<key=代码元素，value=这个代码元素对应到了几个查询单词>|value>=2}
 		 */
-		Set<Pair<Long, Integer>> countSet=new HashSet<>();
-		int maxCount=0;
+		Set<Pair<Long, Integer>> countSet = new HashSet<>();
+		int maxCount = 0;
 		for (long node : id2Name.keySet()) {
 			int count = 0;
 			for (String word : id2Words.get(node))
 				if (queryWordSet.contains(word))
 					count++;
-			if (count >= 2){
+			if (count >= 2) {
 				countSet.add(new ImmutablePair<Long, Integer>(node, count));
-				if (count>maxCount)
-					maxCount=count;
+				if (count > maxCount)
+					maxCount = count;
 			}
 		}
-		
+
 		/**
 		 * 如果一个代码元素对应到了多个查询单词，且是最多的，则它可以作为搜索的起点
-		 *    例如：代码元素SoftKittyWarmKittyLittleBallOfFur, 查询单词soft,kitty, warm, little, fur
+		 * 例如：代码元素SoftKittyWarmKittyLittleBallOfFur, 查询单词soft,kitty, warm,
+		 * little, fur
 		 */
-		for (Pair<Long, Integer> pair:countSet){
-			if (pair.getValue()==maxCount)
+		for (Pair<Long, Integer> pair : countSet) {
+			if (pair.getValue() == maxCount)
 				candidateNodes.add(pair.getKey());
 		}
 
 		/**
-		 * 如果以上步骤能找到搜索的起点，那么就用它们
-		 * 否则的话，再去找质量可能不是那么好的起点
+		 * 如果以上步骤能找到搜索的起点，那么就用它们 否则的话，再去找质量可能不是那么好的起点
 		 */
 		if (candidateNodes.size() > 0)
 			return candidateNodes;
@@ -343,6 +372,24 @@ public class GraphSearcher {
 			}
 
 		return candidateNodes;
+	}
+
+	Set<Long> findAnchors() {
+
+		Set<Long> anchors = new HashSet<>();
+
+		for (String queryWord : queryWordSet) {
+			Set<Long> nodes = queryWord2Ids.get(queryWord);
+			Set<Long> types = new HashSet<>();
+			for (long node : nodes)
+				if (typeSet.contains(node))
+					types.add(node);
+			if (types.size() == 1)
+				anchors.addAll(types);
+		}
+
+		return anchors;
+
 	}
 
 	double sumDist(long cNode, Set<Long> minDistNodeSet) {

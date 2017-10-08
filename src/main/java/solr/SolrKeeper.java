@@ -8,6 +8,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
@@ -30,26 +31,21 @@ public class SolrKeeper {
         client = new HttpSolrClient.Builder(baseUrl).build();
     }
 
-    public void addGraphToIndex(String path, String coreName){
-        GraphDatabaseFactory graphDbFactory = new GraphDatabaseFactory();
-        GraphDatabaseService graphDb = graphDbFactory.newEmbeddedDatabase(new File(path));
-
+    public void addGraphToIndex(GraphDatabaseService graphDb, GraphSearcher graphSearcher, String coreName){
         DocumentExtractor documentExtractor = new DocumentExtractor(graphDb);
-        GraphSearcher graphSearcher = new GraphSearcher(graphDb);
+        System.out.println("doc list size: " + documentExtractor.docIdList.size());
 
         List<SolrInputDocument> documentList = new ArrayList<>();
-        System.out.println("doc list size: " + documentExtractor.docIdList.size());
         for(long id : documentExtractor.docIdList){
-            System.out.println("current id: " + id);
+            System.out.println("id: " + id);
             String org_content = documentExtractor.getOrgText(graphDb, id);
             String content = Jsoup.parse("<html>" + org_content + "</html>").text();
-            List<SearchResult> queryList = graphSearcher.query(content);
-            SearchResult subGraph = queryList.size() > 0 ? queryList.get(0) : new SearchResult();
-            String nodeSet = "";
+            SearchResult subGraph = graphSearcher.querySingle(content);
+            StringBuilder nBuilder = new StringBuilder();
             for (long nodeId : subGraph.nodes){
-                nodeSet += nodeId + " ";
+                nBuilder.append(nodeId + " ");
             }
-            nodeSet = nodeSet.trim();
+            String nodeSet = nBuilder.toString().trim();
             if (content.length() > 0) {
                 SolrInputDocument document = new SolrInputDocument();
                 document.addField("id", id);
@@ -81,16 +77,20 @@ public class SolrKeeper {
     }
 
     public List<Pair<Long, Set<Long>>> querySolr(String q, String coreName){
-        SolrQuery solrQuery = new SolrQuery(q);
+        SolrQuery solrQuery = new SolrQuery();
+        String validQ = ClientUtils.escapeQueryChars(q);
+        System.out.println(q);
+        solrQuery.setQuery("content:" + validQ);
         solrQuery.setRows(100);
+
         List<Pair<Long, Set<Long>>> resPairList = new ArrayList<>();
         try {
             QueryResponse response = client.query(coreName, solrQuery);
             SolrDocumentList docs = response.getResults();
             for (SolrDocument doc : docs){
                 Long id = Long.parseLong((String)doc.getFieldValue("id"));
-                String subGraph = (String)doc.getFieldValue("node_set");
-                Set<Long> nodeSet = new HashSet<Long>();
+                String subGraph = ((List<String>)doc.getFieldValue("node_set")).get(0);
+                Set<Long> nodeSet = new HashSet<>();
                 for (String node : subGraph.trim().split(" ")){
                     nodeSet.add(Long.parseLong(node));
                 }
@@ -106,6 +106,10 @@ public class SolrKeeper {
 
     public static void main(String args[]){
         SolrKeeper keeper = new SolrKeeper("http://localhost:8983/solr");
-        keeper.addGraphToIndex("E:\\Ling\\graphdb-lucene-embedding", "myCore");
+        String path = "E:\\Ling\\graphdb-lucene-embedding";
+        GraphDatabaseFactory graphDbFactory = new GraphDatabaseFactory();
+        GraphDatabaseService graphDb = graphDbFactory.newEmbeddedDatabase(new File(path));
+        GraphSearcher graphSearcher = new GraphSearcher(graphDb);
+        keeper.addGraphToIndex(graphDb, graphSearcher, "myCore");
     }
 }

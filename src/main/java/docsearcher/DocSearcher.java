@@ -1,5 +1,9 @@
 package docsearcher;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,8 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.bouncycastle.util.test.Test;
+import javafx.util.Pair;
 import org.jsoup.Jsoup;
 import org.neo4j.cypher.internal.frontend.v3_1.ast.functions.Has;
 import org.neo4j.graphdb.Direction;
@@ -22,16 +25,21 @@ import org.neo4j.graphdb.Transaction;
 import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import graphsearcher.GraphSearcher;
 import graphsearcher.SearchResult;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import solr.DocumentExtractor;
+import solr.SolrKeeper;
 
 public class DocSearcher {
 	
 	GraphDatabaseService graphDB=null;
 	DocDistScorer docDistScorer=null;
 	GraphSearcher graphSearcher=null;
+	SolrKeeper keeper=null;
 	
-	public DocSearcher(GraphDatabaseService graphDB, GraphSearcher graphSearcher){
+	public DocSearcher(GraphDatabaseService graphDB, GraphSearcher graphSearcher, SolrKeeper keeper){
 		this.graphDB=graphDB;
 		this.graphSearcher=graphSearcher;
+		this.keeper = keeper;
 		this.docDistScorer=new DocDistScorer(graphSearcher);
 	}
 	
@@ -39,19 +47,19 @@ public class DocSearcher {
 		List<DocSearchResult> r=new ArrayList<>();
 		
 		SearchResult graph0=graphSearcher.querySingle(query);
-		
+
 		/*
 		 * Todo (lingcy):
 		 * irResultList: solr索引返回的前100个结果, {<id,nodes>}
-		 * 
+		 *
 		 */
-		List<Pair<Long, Set<Long>>> irResultList=null;
+		List<Pair<Long, Set<Long>>> irResultList=keeper.querySolr(query, "myCore");;
 		
 		for (int i=0;i<irResultList.size();i++){
 			DocSearchResult doc=new DocSearchResult();
-			doc.setId(irResultList.get(i).getLeft());
+			doc.setId(irResultList.get(i).getKey());
 			doc.setIrRank(i+1);
-			doc.setDist(docDistScorer.score(irResultList.get(i).getRight(), graph0.nodes));
+			doc.setDist(docDistScorer.score(irResultList.get(i).getValue(), graph0.nodes));
 			r.add(doc);
 		}
 		
@@ -68,20 +76,30 @@ public class DocSearcher {
 	 */
 	public void findExamples(){
 		Map<Long, Long> qaMap=extractQaMap();
+		System.out.println("qaMap size: " + qaMap.size());
 		Map<Long, String> queryMap=extractQueries(qaMap);
-		int count=0;
+		System.out.println("query size: " + queryMap.size());
+		int count=0, irCount = 0;
+		PrintWriter writer = null;
+		try{
+			writer = new PrintWriter(new FileOutputStream("E:\\Ling\\qaexample"));
+		}catch (IOException e){
+			e.printStackTrace();
+		}
 		for (long queryId:queryMap.keySet()){
 			List<DocSearchResult> list=search(queryMap.get(queryId));
 			for (int i=0;i<20;i++){
 				if (list.get(i).id==qaMap.get(queryId)){
+					irCount++;
 					if (list.get(i).newRank<list.get(i).irRank){
-						System.out.println(count+": "+list.get(i).irRank+"-->"+list.get(i).newRank);
+						writer.write(count+": "+list.get(i).irRank+"-->"+list.get(i).newRank + '\n');
 						count++;
 					}
-					continue;
 				}
 			}
 		}
+		System.out.println("irCount: " + irCount);
+		writer.close();
 	}
 	
 	/**
@@ -121,4 +139,13 @@ public class DocSearcher {
 		return rMap;
 	}
 
+	public static void main(String[] args){
+		String path = "E:\\Ling\\graphdb-lucene-embedding";
+		GraphDatabaseFactory graphDbFactory = new GraphDatabaseFactory();
+		GraphDatabaseService graphDb = graphDbFactory.newEmbeddedDatabase(new File(path));
+		GraphSearcher graphSearcher = new GraphSearcher(graphDb);
+		SolrKeeper keeper = new SolrKeeper("http://localhost:8983/solr");
+		DocSearcher docSearcher = new DocSearcher(graphDb, graphSearcher, keeper);
+		docSearcher.findExamples();
+	}
 }

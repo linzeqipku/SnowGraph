@@ -44,8 +44,4 @@ public class DocumentExtractor {
         }
         return text;
     }
-    public String getText(GraphDatabaseService graphDb, long id){
-        String orgText = getOrgText(graphDb, id);
-        return Jsoup.parse("<html>" + orgText + "</html>").text();
-    }
 }

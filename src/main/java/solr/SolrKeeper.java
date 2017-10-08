@@ -5,6 +5,7 @@ import graphsearcher.SearchResult;
 import javafx.util.Pair;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -78,21 +79,27 @@ public class SolrKeeper {
 
     public List<Pair<Long, Set<Long>>> querySolr(String q, String coreName){
         SolrQuery solrQuery = new SolrQuery();
-        String validQ = ClientUtils.escapeQueryChars(q);
-        System.out.println(q);
+        /*if (q.length() > 1200){ // uri max length
+            System.out.println("exceed max uri length: " + q.length());
+            q = q.substring(0, 1200);
+        }*/
+        String validQ = ClientUtils.escapeQueryChars(q); // 对query中特殊字符转义如：，*，+
+
         solrQuery.setQuery("content:" + validQ);
         solrQuery.setRows(100);
 
         List<Pair<Long, Set<Long>>> resPairList = new ArrayList<>();
         try {
-            QueryResponse response = client.query(coreName, solrQuery);
+            QueryResponse response = client.query(coreName, solrQuery, SolrRequest.METHOD.POST);
             SolrDocumentList docs = response.getResults();
             for (SolrDocument doc : docs){
                 Long id = Long.parseLong((String)doc.getFieldValue("id"));
                 String subGraph = ((List<String>)doc.getFieldValue("node_set")).get(0);
                 Set<Long> nodeSet = new HashSet<>();
-                for (String node : subGraph.trim().split(" ")){
-                    nodeSet.add(Long.parseLong(node));
+                if (subGraph.trim().length() > 0) {
+                    for (String node : subGraph.trim().split(" ")) {
+                        nodeSet.add(Long.parseLong(node));
+                    }
                 }
                 resPairList.add(new Pair<>(id, nodeSet));
             }
@@ -106,10 +113,11 @@ public class SolrKeeper {
 
     public static void main(String args[]){
         SolrKeeper keeper = new SolrKeeper("http://localhost:8983/solr");
-        String path = "E:\\Ling\\graphdb-lucene-embedding";
+        /*String path = "E:\\Ling\\graphdb-lucene-embedding";
         GraphDatabaseFactory graphDbFactory = new GraphDatabaseFactory();
         GraphDatabaseService graphDb = graphDbFactory.newEmbeddedDatabase(new File(path));
         GraphSearcher graphSearcher = new GraphSearcher(graphDb);
-        keeper.addGraphToIndex(graphDb, graphSearcher, "myCore");
+        keeper.addGraphToIndex(graphDb, graphSearcher, "myCore");*/
+        keeper.querySolr("solr", "myCore");
     }
 }

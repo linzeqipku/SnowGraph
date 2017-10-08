@@ -89,10 +89,14 @@ public class DocSearcher {
 		for (long queryId:queryMap.keySet()){
 			List<DocSearchResult> list=search(queryMap.get(queryId));
 			for (int i=0;i<20;i++){
-				if (list.get(i).id==qaMap.get(queryId)){
+			    DocSearchResult current = list.get(i);
+				if (current.id == qaMap.get(queryId)){
 					irCount++;
-					if (list.get(i).newRank<list.get(i).irRank){
-						writer.write(count+": "+list.get(i).irRank+"-->"+list.get(i).newRank + '\n');
+					if (current.newRank < current.irRank){
+					    String res = count+": " +queryId + " " + current.id + " "
+                                + current.irRank+"-->"+current.newRank + '\n';
+						System.out.println(res);
+					    writer.write(res);
 						count++;
 					}
 				}

@@ -1,0 +1,68 @@
+{
+"numSolrResults":1000,
+"query":"has anyone analytically investigated the stabilizing influence of soft elastic cores on the buckling strength of cylindrical shells subjected to non-uniform external pressure.",
+"rankedResults":[
+{
+"answerId":"1171",
+"body":"the stability under axial compression and lateral pressure of circular cylindrical shells with a soft elastic core . the stability under axial compression and lateral pressure of a finite circular-cylindrical shell with an elastic core is treated by means of donnell's equations . the stability criterion is investigated in detail for the general cylinder under axial compression or lateral pressure and for a particular cylinder under combined loading . comparisons are made with available experimental data .",
+"confidence":0.0,
+"finalRank":2,
+"relevance":3,
+"score":1000.0,
+"solrRank":2,
+"title":"the stability under axial compression and lateral pressure of circular cylindrical shells with a soft elastic core ."
+},
+{
+"answerId":"1145",
+"body":"buckling of core-stabilized cylinders under axisymmetric external loads . an equation is derived for the elastic stability of a circular cylindrical shell which is filled with a soft elastic core and is subjected to general axially-symmetric lateral pressure combined with a central axial force . numerical results are given for three lateral pressure distributions of interest in rocket motor case analysis.. uniform pressure, linearly varying pressure, and a circumferential band of pressure located at an arbitrary distance from one end of the cylinder . comparison is made with results of previous theoretical and experimental investigations, where available .",
+"confidence":0.0,
+"finalRank":3,
+"relevance":0,
+"score":999.0,
+"solrRank":3,
+"title":"buckling of core-stabilized cylinders under axisymmetric external loads ."
+},
+{
+"answerId":"760",
+"body":"inelastic buckling of initially imperfect cylindrical shells subject to axial compression . an analytical and experimental study is made for inelastic instability of initially imperfect cylindrical shells subject to axial compression . donnell's equations and the principle of virtual work are adapted to determine the effects of initial imperfections on the buckling modes and the critical buckling stresses . the deformation theory and the incremental theory of plastic stress-strain relationships are both considered . the experimental results of ten tests on specimens made of aluminum alloy 3003-0 are presented . comparison of experimental with theoretical results indicates that the application of the deformation theory provides a fairly accurate prediction of buckling strength, but fails in this case to yield a correct description of post-buckling behavior . on the other hand, the application of the incremental theory, which is mathematically and physically more rigorous, leads to an overestimation of buckling strength, even though initial imperfections are considered . this paradox has existed for years, and remains to be resolved .",
+"confidence":0.0,
+"finalRank":4,
+"relevance":0,
+"score":998.0,
+"solrRank":6,
+"title":"inelastic buckling of initially imperfect cylindrical shells subject to axial compression ."
+}
+],
+"solrResults":[
+{
+"answerId":"1172",
+"body":"elastic stability of circular cylindrical shells stabilized by a soft elastic core . the effect of a soft elastic core upon the buckling strength of a thin, circular, cylindrical shell is investigated experimentally . two types of loading are considered .. (a) axial compression, and (b) uniform radial-band loading, where the width of the band is small compared to the length of the shell . for each type of loading it is shown that the strengthening effect of the elastic core becomes more significant with the increasing values of the radius-thickness ratio . for example, it is shown that for the geometric and elastic constants considered it is possible, with the presence of the core, to increase the axial buckling stress by as much as 65 percent over the values found for those without an elastic core . the elastic core is even more effective in stabilizing the shell against buckling due to band loading, the peak pressure required to buckle the filled specimen being 7.30 times that required to buckle the unfilled shell .",
+"confidence":0.0,
+"finalRank":9,
+"relevance":2,
+"score":10.96542,
+"solrRank":1,
+"title":"elastic stability of circular cylindrical shells stabilized by a soft elastic core ."
+},
+{
+"answerId":"1171",
+"body":"the stability under axial compression and lateral pressure of circular cylindrical shells with a soft elastic core . the stability under axial compression and lateral pressure of a finite circular-cylindrical shell with an elastic core is treated by means of donnell's equations . the stability criterion is investigated in detail for the general cylinder under axial compression or lateral pressure and for a particular cylinder under combined loading . comparisons are made with available experimental data .",
+"confidence":0.0,
+"finalRank":1,
+"relevance":3,
+"score":7.613653,
+"solrRank":1,
+"title":"the stability under axial compression and lateral pressure of circular cylindrical shells with a soft elastic core ."
+},
+{
+"answerId":"1145",
+"body":"buckling of core-stabilized cylinders under axisymmetric external loads . an equation is derived for the elastic stability of a circular cylindrical shell which is filled with a soft elastic core and is subjected to general axially-symmetric lateral pressure combined with a central axial force . numerical results are given for three lateral pressure distributions of interest in rocket motor case analysis.. uniform pressure, linearly varying pressure, and a circumferential band of pressure located at an arbitrary distance from one end of the cylinder . comparison is made with results of previous theoretical and experimental investigations, where available .",
+"confidence":0.0,
+"finalRank":2,
+"relevance":0,
+"score":7.5746145,
+"solrRank":1,
+"title":"buckling of core-stabilized cylinders under axisymmetric external loads ."
+}
+]
+}

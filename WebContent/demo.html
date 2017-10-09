@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Retrieve and Rank Demo</title>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" href="images/favicon.png" type="image/png">
+	<link rel="icon" href="images/favicon.png" type="image/png">
+	<link href="css/indexPageDesigner.css" rel="stylesheet">
+
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+
+	<link rel="stylesheet" href="css/neo4jd3.min.css?v=0.0.1">
+	<link href="css/demo.css" rel="stylesheet">
+</head>
+<body>
+<div style="width: 50%">
+<div>
+	<article class="_content base--article">
+		<div class="_content--choose-input-file">
+			<h2 id="top" class="base--h2">
+				Demo
+			</h2>
+			<p class="_content--input-description base--p">
+				Demo
+			</p>
+		</div>
+		<h3 class="base--h3">Input</h3>
+		<div class="input">
+			<div class="input--question-generator base--a"
+				 style="cursor: pointer;">Get a random question about
+				aerodynamics</div>
+			<div class="input--container">
+				<p id="query" class="input--question base--p"></p>
+			</div>
+		</div>
+		<div class="error" style="display: none;'">
+			<div class="_demo--container">
+				<h3 class="base--h3">Output</h3>
+				<h4></h4>
+			</div>
+		</div>
+	</article>
+</div>
+<div class="output">
+	<div>
+		<h3 class="base--h3">Output</h3>
+		<p class="base--p">You can compare the machine learning approach
+			(Retrieve and Rank) and the standard search results (Solr).</p>
+		<div class="toggle">
+			<div class="toggle--item active">Machine learning approach</div>
+		</div>
+		<div class="service--results"></div>
+		<div class="toggle">
+			<div class="toggle--item active">Standard search</div>
+		</div>
+		<div class="standard--results"></div>
+	</div>
+</div>
+<div class="results--item result--template" style="display: none;">
+	<div class="results--item-container">
+		<div class="results--item-rank">
+			<span class="results--increase-icon icon"></span> <span
+				class="results--increase-value "></span>
+		</div>
+		<div class="results--basic-info">
+			<div class="results--item-text">
+				<span class="icon icon-see_more results--see-more"></span>
+			</div>
+			<div class="results--item-score">
+				<div class="results--item-score-title">Domain expert review</div>
+				<div class="results--item-score-value">
+					<div class="results--item-score-bar"></div>
+					<div class="results--item-score-bar"></div>
+					<div class="results--item-score-bar"></div>
+					<div class="results--item-score-bar"></div>
+				</div>
+			</div>
+		</div>
+		<div class="results--more-info" style="display: none;">
+			<blockquote class="results--item-details base--blockquote">
+			</blockquote>
+		</div>
+	</div>
+</div>
+</div></div>
+<script type="text/javascript"
+		src="js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="js/demo.js"></script>
+<script type="text/javascript" src="js/google-analytics.js"></script>
+</body>
+</html>

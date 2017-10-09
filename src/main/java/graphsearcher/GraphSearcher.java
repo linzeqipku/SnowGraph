@@ -51,7 +51,7 @@ public class GraphSearcher {
 					RelationshipType.withName(JavaCodeExtractor.TYPE), Direction.BOTH,
 					RelationshipType.withName(JavaCodeExtractor.VARIABLE), Direction.BOTH), 5);
 
-	boolean debug = true;
+	boolean debug = false;
 
 	static EnglishStemmer stemmer = new EnglishStemmer();
 	static QueryStringToQueryWordsConverter converter = new QueryStringToQueryWordsConverter();

@@ -2,7 +2,9 @@ package solr;
 
 import graphsearcher.GraphSearcher;
 import graphsearcher.SearchResult;
-import javafx.util.Pair;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -14,7 +16,6 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.jsoup.Jsoup;
-import org.neo4j.cypher.internal.frontend.v2_3.perty.Doc;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
@@ -101,7 +102,7 @@ public class SolrKeeper {
                         nodeSet.add(Long.parseLong(node));
                     }
                 }
-                resPairList.add(new Pair<>(id, nodeSet));
+                resPairList.add(new ImmutablePair<>(id, nodeSet));
             }
         } catch (SolrServerException e) {
             e.printStackTrace();
@@ -113,11 +114,11 @@ public class SolrKeeper {
 
     public static void main(String args[]){
         SolrKeeper keeper = new SolrKeeper("http://localhost:8983/solr");
-        /*String path = "E:\\Ling\\graphdb-lucene-embedding";
+        String path = "E:\\SnowGraphData\\lucene\\graphdb-lucene-embedding";
         GraphDatabaseFactory graphDbFactory = new GraphDatabaseFactory();
         GraphDatabaseService graphDb = graphDbFactory.newEmbeddedDatabase(new File(path));
         GraphSearcher graphSearcher = new GraphSearcher(graphDb);
-        keeper.addGraphToIndex(graphDb, graphSearcher, "myCore");*/
-        keeper.querySolr("solr", "myCore");
+        keeper.addGraphToIndex(graphDb, graphSearcher, "myCore");
+        //keeper.querySolr("solr", "myCore");
     }
 }

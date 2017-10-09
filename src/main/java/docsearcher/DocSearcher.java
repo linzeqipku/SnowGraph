@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.Jsoup;
-import org.neo4j.cypher.internal.frontend.v3_1.ast.functions.Has;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -41,6 +41,31 @@ public class DocSearcher {
 		this.graphSearcher=graphSearcher;
 		this.keeper = keeper;
 		this.docDistScorer=new DocDistScorer(graphSearcher);
+	}
+	
+	/**
+	 * 
+	 * @param nodeId
+	 * @return {<plain-text,rich-text>}
+	 */
+	public Pair<String,String> getContent(long nodeId){
+		String plain="";
+		String rich="";
+		try (Transaction tx=graphDB.beginTx()){
+			
+			if (graphDB.getNodeById(nodeId).hasLabel(Label.label(StackOverflowExtractor.QUESTION))){
+				rich+="<h2>"+graphDB.getNodeById(nodeId).getProperty(StackOverflowExtractor.QUESTION_TITLE)+"</h2>";
+				rich+=" "+graphDB.getNodeById(nodeId).getProperty(StackOverflowExtractor.QUESTION_BODY);
+				plain+=Jsoup.parse("<html>"+rich+"</html>").text();
+			}
+			else if (graphDB.getNodeById(nodeId).hasLabel(Label.label(StackOverflowExtractor.ANSWER))){
+				rich+=graphDB.getNodeById(nodeId).getProperty(StackOverflowExtractor.ANSWER_BODY);
+				plain+=Jsoup.parse("<html>"+rich+"</html>").text();
+			}
+			
+			tx.success();
+		}
+		return new ImmutablePair<String,String>(plain, rich);
 	}
 	
 	public List<DocSearchResult> search(String query){
@@ -82,7 +107,7 @@ public class DocSearcher {
 		int count=0, irCount = 0;
 		PrintWriter writer = null;
 		try{
-			writer = new PrintWriter(new FileOutputStream("E:\\Ling\\qaexample"));
+			writer = new PrintWriter(new FileOutputStream("E:\\tmp\\qaexample"));
 		}catch (IOException e){
 			e.printStackTrace();
 		}
@@ -144,7 +169,7 @@ public class DocSearcher {
 	}
 
 	public static void main(String[] args){
-		String path = "E:\\Ling\\graphdb-lucene-embedding";
+		String path = "E:\\SnowGraphData\\lucene\\graphdb-lucene-embedding";
 		GraphDatabaseFactory graphDbFactory = new GraphDatabaseFactory();
 		GraphDatabaseService graphDb = graphDbFactory.newEmbeddedDatabase(new File(path));
 		GraphSearcher graphSearcher = new GraphSearcher(graphDb);

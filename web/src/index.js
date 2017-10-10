@@ -1,27 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import GraphPanel from './GraphPanel';
-import FindEntityPanel from './FindEntityPanel';
-import InformationPanel from "./InformationPanel";
 import './index.css';
-import SearchForm from "./SearchForm";
+import App from "./App";
+import * as reducers from './reducer';
+import {applyMiddleware, combineReducers, compose, createStore} from "redux";
+import {Provider} from 'react-redux'
+import thunkMiddleware from 'redux-thunk'
+
+const appReducer = combineReducers(reducers);
+
+let store = createStore(appReducer, compose(applyMiddleware(thunkMiddleware), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
 
 ReactDOM.render(
-	<GraphPanel />,
-	document.getElementById('graph-panel')
-);
-
-ReactDOM.render(
-	<FindEntityPanel />,
-	document.getElementById('find-entity-panel')
-);
-
-ReactDOM.render(
-	<InformationPanel />,
-	document.getElementById('information-panel')
-);
-
-ReactDOM.render(
-	<SearchForm />,
-	document.getElementById('search-form')
+    <Provider store={store}>
+        <App/>
+    </Provider>,
+    document.getElementById('root')
 );

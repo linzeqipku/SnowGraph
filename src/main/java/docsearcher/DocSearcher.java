@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.Jsoup;
@@ -99,18 +100,20 @@ public class DocSearcher {
 	 * 寻找重排序后效果好的StackOverflow问答对作为例子
 	 */
 	public void findExamples(){
+		try {
+			FileUtils.write(new File("E:\\tmp\\qaexample"), "");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		Map<Long, Long> qaMap=extractQaMap();
 		System.out.println("qaMap size: " + qaMap.size());
 		Map<Long, String> queryMap=extractQueries(qaMap);
 		System.out.println("query size: " + queryMap.size());
 		int count=0, irCount = 0;
-		PrintWriter writer = null;
-		try{
-			writer = new PrintWriter(new FileOutputStream("E:\\tmp\\qaexample"));
-		}catch (IOException e){
-			e.printStackTrace();
-		}
+		int qCnt = 0, qSize = queryMap.size();
 		for (long queryId:queryMap.keySet()){
+			qCnt++;
 			List<DocSearchResult> list=search(queryMap.get(queryId));
 			for (int i=0;i<20;i++){
 			    DocSearchResult current = list.get(i);
@@ -118,16 +121,21 @@ public class DocSearcher {
 					irCount++;
 					if (current.newRank < current.irRank){
 					    String res = count+": " +queryId + " " + current.id + " "
-                                + current.irRank+"-->"+current.newRank + '\n';
-						System.out.println(res);
-					    writer.write(res);
+                                + current.irRank+"-->"+current.newRank;
+						System.out.println(res+" ("+qCnt+")");
+					    try {
+							FileUtils.write(new File("E:\\tmp\\qaexample"), res+"\n", true);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						count++;
 					}
 				}
 			}
+			//System.out.println("query count: " + qCnt + " " + qCnt * 1.0 / qSize * 100 + "%");
 		}
 		System.out.println("irCount: " + irCount);
-		writer.close();
 	}
 	
 	/**

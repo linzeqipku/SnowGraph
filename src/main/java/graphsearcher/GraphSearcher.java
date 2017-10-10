@@ -243,7 +243,7 @@ public class GraphSearcher {
 		queryWord2Ids(queryWordSet);
 
 		Set<Long> anchors = findAnchors();
-		System.out.println(anchors);
+		//System.out.println(anchors);
 
 		if (anchors.size() > 0) {
 			Set<Long> subGraph = new HashSet<>();

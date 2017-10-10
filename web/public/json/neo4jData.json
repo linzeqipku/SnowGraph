@@ -1,0 +1,18 @@
+{
+    "results": [{
+        "columns": ["user", "entity"],
+        "data": [{
+            "graph": {
+                "nodes": [{
+                    "id": "1",
+                    "labels": ["User"],
+                    "properties": {
+                        "userId": "eisman"
+                    }
+                }],
+                "relationships": []
+            }
+        }]
+    }],
+    "errors": []
+}

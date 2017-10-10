@@ -1092,6 +1092,8 @@
                             var d3Data = neo4jDataToD3Data(neo4jData);
                             
                             updateWithD3Data(d3Data);
+
+                            simulation.alphaTarget(0.05).restart();
                         }
 
                         function updateInfo(d) {

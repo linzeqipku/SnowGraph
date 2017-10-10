@@ -269,10 +269,10 @@ class SearchForm extends Component {
     render() {
         return (
             <Form inline={true} onSubmit={this.handleSubmit}>
-                <FormGroup>
-                    <Input className="SearchInput" type="text" placeholder="Search" innerRef={(input) => this.input = input}/>
+                <FormGroup className="w-75">
+                    <Input className="SearchInput w-100 mr-sm-2" type="text" placeholder="Search" innerRef={(input) => this.input = input}/>
                 </FormGroup>
-                <Button>Submit</Button>
+                <Button color="info" outline={true}>Submit</Button>
             </Form>
         );
     }

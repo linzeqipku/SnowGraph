@@ -4,14 +4,15 @@ import FindEntityPanel from "./components/FindEntityPanel";
 import InformationPanel from "./components/InformationPanel";
 import {Col, Collapse, Container, Navbar, NavbarBrand, Row} from "reactstrap";
 import SearchForm from "./components/SearchForm";
+import './App.css';
 
 class App extends Component {
     render() {
         return (
             <div>
-                <Navbar dark={true} color="dark">
+                <Navbar className="Navbar" dark={true} color="dark">
                     <NavbarBrand href="/index.html"> SEI SNOW Project </NavbarBrand>
-                    <Collapse isOpen={true}>
+                    <Collapse className="w-75" isOpen={true}>
                         <SearchForm/>
                     </Collapse>
                 </Navbar>

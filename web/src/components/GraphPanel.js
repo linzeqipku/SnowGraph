@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Card, CardBody, CardTitle} from "reactstrap";
+import {Card, CardBody, CardFooter, CardTitle} from "reactstrap";
+import GraphPagination from "./GraphPagination";
 
 class GraphPanel extends Component {
     render() {
@@ -14,6 +15,9 @@ class GraphPanel extends Component {
                     <div id="neo4jd3">
                     </div>
                 </CardBody>
+                <CardFooter>
+                    <GraphPagination/>
+                </CardFooter>
             </Card>
         );
     }

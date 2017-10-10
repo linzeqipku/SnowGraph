@@ -16,3 +16,6 @@ resources/configs/*.xml
 out/
 utils/mywork/
 bin/
+classes/
+
+node_modules/

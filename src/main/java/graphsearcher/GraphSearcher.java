@@ -29,6 +29,7 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
+import cn.edu.pku.sei.SnowView.servlet.GraphDbPool;
 import graphdb.extractors.linkers.codeindoc_ch.CodeInDocxFileExtractor;
 import graphdb.extractors.linkers.designtorequire_ch.DesignToRequireExtractor;
 import graphdb.extractors.miners.codeembedding.line.LINEExtracter;
@@ -68,9 +69,9 @@ public class GraphSearcher {
 	Set<String> queryWordSet = new HashSet<>();
 
 	public static void main(String[] args){
-		GraphDatabaseService db=new GraphDatabaseFactory().newEmbeddedDatabase(new File("E:\\CrawlData\\SnowGraphDataBase\\graphdb-lucene-embedding"));
+		GraphDatabaseService db=GraphDbPool.get("lucene");
 		GraphSearcher searcher=new GraphSearcher(db);
-		searcher.querySingle("Affix");
+		System.out.println(searcher.querySingle("IndexWriter").nodes);
 	}
 
 	public GraphSearcher(GraphDatabaseService db) {
@@ -242,9 +243,11 @@ public class GraphSearcher {
 		queryWord2Ids(queryWordSet);
 
 		Set<Long> anchors = findAnchors();
+		System.out.println(anchors);
 
 		if (anchors.size() > 0) {
 			Set<Long> subGraph = new HashSet<>();
+			subGraph.addAll(anchors);
 			for (String queryWord : queryWordSet) {
 				Set<Long> set = new HashSet<>();
 				set.addAll(queryWord2Ids.get(queryWord));

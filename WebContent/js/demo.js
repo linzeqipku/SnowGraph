@@ -38,7 +38,15 @@ $(document).ready(function() {
 
   $output.hide();
   $('#rankDisplayer').hide();
-    $(".mui-switch").change(function() {
+  $(".btn-group-graph").click(function(){
+      $('#rankDisplayer').hide();
+      $('#graphDisplayer').show();	  
+  });
+  $(".btn-group-rank").click(function(){
+      $('#graphDisplayer').hide();
+      $('#rankDisplayer').show();	  
+  });  
+    /*$(".mui-switch").change(function() {
         if ($(".mui-switch")[0].checked){
             $('#graphDisplayer').hide();
             $('#rankDisplayer').show();
@@ -47,7 +55,7 @@ $(document).ready(function() {
             $('#rankDisplayer').hide();
             $('#graphDisplayer').show();
         }
-    });
+    });*/
   $.get('data/queries.json').then(function(data){
     queries = data.queries;
   }, _error);
@@ -64,24 +72,27 @@ $(document).ready(function() {
 	$output.hide();
 	
 	query = queries[Math.floor(Math.random() * queries.length)];
-    $query.text(query.query);
+    /*$query.text(query.query);*/
 
     $.ajax('Rank', {
     	data : JSON.stringify(query),
     	contentType : 'application/json',
     	type : 'POST'
     }).then(function(response) {
-    
+      $query.empty();
+      $query.append(response.query2);
       // standard results - solr
+      $('#queryText').val(response.query);
+      $('#search').click();
       $standardResults.empty();
-      response.solrResults.map(createResultNode.bind(null, $template, false))
+      response.solrResults.map(createResultNode.bind(null, $template, false, response.answerId))
       .forEach(function(e){
         $standardResults.append(e);
       });
 
       // service results - solr + ranker
       $serviceResults.empty();
-      response.rankedResults.map(createResultNode.bind(null, $template, true))
+      response.rankedResults.map(createResultNode.bind(null, $template, true, response.answerId))
       .forEach(function(e){
         $serviceResults.append(e);
       });
@@ -89,12 +100,14 @@ $(document).ready(function() {
       $output.show();
     }, _error);
 
-    function createResultNode($template, showRanking, result, index) {
+    function createResultNode($template, showRanking, standId, result, index) {
       var node = $template.last().clone().show();
 
       node.find('.results--item-text').prepend(result.title);
-      node.find('.results--item-details').text(result.body);
-
+      node.find('.results--item-details').append(result.body);
+      if (standId == result.answerId){
+    	  node.find('.results--item-text').css("background-color","#41D6C3"); 
+      }
 
       // ranking result
       if (showRanking){

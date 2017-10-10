@@ -27,8 +27,8 @@ public class CypherQueryServlet extends HttpServlet {
 	int resultLength;
 	
 	public void init(ServletConfig config) throws ServletException{
-		File databasePath = new File("E:\\CrawlData\\SnowGraphDataBase\\graphdb-lucene-embedding");
-        db = new GraphDatabaseFactory().newEmbeddedDatabase(databasePath);
+		//File databasePath = new File("E:\\SnowGraphData\\lucene\\graphdb-lucene-embedding");
+        db = GraphDbPool.get("lucene");
         searcher = new GraphSearcher(db);
 	}
 	

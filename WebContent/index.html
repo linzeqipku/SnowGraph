@@ -17,7 +17,7 @@
       <script src="../../assets/js/respond.min.js"></script>
     <![endif]-->
 </head>
-<body style="background:#cfcfcf" onkeydown="keyLogin()"> <!--#cfcfcf-->
+<body style="background:#cfcfcf" onkeydown="keyLogin()">
 	<!-- Fixed navbar -->
 	<div class="navbar navbar-fixed-top navbar-inverse">
 		<div class="navbar-header">
@@ -40,8 +40,7 @@
 	<div id="up">
 
 			<div class="row ">
-				<div class = "col-md-6"></div>
-				<div class="col-md-4">
+				<div class="col-md-4 demo--center">
 					<div class="input-group col-md-12">
 						<input type="text" class="form-control" placeholder="Search for..." id="queryText" style="height:35px">
 						<span class="input-group-btn">
@@ -49,47 +48,17 @@
 						</span>
 
 					</div><!-- /input-group -->
-					<label><input class="mui-switch" type="checkbox">默认未选中</label>
+					<!-- <label><input class="mui-switch" type="checkbox">默认未选中</label> -->
 				</div><!-- /.col-lg-6 -->
-				<div class = "col-md-4">
-				</div>
-
-			</div>
-
-			<p></p>
-			<p></p>
-			<p></p>
-			<!--<div class="row" style = "margin-top:10px">
-				<div class="col-md-12">
-				<div class="btn-group">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						Choose One <span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu" id="ListSelect">
-					</ul>
-				</div>
-				</div>
-			</div>-->
-
-	</div>
-	<div class="col-md-12 col-sm-12" style="height:30px"></div>
-	<div id="down" class="row">
-
-		<div id="center" class="col-md-12 col-sm-12" style="background: #dfdfdf">
-				<div id="graphDisplayer" class="col-md-7 col-sm-7 panel panel-default">
-					<div class="panel-heading" style="background: white; color : white">
-						<h3 class="panel-title " style="color:black">相关的代码结构子图</h3>
-						<button id="first" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/first.png);width:43px;height:43px" value=-1 ></button>
-						<button id="former" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/former.png);width:43px;height:43px" value=-1 ></button>
-						<button id="latter" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/latter.png);width:43px;height:43px" value=-1 ></button>
-						<button id="last" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/last.png);width:43px;height:43px" value=-1 ></button>
+					<div class = "col-md-7 demo--center" style = "top : 390px ; text-align: center">
+						
+							<div class="" style="margin-top: 1rem;  float : centre">
+							    <button type="button" class="btn btn-default btn-group-rank" >DocumentSearcher</button>
+							    <button type="button" class="btn btn-default btn-group-graph">ApiGraphSearcher</button>
+							</div>
+								
 					</div>
-					<div id ="neo4jd3" class="col-md-12 col-sm-12"style="background-color:#F0F8FF; height:866px">
-
-					</div>
-				</div>
-				<div id="rankDisplayer" class="col-md-7 col-sm-7 panel panel-default" style="font-size: 11px; text-align :left">
-					<div>
+					<div id="randomQuery"  class="col-md-7 col-sm-7 panel panel-default demo--center" style="font-size: 11px; text-align :left; top:120px; height:250px">
 						<article class="_content base--article">
 							<!--<div class="_content--choose-input-file">
 								<h2 id="top" class="base--h2">
@@ -103,9 +72,9 @@
 							<div class="input">
 								<div class="input--question-generator base--a"
 									 style="cursor: pointer;">Get a random question about
-									aerodynamics</div>
+									lucene</div>
 								<div class="input--container">
-									<p id="query" class="input--question base--p"></p>
+									<p id="query" class="input--question base--p" style="overflow : auto ;height : 100px"></p>
 								</div>
 							</div>
 							<div class="error" style="display: none;'">
@@ -115,8 +84,19 @@
 								</div>
 							</div>
 						</article>
+						
 					</div>
-					<div class="output">
+					
+			</div>
+
+	</div>
+
+	<div id="down" class="row">
+
+		<div id="center" class="col-md-12 col-sm-12 demo--center" style="background: #dfdfdf; top:460px">
+				<div id="rankDisplayer" class="col-md-7 col-sm-7 panel panel-default demo--center" style="font-size: 11px; text-align :left; height:652px;overflow:auto">
+
+					<div class="output" style="margin-top: 1rem;">
 						<div>
 							<h3 class="base--h3">Output</h3>
 							<p class="base--p">You can compare the machine learning approach
@@ -152,10 +132,23 @@
 								</div>
 							</div>
 							<div class="results--more-info" style="display: none;">
-								<blockquote class="results--item-details base--blockquote">
-								</blockquote>
+								<div class="results--item-details base--blockquote">
+								</div>
 							</div>
 						</div>
+					</div>
+				</div>
+				<div id="graphDisplayer">
+				<div class="col-md-7 col-sm-7 panel panel-default">
+					<div class="panel-heading" style="background: white; color : white">
+						<h3 class="panel-title " style="color:black">相关的代码结构子图</h3>
+						<button id="first" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/first.png);width:43px;height:43px" value=-1 ></button>
+						<button id="former" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/former.png);width:43px;height:43px" value=-1 ></button>
+						<button id="latter" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/latter.png);width:43px;height:43px" value=-1 ></button>
+						<button id="last" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/last.png);width:43px;height:43px" value=-1 ></button>
+					</div>
+					<div id ="neo4jd3" class="col-md-12 col-sm-12"style="background-color:#F0F8FF; height:866px">
+
 					</div>
 				</div>
 
@@ -217,6 +210,7 @@
 					</div>
 					
 				</div>
+				</div>
 		</div>
 	</div>
 	
@@ -233,6 +227,6 @@
     <script src="js/indexPageFunctions.js"></script>
 	<script type="text/javascript" src="js/demo.js"></script>
 	<script type="text/javascript" src="js/google-analytics.js"></script>
-</div>>
+</div>
 </body>
 </html>

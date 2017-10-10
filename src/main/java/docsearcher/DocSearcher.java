@@ -26,7 +26,6 @@ import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import graphsearcher.GraphSearcher;
 import graphsearcher.SearchResult;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import solr.DocumentExtractor;
 import solr.SolrKeeper;
 
 public class DocSearcher {

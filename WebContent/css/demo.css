@@ -256,9 +256,9 @@ body {
 body {
   margin: 0;
 }
-body * + * {
+/*body * + * {
   margin-top: 1rem;
-}
+}*/
 body {
   background: #fff;
   color: #121212;
@@ -343,7 +343,7 @@ body {
   transform: translateY(-0.125em);
 }
 .base--radio:checked + label:before, .base--STYLED input[type="radio"]:checked + label:before {
-  background: radial-gradient(#323232 40%, transparent 40%);
+  background: radial-gradient( #323232 40%, transparent 40%);
 }
 .base--color-input, .base--STYLED input[type="color"] {
   height: 3em;
@@ -1262,4 +1262,10 @@ pre[class^="language-"] > code[class^="language-"], pre[class^="language-"] > co
   background-color: #264a60;
   border-color: #264a60;
   color: white;
+}
+.demo--center{
+	margin : 0 auto;
+	position : absolute;
+	left : 0;
+	right : 0;
 }

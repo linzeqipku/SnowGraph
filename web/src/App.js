@@ -2,40 +2,46 @@ import React, {Component} from 'react';
 import GraphPanel from "./components/GraphPanel";
 import FindEntityPanel from "./components/FindEntityPanel";
 import InformationPanel from "./components/InformationPanel";
-import {Col, Collapse, Container, Navbar, NavbarBrand, Row} from "reactstrap";
 import SearchForm from "./components/SearchForm";
-import './App.css';
+import {AppBar, Grid, Toolbar, Typography, withStyles} from "material-ui";
+
+const styles = theme => ({
+    brand: {
+        marginRight: 20,
+    },
+});
 
 class App extends Component {
     render() {
         return (
             <div>
-                <Navbar className="Navbar" dark={true} color="dark">
-                    <NavbarBrand href="/index.html"> SEI SNOW Project </NavbarBrand>
-                    <Collapse className="w-75" isOpen={true}>
+                <AppBar color="primary" position="static">
+                    <Toolbar>
+                        <Typography className={this.props.classes.brand} type="title" color="inherit">
+                            SEI SNOW Project
+                        </Typography>
                         <SearchForm/>
-                    </Collapse>
-                </Navbar>
+                    </Toolbar>
+                </AppBar>
 
-                <Container fluid={true}>
-                    <Row>
-                        <Col md="7">
-                            <div className="py-md-3">
-                                <GraphPanel/>
-                            </div>
-                        </Col>
-                        <Col md="5">
-                            <div className="py-md-3">
-                                <FindEntityPanel/>
-                            </div>
-                            <InformationPanel/>
-                        </Col>
-                    </Row>
-
-                </Container>
+                <Grid container spacing={0}>
+                    <Grid item xs={7}>
+                        <div className="py-md-3">
+                            <GraphPanel/>
+                        </div>
+                    </Grid>
+                    <Grid item xs={5}>
+                        <div className="py-md-3">
+                            <FindEntityPanel/>
+                        </div>
+                        <InformationPanel/>
+                    </Grid>
+                </Grid>
             </div>
         );
     }
 }
 
-export default App;
+App = withStyles(styles)(App);
+
+export default withStyles(styles)(App);

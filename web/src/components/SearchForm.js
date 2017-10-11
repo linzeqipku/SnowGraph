@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import Neo4jd3 from '../neo4jd3.js';
-import {Button, Form, FormGroup, Input} from "reactstrap";
 import {fetchNode, fetchRelationList, requestNewGraph, selectNode, updateGraph} from "../action";
 import {connect} from "react-redux";
 import {cypherQuery} from "../utils";
 import './SearchForm.css';
+import {TextField} from "material-ui";
 
 const mapStateToProps = (state) => {
     return {
@@ -268,12 +268,9 @@ class SearchForm extends Component {
 
     render() {
         return (
-            <Form inline={true} onSubmit={this.handleSubmit}>
-                <FormGroup className="w-75">
-                    <Input className="SearchInput w-100 mr-sm-2" type="text" placeholder="Search" innerRef={(input) => this.input = input}/>
-                </FormGroup>
-                <Button color="info" outline={true}>Submit</Button>
-            </Form>
+            <form onSubmit={this.handleSubmit}>
+                <TextField type="search" placeholder="Search" inputRef={(input) => this.input = input}/>
+            </form>
         );
     }
 }

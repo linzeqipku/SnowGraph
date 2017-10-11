@@ -1,9 +1,15 @@
 import React, {Component} from 'react';
-import {Button, Card, CardBody, CardTitle, Form, FormGroup, Input, Label} from "reactstrap";
 import {connect} from "react-redux";
 import {getNodeIDFromRelation, rename} from "../utils";
 import {fetchNode, fetchRelationList, requestShowRelation} from "../action";
+import {Button, Card, CardContent, FormControl, Input, InputLabel, Select, Typography, withStyles} from "material-ui";
 
+const styles = theme => ({
+    formControl: {
+        margin: theme.spacing.unit,
+        minWidth: 240,
+    }
+});
 
 const mapStateToProps = (state) => {
     return {
@@ -65,27 +71,27 @@ class FindEntityPanel extends Component {
 
         if (selectedRelationList && selectedRelationList.fetched) {
             const relationTypes = [...new Set(selectedRelationList.relationList.map(x => x["raw"].type))];
-            body = <Form onSubmit={this.handleSubmit}>
-                <FormGroup>
-                    <Label for="relation-type">选择关联实体类型</Label>
-                    <Input type="select" id="relation-type" innerRef={(input) => this.input = input}>
+            body = <form onSubmit={this.handleSubmit}>
+                <FormControl className={this.props.classes.formControl}>
+                    <InputLabel htmlFor="relation-type">选择关联实体类型</InputLabel>
+                    <Select native input={<Input id="relation-type" inputRef={(input) => this.input = input}/>}>
                         {relationTypes.map(t => <option key={t} value={t}>{rename(t)}</option>)}
-                    </Input>
-                </FormGroup>
-                <Button>Submit</Button>
-            </Form>;
+                    </Select>
+                </FormControl>
+                <Button type="submit">Submit</Button>
+            </form>;
         } else if (selectedRelationList) {
-            body = <div>获取结点信息中...</div>;
+            body = <Typography component="p"> 获取结点信息中... </Typography>;
         } else {
-            body = <div>请先选择一个结点</div>;
+            body = <Typography component="p"> 请先选择一个结点 </Typography>;
         }
 
         return (
             <Card>
-                <CardBody>
-                    <CardTitle>查找关联实体</CardTitle>
+                <CardContent>
+                    <Typography type="headline" component="h2"> 查找关联实体 </Typography>
                     {body}
-                </CardBody>
+                </CardContent>
             </Card>
 
         );
@@ -94,4 +100,4 @@ class FindEntityPanel extends Component {
 
 FindEntityPanel = connect(mapStateToProps, mapDispatchToProps)(FindEntityPanel)
 
-export default FindEntityPanel;
+export default withStyles(styles)(FindEntityPanel);

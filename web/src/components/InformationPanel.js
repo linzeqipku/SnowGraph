@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import {Card, CardBody, CardTitle, Table} from "reactstrap";
 import {connect} from "react-redux";
-import './InformationPanel.css';
+import {Card, CardContent, Table, TableBody, TableCell, TableRow, Typography, withStyles} from "material-ui";
 
 var labelCnName = {
     "Class": "类", "Interface": "接口", "Method": "方法", "Field": "域", "DocxFile": "文档文件",
@@ -37,34 +36,34 @@ class InformationPanel extends Component {
                 .map(x => {
                     let content = this.props.selectedNode.node.data[x];
                     content = (x === "content" || x === "comment") ?
-                        <pre className="pre-scrollable" dangerouslySetInnerHTML={{__html: content}}/> : content;
+                        <pre className="pre-scrollable" dangerouslySetInnerHTML={{__html: content}}/> : content.toString();
                     return {key: x, label: propertyCnName[x], content};
                 });
             const label = this.props.selectedNode.node["metadata"].labels[0];
             body = <Table>
-                <tbody>
-                <tr>
-                    <th>类型：</th>
-                    <td>{`${label}(${labelCnName[label]})`}</td>
-                </tr>
-                {properties.map(p => <tr key={p.key}>
-                    <th>{p.label}</th>
-                    <td>{p.content}</td>
-                </tr>)}
-                </tbody>
+                <TableBody>
+                <TableRow>
+                    <TableCell>类型：</TableCell>
+                    <TableCell>{`${label}(${labelCnName[label]})`}</TableCell>
+                </TableRow>
+                {properties.map(p => <TableRow key={p.key}>
+                    <TableCell>{p.label}</TableCell>
+                    <TableCell>{p.content}</TableCell>
+                </TableRow>)}
+                </TableBody>
             </Table>;
         } else if (this.props.selectedNode) {
-            body = <div>获取结点信息中...</div>;
+            body = <Typography component="p"> 获取结点信息中... </Typography>;
         } else {
-            body = <div>请先选择一个结点</div>;
+            body = <Typography component="p"> 请先选择一个结点 </Typography>;
         }
 
         return (
             <Card>
-                <CardBody className="CardBody">
-                    <CardTitle>实体详细信息</CardTitle>
+                <CardContent>
+                    <Typography type="headline" component="h2"> 实体详细信息 </Typography>
                     {body}
-                </CardBody>
+                </CardContent>
             </Card>
         );
     }

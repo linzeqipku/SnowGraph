@@ -1,14 +1,14 @@
 import {
     RECEIVED_NODE, RECEIVED_RELATION_LIST, REQUEST_NODE, REQUEST_RELATION_LIST,
     SELECT_NODE, REQUEST_SHOW_REALTION,
-    UPDATE_GRAPH, RECEIVED_SHOW_REALTION, REQUEST_NEW_GRAPH
+    RECEIVED_SHOW_REALTION, REQUEST_GRAPH, RECEIVED_GRAPH, DRAW_GRAPH
 } from "./action";
 import {cloneDeep} from "lodash";
 import {getNodeIDFromRelation, relation2format} from "./utils";
 
 export function selectedNode(state = null, action) {
     switch (action.type) {
-        case REQUEST_NEW_GRAPH:
+        case REQUEST_GRAPH:
             return null;
         case SELECT_NODE:
             return action.id;
@@ -19,7 +19,7 @@ export function selectedNode(state = null, action) {
 
 export function nodes(state = {}, action) {
     switch (action.type) {
-        case REQUEST_NEW_GRAPH:
+        case REQUEST_GRAPH:
             return {};
         case REQUEST_NODE:
             return Object.assign({}, state, {
@@ -42,7 +42,7 @@ export function nodes(state = {}, action) {
 
 export function relationLists(state = {}, action) {
     switch (action.type) {
-        case REQUEST_NEW_GRAPH:
+        case REQUEST_GRAPH:
             return {};
         case REQUEST_RELATION_LIST:
             return Object.assign({}, state, {
@@ -70,7 +70,7 @@ export function relationLists(state = {}, action) {
 
 export function waitingRelationLists(state = {}, action) {
     switch (action.type) {
-        case REQUEST_NEW_GRAPH:
+        case REQUEST_GRAPH:
             return {};
         case REQUEST_SHOW_REALTION:
             const relation = action.relation
@@ -94,13 +94,17 @@ export function waitingRelationLists(state = {}, action) {
     }
 }
 
-export function graph(state = null, action) {
+export function graph(state = {state: "none", graph: null}, action) {
     switch (action.type) {
-        case REQUEST_NEW_GRAPH:
-            return null;
-        case UPDATE_GRAPH:
-            return action.graph;
+        case REQUEST_GRAPH:
+            return {state: "fetching", graph: state.graph};
+        case RECEIVED_GRAPH:
+            if (action.result === null) return {state: "fetched", graph: state.graph};
+            return {state: "waited", result: action.result};
+        case DRAW_GRAPH:
+            return {state: "rendered", graph: action.graph};
         default:
             return state;
     }
 }
+

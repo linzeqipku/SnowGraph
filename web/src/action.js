@@ -1,7 +1,5 @@
 import {node2format, relation2format} from "./utils";
 
-export const REQUEST_NEW_GRAPH = 'REQUEST_NEW_GRAPH';
-
 export const SELECT_NODE = 'SELECT_NODE';
 
 export const REQUEST_NODE = 'REQUEST_NODE';
@@ -11,14 +9,13 @@ export const REQUEST_RELATION_LIST = 'REQUEST_RELATION_LIST';
 export const RECEIVED_RELATION_LIST = 'RECEIVED_RELATION_LIST';
 export const REQUEST_SHOW_REALTION = 'REQUEST_SHOW_REALTION';
 export const RECEIVED_SHOW_REALTION = 'RECEIVED_SHOW_REALTION';
-export const UPDATE_GRAPH = 'UPDATE_GRAPH';
+
+export const REQUEST_GRAPH = 'REQUEST_GRAPH';
+export const RECEIVED_GRAPH = 'RECEIVED_GRAPH';
+export const DRAW_GRAPH = 'DRAW_GRAPH';
 import $ from 'jquery';
 
 const URL = "http://localhost:8080";
-
-export function requestNewGraph() {
-    return {type: REQUEST_NEW_GRAPH};
-}
 
 export function selectNode(id) {
     return {type: SELECT_NODE, id};
@@ -73,7 +70,25 @@ export function receivedShowRelation(id, graph) {
     return {type: RECEIVED_SHOW_REALTION, id, graph};
 }
 
-export function updateGraph(graph) {
-    return {type: UPDATE_GRAPH, graph};
+export function requestGraph() {
+    return {type: REQUEST_GRAPH};
+}
+
+export function receivedGraph(result) {
+    return {type: RECEIVED_GRAPH, result};
+}
+
+export function drawGraph(graph) {
+    return {type: DRAW_GRAPH, graph};
+}
+
+
+export function fetchGraph(query) {
+    return function (dispatch) {
+        dispatch(requestGraph());
+        $.post(`${URL}/CypherQuery`, {params: query})
+            .done(result => dispatch(receivedGraph(result)))
+            .fail(() => dispatch(receivedGraph(null)));
+    }
 }
 

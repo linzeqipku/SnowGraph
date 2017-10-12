@@ -26,9 +26,19 @@ const mapStateToProps = (state) => {
     }
 }
 
+const styles = theme => ({
+    container: {
+        overflow: "auto",
+        whiteSpace: "pre-wrap",
+        height: 500
+    }
+});
+
 class InformationPanel extends Component {
     render() {
         let body = null;
+
+        const {classes} = this.props;
 
         if (this.props.selectedNode && this.props.selectedNode.fetched) {
             const properties = Object.keys(propertyCnName)
@@ -36,20 +46,21 @@ class InformationPanel extends Component {
                 .map(x => {
                     let content = this.props.selectedNode.node.data[x];
                     content = (x === "content" || x === "comment") ?
-                        <pre className="pre-scrollable" dangerouslySetInnerHTML={{__html: content}}/> : content.toString();
+                        <pre className={classes.container}
+                             dangerouslySetInnerHTML={{__html: content}}/> : content.toString();
                     return {key: x, label: propertyCnName[x], content};
                 });
             const label = this.props.selectedNode.node["metadata"].labels[0];
             body = <Table>
                 <TableBody>
-                <TableRow>
-                    <TableCell>类型：</TableCell>
-                    <TableCell>{`${label}(${labelCnName[label]})`}</TableCell>
-                </TableRow>
-                {properties.map(p => <TableRow key={p.key}>
-                    <TableCell>{p.label}</TableCell>
-                    <TableCell>{p.content}</TableCell>
-                </TableRow>)}
+                    <TableRow>
+                        <TableCell>类型：</TableCell>
+                        <TableCell>{`${label}(${labelCnName[label]})`}</TableCell>
+                    </TableRow>
+                    {properties.map(p => <TableRow key={p.key}>
+                        <TableCell>{p.label}</TableCell>
+                        <TableCell>{p.content}</TableCell>
+                    </TableRow>)}
                 </TableBody>
             </Table>;
         } else if (this.props.selectedNode) {
@@ -71,4 +82,4 @@ class InformationPanel extends Component {
 
 InformationPanel = connect(mapStateToProps)(InformationPanel)
 
-export default InformationPanel;
+export default withStyles(styles)(InformationPanel);

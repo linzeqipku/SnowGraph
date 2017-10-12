@@ -1,7 +1,3 @@
-import $ from 'jquery';
-
-const URL = "http://localhost:8080";
-
 export function rename(str) {
     if (str === "extend") return "父类 / 子类";
     if (str === "implement") return "实现的接口 / 实现本接口的类";
@@ -46,10 +42,6 @@ export function rename(str) {
     if (str.substr(3) === "function_designed_by" && str[0] === 'i') return "设计文档";
     if (str.substr(3) === "function_designed_by" && str[0] === 'o') return "需求文档";
     return str;
-}
-
-export function cypherQuery(data, callback) {
-    $.post(`${URL}/CypherQuery`, data, callback);
 }
 
 export function getNodeIDFromRelation(relation) {

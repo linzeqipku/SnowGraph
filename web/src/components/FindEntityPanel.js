@@ -16,7 +16,7 @@ const mapStateToProps = (state) => {
         selectedNode: state.selectedNode,
         nodes: state.nodes,
         relationLists: state.relationLists,
-        graph: state.graph
+        graph: state.graph.graph
     }
 }
 

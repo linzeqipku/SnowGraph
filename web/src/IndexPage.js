@@ -103,9 +103,9 @@ class IndexPage extends Component {
                 <form className={classes.search} onSubmit={this.handleSubmit}>
                     <Input className={classes.searchInput} placeholder="Please enter your question..."
                            inputRef={input => this.input = input}/>
-                    {this.props.graph.state === "none" &&
-                    <Button fab type="submit" color="accent"><SearchIcon/></Button>}
-                    {this.props.graph.state === "fetching" && <CircularProgress color="accent" size={55}/>}
+                    {this.props.graph.fetching ?
+                        <CircularProgress color="accent" size={55}/> :
+                        <Button fab type="submit" color="accent"><SearchIcon/></Button>}
                 </form>
             </div>
         );

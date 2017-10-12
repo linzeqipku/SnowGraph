@@ -13,6 +13,8 @@ export const RECEIVED_SHOW_REALTION = 'RECEIVED_SHOW_REALTION';
 export const REQUEST_GRAPH = 'REQUEST_GRAPH';
 export const RECEIVED_GRAPH = 'RECEIVED_GRAPH';
 export const DRAW_GRAPH = 'DRAW_GRAPH';
+
+export const GOTO_INDEX = 'GOTO_INDEX';
 import $ from 'jquery';
 
 const URL = "http://localhost:8080";
@@ -82,7 +84,6 @@ export function drawGraph(graph) {
     return {type: DRAW_GRAPH, graph};
 }
 
-
 export function fetchGraph(query) {
     return function (dispatch) {
         dispatch(requestGraph());
@@ -90,5 +91,9 @@ export function fetchGraph(query) {
             .done(result => dispatch(receivedGraph(result)))
             .fail(() => dispatch(receivedGraph(null)));
     }
+}
+
+export function gotoIndex() {
+    return {type: GOTO_INDEX};
 }
 

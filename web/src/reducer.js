@@ -1,7 +1,7 @@
 import {
     RECEIVED_NODE, RECEIVED_RELATION_LIST, REQUEST_NODE, REQUEST_RELATION_LIST,
     SELECT_NODE, REQUEST_SHOW_REALTION,
-    RECEIVED_SHOW_REALTION, REQUEST_GRAPH, RECEIVED_GRAPH, DRAW_GRAPH
+    RECEIVED_SHOW_REALTION, REQUEST_GRAPH, RECEIVED_GRAPH, DRAW_GRAPH, GOTO_INDEX
 } from "./action";
 import {cloneDeep} from "lodash";
 import {getNodeIDFromRelation, relation2format} from "./utils";
@@ -94,15 +94,27 @@ export function waitingRelationLists(state = {}, action) {
     }
 }
 
-export function graph(state = {state: "none", graph: null}, action) {
+export function graph(state = {fetching: false, toBeDrawn: false, instance: null}, action) {
     switch (action.type) {
         case REQUEST_GRAPH:
-            return {state: "fetching", graph: state.graph};
+            return {fetching: true, toBeDrawn: false, instance: state.instance};
         case RECEIVED_GRAPH:
-            if (action.result === null) return {state: "fetched", graph: state.graph};
-            return {state: "waited", result: action.result};
+            if (action.result === null) return {fetching: false, toBeDrawn: false, graph: state.instance};
+            return {fetching: false, toBeDrawn: true, result: action.result};
         case DRAW_GRAPH:
-            return {state: "rendered", graph: action.graph};
+            return {fetching: false, toBeDrawn: false, instance: action.graph};
+        default:
+            return state;
+    }
+}
+
+export function page(state = "index", action) {
+    switch (action.type) {
+        case GOTO_INDEX:
+            return "index";
+        case RECEIVED_GRAPH:
+            if (action.result === null) return state;
+            return "graph";
         default:
             return state;
     }

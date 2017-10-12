@@ -6,12 +6,12 @@ import {connect} from "react-redux";
 
 const mapStateToProps = (state) => {
     return {
-        isFetchedGraph: state.graph.state === "fetched",
         nodes: state.nodes,
         relationLists: state.relationLists,
-        graph: state.graph.graph,
+        graph: state.graph.instance,
         result: state.graph.result,
-        test: state.graph,
+        fetchingGraph: state.graph.fetching,
+        redraw: state.graph.toBeDrawn
     }
 }
 
@@ -36,7 +36,7 @@ class GraphPanel extends Component {
         return this.props.graph;
     }
 
-    componentDidMount() {
+    updateD3() {
         const neo4jd3 = new Neo4jd3('#neo4jd3', {
             showClassChnName: true,
             classes: {
@@ -244,12 +244,20 @@ class GraphPanel extends Component {
         this.props.drawGraph(neo4jd3);
     }
 
+    componentDidMount() {
+        this.updateD3();
+    }
+
+    componentDidUpdate() {
+        if (this.props.redraw) this.updateD3();
+    }
+
     render() {
         return (
             <Card>
                 <CardContent>
                     <Typography type="headline" component="h2"> 相关的代码结构子图 </Typography>
-                    <div style={{height: 800}} id="neo4jd3"/>
+                    {!this.props.fetchingGraph && <div style={{height: 800}} id="neo4jd3"/>}
                 </CardContent>
             </Card>
         );

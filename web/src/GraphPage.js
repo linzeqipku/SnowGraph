@@ -4,6 +4,8 @@ import FindEntityPanel from "./components/FindEntityPanel";
 import InformationPanel from "./components/InformationPanel";
 import SearchForm from "./components/SearchForm";
 import {AppBar, Grid, Toolbar, Typography, withStyles} from "material-ui";
+import {gotoIndex} from "./action";
+import {connect} from "react-redux";
 
 const styles = theme => ({
     leftPanel: {
@@ -15,17 +17,29 @@ const styles = theme => ({
     },
     informationPanel: {
         marginTop: theme.spacing.unit * 2,
+    },
+    brand: {
+        textDecoration: "none"
     }
 });
 
-class ResultPage extends Component {
+const mapStateToProps = (state) => {
+    return {}
+}
+
+const mapDispatchToProps = {
+    gotoIndex: gotoIndex
+}
+
+class GraphPage extends Component {
     render() {
         const {classes} = this.props;
         return (
             <div>
                 <AppBar color="primary" position="static">
                     <Toolbar>
-                        <Typography type="title" color="inherit">
+                        <Typography className={classes.brand} href="#" type="title" color="inherit" component="a"
+                                    onClick={this.props.gotoIndex}>
                             SEI SNOW Project
                         </Typography>
                         <SearchForm/>
@@ -48,4 +62,6 @@ class ResultPage extends Component {
     }
 }
 
-export default withStyles(styles)(ResultPage);
+GraphPage = connect(mapStateToProps, mapDispatchToProps)(GraphPage);
+
+export default withStyles(styles)(GraphPage);

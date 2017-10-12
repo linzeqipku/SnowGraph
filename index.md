@@ -12,3 +12,9 @@ However, it is a difficult task for software developers to obtain knowledge from
 * Natural language text is a common form of knowledge representation in software engineering data, while the machine comprehension of natural language text is very difficult.
 
 # [](#header-1)What Is SnowGraph?
+
+SnowGraph (Software Knowledge Graph) is a project for creating software-specific question-answering bot.
+Given a software project and various software engineering data of it, you can use SnowGraph to:
+
+* **Creating a software-specific knowledge graph automatically.** SnowGraph will extract entities from software engineering data, analyze relationships between them, and fuse them into a uniform graph database. Software developers can access the software-specific knowledge graph through graphic user interface or graph query language.
+* **Creating a software-specific question answering bot automatically.** Given a natural language user question about the software project, the QA bot can return passages from software engineering data to answer the question.

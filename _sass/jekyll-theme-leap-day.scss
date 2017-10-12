@@ -196,29 +196,7 @@ header {
   border-radius: 0px 2px 2px 0px;
   padding-right: 10px;
 
-  .button {
-    border: 1px solid #000000;
-    background: #F0FFFF;
-    border-radius: 2px;
-    box-shadow: inset 0px 1px 0px rgba(255,255,255,.4), 0px 1px 1px rgba(0,0,0,.1);
-    background-color: #F0FFFF;
-    margin-left: 5px;
-    padding: 10px 12px;
-    margin-top: 6px;
-    line-height:14px;
-    font-size:14px;
-    color:#000000;
-    font-weight: bold;
-    display:inline-block;
-    text-align:center;
-
-    &:hover {
-      background: #F0FFFF;
-      background-color: #F0FFFF;
-    }
-  }
-
-  .fork {
+  .fork, .button {
     position:fixed;
     left:50%;
     margin-left:-325px;
@@ -226,7 +204,8 @@ header {
     margin-top: 6px;
     line-height:14px;
     font-size:14px;
-    background-color: #F0FFFF;
+    background-color: #F5FFFA;
+    color:#000000;
   }
 
   .downloads {

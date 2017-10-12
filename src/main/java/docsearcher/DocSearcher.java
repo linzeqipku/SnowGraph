@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,7 +72,10 @@ public class DocSearcher {
 	public List<DocSearchResult> search(String query){
 		List<DocSearchResult> r=new ArrayList<>();
 		
-		SearchResult graph0=graphSearcher.querySingle(query);
+		Map<Set<Long>, Double> seedMap=graphSearcher.findSubGraphs(query);
+		Set<Long> graph0=new HashSet<>();
+		if (seedMap.size()>0)
+			graph0=seedMap.keySet().iterator().next();
 
 		/*
 		 * Todo (lingcy):
@@ -84,7 +88,7 @@ public class DocSearcher {
 			DocSearchResult doc=new DocSearchResult();
 			doc.setId(irResultList.get(i).getKey());
 			doc.setIrRank(i+1);
-			doc.setDist(docDistScorer.score(irResultList.get(i).getValue(), graph0.nodes));
+			doc.setDist(docDistScorer.score(irResultList.get(i).getValue(), graph0));
 			r.add(doc);
 		}
 		
@@ -120,7 +124,7 @@ public class DocSearcher {
 				if (current.id == qaMap.get(queryId)){
 					irCount++;
 					if (current.newRank < current.irRank){
-					    String res = count+": " +queryId + " " + current.id + " "
+					    String res = count+" " +queryId + " " + current.id + " "
                                 + current.irRank+"-->"+current.newRank;
 						System.out.println(res+" ("+qCnt+")");
 					    try {

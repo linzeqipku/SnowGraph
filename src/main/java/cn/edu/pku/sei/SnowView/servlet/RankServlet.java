@@ -73,7 +73,7 @@ public class RankServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        long id = rand.nextInt(417);
+        long id = rand.nextInt(map.size());
         String query = docSearcher.getContent(map.get((int)id).getLeft()).getLeft();
         String query2 = docSearcher.getContent(map.get((int)id).getLeft()).getRight();
         List<DocSearchResult> resultList = docSearcher.search(query);

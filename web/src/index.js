@@ -6,7 +6,7 @@ import {applyMiddleware, combineReducers, compose, createStore} from "redux";
 import {Provider} from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import {createMuiTheme, MuiThemeProvider} from "material-ui";
-import 'typeface-roboto'
+import 'typeface-roboto';
 import App from "./App";
 
 const appReducer = combineReducers(reducers);

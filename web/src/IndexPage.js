@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 
 const styles = theme => ({
     container: {
-        background: theme.palette.primary[800],
+        background: theme.palette.primary[500],
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -18,13 +18,13 @@ const styles = theme => ({
         left: 0,
     },
     title: {
-        color: theme.palette.primary[50]
+        color: theme.palette.common.white
     },
     introduction: {
-        color: theme.palette.primary[100]
+        color: theme.palette.primary[50]
     },
     featureList: {
-        color: theme.palette.primary[100]
+        color: theme.palette.primary[50]
     },
     search: {
         display: "flex",
@@ -36,12 +36,12 @@ const styles = theme => ({
         flex: 1,
         marginLeft: theme.spacing.unit * 2,
         marginRight: theme.spacing.unit * 2,
-        color: theme.palette.primary[100],
+        color: theme.palette.primary[50],
         '&:before': {
-            backgroundColor: theme.palette.primary[500],
+            backgroundColor: theme.palette.primary[400],
         },
         '&:hover:not(.disabled):before': {
-            backgroundColor: theme.palette.primary[300],
+            backgroundColor: theme.palette.primary[200],
         },
         '&:after': {
             backgroundColor: theme.palette.primary[50],

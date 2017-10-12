@@ -207,14 +207,14 @@ header {
     margin-top: 6px;
     line-height:14px;
     font-size:14px;
-    color:#F0FFFF;
+    color:#000000;
     font-weight: bold;
     display:inline-block;
     text-align:center;
 
     &:hover {
-      background: linear_gradient(rgb(255, 231, 136), rgb(255, 231, 136));
-      background-color: #ffeca0;
+      background: #F0FFFF;
+      background-color: #F0FFFF;
     }
   }
 

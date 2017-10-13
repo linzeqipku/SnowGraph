@@ -37,7 +37,7 @@ $(document).ready(function() {
     $query = $('#query');
 
   $output.hide();
-  $('#rankDisplayer').hide();
+  $('#graphDisplayer').hide();
   $(".btn-group-graph").click(function(){
       $('#rankDisplayer').hide();
       $('#graphDisplayer').show();	  

@@ -39,17 +39,15 @@ public class RankServlet extends HttpServlet {
 	Random rand ;
 	Map<Integer, Pair<Integer,Integer>> map = new HashMap<Integer, Pair<Integer,Integer>>();
 	public void init(ServletConfig config) throws ServletException{
-		//String path = "E:\\SnowGraphData\\lucene\\graphdb-lucene-embedding";
-		//GraphDatabaseFactory graphDbFactory = new GraphDatabaseFactory();
-		GraphDatabaseService graphDb = GraphDbPool.get("lucene");
+		GraphDatabaseService graphDb = Config.getGraphDB();
 		GraphSearcher graphSearcher = new GraphSearcher(graphDb);
-		SolrKeeper keeper = new SolrKeeper("http://localhost:8983/solr");
+		SolrKeeper keeper = new SolrKeeper(Config.getSolrUrl());
 		docSearcher = new DocSearcher(graphDb, graphSearcher, keeper);
 		rand = new Random();
 
         /* 读取数据 */
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File("E:\\tmp\\qaexample")),
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(Config.getExampleFilePath())),
                                                                          "UTF-8"));
             String lineTxt = null;
             while ((lineTxt = br.readLine()) != null) {
@@ -99,24 +97,5 @@ public class RankServlet extends HttpServlet {
         
         response.getWriter().print(searchResult.toString());
     }
-    private static String readString2()
 
-    {
-        StringBuffer str=new StringBuffer("");
-        File file=new File("D:\\IdeaProjects\\SnowGraph\\src\\main\\java\\cn\\edu\\pku\\sei\\SnowView\\b.txt");
-        try {
-            FileReader fr=new FileReader(file);
-            int ch = 0;
-            while((ch = fr.read())!=-1 )
-            {
-                str.append((char)ch);
-            }
-            fr.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            System.out.println("File reader出错");
-        }
-        return str.toString();
-    }
 }

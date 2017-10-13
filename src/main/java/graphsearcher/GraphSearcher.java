@@ -29,7 +29,7 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
-import cn.edu.pku.sei.SnowView.servlet.GraphDbPool;
+import cn.edu.pku.sei.SnowView.servlet.Config;
 import graphdb.extractors.linkers.codeindoc_ch.CodeInDocxFileExtractor;
 import graphdb.extractors.linkers.designtorequire_ch.DesignToRequireExtractor;
 import graphdb.extractors.miners.codeembedding.line.LINEExtracter;
@@ -69,7 +69,7 @@ public class GraphSearcher {
 	Set<String> queryWordSet = new HashSet<>();
 
 	public static void main(String[] args){
-		GraphDatabaseService db=GraphDbPool.get("lucene");
+		GraphDatabaseService db=Config.getGraphDB();
 		GraphSearcher searcher=new GraphSearcher(db);
 		System.out.println(searcher.querySingle("IndexWriter").nodes);
 	}

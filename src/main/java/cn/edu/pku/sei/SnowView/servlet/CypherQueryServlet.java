@@ -23,8 +23,7 @@ public class CypherQueryServlet extends HttpServlet {
     int resultLength;
 
     public void init(ServletConfig config) throws ServletException{
-        //File databasePath = new File("E:\\SnowGraphData\\lucene\\graphdb-lucene-embedding");
-        db = GraphDbPool.get("lucene");
+        db = Config.getGraphDB();
         searcher = new GraphSearcher(db);
     }
 
@@ -35,8 +34,6 @@ public class CypherQueryServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        System.out.println("test!");
 
         request.setCharacterEncoding("UTF-8");
         String queryText = request.getParameter("params");

@@ -39,12 +39,12 @@ class ResultPage extends Component {
                 </AppBar>
 
                 <Tabs value={this.props.tab} onChange={(e, v) => this.props.changeTab(v)}>
-                    <Tab value="api-graph" label="API Graph"/>
                     <Tab value="document" label="Document"/>
+                    <Tab value="api-graph" label="API Graph"/>
                 </Tabs>
 
-                <GraphTab visibility={this.props.tab === "api-graph"}/>
                 <DocumentTab visibility={this.props.tab === "document"}/>
+                <GraphTab visibility={this.props.tab === "api-graph"}/>
             </div>
         );
     }

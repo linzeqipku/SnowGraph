@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-import {Card, CardContent, LinearProgress, Table, TableBody, TableCell, TableRow, Typography, withStyles} from "material-ui";
+import {
+    Card, CardContent, CardHeader, LinearProgress,
+    Table, TableBody, TableCell, TableRow, Typography, withStyles
+} from "material-ui";
+import CodeModal from "./CodeModal";
 
 var labelCnName = {
     "Class": "类", "Interface": "接口", "Method": "方法", "Field": "域", "DocxFile": "文档文件",
@@ -27,8 +31,12 @@ const mapStateToProps = (state) => {
 }
 
 const styles = theme => ({
-    container: {
+    preCell: {
         overflow: "auto",
+        whiteSpace: "pre-wrap",
+    },
+    normalCell: {
+        wordWrap: "break-word",
         whiteSpace: "pre-wrap",
     }
 });
@@ -45,8 +53,8 @@ class InformationPanel extends Component {
                 .map(x => {
                     let content = this.props.selectedNode.node.data[x];
                     content = (x === "content" || x === "comment") ?
-                        <pre className={classes.container}
-                             dangerouslySetInnerHTML={{__html: content}}/> : content.toString();
+                        <CodeModal content={content}/> :
+                        <div className={classes.normalCell}>{content.toString()}</div>;
                     return {key: x, label: x, content};
                 });
             const label = this.props.selectedNode.node["metadata"].labels[0];
@@ -70,8 +78,8 @@ class InformationPanel extends Component {
 
         return (
             <Card>
+                <CardHeader title="Entity Properties"/>
                 <CardContent>
-                    <Typography type="headline" component="h2"> Entity Properties </Typography>
                     {body}
                 </CardContent>
             </Card>

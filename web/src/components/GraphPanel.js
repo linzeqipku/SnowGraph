@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, CardContent, Typography} from "material-ui";
+import {Card, CardContent, CardHeader, withStyles} from "material-ui";
 import Neo4jd3 from '../neo4jd3.js';
 import {drawGraph, fetchNode, fetchRelationList, selectNode} from "../redux/action";
 import {connect} from "react-redux";
@@ -38,7 +38,7 @@ class GraphPanel extends Component {
 
     updateD3() {
         const neo4jd3 = new Neo4jd3('#neo4jd3', {
-            showClassChnName: true,
+            showClassChnName: false,
             classes: {
                 "Class": {
                     'englishName': "Class",
@@ -255,8 +255,8 @@ class GraphPanel extends Component {
     render() {
         return (
             <Card>
+                <CardHeader title="Related API Code Graph"/>
                 <CardContent>
-                    <Typography type="headline" component="h2"> Related API Code Graph </Typography>
                     {!this.props.fetchingGraph && <div style={{height: 800}} id="neo4jd3"/>}
                 </CardContent>
             </Card>

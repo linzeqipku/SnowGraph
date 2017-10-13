@@ -13,7 +13,20 @@ const appReducer = combineReducers(reducers);
 
 let store = createStore(appReducer, compose(applyMiddleware(thunkMiddleware), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
 
-const theme = createMuiTheme();
+const theme = createMuiTheme({
+    overrides: {
+        MuiCardHeader: {
+            root: {
+                background: "#3f51b5",
+                borderRadius: "2px 2px 0 0",
+                padding: "8px 16px",
+            },
+            title: {
+                color: 'white',
+            }
+        },
+    },
+});
 
 ReactDOM.render(
     <Provider store={store}>

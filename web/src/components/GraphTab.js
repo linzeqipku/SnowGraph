@@ -25,10 +25,10 @@ class GraphTab extends Component {
         const {classes} = this.props;
         return (
             <Grid style={{display: this.props.visibility ? "flex" : "none"}} container spacing={0}>
-                <Grid item xs={7} className={classes.leftPanel}>
+                <Grid item xs={8} className={classes.leftPanel}>
                     <GraphPanel/>
                 </Grid>
-                <Grid item xs={5} className={classes.rightPanel}>
+                <Grid item xs={4} className={classes.rightPanel}>
                     <FindEntityPanel/>
                     <div className={classes.informationPanel}>
                         <InformationPanel/>

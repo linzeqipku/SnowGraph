@@ -3,16 +3,8 @@ import {connect} from "react-redux";
 import {getNodeIDFromRelation, rename} from "../utils";
 import {fetchNode, fetchRelationList, requestShowRelation} from "../redux/action";
 import {
-    Button,
-    Card,
-    CardContent,
-    FormControl,
-    Input,
-    InputLabel,
-    LinearProgress,
-    Select,
-    Typography,
-    withStyles
+    Button, Card, CardContent, CardHeader, FormControl,
+    Input, InputLabel, LinearProgress, Select, Typography, withStyles
 } from "material-ui";
 
 const styles = theme => ({
@@ -99,8 +91,8 @@ class FindEntityPanel extends Component {
 
         return (
             <Card>
+                <CardHeader title="Expand Related Entity"/>
                 <CardContent>
-                    <Typography type="headline" component="h2"> Expand Related Entity </Typography>
                     {body}
                 </CardContent>
             </Card>

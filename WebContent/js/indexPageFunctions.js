@@ -6,8 +6,13 @@ var neo4jd3;
 var dataset = [];
 var relationset = [];
 var edgelist = [];
-
-
+var classesJson;
+var relationshipsJson;
+var ou_relationshipsJson;
+var in_relationshipsJson;
+var codePropertyCnName ;
+var docPropertyCnName;
+var labelCnName ;
 function keyLogin(){
     if(event.keyCode == 13 && document.getElementById("search").val() != "") {
         document.getElementById("search").click();
@@ -129,111 +134,27 @@ function init(orijson,node_ID) {
     dataset = [];
     relationset = [];
     edgelist = [];
+
+    $.ajax({  
+        type : "get",  
+        url : "data/translation.json",  
+        async : false,  
+        success : function(data){  
+        	classesJson = data.classes;
+        	relationshipsJson = data.relationships;
+        	in_relationshipsJson = data.in_relationships;
+        	ou_relationshipsJson = data.ou_relationships;
+        	codePropertyCnName = data.codePropertyCnName;
+        	docPropertyCnName = data.docPropertyCnName;
+        	labelCnName = data.labelCnName;
+        }  
+        });  
+
     neo4jd3 = new Neo4jd3('#neo4jd3', {
-        showClassChnName : true,
-        classes: {
-            "Class":{
-                'englishName':"Class",
-                "chnName":"类",
-                "nodeFillColor":"#68bdf6" // light blue
-            },
-            "Method":{
-                'englishName':"Method",
-                'chnName':"方法",
-                "nodeFillColor":'#6dce9e' // green #1
-            },
-            'Interface':{
-                'englishName':"Interface",
-                'chnName':"接口",
-                "nodeFillColor":'#faafc2' // light pink
-            },
-            'Field':{
-                'englishName':"Field",
-                'chnName':"域",
-                "nodeFillColor":'#f2baf6' // purple
-            },
-            'DocxFile':{
-                'englishName':"DocxFile",
-                'chnName':"docx文件",
-                "nodeFillColor":'#ff928c' // light red
-            },
-            'DocxPlainText':{
-                'englishName':"DocxPlainText",
-                'chnName':"docx文本",
-                "nodeFillColor":'#fcea7e' // light yellow
-            },
-            'DocxSection':{
-                'englishName':"DocxSection",
-                'chnName':"docx章节",
-                "nodeFillColor":'#ffc766' // light orange
-            },
-            'DocxTable':{
-                'englishName':"DocxTable",
-                'chnName':"docx表格",
-                "nodeFillColor":'#405f9e' // navy blue
-            }
-
-        },
+        showClassChnName : false,
+        classes: classesJson,
         showRlationshipsChnName: false,
-        relationships:{
-            "api_explained_by":{
-                "englishName":"api_explained_by",
-                "chnName":"设计文档 / 本文档对应的代码元素"
-            },
-            "call_field":{
-                "englishName":"call_field",
-                "chnName":"call_field未定义"
-            },
-            "call_method":{
-                "englishName":"call_method",
-                "chnName":"本方法调用的方法 / 调用本方法的方法"
-            },
-            "extend":{
-                "englishName":"extend",
-                "chnName":"子类  / 父类"
-            },
-            "function_designed_by":{
-                "englishName":"function_designed_by",
-                "chnName":"该用户设计的方法  / 设计该方法的人"
-            },
-            "hava_field":{
-                "englishName":"hava_field",
-                "chnName":"本方法拥有的域  / 拥有该域的方法"
-            },
-            "have_method":{
-                "englishName":"have_method",
-                "chnName":"本类拥有的方法  / 拥有本方法的类"
-            },
-            "have_sub_element":{
-                "englishName":"have_sub_element",
-                "chnName":"需求文档 / 设计文档"
-            },
-            "implement":{
-                "englishName":"implement",
-                "chnName":"实现的接口  / 实现的接口的类"
-            },
-            "param":{
-                "englishName":"param",
-                "chnName":"参数  / 以本类型为参数的方法"
-            },
-            "rt":{
-                "englishName":"rt",
-                "chnName":"返回类型  / 以本类型为返回类型的方法"
-            },
-            "throw":{
-                "englishName":"throw",
-                "chnName":"抛出异常  / 抛出本异常的方法"
-            },
-            "type":{
-                "englishName":"type",
-                "chnName":"域的类型  / 定义本类型的方法"
-            },
-            "variable":{
-                "englishName":"variable",
-                "chnName":"引用  / 引用本类型的方法"
-            }
-
-        },
+        relationships: relationshipsJson,
         highlight: [
             {
                 class: 'Project',
@@ -567,49 +488,10 @@ Array.prototype.contains = function(obj) {
 }
 
 function rename(str){
-    if (str == "extend") return "父类 / 子类";
-    if (str == "implement") return "实现的接口 / 实现本接口的类";
-    if (str == "throw") return "抛出异常 / 抛出本异常的方法";
-    if (str == "param") return "参数 / 以本类型为参数的方法";
-    if (str == "rt") return "返回类型 / 以本类型为返回类型的方法";
-    if (str == "have_method") return "声明方法 / 所属类型";
-    if (str == "have_field") return "声明域 / 所属域";
-    if (str == "call_method") return "本方法调用的方法 / 调用本方法的方法";
-    if (str == "call_field") return "调用这个域的方法 / 本方法调用的域";
-    if (str == "type") return "域的类型 / 定义为本类型的域";
-    if (str == "variable") return "引用 / 引用本类型的方法";
-    if (str == "have_sub_element") return "下级文档元素 / 上级文档元素";
-    if (str == "api_explained_by") return "设计文档 / 本文档对应的代码元素";
-    if (str == "function_designed_by") return "需求文档 / 设计文档";
-    if (str.substr(3) == "extend" && str[0] == 'i') return "子类";
-    if (str.substr(3) == "extend" && str[0] == 'o') return "父类 ";
-    if (str.substr(3) == "implement" && str[0] == 'i') return "实现本接口的类";
-    if (str.substr(3) == "implement" && str[0] == 'o') return "实现的接口";
-    if (str.substr(3) == "throw" && str[0] == 'i') return "抛出本异常的方法";
-    if (str.substr(3) == "throw" && str[0] == 'o') return "抛出异常";
-    if (str.substr(3) == "param" && str[0] == 'i') return "以本类型为参数的方法";
-    if (str.substr(3) == "param" && str[0] == 'o') return "参数";
-    if (str.substr(3) == "rt" && str[0] == 'i') return "以本类型为返回类型的方法";
-    if (str.substr(3) == "rt" && str[0] == 'o') return "返回类型";
-    if (str.substr(3) == "have_method" && str[0] == 'i') return "所属类型";
-    if (str.substr(3) == "have_method" && str[0] == 'o') return "声明方法";
-    if (str.substr(3) == "have_field" && str[0] == 'i') return "所属类";
-    if (str.substr(3) == "have_field" && str[0] == 'o') return "声明域";
-    if (str.substr(3) == "call_method" && str[0] == 'i') return "调用本方法的方法";
-    if (str.substr(3) == "call_method" && str[0] == 'o') return "本方法调用的方法";
-    if (str.substr(3) == "call_field" && str[0] == 'i') return "调用这个域的方法";
-    if (str.substr(3) == "call_field" && str[0] == 'o') return "本方法调用的域";
-    if (str.substr(3) == "type" && str[0] == 'i') return "定义为本类型的域";
-    if (str.substr(3) == "type" && str[0] == 'o') return "域的类型";
-    if (str.substr(3) == "variable" && str[0] == 'i') return "引用本类型的方法";
-    if (str.substr(3) == "variable" && str[0] == 'o') return "引用";
-    if (str.substr(3) == "have_sub_element" && str[0] == 'i') return "上级文档元素";
-    if (str.substr(3) == "have_sub_element" && str[0] == 'o') return "下级文档元素";
-    if (str.substr(3) == "api_explained_by" && str[0] == 'i') return "本文档对应的代码元素";
-    if (str.substr(3) == "api_explained_by" && str[0] == 'o') return "设计文档";
-    if (str.substr(3) == "function_designed_by" && str[0] == 'i') return "设计文档";
-    if (str.substr(3) == "function_designed_by" && str[0] == 'o') return "需求文档";
-    return str;
+	if (relationshipsJson[str]) return relationshipsJson[str].englishName;
+	if (in_relationshipsJson[str]) return in_relationshipsJson[str].englishName;
+	if (ou_relationshipsJson[str]) return ou_relationshipsJson[str].englishName;
+	return str;
     //return str + "rename";
 }
 //based on
@@ -642,8 +524,8 @@ function view(obj,list){
     if (name == null)
         name = obj.metadata.id
     $("#data").empty();
-    $("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;类型:</td> <td>"
-        + label +"(" + labelCnName[label] + ")</td> </tr>");
+    $("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;Type:</td> <td>"
+        + label + "</td> </tr>");
     if (label == "Class" || label == "Interface" || label == "Method" || label == "Field"){
         showProperty(obj, codePropertyCnName)
     } else {
@@ -655,20 +537,22 @@ function showProperty(obj, propertyCnName){
     for (key in propertyCnName){
         if (obj.data.hasOwnProperty(key)){
             var content = obj.data[key];
-            if (key == "content" || key == "comment")
+            /*if (key == "content" || key == "comment")*/
                 content = "<pre>" + content + "</pre>";
-            $("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;"+propertyCnName[key]+
+            $("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;"+key+
                 ":</td> <td>" + content +"</td> </tr>");
         }
     }
+    for (key in obj.data){
+    	if (!propertyCnName.hasOwnProperty(key)){
+    		var content = obj.data[key];
+                content = "<pre>" + content + "</pre>";
+            $("#data").append("<tr> <td class = 'title'>&nbsp;&nbsp;"+key+
+                ":</td> <td>" + content +"</td> </tr>");
+    	}
+    }
 }
-var codePropertyCnName = {"name": "名称","fullName": "全名", "access": "访问修饰符", "superClass": "父类", "implements":"实现接口",
-    "extends": "父接口", "isAbstract": "是否抽象类(abstract)", "isFinal": "是否不可变(final)",
-    "isStatic": "是否静态", "belongTo":"所属类", "comment": "注释", "content": "内容"};
-var docPropertyCnName = {"sectionTitle": "标题", "sectionContent": "内容", "tableContent": "表格内容",
-    "docxName" : "文档名称", "projectName" : "项目名称", "plainTextContent" : "文本内容"};
-var labelCnName = {"Class": "类", "Interface": "接口", "Method": "方法", "Field": "域", "DocxFile": "文档文件",
-    "DocxSection": "文档章节", "DocxTable": "文档表格", "DocxPlainText": "文档文本信息"};
+
 
 function listsplay(node_ID){
     $("#relationTypes").empty();

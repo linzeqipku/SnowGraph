@@ -31,7 +31,7 @@ public class GetModifiedCode extends HttpServlet {
         Set<String> relset = new HashSet<>();
         String id = request.getParameter("id");
         nodeset.add(id);
-        String p = PostUtil.sendGet("http://neo4j:1@127.0.0.1:7474/db/data/node/"+id);
+        String p = PostUtil.sendGet(GraphDbPool.getUrl()+"/db/data/node/"+id);
         //System.out.println(p);
         JSONObject jsobj = new JSONObject(p);
         nodes.add(jsobj);

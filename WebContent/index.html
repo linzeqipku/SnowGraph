@@ -50,12 +50,16 @@
 				</div><!-- /input-group -->
 				<!-- <label><input class="mui-switch" type="checkbox">默认未选中</label> -->
 			</div><!-- /.col-lg-6 -->
-			<div class = "col-md-7 demo--center" style = "top : 390px ; text-align: center">
+			<div class = "col-md-7 " style = "top : 320px ; text-align: left">
 
-				<div class="" style="margin-top: 1rem;  float : centre">
-					<button type="button" class="btn btn-default btn-group-rank" >DocumentSearcher</button>
-					<button type="button" class="btn btn-default btn-group-graph">ApiGraphSearcher</button>
-				</div>
+				 <div class="" style="margin-top: 1rem;  float : left ">
+				 			 	<ul class="nav nav-tabs">
+				  				<li><a href="#" data-toggle="tab" class="btn-group-rank">DocumentSearcher</a></li>
+				  				<li class="active"><a href="#" data-toggle="tab" class="btn-group-graph">ApiGraphSearcher</a></li>
+								</ul>
+					<!-- <button type="button" class="btn btn-default btn-group-rank" >DocumentSearcher</button>
+					<button type="button" class="btn btn-default btn-group-graph">ApiGraphSearcher</button> -->
+				</div> 
 
 			</div>
 			<div id="randomQuery"  class="col-md-7 col-sm-7 panel panel-default demo--center" style="font-size: 11px; text-align :left; top:120px; height:250px">
@@ -140,7 +144,7 @@
 			<div id="graphDisplayer">
 				<div class="col-md-7 col-sm-7 panel panel-default">
 					<div class="panel-heading" style="background: white; color : white">
-						<h3 class="panel-title " style="color:black">相关的代码结构子图</h3>
+						<h3 class="panel-title " style="color:black">Related Api Code Graph</h3>
 						<!-- 这是返回多个图时，上下浏览不同的图
 						<button id="first" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/first.png);width:43px;height:43px" value=-1 ></button>
 						<button id="former" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/former.png);width:43px;height:43px" value=-1 ></button>
@@ -159,7 +163,7 @@
 					<div class="panel panel-default" style="background: #dfdfdf">
 						<!-- Table -->
 						<div class="panel-heading" style="background: black; color : white">
-							<h3 class="panel-title">查找关联实体</h3>
+							<h3 class="panel-title">Expand</h3>
 						</div>
 						<!--<div id = "echarts" style="width: 500px;height:400px;">
 		
@@ -185,7 +189,7 @@
 					<div class="panel panel-default" style="background: #dfdfdf">
 						<div class="panel panel-default" style="background: #dfdfdf">
 							<div class="panel-heading" style="background: black; color : white">
-								<h3 class="panel-title">实体详细信息</h3>
+								<h3 class="panel-title">Properties</h3>
 							</div>
 
 							<!-- Single button -->

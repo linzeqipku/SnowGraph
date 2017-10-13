@@ -19,3 +19,7 @@ bin/
 classes/
 
 node_modules/
+
+_site/
+Gemfile
+Gemfile.lock

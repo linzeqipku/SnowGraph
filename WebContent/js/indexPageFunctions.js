@@ -488,9 +488,11 @@ Array.prototype.contains = function(obj) {
 }
 
 function rename(str){
-	if (relationshipsJson[str]) return relationshipsJson[str].englishName;
-	if (in_relationshipsJson[str]) return in_relationshipsJson[str].englishName;
-	if (ou_relationshipsJson[str]) return ou_relationshipsJson[str].englishName;
+	if (relationshipsJson[str] && relationshipsJson[str]["englishName"]) return relationshipsJson[str].englishName;
+	if (in_relationshipsJson[str] && in_relationshipsJson[str]["englishName"]) return in_relationshipsJson[str].englishName;
+	if (ou_relationshipsJson[str] && ou_relationshipsJson[str]["englishName"]) return ou_relationshipsJson[str].englishName;
+	if (str.substring(0,3) == "in_") return str.substring(3)+"(incoming)";
+	if (str.substring(0,3) == "ou_") return str.substring(3)+"(outgoing)";
 	return str;
     //return str + "rename";
 }

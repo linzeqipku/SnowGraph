@@ -3,22 +3,26 @@
             "Class":{
                 "englishName":"Class",
                 "chnName":"类",
-                "nodeFillColor":"#68bdf6" 
+                "nodeFillColor":"#68bdf6" ,
+                "displayName":"name"
             },
             "Method":{
                 "englishName":"Method",
                 "chnName":"方法",
-                "nodeFillColor":"#6dce9e" 
+                "nodeFillColor":"#6dce9e",
+                "displayName":"name" 
             },
             "Interface":{
                 "englishName":"Interface",
                 "chnName":"接口",
-                "nodeFillColor":"#faafc2"
+                "nodeFillColor":"#faafc2",
+                "displayName":"name"
             },
             "Field":{
                 "englishName":"Field",
                 "chnName":"域",
-                "nodeFillColor":"#f2baf6" 
+                "nodeFillColor":"#f2baf6",
+                "displayName":"name" 
             },
             "DocxFile":{
                 "englishName":"DocxFile",
@@ -39,7 +43,42 @@
                 "englishName":"DocxTable",
                 "chnName":"docx表格",
                 "nodeFillColor":"#405f9e" 
-            }
+            },
+            "APIUsageExample":{
+            },
+            "JiraIssue":{
+            	
+            },
+            "JiraIssueComment":{
+            },
+            "JiraIssueUser":{
+            	"displayName":"displayName"
+            },
+            "JiraPatch":{
+            },
+            "Mail":{
+            
+            },
+            "MailUser":{
+            "displayName":"names"
+            },
+            "StackOverflowAnswer":{
+            },
+            "StackOverflowComment":{
+            },
+            "StackOverflowQuestion":{
+            },            
+	        "StackOverflowUser":{
+	        "displayName":"displayName"
+            },
+            "GitCommit":{
+            },
+            "GitCommitAuthor":{
+            "displayName":"name"
+            },
+            "default":{
+             	"nodeFillColor":"#ced2d9"
+            }   
         },
 "in_relationships":{
         "in_api_explained_by":{

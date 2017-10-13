@@ -1,0 +1,4 @@
+db E://SnowGraphData//lucene//graphdb-lucene-final
+neo4jUrl http://neo4j:1@127.0.0.1:7474
+exampleFilePath E://tmp//qaexample
+solrUrl http://127.0.0.1:8983/solr

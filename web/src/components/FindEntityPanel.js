@@ -2,7 +2,18 @@ import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {getNodeIDFromRelation, rename} from "../utils";
 import {fetchNode, fetchRelationList, requestShowRelation} from "../redux/action";
-import {Button, Card, CardContent, FormControl, Input, InputLabel, Select, Typography, withStyles} from "material-ui";
+import {
+    Button,
+    Card,
+    CardContent,
+    FormControl,
+    Input,
+    InputLabel,
+    LinearProgress,
+    Select,
+    Typography,
+    withStyles
+} from "material-ui";
 
 const styles = theme => ({
     formControl: {
@@ -73,23 +84,23 @@ class FindEntityPanel extends Component {
             const relationTypes = [...new Set(selectedRelationList.relationList.map(x => x["raw"].type))];
             body = <form onSubmit={this.handleSubmit}>
                 <FormControl className={this.props.classes.formControl}>
-                    <InputLabel htmlFor="relation-type">选择关联实体类型</InputLabel>
+                    <InputLabel htmlFor="relation-type">Relation Type</InputLabel>
                     <Select native input={<Input id="relation-type" inputRef={(input) => this.input = input}/>}>
-                        {relationTypes.map(t => <option key={t} value={t}>{rename(t)}</option>)}
+                        {relationTypes.map(t => <option key={t} value={t}>{t}</option>)}
                     </Select>
                 </FormControl>
                 <Button type="submit">Submit</Button>
             </form>;
         } else if (selectedRelationList) {
-            body = <Typography component="p"> 获取结点信息中... </Typography>;
+            body = <LinearProgress/>;
         } else {
-            body = <Typography component="p"> 请先选择一个结点 </Typography>;
+            body = <Typography component="p"> Please select a node first </Typography>;
         }
 
         return (
             <Card>
                 <CardContent>
-                    <Typography type="headline" component="h2"> 查找关联实体 </Typography>
+                    <Typography type="headline" component="h2"> Expand Related Entity </Typography>
                     {body}
                 </CardContent>
             </Card>

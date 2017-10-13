@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {withStyles} from "material-ui";
 import {connect} from "react-redux";
-import GraphPage from "./pages/ResultPage";
+import ResultPage from "./pages/ResultPage";
 import IndexPage from "./pages/IndexPage";
 
 const styles = theme => ({});
@@ -14,7 +14,7 @@ const mapStateToProps = (state) => {
 
 class App extends Component {
     render() {
-        return this.props.page === "index" ? <IndexPage/> : <GraphPage/>
+        return this.props.page === "index" ? <IndexPage/> : <ResultPage/>
     }
 }
 

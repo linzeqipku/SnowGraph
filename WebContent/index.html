@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Software Knowledge Graph</title>
-    <!-- Bootstrap -->
+	<!-- Bootstrap -->
 	<link href="css/bootstrap.css" rel="stylesheet">
 	<link href="css/demo.css" rel="stylesheet">
 	<link href="css/switch.css" rel="stylesheet">
@@ -11,153 +11,159 @@
 
 	<link rel="stylesheet" href="css/font-awesome.min.css">
 	<link rel="stylesheet" href="css/neo4jd3.min.css">
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="../../assets/js/html5shiv.js"></script>
-      <script src="../../assets/js/respond.min.js"></script>
-    <![endif]-->
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+	<script src="../../assets/js/html5shiv.js"></script>
+	<script src="../../assets/js/respond.min.js"></script>
+	<![endif]-->
 </head>
 <body style="background:#cfcfcf" onkeydown="keyLogin()">
-	<!-- Fixed navbar -->
-	<div class="navbar navbar-fixed-top navbar-inverse">
-		<div class="navbar-header">
-			<a class="navbar-brand" href="index.html">SEI</a>
-		</div>
-		<div class="container">
-			<div class="navbar-collapse collapse">
-				<ul class="nav navbar-nav">
-					<li class="active"><a href="ProjectList.html">SNOW Projects</a></li>
-				</ul>
-
-
-				<ul class="nav navbar-nav navbar-right">
-					<!--<li><a href="">Default</a></li>-->
-				</ul>
-			</div><!--/.nav-collapse -->
-		</div>
+<!-- Fixed navbar -->
+<div class="navbar navbar-fixed-top navbar-inverse">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SEI</a>
 	</div>
+	<div class="container">
+		<div class="navbar-collapse collapse">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="ProjectList.html">SNOW Projects</a></li>
+			</ul>
+
+
+			<ul class="nav navbar-nav navbar-right">
+				<!--<li><a href="">Default</a></li>-->
+			</ul>
+		</div><!--/.nav-collapse -->
+	</div>
+</div>
 <div id="all" >
 	<div id="up">
 
-			<div class="row ">
-				<div class="col-md-4 demo--center">
-					<div class="input-group col-md-12">
-						<input type="text" class="form-control" placeholder="Search for..." id="queryText" style="height:35px">
-						<span class="input-group-btn">
+		<div class="row ">
+			<div class="col-md-4 demo--center">
+				<div class="input-group col-md-12">
+					<input type="text" class="form-control" placeholder="Search for..." id="queryText" style="height:35px">
+					<span class="input-group-btn">
 							<button class="btn btn-default" type="button" onclick="queryByText();" id="search" style="width:50px;height:35px"></button>
 						</span>
 
-					</div><!-- /input-group -->
-					<!-- <label><input class="mui-switch" type="checkbox">默认未选中</label> -->
-				</div><!-- /.col-lg-6 -->
-					<div class = "col-md-7 demo--center" style = "top : 390px ; text-align: center">
-						
-							<div class="" style="margin-top: 1rem;  float : centre">
-							    <button type="button" class="btn btn-default btn-group-rank" >DocumentSearcher</button>
-							    <button type="button" class="btn btn-default btn-group-graph">ApiGraphSearcher</button>
-							</div>
-								
-					</div>
-					<div id="randomQuery"  class="col-md-7 col-sm-7 panel panel-default demo--center" style="font-size: 11px; text-align :left; top:120px; height:250px">
-						<article class="_content base--article">
-							<!--<div class="_content--choose-input-file">
-								<h2 id="top" class="base--h2">
-									Demo
-								</h2>
-								<p class="_content--input-description base--p">
-									Demo
-								</p>
-							</div>-->
-							<h3 class="base--h3">Input</h3>
-							<div class="input">
-								<div class="input--question-generator base--a"
-									 style="cursor: pointer;">Get a random question about
-									lucene</div>
-								<div class="input--container">
-									<p id="query" class="input--question base--p" style="overflow : auto ;height : 100px"></p>
-								</div>
-							</div>
-							<div class="error" style="display: none;'">
-								<div class="_demo--container">
-									<h3 class="base--h3">Output</h3>
-									<h4></h4>
-								</div>
-							</div>
-						</article>
-						
-					</div>
-					
+				</div><!-- /input-group -->
+				<!-- <label><input class="mui-switch" type="checkbox">默认未选中</label> -->
+			</div><!-- /.col-lg-6 -->
+			<div class = "col-md-7 " style = "top : 320px ; text-align: left">
+
+				 <div class="" style="margin-top: 1rem;  float : left ">
+				 			 	<ul class="nav nav-tabs">
+				  				<li><a href="#" data-toggle="tab" class="btn-group-rank">DocumentSearcher</a></li>
+				  				<li class="active"><a href="#" data-toggle="tab" class="btn-group-graph">ApiGraphSearcher</a></li>
+								</ul>
+					<!-- <button type="button" class="btn btn-default btn-group-rank" >DocumentSearcher</button>
+					<button type="button" class="btn btn-default btn-group-graph">ApiGraphSearcher</button> -->
+				</div> 
+
 			</div>
+			<div id="randomQuery"  class="col-md-7 col-sm-7 panel panel-default demo--center" style="font-size: 11px; text-align :left; top:120px; height:250px">
+				<article class="_content base--article">
+					<!--<div class="_content--choose-input-file">
+                        <h2 id="top" class="base--h2">
+                            Demo
+                        </h2>
+                        <p class="_content--input-description base--p">
+                            Demo
+                        </p>
+                    </div>-->
+					<h3 class="base--h3">Input</h3>
+					<div class="input">
+						<div class="input--question-generator base--a"
+							 style="cursor: pointer;">Get a random question about
+							lucene</div>
+						<div class="input--container">
+							<p id="query" class="input--question base--p" style="overflow : auto ;height : 100px"></p>
+						</div>
+					</div>
+					<div class="error" style="display: none;'">
+						<div class="_demo--container">
+							<h3 class="base--h3">Output</h3>
+							<h4></h4>
+						</div>
+					</div>
+				</article>
+
+			</div>
+
+		</div>
 
 	</div>
 
 	<div id="down" class="row">
 
 		<div id="center" class="col-md-12 col-sm-12 demo--center" style="background: #dfdfdf; top:460px">
-				<div id="rankDisplayer" class="col-md-7 col-sm-7 panel panel-default demo--center" style="font-size: 11px; text-align :left; height:652px;overflow:auto">
+			<div id="rankDisplayer" class="col-md-7 col-sm-7 panel panel-default demo--center" style="font-size: 11px; text-align :left; height:652px;overflow:auto">
 
-					<div class="output" style="margin-top: 1rem;">
-						<div>
-							<h3 class="base--h3">Output</h3>
-							<p class="base--p">You can compare the machine learning approach
-								(Retrieve and Rank) and the standard search results (Solr).</p>
-							<div class="toggle">
-								<div class="toggle--item active">Machine learning approach</div>
-							</div>
-							<div class="service--results"></div>
-							<div class="toggle">
-								<div class="toggle--item active">Standard search</div>
-							</div>
-							<div class="standard--results"></div>
+				<div class="output" style="margin-top: 1rem;">
+					<div>
+						<h3 class="base--h3">Output</h3>
+						<p class="base--p">You can compare the API knowledge-based approach and the standard search results (Solr).</p>
+						<div class="toggle">
+							<div class="toggle--item active">API knowledge-based approach</div>
 						</div>
+						<div class="service--results"></div>
+						<div class="toggle">
+							<div class="toggle--item active">Standard search</div>
+						</div>
+						<div class="standard--results"></div>
 					</div>
-					<div class="results--item result--template" style="display: none;">
-						<div class="results--item-container">
-							<div class="results--item-rank">
-								<span class="results--increase-icon icon"></span> <span
-									class="results--increase-value "></span>
+				</div>
+				<div class="results--item result--template" style="display: none;">
+					<div class="results--item-container">
+						<div class="results--item-rank">
+							<span class="results--increase-icon icon"></span> <span
+								class="results--increase-value "></span>
+						</div>
+						<div class="results--basic-info">
+							<div class="results--item-text">
+								<span class="icon icon-see_more results--see-more"></span>
 							</div>
-							<div class="results--basic-info">
-								<div class="results--item-text">
-									<span class="icon icon-see_more results--see-more"></span>
-								</div>
-								<div class="results--item-score">
-									<div class="results--item-score-title">Domain expert review</div>
-									<div class="results--item-score-value">
-										<div class="results--item-score-bar"></div>
-										<div class="results--item-score-bar"></div>
-										<div class="results--item-score-bar"></div>
-										<div class="results--item-score-bar"></div>
-									</div>
+							<div class="results--item-score">
+								<div class="results--item-score-title">Domain expert review</div>
+								<div class="results--item-score-value">
+									<div class="results--item-score-bar"></div>
+									<div class="results--item-score-bar"></div>
+									<div class="results--item-score-bar"></div>
+									<div class="results--item-score-bar"></div>
 								</div>
 							</div>
-							<div class="results--more-info" style="display: none;">
-								<div class="results--item-details base--blockquote">
-								</div>
+						</div>
+						<div class="results--more-info" style="display: none;">
+							<div class="results--item-details base--blockquote">
 							</div>
 						</div>
 					</div>
 				</div>
-				<div id="graphDisplayer">
+			</div>
+			<div id="graphDisplayer">
 				<div class="col-md-7 col-sm-7 panel panel-default">
 					<div class="panel-heading" style="background: white; color : white">
-						<h3 class="panel-title " style="color:black">相关的代码结构子图</h3>
+						<h3 class="panel-title " style="color:black">Related Api Code Graph</h3>
+						<!-- 这是返回多个图时，上下浏览不同的图
 						<button id="first" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/first.png);width:43px;height:43px" value=-1 ></button>
 						<button id="former" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/former.png);width:43px;height:43px" value=-1 ></button>
 						<button id="latter" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/latter.png);width:43px;height:43px" value=-1 ></button>
 						<button id="last" class="btn btn-lg" onClick="getGraph(this);" style="background-image:url(images/last.png);width:43px;height:43px" value=-1 ></button>
+						-->
 					</div>
+
 					<div id ="neo4jd3" class="col-md-12 col-sm-12"style="background-color:#F0F8FF; height:866px">
 
 					</div>
 				</div>
 
 				<div class="col-md-5 col-sm-5">
-				
+
 					<div class="panel panel-default" style="background: #dfdfdf">
 						<!-- Table -->
 						<div class="panel-heading" style="background: black; color : white">
-							<h3 class="panel-title">查找关联实体</h3>
+							<h3 class="panel-title">Expand</h3>
 						</div>
 						<!--<div id = "echarts" style="width: 500px;height:400px;">
 		
@@ -171,52 +177,52 @@
 										<option>NONE</option>
 									</select>
 								</div>
-						  	</div>
+							</div>
 							<table id="relationTypes" class="table">
-			
+
 							</table>
 						</div>
-	
+
 					</div>
-					
-					
+
+
 					<div class="panel panel-default" style="background: #dfdfdf">
 						<div class="panel panel-default" style="background: #dfdfdf">
 							<div class="panel-heading" style="background: black; color : white">
-								<h3 class="panel-title">实体详细信息</h3>
+								<h3 class="panel-title">Properties</h3>
 							</div>
-				
+
 							<!-- Single button -->
 							<div class="panel panel-default" style="margin: 10px 10px 10px 10px">
 								<!-- Table -->
 								<table id="otherinfo" class="table">
-					
+
 								</table>
 							</div>
 							<div class="panel panel-default" style="margin: 10px 10px 10px 10px;height:652px;overflow:auto">
-							  <!-- Table -->
-							  <table id="data" class="table">
-					
-							  </table>
+								<!-- Table -->
+								<table id="data" class="table">
+
+								</table>
 							</div>
 							<div class="panel panel-default" style="margin: 10px 10px 10px 10px">
 								<!-- Table -->
 								<table id="relation" class="table">
-					
+
 								</table>
 							</div>
 						</div>
-	
+
 					</div>
-					
+
 				</div>
-				</div>
+			</div>
 		</div>
 	</div>
-	
-    <script src="js/jquery-1.10.2.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+
+	<script src="js/jquery-1.10.2.min.js"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="js/bootstrap.min.js"></script>
 	<script src="js/jquery.json.js"></script>
 	<script src="js/myjs.js"></script>
 
@@ -224,7 +230,7 @@
 	<script src="js/d3.min.js"></script>
 	<script src="js/neo4jd3.js?v=0.0.1"></script>
 	<script src="js/echarts.min.js"></script>
-    <script src="js/indexPageFunctions.js"></script>
+	<script src="js/indexPageFunctions.js"></script>
 	<script type="text/javascript" src="js/demo.js"></script>
 	<script type="text/javascript" src="js/google-analytics.js"></script>
 </div>

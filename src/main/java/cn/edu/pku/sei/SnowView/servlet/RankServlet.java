@@ -1,17 +1,13 @@
 package cn.edu.pku.sei.SnowView.servlet;
 
+import docsearcher.DocSearchResult;
+import docsearcher.DocSearcher;
+import graphsearcher.GraphSearcher;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-
-import docsearcher.DocDistScorer;
-import docsearcher.DocSearchResult;
-import docsearcher.DocSearcher;
-import graphsearcher.GraphSearcher;
-import graphsearcher.SearchResult;
 import solr.SolrKeeper;
 
 import javax.servlet.ServletConfig;
@@ -19,13 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +63,7 @@ public class RankServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        long id = rand.nextInt(417);
+        long id = rand.nextInt(map.size());
         String query = docSearcher.getContent(map.get((int)id).getLeft()).getLeft();
         String query2 = docSearcher.getContent(map.get((int)id).getLeft()).getRight();
         List<DocSearchResult> resultList = docSearcher.search(query);

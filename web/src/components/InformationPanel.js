@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-import {Card, CardContent, Table, TableBody, TableCell, TableRow, Typography, withStyles} from "material-ui";
+import {Card, CardContent, LinearProgress, Table, TableBody, TableCell, TableRow, Typography, withStyles} from "material-ui";
 
 var labelCnName = {
     "Class": "类", "Interface": "接口", "Method": "方法", "Field": "域", "DocxFile": "文档文件",
@@ -30,7 +30,6 @@ const styles = theme => ({
     container: {
         overflow: "auto",
         whiteSpace: "pre-wrap",
-        height: 500
     }
 });
 
@@ -48,14 +47,14 @@ class InformationPanel extends Component {
                     content = (x === "content" || x === "comment") ?
                         <pre className={classes.container}
                              dangerouslySetInnerHTML={{__html: content}}/> : content.toString();
-                    return {key: x, label: propertyCnName[x], content};
+                    return {key: x, label: x, content};
                 });
             const label = this.props.selectedNode.node["metadata"].labels[0];
             body = <Table>
                 <TableBody>
                     <TableRow>
-                        <TableCell>类型：</TableCell>
-                        <TableCell>{`${label}(${labelCnName[label]})`}</TableCell>
+                        <TableCell>Type: </TableCell>
+                        <TableCell>{`${label}`}</TableCell>
                     </TableRow>
                     {properties.map(p => <TableRow key={p.key}>
                         <TableCell>{p.label}</TableCell>
@@ -64,15 +63,15 @@ class InformationPanel extends Component {
                 </TableBody>
             </Table>;
         } else if (this.props.selectedNode) {
-            body = <Typography component="p"> 获取结点信息中... </Typography>;
+            body = <LinearProgress/>;
         } else {
-            body = <Typography component="p"> 请先选择一个结点 </Typography>;
+            body = <Typography component="p"> Please select a node first </Typography>;
         }
 
         return (
             <Card>
                 <CardContent>
-                    <Typography type="headline" component="h2"> 实体详细信息 </Typography>
+                    <Typography type="headline" component="h2"> Entity Properties </Typography>
                     {body}
                 </CardContent>
             </Card>

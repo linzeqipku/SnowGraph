@@ -43,6 +43,7 @@ public class SolrKeeper {
             String org_content = documentExtractor.getOrgText(graphDb, id);
             String content = Jsoup.parse("<html>" + org_content + "</html>").text();
             SearchResult subGraph = graphSearcher.querySingle(content);
+            System.out.println("graph size: " + subGraph.nodes.size());
             StringBuilder nBuilder = new StringBuilder();
             for (long nodeId : subGraph.nodes){
                 nBuilder.append(nodeId + " ");
@@ -56,7 +57,7 @@ public class SolrKeeper {
                 document.addField("node_set", nodeSet);
                 documentList.add(document);
             }
-            if (documentList.size() >= 600) {
+            if (documentList.size() >= 1000) {
                 try {
                     client.add(coreName, documentList);
                     System.out.println("add doc to server");

@@ -154,16 +154,27 @@ public class GraphSearcher {
 			for (Set<Long> seeds : seedMap.keySet()) {
 				SearchResult searchResult = new SearchResult();
 				searchResult.nodes.addAll(seeds);
-				for (long seed1 : seeds)
+				
+				Set<Long> flags=new HashSet<>();
+				for (long seed1 : seeds){
+					if (flags.contains(seed1))
+						continue;
 					for (long seed2 : seeds) {
+						if (seed1==seed2)
+							continue;
+						if (flags.contains(seed2))
+							continue;
 						Path path = pathFinder.findSinglePath(db.getNodeById(seed1), db.getNodeById(seed2));
 						if (path != null) {
 							for (Node node : path.nodes())
 								searchResult.nodes.add(node.getId());
 							for (Relationship edge : path.relationships())
 								searchResult.edges.add(edge.getId());
+							flags.add(seed2);
 						}
 					}
+					flags.add(seed1);
+				}
 				Set<Long> tmpSet = new HashSet<>();
 				tmpSet.addAll(searchResult.nodes);
 				for (long node : tmpSet) {
@@ -222,7 +233,7 @@ public class GraphSearcher {
 	 *            用户输入的自然语言查询语句(英文)
 	 * @return 定位到各个代码元素集合，以及这些集合的离散度
 	 */
-	Map<Set<Long>, Double> findSubGraphs(String queryString) {
+	public Map<Set<Long>, Double> findSubGraphs(String queryString) {
 
 		Map<Set<Long>, Double> r = new HashMap<>();
 
@@ -243,7 +254,7 @@ public class GraphSearcher {
 		queryWord2Ids(queryWordSet);
 
 		Set<Long> anchors = findAnchors();
-		System.out.println(anchors);
+		//System.out.println(anchors);
 
 		if (anchors.size() > 0) {
 			Set<Long> subGraph = new HashSet<>();

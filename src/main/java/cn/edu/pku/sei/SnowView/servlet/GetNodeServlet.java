@@ -20,7 +20,7 @@ public class GetNodeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
 
-        String p = PostUtil.sendGet("http://neo4j:1@127.0.0.1:7474/db/data/node/"+id);
+        String p = PostUtil.sendGet(GraphDbPool.getUrl()+"/db/data/node/"+id);
         //System.out.println(p);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

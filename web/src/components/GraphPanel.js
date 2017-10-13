@@ -256,7 +256,7 @@ class GraphPanel extends Component {
         return (
             <Card>
                 <CardContent>
-                    <Typography type="headline" component="h2"> 相关的代码结构子图 </Typography>
+                    <Typography type="headline" component="h2"> Related API Code Graph </Typography>
                     {!this.props.fetchingGraph && <div style={{height: 800}} id="neo4jd3"/>}
                 </CardContent>
             </Card>

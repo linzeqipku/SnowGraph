@@ -23,7 +23,7 @@ public class OutGoingRelationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
 
-        String p = PostUtil.sendGet("http://neo4j:1@127.0.0.1:7474/db/data/node/"+id+"/relationships/all");
+        String p = PostUtil.sendGet(GraphDbPool.getUrl()+"/db/data/node/"+id+"/relationships/all");
         //System.out.println(p);
         JSONArray jsarr = new JSONArray(p);
         Map<String,Integer> cnt = new HashMap<>();

@@ -22,9 +22,9 @@ public class OutGoingRelationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
+        //System.out.println("OutGoing: "+id);
 
         String p = PostUtil.sendGet(Config.getUrl()+"/db/data/node/"+id+"/relationships/all");
-        //System.out.println(p);
         JSONArray jsarr = new JSONArray(p);
         Map<String,Integer> cnt = new HashMap<>();
         Iterator<Object> it = jsarr.iterator();

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {getNodeIDFromRelation, rename} from "../utils";
-import {fetchNode, fetchRelationList, requestShowRelation} from "../action";
+import {fetchNode, fetchRelationList, requestShowRelation} from "../redux/action";
 import {Button, Card, CardContent, FormControl, Input, InputLabel, Select, Typography, withStyles} from "material-ui";
 
 const styles = theme => ({

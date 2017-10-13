@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Button, CircularProgress, Input, Typography, withStyles} from "material-ui";
 import SearchIcon from 'material-ui-icons/Search'
-import {fetchGraph, fetchNode, fetchRelationList, selectNode} from "./action";
+import {fetchGraph, fetchNode, fetchRelationList, selectNode} from "../redux/action";
 import {connect} from "react-redux";
 
 const styles = theme => ({

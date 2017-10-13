@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import * as reducers from './reducer';
+import * as reducers from './redux/reducer';
 import {applyMiddleware, combineReducers, compose, createStore} from "redux";
 import {Provider} from 'react-redux';
 import thunkMiddleware from 'redux-thunk';

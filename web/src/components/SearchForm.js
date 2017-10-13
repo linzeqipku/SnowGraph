@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {fetchGraph} from "../action";
+import {fetchGraph} from "../redux/action";
 import {connect} from "react-redux";
 import './SearchForm.css';
 import {Input, withStyles} from "material-ui";

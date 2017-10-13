@@ -1,10 +1,10 @@
 import {
     RECEIVED_NODE, RECEIVED_RELATION_LIST, REQUEST_NODE, REQUEST_RELATION_LIST,
     SELECT_NODE, REQUEST_SHOW_REALTION,
-    RECEIVED_SHOW_REALTION, REQUEST_GRAPH, RECEIVED_GRAPH, DRAW_GRAPH, GOTO_INDEX
+    RECEIVED_SHOW_REALTION, REQUEST_GRAPH, RECEIVED_GRAPH, DRAW_GRAPH, GOTO_INDEX, CHANGE_TAB
 } from "./action";
 import {cloneDeep} from "lodash";
-import {getNodeIDFromRelation, relation2format} from "./utils";
+import {getNodeIDFromRelation, relation2format} from "../utils";
 
 export function selectedNode(state = null, action) {
     switch (action.type) {
@@ -125,3 +125,11 @@ export function page(state = "index", action) {
     }
 }
 
+export function tab(state = "api-graph", action) {
+    switch (action.type) {
+        case CHANGE_TAB:
+            return action.tab;
+        default:
+            return state;
+    }
+}

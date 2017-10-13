@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Card, CardContent, Typography} from "material-ui";
 import Neo4jd3 from '../neo4jd3.js';
-import {drawGraph, fetchNode, fetchRelationList, selectNode} from "../action";
+import {drawGraph, fetchNode, fetchRelationList, selectNode} from "../redux/action";
 import {connect} from "react-redux";
 
 const mapStateToProps = (state) => {
@@ -245,7 +245,7 @@ class GraphPanel extends Component {
     }
 
     componentDidMount() {
-        this.updateD3();
+        if (this.props.redraw) this.updateD3();
     }
 
     componentDidUpdate() {

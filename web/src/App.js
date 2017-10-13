@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {withStyles} from "material-ui";
 import {connect} from "react-redux";
-import GraphPage from "./GraphPage";
-import IndexPage from "./IndexPage";
+import GraphPage from "./pages/ResultPage";
+import IndexPage from "./pages/IndexPage";
 
 const styles = theme => ({});
 

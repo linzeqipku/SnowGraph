@@ -1,8 +1,8 @@
-import {node2format, relation2format} from "./utils";
+import {node2format, relation2format} from "../utils";
 import $ from 'jquery';
 import {show} from 'js-snackbar';
 
-require('../node_modules/js-snackbar/dist/snackbar.css');
+require('../../node_modules/js-snackbar/dist/snackbar.css');
 
 export const SELECT_NODE = 'SELECT_NODE';
 
@@ -19,6 +19,9 @@ export const RECEIVED_GRAPH = 'RECEIVED_GRAPH';
 export const DRAW_GRAPH = 'DRAW_GRAPH';
 
 export const GOTO_INDEX = 'GOTO_INDEX';
+
+export const CHANGE_TAB = 'CHANGE_TAB';
+
 const URL = "http://localhost:8080";
 
 export function selectNode(id) {
@@ -111,5 +114,9 @@ export function fetchGraph(query) {
 
 export function gotoIndex() {
     return {type: GOTO_INDEX};
+}
+
+export function changeTab(tab) {
+    return {type: CHANGE_TAB, tab};
 }
 

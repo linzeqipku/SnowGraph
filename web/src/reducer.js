@@ -29,6 +29,11 @@ export function nodes(state = {}, action) {
                 }
             });
         case RECEIVED_NODE:
+            if (action.node == null) {
+                const newState = Object.assign({}, state);
+                delete newState[action.id];
+                return newState;
+            }
             return Object.assign({}, state, {
                 [action.id]: {
                     fetched: true,

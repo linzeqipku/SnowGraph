@@ -1,4 +1,8 @@
 import {node2format, relation2format} from "./utils";
+import $ from 'jquery';
+import {show} from 'js-snackbar';
+
+require('../node_modules/js-snackbar/dist/snackbar.css');
 
 export const SELECT_NODE = 'SELECT_NODE';
 
@@ -15,8 +19,6 @@ export const RECEIVED_GRAPH = 'RECEIVED_GRAPH';
 export const DRAW_GRAPH = 'DRAW_GRAPH';
 
 export const GOTO_INDEX = 'GOTO_INDEX';
-import $ from 'jquery';
-
 const URL = "http://localhost:8080";
 
 export function selectNode(id) {
@@ -35,12 +37,20 @@ export function fetchNode(id, nodes, graph) {
     return function (dispatch) {
         if (id in nodes) return;
         dispatch(requestNode(id));
-        return $.post(`${URL}/GetNode`, {id}, result => {
-            dispatch(receivedNode(id, result));
-            const nodeJson = node2format(result);
-            graph.updateWithNeo4jData({results: [{data: [{graph: {nodes: [nodeJson], relationships: []}}]}]});
-            dispatch(receivedShowRelation(id, graph));
-        });
+        $.post(`${URL}/GetNode`, {id})
+            .done(result => {
+                dispatch(receivedNode(id, result));
+                const nodeJson = node2format(result);
+                graph.updateWithNeo4jData({results: [{data: [{graph: {nodes: [nodeJson], relationships: []}}]}]});
+                dispatch(receivedShowRelation(id, graph));
+            })
+            .fail(() => {
+                show({
+                    text: "Could not connect to server",
+                    pos: "bottom-center",
+                });
+                dispatch(receivedNode(id, null));
+            });
     }
 }
 
@@ -89,7 +99,13 @@ export function fetchGraph(query) {
         dispatch(requestGraph());
         $.post(`${URL}/CypherQuery`, {params: query})
             .done(result => dispatch(receivedGraph(result)))
-            .fail(() => dispatch(receivedGraph(null)));
+            .fail(() => {
+                show({
+                    text: "Could not connect to server",
+                    pos: "bottom-center",
+                });
+                dispatch(receivedGraph(null));
+            });
     }
 }
 

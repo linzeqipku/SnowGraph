@@ -26,3 +26,11 @@ Coming soon... (intended date: 2017/10/20)
 # [](#header-1)Usage
 
 Coming soon...
+
+# [](#header-1)Details
+
+Coming soon...
+
+# [](#header-1)Reference
+
+# [](#header-1)People

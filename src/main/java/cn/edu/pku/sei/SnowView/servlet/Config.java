@@ -1,15 +1,13 @@
 package cn.edu.pku.sei.SnowView.servlet;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.io.IOUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Config {
 
@@ -21,7 +19,7 @@ public class Config {
 	static {
 		List<String> lines=new ArrayList<>();
 		try {
-			lines=IOUtils.readLines(Config.class.getClassLoader().getResourceAsStream("/conf"));
+			lines=IOUtils.readLines(Config.class.getResourceAsStream("/conf"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

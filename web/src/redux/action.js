@@ -4,6 +4,8 @@ import {show} from 'js-snackbar';
 
 require('../../node_modules/js-snackbar/dist/snackbar.css');
 
+export const SEARCH_QUESTION = 'SEARCH_QUESTION';
+
 export const SELECT_NODE = 'SELECT_NODE';
 
 export const REQUEST_NODE = 'REQUEST_NODE';
@@ -23,6 +25,10 @@ export const GOTO_INDEX = 'GOTO_INDEX';
 export const CHANGE_TAB = 'CHANGE_TAB';
 
 const URL = "http://localhost:8080";
+
+export function searchQuestion(question) {
+    return {type: SEARCH_QUESTION, question};
+}
 
 export function selectNode(id) {
     return {type: SELECT_NODE, id};

@@ -38,16 +38,6 @@
 
     <servlet>
         <description></description>
-        <display-name>GetExtendsTree</display-name>
-        <servlet-name>GetExtendsTree</servlet-name>
-        <servlet-class>cn.edu.pku.sei.SnowView.servlet.GetExtendsTreeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>GetExtendsTree</servlet-name>
-        <url-pattern>/GetExtendsTree</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <description></description>
         <display-name>GetModifiedCode</display-name>
         <servlet-name>GetModifiedCode</servlet-name>
         <servlet-class>cn.edu.pku.sei.SnowView.servlet.GetModifiedCode</servlet-class>

@@ -1,9 +1,16 @@
 import React, {Component} from 'react';
-import GraphPanel from "../components/GraphPanel";
-import FindEntityPanel from "../components/FindEntityPanel";
-import InformationPanel from "../components/InformationPanel";
-import SearchForm from "../components/SearchForm";
-import {AppBar, Grid, Toolbar, Typography, withStyles} from "material-ui";
+import {
+    AppBar,
+    Grid,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    Toolbar,
+    Typography,
+    withStyles
+} from "material-ui";
 import {gotoIndex} from "../redux/action";
 import {connect} from "react-redux";
 
@@ -24,7 +31,19 @@ class DocumentTab extends Component {
     render() {
         const {classes} = this.props;
         return (
-            <div style={{display: this.props.visibility ? "block" : "none"}}>Document Tab</div>
+            <div style={{display: this.props.visibility ? "block" : "none"}}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Rank</TableCell>
+                            <TableCell>Title</TableCell>
+                            <TableCell>Solr Rank</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    </TableBody>
+                </Table>
+            </div>
         );
     }
 }

@@ -46,6 +46,8 @@ public class WordKnowledgeExtractor implements Extractor {
     @PropertyDeclaration(parent = DOCX_SECTION)
     public static final String SECTION_CONTENT = "sectionContent";
     @PropertyDeclaration(parent = DOCX_SECTION)
+    public static final String SECTION_ENGLISH_CONTENT = "sectionEnglishContent";
+    @PropertyDeclaration(parent = DOCX_SECTION)
     public static final String SECTION_PACKAGE = "sectionPackage";
     @PropertyDeclaration(parent = DOCX_SECTION)
     public static final String SECTION_APIS = "sectionApis";
@@ -64,11 +66,15 @@ public class WordKnowledgeExtractor implements Extractor {
     public static final String TABLE_ROW_NUM = "tableRowNum";
     @PropertyDeclaration(parent = DOCX_TABLE)
     public static final String TABLE_CONTENT = "tableContent";
+    @PropertyDeclaration(parent = DOCX_TABLE)
+    public static final String TABLE_ENGLISH_CONTENT = "tableEnglishContent";
 
     @PropertyDeclaration
     public static final String DOCX_PLAIN_TEXT = "DocxPlainText";
     @PropertyDeclaration(parent = DOCX_PLAIN_TEXT)
     public static final String PLAIN_TEXT_CONTENT = "plainTextContent";
+    @PropertyDeclaration(parent = DOCX_PLAIN_TEXT)
+    public static final String PLAIN_TEXT_ENGLISH_CONTENT = "plainTextEnglishContent";
 
     @RelationshipDeclaration
     public static final String HAVE_SUB_ELEMENT = "have_sub_element";
@@ -104,28 +110,39 @@ public class WordKnowledgeExtractor implements Extractor {
             SectionInfo sectionEle = (SectionInfo) ele;
             GraphNodeUtil.createSectionNode(sectionEle, node);
             List<DocumentElementInfo> subElements = ele.getSubElements();
-            String currentSectionContent = "<section>\n<h" + sectionEle.getLayer() + ">" + sectionEle.getTitle() + "</h" + sectionEle.getLayer() + ">";
+            String currentSectionContent =
+                    "<section>\n<h" + sectionEle.getLayer() + ">" + sectionEle.getTitle() + "</h" + sectionEle.getLayer() + ">";
+            String currentEnglishSectionContent =
+                    "<section>\n<h" + sectionEle.getLayer() + ">" + sectionEle.getEnglishTitle() + "</h" + sectionEle.getLayer() + ">";
             for(DocumentElementInfo subEle : subElements) {
                 Node subNode = dfs_ele(subEle);
                 if(subEle instanceof SectionInfo) {
                     currentSectionContent = currentSectionContent +
                             "\n" + subNode.getProperty(SECTION_CONTENT);
+                    currentEnglishSectionContent = currentEnglishSectionContent +
+                            "\n" + subNode.getProperty(SECTION_ENGLISH_CONTENT);
                 }
                 else if(subEle instanceof TableInfo) {
                     currentSectionContent = currentSectionContent +
                             "\n" + subNode.getProperty(TABLE_CONTENT);
+                    currentEnglishSectionContent = currentEnglishSectionContent +
+                            "\n" + subNode.getProperty(TABLE_ENGLISH_CONTENT);
                 }
                 else if(subEle instanceof PlainTextInfo) {
                     currentSectionContent = currentSectionContent +
                             "\n" + subNode.getProperty(PLAIN_TEXT_CONTENT);
+                    currentEnglishSectionContent = currentEnglishSectionContent +
+                            "\n" + subNode.getProperty(PLAIN_TEXT_ENGLISH_CONTENT);
                 }
                 node.createRelationshipTo(subNode, RelationshipType.withName(HAVE_SUB_ELEMENT));
             }
             node.setProperty(SECTION_CONTENT, currentSectionContent + "</section>\n");
+            node.setProperty(SECTION_ENGLISH_CONTENT, currentEnglishSectionContent + "</section>\n");
         }
         else if(ele instanceof TableInfo) {
             GraphNodeUtil.createTableNode((TableInfo) ele, node);
-            node.setProperty(TABLE_CONTENT,  ele.toHtml());
+            node.setProperty(TABLE_CONTENT,  ele.toHtml(false));
+            node.setProperty(TABLE_ENGLISH_CONTENT, ele.toHtml(true));
         }
         return node;
     }

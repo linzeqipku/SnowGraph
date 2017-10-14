@@ -26,13 +26,13 @@ public class Dictionary {
             return ret;
         }
         try {
-            String result = Translator.lookUp(word);
+            String result = Translator.en2ch(word);
             if(result.equals("未查找到释义.")) return ret;
             StringBuilder toPrint = new StringBuilder();
             String[] tokens = result.split("；|，| ");
             for(String token : tokens) {
                 token = token.replaceAll(
-                        " |\t|\\.|\\w|\\(.*\\)|（.*）|（.*|.*）|人名", "");
+                        " |\t|\\.|\\w|\\([^)]*\\)|\\[[^]]*]|（[^）]*）|（.*|.*）|人名", "");
                 if(!token.equals("")) toPrint.append(token + " ");
                 ret.add(token);
             }

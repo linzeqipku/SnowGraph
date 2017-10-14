@@ -3,6 +3,7 @@ package graphdb.extractors.parsers.word.entity.table;
 import graphdb.extractors.parsers.word.entity.utils.DocumentElementInfo;
 import graphdb.extractors.parsers.word.entity.utils.PlainTextInfo;
 
+
 /**
  * Created by maxkibble on 2017/5/25.
  */
@@ -69,5 +70,13 @@ public class TableCellInfo extends DocumentElementInfo {
     public String toString()
     {
         return getText();
+    }
+
+    public String getEnglishText() {
+        if (subElements == null || subElements.get(0) == null
+                || !(subElements.get(0) instanceof PlainTextInfo))
+            return null;
+        PlainTextInfo plainTextInfo = (PlainTextInfo) (subElements.get(0));
+        return plainTextInfo.getEnglishText();
     }
 }

@@ -14,7 +14,7 @@ const mapStateToProps = (state) => {
 
 class App extends Component {
     render() {
-        return this.props.page === "index" ? <IndexPage/> : <ResultPage/>
+        return this.props.page === "index" ? <IndexPage/> : <ResultPage/>;
     }
 }
 

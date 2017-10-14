@@ -3,7 +3,7 @@ import GraphPanel from "../components/GraphPanel";
 import FindEntityPanel from "../components/FindEntityPanel";
 import InformationPanel from "../components/InformationPanel";
 import SearchForm from "../components/SearchForm";
-import {AppBar, Grid, Toolbar, Typography, withStyles} from "material-ui";
+import {AppBar, Grid, LinearProgress, withStyles} from "material-ui";
 import {gotoIndex} from "../redux/action";
 import {connect} from "react-redux";
 
@@ -20,23 +20,33 @@ const styles = theme => ({
     }
 });
 
+const mapStateToProps = (state) => {
+    return {
+        fetchingGraph: state.graph.fetching,
+    }
+}
+
 class GraphTab extends Component {
     render() {
         const {classes} = this.props;
-        return (
-            <Grid style={{display: this.props.visibility ? "flex" : "none"}} container spacing={0}>
-                <Grid item xs={8} className={classes.leftPanel}>
-                    <GraphPanel/>
-                </Grid>
-                <Grid item xs={4} className={classes.rightPanel}>
-                    <FindEntityPanel/>
-                    <div className={classes.informationPanel}>
-                        <InformationPanel/>
-                    </div>
-                </Grid>
+        const show = <Grid style={{display: this.props.visibility ? "flex" : "none"}} container spacing={0}>
+            <Grid item xs={8} className={classes.leftPanel}>
+                <GraphPanel/>
             </Grid>
-        );
+            <Grid item xs={4} className={classes.rightPanel}>
+                <FindEntityPanel/>
+                <div className={classes.informationPanel}>
+                    <InformationPanel/>
+                </div>
+            </Grid>
+        </Grid>;
+        const notShow = <Grid style={{display: this.props.visibility ? "flex" : "none"}} container spacing={0}>
+            <LinearProgress/>
+        </Grid>;
+        return this.props.fetchingGraph ? notShow : show;
     }
 }
+
+GraphTab = connect(mapStateToProps)(GraphTab)
 
 export default withStyles(styles)(GraphTab);

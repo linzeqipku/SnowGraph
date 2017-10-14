@@ -6,6 +6,9 @@ require('../../node_modules/js-snackbar/dist/snackbar.css');
 
 export const SEARCH_QUESTION = 'SEARCH_QUESTION';
 
+export const REQUEST_DOCUMENT_RESULT = 'REQUEST_DOCUMENT_RESULT';
+export const RECEIVED_DOCUMENT_RESULT = 'RECEIVED_DOCUMENT_RESULT';
+
 export const SELECT_NODE = 'SELECT_NODE';
 
 export const REQUEST_NODE = 'REQUEST_NODE';
@@ -28,6 +31,32 @@ const URL = "http://localhost:8080";
 
 export function searchQuestion(question) {
     return {type: SEARCH_QUESTION, question};
+}
+
+export function requestDocumentResult() {
+    return {type: REQUEST_DOCUMENT_RESULT};
+}
+
+export function receivedDocumentResult(result) {
+    return {type: RECEIVED_DOCUMENT_RESULT, result};
+}
+
+export function fetchDocumentResult(question) {
+    return function (dispatch) {
+        dispatch(requestDocumentResult());
+        $.post(`${URL}/Rank`, {query: question, id: 175})
+            .done(result => {
+                dispatch(receivedDocumentResult(result));
+                dispatch(fetchGraph(result["query"]));
+            })
+            .fail(() => {
+                show({
+                    text: "Could not connect to server",
+                    pos: "bottom-center",
+                });
+                dispatch(receivedNode(null));
+            });
+    }
 }
 
 export function selectNode(id) {

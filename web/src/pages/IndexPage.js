@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {Button, CircularProgress, Input, Typography, withStyles} from "material-ui";
 import SearchIcon from 'material-ui-icons/Search'
-import HelpIcon from 'material-ui-icons/Help'
-import {fetchGraph, fetchNode, fetchRelationList, selectNode} from "../redux/action";
+import {searchQuestion} from "../redux/action";
 import {connect} from "react-redux";
 
 const styles = theme => ({
@@ -70,10 +69,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = {
-    fetchNode: fetchNode,
-    fetchRelationList: fetchRelationList,
-    selectNode: selectNode,
-    fetchGraph: fetchGraph
+    searchQuestion: searchQuestion
 }
 
 const queries = [
@@ -174,7 +170,7 @@ class IndexPage extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        this.props.fetchGraph(this.input.value);
+        this.props.searchQuestion(this.input.value);
     }
 
     generateRandomQuestion() {

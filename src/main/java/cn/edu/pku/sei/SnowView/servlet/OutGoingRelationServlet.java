@@ -22,9 +22,9 @@ public class OutGoingRelationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
+        //System.out.println("OutGoing: "+id);
 
-        String p = PostUtil.sendGet("http://neo4j:1@127.0.0.1:7474/db/data/node/"+id+"/relationships/all");
-        //System.out.println(p);
+        String p = PostUtil.sendGet(Config.getUrl()+"/db/data/node/"+id+"/relationships/all");
         JSONArray jsarr = new JSONArray(p);
         Map<String,Integer> cnt = new HashMap<>();
         Iterator<Object> it = jsarr.iterator();
@@ -56,7 +56,7 @@ public class OutGoingRelationServlet extends HttpServlet {
             for (JSONObject obj : list){
                 if (obj.getString("type").equals(k)) {
                     String flag = "in_";
-                    if (obj.getString("start").equals("http://127.0.0.1:7474/db/data/node/"+id)) flag = "ou_";
+                    if (obj.getString("start").equals(Config.getUrl()+"/db/data/node/"+id)) flag = "ou_";
                     if (flag.equals("in_")) continue;
                     obj.put("type",flag+k);
                     rejsarr.put(obj);
@@ -65,7 +65,7 @@ public class OutGoingRelationServlet extends HttpServlet {
             for (JSONObject obj : list){
                 if (obj.getString("type").equals(k)) {
                     String flag = "in_";
-                    if (obj.getString("start").equals("http://127.0.0.1:7474/db/data/node/"+id)) flag = "ou_";
+                    if (obj.getString("start").equals(Config.getUrl()+"/db/data/node/"+id)) flag = "ou_";
                     if (flag.equals("ou_")) continue;
                     obj.put("type",flag+k);
                     rejsarr.put(obj);

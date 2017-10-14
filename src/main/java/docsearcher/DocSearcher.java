@@ -1,16 +1,21 @@
 package docsearcher;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.bouncycastle.util.test.Test;
 import org.jsoup.Jsoup;
-import org.neo4j.cypher.internal.frontend.v3_1.ast.functions.Has;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -22,36 +27,68 @@ import org.neo4j.graphdb.Transaction;
 import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import graphsearcher.GraphSearcher;
 import graphsearcher.SearchResult;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import solr.SolrKeeper;
 
 public class DocSearcher {
 	
 	GraphDatabaseService graphDB=null;
 	DocDistScorer docDistScorer=null;
 	GraphSearcher graphSearcher=null;
+	SolrKeeper keeper=null;
 	
-	public DocSearcher(GraphDatabaseService graphDB, GraphSearcher graphSearcher){
+	public DocSearcher(GraphDatabaseService graphDB, GraphSearcher graphSearcher, SolrKeeper keeper){
 		this.graphDB=graphDB;
 		this.graphSearcher=graphSearcher;
+		this.keeper = keeper;
 		this.docDistScorer=new DocDistScorer(graphSearcher);
+	}
+	
+	/**
+	 * 
+	 * @param nodeId
+	 * @return {<plain-text,rich-text>}
+	 */
+	public Pair<String,String> getContent(long nodeId){
+		String plain="";
+		String rich="";
+		try (Transaction tx=graphDB.beginTx()){
+			
+			if (graphDB.getNodeById(nodeId).hasLabel(Label.label(StackOverflowExtractor.QUESTION))){
+				rich+="<h2>"+graphDB.getNodeById(nodeId).getProperty(StackOverflowExtractor.QUESTION_TITLE)+"</h2>";
+				rich+=" "+graphDB.getNodeById(nodeId).getProperty(StackOverflowExtractor.QUESTION_BODY);
+				plain+=Jsoup.parse("<html>"+rich+"</html>").text();
+			}
+			else if (graphDB.getNodeById(nodeId).hasLabel(Label.label(StackOverflowExtractor.ANSWER))){
+				rich+=graphDB.getNodeById(nodeId).getProperty(StackOverflowExtractor.ANSWER_BODY);
+				plain+=Jsoup.parse("<html>"+rich+"</html>").text();
+			}
+			
+			tx.success();
+		}
+		return new ImmutablePair<String,String>(plain, rich);
 	}
 	
 	public List<DocSearchResult> search(String query){
 		List<DocSearchResult> r=new ArrayList<>();
 		
-		SearchResult graph0=graphSearcher.querySingle(query);
-		
+		Map<Set<Long>, Double> seedMap=graphSearcher.findSubGraphs(query);
+		Set<Long> graph0=new HashSet<>();
+		if (seedMap.size()>0)
+			graph0=seedMap.keySet().iterator().next();
+
 		/*
 		 * Todo (lingcy):
 		 * irResultList: solr索引返回的前100个结果, {<id,nodes>}
-		 * 
+		 *
 		 */
-		List<Pair<Long, Set<Long>>> irResultList=null;
+		List<Pair<Long, Set<Long>>> irResultList=keeper.querySolr(query, "myCore");;
 		
 		for (int i=0;i<irResultList.size();i++){
 			DocSearchResult doc=new DocSearchResult();
-			doc.setId(irResultList.get(i).getLeft());
+			doc.setId(irResultList.get(i).getKey());
 			doc.setIrRank(i+1);
-			doc.setDist(docDistScorer.score(irResultList.get(i).getRight(), graph0.nodes));
+			doc.setDist(docDistScorer.score(irResultList.get(i).getValue(), graph0));
 			r.add(doc);
 		}
 		
@@ -67,21 +104,42 @@ public class DocSearcher {
 	 * 寻找重排序后效果好的StackOverflow问答对作为例子
 	 */
 	public void findExamples(){
+		try {
+			FileUtils.write(new File("E:\\tmp\\qaexample"), "");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		Map<Long, Long> qaMap=extractQaMap();
+		System.out.println("qaMap size: " + qaMap.size());
 		Map<Long, String> queryMap=extractQueries(qaMap);
-		int count=0;
+		System.out.println("query size: " + queryMap.size());
+		int count=0, irCount = 0;
+		int qCnt = 0, qSize = queryMap.size();
 		for (long queryId:queryMap.keySet()){
+			qCnt++;
 			List<DocSearchResult> list=search(queryMap.get(queryId));
 			for (int i=0;i<20;i++){
-				if (list.get(i).id==qaMap.get(queryId)){
-					if (list.get(i).newRank<list.get(i).irRank){
-						System.out.println(count+": "+list.get(i).irRank+"-->"+list.get(i).newRank);
+			    DocSearchResult current = list.get(i);
+				if (current.id == qaMap.get(queryId)){
+					irCount++;
+					if (current.newRank < current.irRank){
+					    String res = count+" " +queryId + " " + current.id + " "
+                                + current.irRank+"-->"+current.newRank;
+						System.out.println(res+" ("+qCnt+")");
+					    try {
+							FileUtils.write(new File("E:\\tmp\\qaexample"), res+"\n", true);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						count++;
 					}
-					continue;
 				}
 			}
+			//System.out.println("query count: " + qCnt + " " + qCnt * 1.0 / qSize * 100 + "%");
 		}
+		System.out.println("irCount: " + irCount);
 	}
 	
 	/**
@@ -121,4 +179,13 @@ public class DocSearcher {
 		return rMap;
 	}
 
+	public static void main(String[] args){
+		String path = "E:\\SnowGraphData\\lucene\\graphdb-lucene-embedding";
+		GraphDatabaseFactory graphDbFactory = new GraphDatabaseFactory();
+		GraphDatabaseService graphDb = graphDbFactory.newEmbeddedDatabase(new File(path));
+		GraphSearcher graphSearcher = new GraphSearcher(graphDb);
+		SolrKeeper keeper = new SolrKeeper("http://localhost:8983/solr");
+		DocSearcher docSearcher = new DocSearcher(graphDb, graphSearcher, keeper);
+		docSearcher.findExamples();
+	}
 }

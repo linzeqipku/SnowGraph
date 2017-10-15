@@ -18,6 +18,10 @@ public class GetNodeServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	
+    	if (Config.sendToSlaveUrl(request,response,"GetNode")==1)
+    		return;
+    	
         String id = request.getParameter("id");
         //System.out.println("GetNode: "+id);
 
@@ -25,5 +29,9 @@ public class GetNodeServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().print(p);
+    }
+    
+    public void destroy() {
+    	Config.getGraphDB().shutdown();
     }
 }

@@ -26,6 +26,7 @@ function getdata(node){
         type: 'POST',
         url: "GetNode",
         data: {id: node_ID},
+        dataType: 'json',
         async: false,
         success: function (data) {
             dataset.push(data);
@@ -35,6 +36,7 @@ function getdata(node){
         type: 'POST',
         url: "OutGoingRelation",
         data: {id: node_ID},
+        dataType: 'json',
         async: false,
         success: function (data) {
             relationset.push(data);
@@ -138,6 +140,7 @@ function init(orijson,node_ID) {
     $.ajax({  
         type : "get",  
         url : "data/translation.json",  
+        dataType: 'json',
         async : false,  
         success : function(data){  
         	classesJson = data.classes;
@@ -266,15 +269,13 @@ function sendcypher(query){
     $.ajax({
         type: 'POST',
         url: "CypherQuery",
+        dataType: "json",
         data: query,
         async: false,
-        success: function (data) {
-            list = data;
-            //alert(project.name)
-        }
+        success: function(response) {list = response;}
     });
     if(!list.searchResult) {
-        alert("No Item Found!");
+        alert("No API SubGraph Found!");
     }else{
         anotherInit(list , 10000);
     }
@@ -299,8 +300,7 @@ function queryByText(){
 // query by type and name
 function queryByName() {
     var node_name = $("#queryText").val();
-    var thing = {
-        params: node_name};
+    var thing = {"query":node_name};
     sendcypher(thing);
 }
 
@@ -413,14 +413,13 @@ function getGraph(element){
         "type":"getGraph",
         index: element.value
     }
-    $.ajax({
-        type:'Post',
-        url:'CypherQuery',
-        data:parameters,
-        async:false,
-        success:function(data){
-            list = data;
-        }
+    $.ajax('CypherQuery', {
+    	dataType : 'json',
+    	contentType : 'application/json',
+    	type : 'POST',
+    	data : parameters
+    }).then(function(response) {
+    	list = response;
     });
     $("#relationSelect").empty();
     $("#relationSelect").append("<option>NONE</option>");

@@ -36,6 +36,7 @@ function rank(repsonseRandom,query,flag){
         type: 'POST',
         url: "Rank",
         data: queryJson,
+        dataType: 'json',
         async: false,
         success: function(response) {
       if (!flag)$query.append(response.query2);
@@ -143,6 +144,7 @@ $(document).ready(function() {
   });
   $('.input--question-generator').click(function(){
 	    $.ajax('Random', {
+	    	dataType : 'json',
 	    	contentType : 'application/json',
 	    	type : 'POST'
 	    }).then(function(response) {

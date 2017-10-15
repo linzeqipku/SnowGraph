@@ -17,7 +17,7 @@ public class Config {
 	public static void init() {
 		List<String> lines=new ArrayList<>();
 		try {
-			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"conf"));
+			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"conf2"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

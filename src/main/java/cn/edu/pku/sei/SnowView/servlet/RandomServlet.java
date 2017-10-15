@@ -34,14 +34,30 @@ import java.util.Random;
 /**
  * Created by Administrator on 2017/5/26.
  */
-public class RankServlet extends HttpServlet {
+public class RandomServlet extends HttpServlet {
 	DocSearcher docSearcher;
+	Random rand ;
+	Map<Integer, Pair<Integer,Integer>> map = new HashMap<Integer, Pair<Integer,Integer>>();
 	public void init(ServletConfig config) throws ServletException{
 		GraphDatabaseService graphDb = Config.getGraphDB();
 		GraphSearcher graphSearcher = new GraphSearcher(graphDb);
 		SolrKeeper keeper = new SolrKeeper(Config.getSolrUrl());
 		docSearcher = new DocSearcher(graphDb, graphSearcher, keeper);
-	
+		rand = new Random();
+
+        /* 读取数据 */
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(Config.getExampleFilePath())),
+                                                                         "UTF-8"));
+            String lineTxt = null;
+            while ((lineTxt = br.readLine()) != null) {
+                String[] names = lineTxt.split(" ");
+                map.put(Integer.parseInt(names[0]), new ImmutablePair<Integer,Integer>(Integer.parseInt(names[1]), Integer.parseInt(names[2])));
+            }
+            br.close();
+        } catch (Exception e) {
+            System.err.println("read errors :" + e);
+        }		
 	}
 	
     @Override
@@ -55,25 +71,14 @@ public class RankServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        String query = request.getParameter("query");
-        List<DocSearchResult> resultList = docSearcher.search(query);
+        long id = rand.nextInt(map.size());
+        String query = docSearcher.getContent(map.get((int)id).getLeft()).getLeft();
+        String query2 = docSearcher.getContent(map.get((int)id).getLeft()).getRight();
         JSONObject searchResult = new JSONObject();
-        JSONArray results = new JSONArray();
-        for (DocSearchResult doc : resultList){
-        	JSONObject obj = new JSONObject();
-        	obj.put("answerId", doc.getId());
-        	Pair<String, String> pair = docSearcher.getContent(doc.getId());
-        	if (pair.getLeft().length() > 110) obj.put("title", pair.getLeft().substring(0, 100) + "......"); else
-        		obj.put("title", pair.getLeft());
-        	obj.put("body", pair.getRight());
-        	obj.put("finalRank", doc.getNewRank());
-        	obj.put("solrRank", doc.getIrRank());
-        	obj.put("relevance", 0);
-        	results.put(obj);
-        }
+
         searchResult.put("query", query);
-        searchResult.put("rankedResults", results);
-        searchResult.put("solrResults", new JSONArray());
+        searchResult.put("query2", query2);
+        searchResult.put("answerId", map.get((int)id).getRight());
         
         response.getWriter().print(searchResult.toString());
     }

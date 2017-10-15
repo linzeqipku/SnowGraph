@@ -15,91 +15,49 @@
  */
 /* global $ */
 'use strict';
-
-function _error(xhr) {
-  $('.error').show();
-  var response = JSON.parse(xhr.responseText);
-  console.log(response.error);
-  $('.error h4').text(response.error || 'Internal server error.');
+// jQuery nodes
+var $serviceResults = $('.service--results'),
+  $standardResults = $('.standard--results'),
+  $template = $('.result--template'),
+  $output = $('.output'),
+  $query = $('#query');
+function queryByTextInDemo(){
+    $query.empty();
+	rank(null,$("#queryText").val(),true);
 }
+function rank(repsonseRandom,query,flag){
 
-
-$(document).ready(function() {
-  // namespace variables
-  var queries = [];
-  var query = null;
-
-  // jQuery nodes
-  var $serviceResults = $('.service--results'),
-    $standardResults = $('.standard--results'),
-    $template = $('.result--template'),
-    $output = $('.output'),
-    $query = $('#query');
-
-  $output.hide();
-  $('#graphDisplayer').hide();
-  $(".btn-group-graph").click(function(){
-      $('#rankDisplayer').hide();
-      $('#graphDisplayer').show();	  
-  });
-  $(".btn-group-rank").click(function(){
-      $('#graphDisplayer').hide();
-      $('#rankDisplayer').show();	  
-  });  
-    /*$(".mui-switch").change(function() {
-        if ($(".mui-switch")[0].checked){
-            $('#graphDisplayer').hide();
-            $('#rankDisplayer').show();
-        }else{
-
-            $('#rankDisplayer').hide();
-            $('#graphDisplayer').show();
-        }
-    });*/
-  $.get('data/queries.json').then(function(data){
-    queries = data.queries;
-  }, _error);
-
-  /**
-   * Event handler for reset button
-   */
-  $('.reset-button').click(function() {
-    location.reload();
-  });
-
-  $('.input--question-generator').click(function(){
 	$('.error').hide();
 	$output.hide();
 	
-	query = queries[Math.floor(Math.random() * queries.length)];
+	var queryJson = {"query":query};
     /*$query.text(query.query);*/
-
-    $.ajax('Rank', {
-    	data : JSON.stringify(query),
-    	contentType : 'application/json',
-    	type : 'POST'
-    }).then(function(response) {
-      $query.empty();
-      $query.append(response.query2);
-      // standard results - solr
-      $('#queryText').val(response.query);
-      $('#search').click();
+    $.ajax({
+        type: 'POST',
+        url: "Rank",
+        data: queryJson,
+        async: false,
+        success: function(response) {
+      if (!flag)$query.append(response.query2);
+  	  queryByText();
       $standardResults.empty();
-      response.solrResults.map(createResultNode.bind(null, $template, false, response.answerId))
+      var aid = -1;
+      if (!flag) aid = response.answerId;
+      response.solrResults.map(createResultNode.bind(null, $template, false, aid))
       .forEach(function(e){
         $standardResults.append(e);
       });
 
       // service results - solr + ranker
       $serviceResults.empty();
-      response.rankedResults.map(createResultNode.bind(null, $template, true, response.answerId))
+      response.rankedResults.map(createResultNode.bind(null, $template, true, aid))
       .forEach(function(e){
         $serviceResults.append(e);
       });
 
       $output.show();
-    }, _error);
-
+    }
+    });
     function createResultNode($template, showRanking, standId, result, index) {
       var node = $template.last().clone().show();
 
@@ -137,6 +95,63 @@ $(document).ready(function() {
       });
       return node;
     }
+  }
+function _error(xhr) {
+  $('.error').show();
+  var response = JSON.parse(xhr.responseText);
+  console.log(response.error);
+  $('.error h4').text(response.error || 'Internal server error.');
+}
+
+
+$(document).ready(function() {
+  // namespace variables
+  var queries = [];
+  var query = null;
+
+
+
+  $output.hide();
+  $('#graphDisplayer').hide();
+  $(".btn-group-graph").click(function(){
+      $('#rankDisplayer').hide();
+      $('#graphDisplayer').show();	  
   });
+  $(".btn-group-rank").click(function(){
+      $('#graphDisplayer').hide();
+      $('#rankDisplayer').show();	  
+  });  
+    /*$(".mui-switch").change(function() {
+        if ($(".mui-switch")[0].checked){
+            $('#graphDisplayer').hide();
+            $('#rankDisplayer').show();
+        }else{
+
+            $('#rankDisplayer').hide();
+            $('#graphDisplayer').show();
+        }
+    });*/
+  $.get('data/queries.json').then(function(data){
+    queries = data.queries;
+  }, _error);
+
+  /**
+   * Event handler for reset button
+   */
+  $('.reset-button').click(function() {
+    location.reload();
+  });
+  $('.input--question-generator').click(function(){
+	    $.ajax('Random', {
+	    	contentType : 'application/json',
+	    	type : 'POST'
+	    }).then(function(response) {
+	        $('#queryText').val(response.query);
+	        $query.empty();
+	        $query.append(response.query2);
+	    	rank(response,response.query,false);
+	    });
+  });
+  
 });
 

@@ -48,4 +48,14 @@
         <url-pattern>/Rank</url-pattern>
     </servlet-mapping>
     
+    <servlet>
+        <description></description>
+        <display-name>Random</display-name>
+        <servlet-name>Random</servlet-name>
+        <servlet-class>cn.edu.pku.sei.SnowView.servlet.RandomServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Random</servlet-name>
+        <url-pattern>/Random</url-pattern>
+    </servlet-mapping>    
 </web-app>

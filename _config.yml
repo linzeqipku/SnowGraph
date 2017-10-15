@@ -2,6 +2,6 @@ title: SnowGraph
 description: SnowGraph is a project for creating software-specific question-answering bot.
 show_downloads: true
 google_analytics:
-theme: jekyll-theme-leap-day
+theme: jekyll-theme-time-machine
 repository: linzeqipku/SnowGraph
 baseurl: SnowGraph

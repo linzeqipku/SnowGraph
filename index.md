@@ -21,7 +21,7 @@ Given a software project and various software engineering data of it, you can us
 
 # [](#header-1)Demo
 
-Coming soon... (intended date: 2017/10/20)
+[This is an online SnowGraph demo for helping software developers reuse Apache Lucene](http://47.94.225.216:8080/SnowGraph/index.html)
 
 # [](#header-1)Usage
 

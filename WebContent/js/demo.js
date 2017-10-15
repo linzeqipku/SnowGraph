@@ -42,7 +42,7 @@ function rank(repsonseRandom,query,flag){
   	  queryByText();
       $standardResults.empty();
       var aid = -1;
-      if (!flag) aid = response.answerId;
+      if (!flag) aid = repsonseRandom.answerId;
       response.solrResults.map(createResultNode.bind(null, $template, false, aid))
       .forEach(function(e){
         $standardResults.append(e);

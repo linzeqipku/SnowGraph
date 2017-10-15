@@ -115,13 +115,14 @@ $(document).ready(function() {
         var rank = result.solrRank - index -1;
         if (rank < 0)
           iconClass = 'results--increase-icon_DOWN icon-arrow_down';
-
+        node.find('.results--rank').text("No. "+(index+1));
         node.find('.results--increase-icon').addClass(iconClass);
-        node.find('.results--increase-value').text(rank > 0 ? rank : Math.abs(1 + index - result.solrRank));
+        node.find('.results--increase-value').text(rank > 0 ? rank : Math.abs(1 + index - result.solrRank) );
+        
       } else {
         node.find('.results--item-rank').remove();
       }
-
+	  
       node.find('.results--item-score-bar').each(function(i, score) {
         if ((result.relevance - i - 1) >= 0)
           $(score).addClass('green');

@@ -202,45 +202,6 @@ function init(orijson,node_ID) {
             'zoomIn': 'search-plus',
             'zoomOut': 'search-minus'
         },
-        //endregion
-        images: {
-            'Address': 'img/twemoji/1f3e0.svg',
-            'Api': 'img/twemoji/1f527.svg',
-            'Method': 'img/twemoji/M.svg',
-            'Field': 'img/twemoji/F.svg',
-            'Class': 'img/twemoji/C.svg',
-            'Interface': 'img/twemoji/I.svg',
-            'BirthDate': 'img/twemoji/1f382.svg',
-            'Cookie': 'img/twemoji/1f36a.svg',
-            'CreditCard': 'img/twemoji/1f4b3.svg',
-            'Device': 'img/twemoji/1f4bb.svg',
-            'Mail': 'img/twemoji/2709.svg',
-            'Git': 'img/twemoji/1f5c3.svg',
-            // 'gitCommit' : 'img/twemoji/1f5c3.svg',
-            'Github': 'img/twemoji/1f5c4.svg',
-            'icons': 'img/twemoji/1f38f.svg',
-            'Ip': 'img/twemoji/1f4cd.svg',
-            'Issue': 'img/twemoji/1f4a9.svg',
-            'Patch': 'img/twemoji/1f4a9.svg',
-            'Language': 'img/twemoji/1f1f1-1f1f7.svg',
-            'Options': 'img/twemoji/2699.svg',
-            'Password': 'img/twemoji/1f511.svg',
-//                        'Phone': 'img/twemoji/1f4de.svg',
-            'Project': 'img/twemoji/2198.svg',
-            'Project|name|neo4jd3': 'img/twemoji/2196.svg',
-//                        'SecurityChallengeAnswer': 'img/twemoji/1f4ac.svg',
-            'User': 'img/twemoji/1f600.svg',
-            'MailUser' : 'img/twemoji/user.svg',
-            'IssueUser' : 'img/twemoji/user.svg',
-            'StackOverflowUser' : 'img/twemoji/user.svg',
-            'gitCommitAuthor' : 'img/twemoji/user.svg',
-            'StackOverflowQuestion' : 'img/twemoji/stackoverflow.svg',
-            'StackOverflowAnswer' : 'img/twemoji/stackoverflow.svg',
-            'StackOverflowComment' : 'img/twemoji/stackoverflow.svg'
-//                        'zoomFit': 'img/twemoji/2194.svg',
-//                        'zoomIn': 'img/twemoji/1f50d.svg',
-//                        'zoomOut': 'img/twemoji/1f50e.svg'
-        },
         minCollision: 60,
         neo4jData: orijson,
         nodeRadius: 40,
@@ -467,4 +428,3 @@ function getGraph(element){
     $("#data").empty();
     anotherInit(list , 19);
 }
-//start();

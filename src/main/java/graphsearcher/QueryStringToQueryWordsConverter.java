@@ -1,14 +1,17 @@
 package graphsearcher;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
+import cn.edu.pku.sei.SnowView.servlet.Config;
 import graphdb.extractors.parsers.word.corpus.WordSegmenter;
 
 public class QueryStringToQueryWordsConverter {
@@ -20,7 +23,7 @@ public class QueryStringToQueryWordsConverter {
 	public QueryStringToQueryWordsConverter(){
 		List<String> lines=new ArrayList<>();
 		try {
-			lines=IOUtils.readLines(this.getClass().getResourceAsStream("/stopwords_en.txt"));
+			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"stopwords_en.txt"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,7 +39,7 @@ public class QueryStringToQueryWordsConverter {
 			englishStopWords.add(stemmer.getCurrent());
 		}
 		try {
-			lines=IOUtils.readLines(this.getClass().getResourceAsStream("/stopwords_cn.txt"));
+			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"stopwords_cn.txt"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

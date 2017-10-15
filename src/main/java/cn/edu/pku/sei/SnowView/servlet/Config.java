@@ -3,14 +3,10 @@ package cn.edu.pku.sei.SnowView.servlet;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-
 public class Config {
 
 	static private GraphDatabaseService db=null;
@@ -18,10 +14,10 @@ public class Config {
 	static private String exampleFilePath = null;
 	static private String solrUrl = null;
 	
-	static {
+	public static void init() {
 		List<String> lines=new ArrayList<>();
 		try {
-			lines=IOUtils.readLines(Config.class.getClassLoader().getResourceAsStream("/conf"));
+			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"conf"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -44,15 +40,23 @@ public class Config {
 	}
 	
 	static public GraphDatabaseService getGraphDB(){
+		if (db==null)
+			init();
 		return db;
 	}
 	static public String getUrl(){
+		if (neo4jUrl==null)
+			init();
 		return neo4jUrl;
 	}
 	static public String getExampleFilePath(){
+		if (exampleFilePath==null)
+			init();
 		return exampleFilePath;
 	}
 	static public String getSolrUrl(){
+		if (solrUrl==null)
+			init();
 		return solrUrl;
 	}
 }

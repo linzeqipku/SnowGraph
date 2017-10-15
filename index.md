@@ -23,17 +23,34 @@ Given a software project and various software engineering data of it, you can us
 
 [This is an online SnowGraph demo for helping software developers reuse Apache Lucene](http://47.94.225.216:8080/SnowGraph/index.html)
 
-* **Query**
+* **Input**
+
+You can input a natural language question about Lucene in the search box.
+
+For the convenience of demonstration, we add a "get-random-question" link in this demo.
+Click this link, then the site will get a random question about Lucene from StackOverflow as an example input.
 
 ![](assets/images/input.PNG)
 
 * **Knowledge Graph Navigation**
 
+Given the natural language user question, our site will locate related code elements about the question, and discover structural dependencies between these code elements.
+This is an API subgraph about the question, as the following figure shows.
+
 ![](assets/images/graphsearcher.PNG)
+
+You can use the API subgraph as a starting point to navigate the knowledge graph of Lucene.
+Double-click an entity, then the "properties" panel will show its properties.
+If you want to see some neighbors of the entity, select a relationship type in the "expand" panel and double-click the entity again, then these neighbors will be shown in the "related API graph" panel.
 
 * **Question Answering**
 
+Given the natural language user question, our site will search passages from documents in Lucene (including emails, bug reports, API documentation, StackOverflow answers, etc) to answer the question.
+
 ![](assets/images/docsearcher.PNG)
+
+We leverage conceptual knowledge in Lucene's source code to improve the rank of these passages.
+We show 
 
 # [](#header-1)Usage
 

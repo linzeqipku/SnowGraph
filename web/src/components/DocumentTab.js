@@ -4,8 +4,12 @@ import {
 } from "material-ui";
 import {fetchDocumentResult, gotoIndex} from "../redux/action";
 import {connect} from "react-redux";
+import RankRow from "./RankRow";
 
 const styles = theme => ({
+    progress: {
+        margin: theme.spacing.unit * 4
+    }
 });
 
 const mapStateToProps = (state) => {
@@ -29,7 +33,7 @@ class DocumentTab extends Component {
         const {classes, documentResult} = this.props;
         return (
             <div style={{display: this.props.visibility ? "block" : "none"}}>
-                {documentResult.fetching && <LinearProgress/>}
+                {documentResult.fetching && <LinearProgress className={classes.progress}/>}
                 {documentResult.result != null && <Table>
                     <TableHead>
                         <TableRow>
@@ -39,11 +43,12 @@ class DocumentTab extends Component {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {documentResult.result["rankedResults"].map(r => <TableRow key={r["answerId"]}>
-                            <TableCell>{r["finalRank"]}</TableCell>
-                            <TableCell>{r["title"]}</TableCell>
-                            <TableCell>{r["solrRank"]}</TableCell>
-                        </TableRow>)}
+                        {documentResult.result["rankedResults"].map(r => {
+                            return <RankRow
+                                key={r["answerId"]} rank={r["finalRank"]} title={r["title"]} solrRank={r["solrRank"]}
+                                detail={r["body"]} highlight={r["answerId"] === documentResult.result["answerId"]}
+                            />;
+                        })}
                     </TableBody>
                 </Table>
                 }

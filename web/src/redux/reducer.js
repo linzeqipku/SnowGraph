@@ -127,6 +127,8 @@ export function page(state = "index", action) {
 
 export function tab(state = "document", action) {
     switch (action.type) {
+        case GOTO_INDEX:
+            return "document";
         case CHANGE_TAB:
             return action.tab;
         default:

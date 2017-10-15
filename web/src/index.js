@@ -25,6 +25,11 @@ const theme = createMuiTheme({
                 color: 'white',
             }
         },
+        MuiSvgIcon: {
+            root: {
+                cursor: "pointer"
+            }
+        }
     },
 });
 

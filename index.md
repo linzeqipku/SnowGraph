@@ -23,7 +23,17 @@ Given a software project and various software engineering data of it, you can us
 
 [This is an online SnowGraph demo for helping software developers reuse Apache Lucene](http://47.94.225.216:8080/SnowGraph/index.html)
 
+1. Query
+
 ![](assets/images/input.PNG)
+
+2. Knowledge Graph Navigation
+
+![](assets/images/graphsearcher.PNG)
+
+3. Question Answering
+
+![](assets/images/docsearcher.PNG)
 
 # [](#header-1)Usage
 

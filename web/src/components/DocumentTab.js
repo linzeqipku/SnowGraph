@@ -1,13 +1,18 @@
 import React, {Component} from 'react';
-import {
-    AppBar, Grid, LinearProgress, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Typography, withStyles
-} from "material-ui";
-import {fetchDocumentResult, gotoIndex} from "../redux/action";
+import {LinearProgress, Table, TableBody, TableCell, TableHead, TableRow, withStyles} from "material-ui";
+import {fetchDocumentResult} from "../redux/action";
 import {connect} from "react-redux";
 import RankRow from "./RankRow";
 
 const styles = theme => ({
+    container: {
+        justifyContent: "center",
+    },
+    table: {
+        width: "70%",
+    },
     progress: {
+        flexGrow: 1,
         margin: theme.spacing.unit * 4
     }
 });
@@ -32,9 +37,9 @@ class DocumentTab extends Component {
     render() {
         const {classes, documentResult} = this.props;
         return (
-            <div style={{display: this.props.visibility ? "block" : "none"}}>
+            <div style={{display: this.props.visibility ? "flex" : "none"}} className={classes.container}>
                 {documentResult.fetching && <LinearProgress className={classes.progress}/>}
-                {documentResult.result != null && <Table>
+                {documentResult.result != null && <Table className={classes.table}>
                     <TableHead>
                         <TableRow>
                             <TableCell>Rank</TableCell>
@@ -45,7 +50,8 @@ class DocumentTab extends Component {
                     <TableBody>
                         {documentResult.result["rankedResults"].map(r => {
                             return <RankRow
-                                key={r["answerId"]} rank={r["finalRank"]} title={r["title"]} solrRank={r["solrRank"]}
+                                key={r["answerId"]} rank={r["finalRank"]} title={r["title"]}
+                                solrRank={r["solrRank"]}
                                 detail={r["body"]} highlight={r["answerId"] === documentResult.result["answerId"]}
                             />;
                         })}

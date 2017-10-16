@@ -5,6 +5,7 @@ import {show} from 'js-snackbar';
 require('../../node_modules/js-snackbar/dist/snackbar.css');
 
 export const SEARCH_QUESTION = 'SEARCH_QUESTION';
+export const SET_QUESTION = 'SET_QUESTION';
 
 export const REQUEST_DOCUMENT_RESULT = 'REQUEST_DOCUMENT_RESULT';
 export const RECEIVED_DOCUMENT_RESULT = 'RECEIVED_DOCUMENT_RESULT';
@@ -27,10 +28,14 @@ export const GOTO_INDEX = 'GOTO_INDEX';
 
 export const CHANGE_TAB = 'CHANGE_TAB';
 
-const URL = "http://localhost:8080";
+const URL = "http://162.105.88.181:8080";
 
 export function searchQuestion(question) {
     return {type: SEARCH_QUESTION, question};
+}
+
+export function setQuestion(question, rich) {
+    return {type: SET_QUESTION, question, rich};
 }
 
 export function requestDocumentResult() {
@@ -46,6 +51,7 @@ export function fetchDocumentResult(question) {
         dispatch(requestDocumentResult());
         $.post(`${URL}/Rank`, {query: question, id: 175})
             .done(result => {
+                dispatch(setQuestion(result["query"], result["query2"]));
                 dispatch(receivedDocumentResult(result));
                 dispatch(fetchGraph(result["query"]));
             })

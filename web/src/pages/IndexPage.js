@@ -22,7 +22,7 @@ const styles = theme => ({
         alignItems: "center",
         justifyContent: "center",
         height: "100%",
-        width: "50%",
+        width: "70%",
     },
     title: {
         color: theme.palette.common.white
@@ -43,7 +43,7 @@ const styles = theme => ({
         flex: 1,
         marginLeft: theme.spacing.unit * 2,
         marginRight: theme.spacing.unit * 2,
-        color: theme.palette.primary[50],
+        color: theme.palette.common.white,
         '&:before': {
             backgroundColor: theme.palette.primary[400],
         },
@@ -180,8 +180,8 @@ class IndexPage extends Component {
     render() {
         const {classes} = this.props;
         return (
-            <div elevation={0} className={classes.page}>
-                <div elevation={0} className={classes.container}>
+            <div className={classes.page}>
+                <div className={classes.container}>
                     <Typography component="h1" type="display4" className={classes.title}>SEI SnowGraph</Typography>
                     <Typography component="h2" type="headline" className={classes.introduction}>
                         SnowGraph (Software Knowledge Graph) is a project for creating software-specific
@@ -214,7 +214,7 @@ class IndexPage extends Component {
                     </Typography>
                     <form className={classes.search} onSubmit={this.handleSubmit}>
                         <Input className={classes.searchInput} placeholder="Please enter your question..."
-                               inputRef={input => this.input = input}/>
+                               inputRef={input => this.input = input} multiline/>
                         {this.props.graph.fetching ?
                             <CircularProgress color="accent" size={55}/> :
                             <Button fab type="submit" color="accent"><SearchIcon/></Button>}

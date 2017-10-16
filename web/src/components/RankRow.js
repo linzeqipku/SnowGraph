@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-import {
-    AppBar, Grid, LinearProgress, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Typography, withStyles
-} from "material-ui";
+import {TableCell, TableRow, withStyles} from "material-ui";
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
 import ExpandLessIcon from 'material-ui-icons/ExpandLess'
 import {connect} from "react-redux";
@@ -14,10 +12,10 @@ const styles = theme => ({
         paddingLeft: theme.spacing.unit
     },
     cellRank: {
-        width: "5%"
+        width: "8%"
     },
     cellMain: {
-        width: "90%",
+        width: "84%",
         overflowWrap: "normal",
         whiteSpace: "normal"
     },
@@ -57,7 +55,7 @@ class RankRow extends Component {
     render() {
         const {classes, rank, title, solrRank, detail, highlight} = this.props;
         return (
-            <TableRow className={highlight ? classes.highlight : {}}>
+            <TableRow style={highlight ? {background: "#EEEEEE"} : {}}>
                 <TableCell className={classes.cellRank}>{rank}</TableCell>
                 <TableCell className={classes.cellMain}>
                     {title}

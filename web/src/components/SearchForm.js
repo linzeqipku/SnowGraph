@@ -1,29 +1,25 @@
 import React, {Component} from 'react';
 import {fetchGraph} from "../redux/action";
 import {connect} from "react-redux";
-import './SearchForm.css';
-import {Input, withStyles} from "material-ui";
+import {Card, CardContent, CardHeader, Input, withStyles} from "material-ui";
+import CodeModal from "./CodeModal";
 
-const mapStateToProps = (state) => ({})
+const mapStateToProps = (state) => ({
+    question: state.question,
+    richQuestion: state.richQuestion
+})
 
 const styles = theme => ({
+    container: {
+      margin: theme.spacing.unit * 2
+    },
     form: {
-        width: "75%"
+        width: "95%"
     },
     search: {
         marginLeft: theme.spacing.unit * 2,
         marginRight: theme.spacing.unit * 2,
         width: "100%",
-        color: theme.palette.primary[100],
-        '&:before': {
-            backgroundColor: theme.palette.primary[400],
-        },
-        '&:hover:not(.disabled):before': {
-            backgroundColor: theme.palette.primary[200],
-        },
-        '&:after': {
-            backgroundColor: theme.palette.primary[50],
-        },
     }
 });
 
@@ -47,9 +43,17 @@ class SearchForm extends Component {
         const {classes} = this.props;
 
         return (
-            <form className={classes.form} onSubmit={this.handleSubmit}>
-                <Input className={classes.search} type="search" placeholder="Search" inputRef={input => this.input = input}/>
-            </form>
+            <Card className={classes.container}>
+                <CardHeader title="Question"/>
+                <CardContent>
+                    <form className={classes.form} onSubmit={this.handleSubmit}>
+                        <Input className={classes.search} type="search" placeholder="Search" value={this.props.question}
+                               inputRef={input => this.input = input} multiline/>
+                    </form>
+                    <CodeModal content={this.props.richQuestion}/>
+                </CardContent>
+            </Card>
+
         );
     }
 }

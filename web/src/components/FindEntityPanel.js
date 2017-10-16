@@ -78,7 +78,7 @@ class FindEntityPanel extends Component {
                 <FormControl className={this.props.classes.formControl}>
                     <InputLabel htmlFor="relation-type">Relation Type</InputLabel>
                     <Select native input={<Input id="relation-type" inputRef={(input) => this.input = input}/>}>
-                        {relationTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                        {relationTypes.map(t => <option key={t} value={t}>{rename(t)}</option>)}
                     </Select>
                 </FormControl>
                 <Button type="submit">Submit</Button>

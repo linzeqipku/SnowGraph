@@ -2,9 +2,7 @@ import React, {Component} from 'react';
 import GraphPanel from "../components/GraphPanel";
 import FindEntityPanel from "../components/FindEntityPanel";
 import InformationPanel from "../components/InformationPanel";
-import SearchForm from "../components/SearchForm";
-import {AppBar, Grid, LinearProgress, withStyles} from "material-ui";
-import {gotoIndex} from "../redux/action";
+import {Grid, LinearProgress, withStyles} from "material-ui";
 import {connect} from "react-redux";
 
 const styles = theme => ({

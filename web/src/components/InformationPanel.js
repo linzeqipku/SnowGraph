@@ -6,11 +6,6 @@ import {
 } from "material-ui";
 import CodeModal from "./CodeModal";
 
-var labelCnName = {
-    "Class": "类", "Interface": "接口", "Method": "方法", "Field": "域", "DocxFile": "文档文件",
-    "DocxSection": "文档章节", "DocxTable": "文档表格", "DocxPlainText": "文档文本信息"
-};
-
 const codePropertyCnName = {
     "name": "名称", "fullName": "全名", "access": "访问修饰符", "superClass": "父类", "implements": "实现接口",
     "extends": "父接口", "isAbstract": "是否抽象类(abstract)", "isFinal": "是否不可变(final)",
@@ -31,13 +26,10 @@ const mapStateToProps = (state) => {
 }
 
 const styles = theme => ({
-    preCell: {
-        overflow: "auto",
-        whiteSpace: "pre-wrap",
-    },
     normalCell: {
         wordWrap: "break-word",
         whiteSpace: "pre-wrap",
+        wordBreak: "break-word",
     }
 });
 

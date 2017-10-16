@@ -4,7 +4,9 @@ import {Typography, Dialog, withStyles} from "material-ui";
 const styles = theme => ({
     container: {
         margin: theme.spacing.unit * 2,
-        overflow: "auto"
+        overflow: "auto",
+        wordBreak: "break-all",
+        whiteSpace: "pre-wrap"
     },
 });
 

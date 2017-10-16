@@ -86,7 +86,7 @@ Intelligent Development Environment and Software Knowledge Graph [[PDF]](assets/
 Improving Software Text Retrieval using Conceptual Knowledge in Source Code [[PDF]](assets/papers/embedding.pdf)
 
 ```
-@inproceedings{zou2015learning,
+@inproceedings{lin2017improving,
   title={Improving Software Text Retrieval using Conceptual Knowledge in Source Code},
   author={Lin, Zeqi and Zou, Yanzhen and Zhao, Junfeng and Bing, Xie},
   booktitle={Automated Software Engineering (ASE), 2017 32th IEEE/ACM International Conference on},

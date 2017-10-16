@@ -23,6 +23,8 @@ Given a software project and various software engineering data of it, you can us
 
 [This is an online SnowGraph demo for helping software developers reuse Apache Lucene](http://162.105.88.28:8080/SnowGraph/index.html)
 
+(Temporarily suspended from 2017-9-30 to 2017-10-27 to celebrate the 19th National Congress of CPC.)
+
 * **Input**
 
 You can input a natural language question about Lucene in the search box.

@@ -52,11 +52,11 @@ Given the natural language user question, our site will search passages from doc
 We leverage conceptual knowledge in Lucene's source code to improve the rank of these passages.
 In our experimental evaluation, SnowGraph ranks ground truth answers of test StackOverflow questions much higher than several state-of-the-art document ranking approaches, including Solr, LDA and neural language models.
 
-# [](#header-1)Usage
+# [](#header-1)Deployment
 
 Coming soon...
 
-# [](#header-1)Details
+# [](#header-1)Internals
 
 Coming soon...
 

@@ -15,7 +15,88 @@
  */
 /* global $ */
 'use strict';
+// jQuery nodes
+var $serviceResults = $('.service--results'),
+  $standardResults = $('.standard--results'),
+  $template = $('.result--template'),
+  $output = $('.output'),
+  $query = $('#query');
+function queryByTextInDemo(){
+    $query.empty();
+	rank(null,$("#queryText").val(),true);
+}
+function rank(repsonseRandom,query,flag){
 
+	$('.error').hide();
+	$output.hide();
+	
+	var queryJson = {"query":query};
+    /*$query.text(query.query);*/
+    $.ajax({
+        type: 'POST',
+        url: "Rank",
+        data: queryJson,
+        dataType: 'json',
+        async: false,
+        success: function(response) {
+      if (!flag)$query.append(response.query2);
+  	  queryByText();
+      $standardResults.empty();
+      var aid = -1;
+      if (!flag) aid = repsonseRandom.answerId;
+      response.solrResults.map(createResultNode.bind(null, $template, false, aid))
+      .forEach(function(e){
+        $standardResults.append(e);
+      });
+
+      // service results - solr + ranker
+      $serviceResults.empty();
+      response.rankedResults.map(createResultNode.bind(null, $template, true, aid))
+      .forEach(function(e){
+        $serviceResults.append(e);
+      });
+
+      $output.show();
+    }
+    });
+    function createResultNode($template, showRanking, standId, result, index) {
+      var node = $template.last().clone().show();
+
+      node.find('.results--item-text').prepend(result.title);
+      node.find('.results--item-details').append(result.body);
+      if (standId == result.answerId){
+    	  node.find('.results--item-text').css("background-color","#41D6C3"); 
+      }
+
+      // ranking result
+      if (showRanking){
+        var iconClass = 'results--increase-icon_UP icon-arrow_up';
+        var rank = result.solrRank - index -1;
+        if (rank < 0)
+          iconClass = 'results--increase-icon_DOWN icon-arrow_down';
+        node.find('.results--rank').text("No. "+(index+1));
+        node.find('.results--increase-icon').addClass(iconClass);
+        node.find('.results--increase-value').text(rank > 0 ? rank : Math.abs(1 + index - result.solrRank) );
+        
+      } else {
+        node.find('.results--item-rank').remove();
+      }
+	  
+      node.find('.results--item-score-bar').each(function(i, score) {
+        if ((result.relevance - i - 1) >= 0)
+          $(score).addClass('green');
+      });
+
+      var $moreInfo = node.find('.results--more-info');
+      node.find('.results--see-more').click(function() {
+        if ($moreInfo.css('display') === 'none')
+          $moreInfo.fadeIn('slow');
+        else
+          $moreInfo.fadeOut(500);
+      });
+      return node;
+    }
+  }
 function _error(xhr) {
   $('.error').show();
   var response = JSON.parse(xhr.responseText);
@@ -29,12 +110,7 @@ $(document).ready(function() {
   var queries = [];
   var query = null;
 
-  // jQuery nodes
-  var $serviceResults = $('.service--results'),
-    $standardResults = $('.standard--results'),
-    $template = $('.result--template'),
-    $output = $('.output'),
-    $query = $('#query');
+
 
   $output.hide();
   $('#graphDisplayer').hide();
@@ -66,76 +142,18 @@ $(document).ready(function() {
   $('.reset-button').click(function() {
     location.reload();
   });
-
   $('.input--question-generator').click(function(){
-	$('.error').hide();
-	$output.hide();
-	
-	query = queries[Math.floor(Math.random() * queries.length)];
-    /*$query.text(query.query);*/
-
-    $.ajax('Rank', {
-    	data : JSON.stringify(query),
-    	contentType : 'application/json',
-    	type : 'POST'
-    }).then(function(response) {
-      $query.empty();
-      $query.append(response.query2);
-      // standard results - solr
-      $('#queryText').val(response.query);
-      $('#search').click();
-      $standardResults.empty();
-      response.solrResults.map(createResultNode.bind(null, $template, false, response.answerId))
-      .forEach(function(e){
-        $standardResults.append(e);
-      });
-
-      // service results - solr + ranker
-      $serviceResults.empty();
-      response.rankedResults.map(createResultNode.bind(null, $template, true, response.answerId))
-      .forEach(function(e){
-        $serviceResults.append(e);
-      });
-
-      $output.show();
-    }, _error);
-
-    function createResultNode($template, showRanking, standId, result, index) {
-      var node = $template.last().clone().show();
-
-      node.find('.results--item-text').prepend(result.title);
-      node.find('.results--item-details').append(result.body);
-      if (standId == result.answerId){
-    	  node.find('.results--item-text').css("background-color","#41D6C3"); 
-      }
-
-      // ranking result
-      if (showRanking){
-        var iconClass = 'results--increase-icon_UP icon-arrow_up';
-        var rank = result.solrRank - index -1;
-        if (rank < 0)
-          iconClass = 'results--increase-icon_DOWN icon-arrow_down';
-
-        node.find('.results--increase-icon').addClass(iconClass);
-        node.find('.results--increase-value').text(rank > 0 ? rank : Math.abs(1 + index - result.solrRank));
-      } else {
-        node.find('.results--item-rank').remove();
-      }
-
-      node.find('.results--item-score-bar').each(function(i, score) {
-        if ((result.relevance - i - 1) >= 0)
-          $(score).addClass('green');
-      });
-
-      var $moreInfo = node.find('.results--more-info');
-      node.find('.results--see-more').click(function() {
-        if ($moreInfo.css('display') === 'none')
-          $moreInfo.fadeIn('slow');
-        else
-          $moreInfo.fadeOut(500);
-      });
-      return node;
-    }
+	    $.ajax('Random', {
+	    	dataType : 'json',
+	    	contentType : 'application/json',
+	    	type : 'POST'
+	    }).then(function(response) {
+	        $('#queryText').val(response.query);
+	        $query.empty();
+	        $query.append(response.query2);
+	    	rank(response,response.query,false);
+	    });
   });
+  
 });
 

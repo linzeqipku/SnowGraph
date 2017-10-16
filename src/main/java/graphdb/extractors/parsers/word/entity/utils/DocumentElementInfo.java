@@ -98,5 +98,7 @@ public class DocumentElementInfo implements Serializable {
         return super.toString() + " - " + this.getClass().getSimpleName();
     }
 
-    public String toHtml() { return ""; }
+    public String toHtml(boolean en) { return ""; }
+
+    public String toEnglish() { return ""; }
 }

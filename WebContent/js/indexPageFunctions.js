@@ -26,6 +26,7 @@ function getdata(node){
         type: 'POST',
         url: "GetNode",
         data: {id: node_ID},
+        dataType: 'json',
         async: false,
         success: function (data) {
             dataset.push(data);
@@ -35,6 +36,7 @@ function getdata(node){
         type: 'POST',
         url: "OutGoingRelation",
         data: {id: node_ID},
+        dataType: 'json',
         async: false,
         success: function (data) {
             relationset.push(data);
@@ -78,8 +80,8 @@ function getd3GraphById(node_ID,type){
     edgelist[index][edgeindex].end = ende;
     for (var i = starte; i < ende; i++) {
         var ele = list[i];
-        var endid = parseInt(ele.end.substr(35));
-        var startid = parseInt(ele.start.substr(35));
+        var endid = parseInt(ele.end.substr(ele.end.lastIndexOf("/")+1));
+        var startid = parseInt(ele.start.substr(ele.start.lastIndexOf("/")+1));
         json.relationships.push({
             id: ele.metadata.id, type: ele.type.substr(3), startNode: startid,
             endNode: endid, properties: {}
@@ -90,8 +92,8 @@ function getd3GraphById(node_ID,type){
         json.nodes.push({id : dataset[tmpindex].metadata.id, labels : dataset[tmpindex].metadata.labels, properties : dataset[tmpindex].data});
         for (var j = 0; j < relationset[tmpindex].length; j++) {
             var ele = relationset[tmpindex][j];
-            var endid = parseInt(ele.end.substr(35));
-            var startid = parseInt(ele.start.substr(35));
+            var endid = parseInt(ele.end.substr(ele.end.lastIndexOf("/")+1));
+            var startid = parseInt(ele.start.substr(ele.start.lastIndexOf("/")+1));
             json.relationships.push({
                 id: ele.metadata.id, type: ele.type.substr(3), startNode: startid,
                 endNode: endid, properties: {}
@@ -111,8 +113,8 @@ function getd3Graph(obj){
     }
     for (var i = 0; i < obj.relationships.length; i++) {
         ele = obj.relationships[i];
-        var endid = parseInt(ele.end.substr(35));
-        var startid = parseInt(ele.start.substr(35));
+        var endid = parseInt(ele.end.substr(ele.end.lastIndexOf("/")+1));
+        var startid = parseInt(ele.start.substr(ele.start.lastIndexOf("/")+1));
         json.relationships.push({id : ele.metadata.id, type : ele.type.substr(3), startNode : startid,
             endNode : endid, properties : {}});
     }
@@ -138,6 +140,7 @@ function init(orijson,node_ID) {
     $.ajax({  
         type : "get",  
         url : "data/translation.json",  
+        dataType: 'json',
         async : false,  
         success : function(data){  
         	classesJson = data.classes;
@@ -202,45 +205,6 @@ function init(orijson,node_ID) {
             'zoomIn': 'search-plus',
             'zoomOut': 'search-minus'
         },
-        //endregion
-        images: {
-            'Address': 'img/twemoji/1f3e0.svg',
-            'Api': 'img/twemoji/1f527.svg',
-            'Method': 'img/twemoji/M.svg',
-            'Field': 'img/twemoji/F.svg',
-            'Class': 'img/twemoji/C.svg',
-            'Interface': 'img/twemoji/I.svg',
-            'BirthDate': 'img/twemoji/1f382.svg',
-            'Cookie': 'img/twemoji/1f36a.svg',
-            'CreditCard': 'img/twemoji/1f4b3.svg',
-            'Device': 'img/twemoji/1f4bb.svg',
-            'Mail': 'img/twemoji/2709.svg',
-            'Git': 'img/twemoji/1f5c3.svg',
-            // 'gitCommit' : 'img/twemoji/1f5c3.svg',
-            'Github': 'img/twemoji/1f5c4.svg',
-            'icons': 'img/twemoji/1f38f.svg',
-            'Ip': 'img/twemoji/1f4cd.svg',
-            'Issue': 'img/twemoji/1f4a9.svg',
-            'Patch': 'img/twemoji/1f4a9.svg',
-            'Language': 'img/twemoji/1f1f1-1f1f7.svg',
-            'Options': 'img/twemoji/2699.svg',
-            'Password': 'img/twemoji/1f511.svg',
-//                        'Phone': 'img/twemoji/1f4de.svg',
-            'Project': 'img/twemoji/2198.svg',
-            'Project|name|neo4jd3': 'img/twemoji/2196.svg',
-//                        'SecurityChallengeAnswer': 'img/twemoji/1f4ac.svg',
-            'User': 'img/twemoji/1f600.svg',
-            'MailUser' : 'img/twemoji/user.svg',
-            'IssueUser' : 'img/twemoji/user.svg',
-            'StackOverflowUser' : 'img/twemoji/user.svg',
-            'gitCommitAuthor' : 'img/twemoji/user.svg',
-            'StackOverflowQuestion' : 'img/twemoji/stackoverflow.svg',
-            'StackOverflowAnswer' : 'img/twemoji/stackoverflow.svg',
-            'StackOverflowComment' : 'img/twemoji/stackoverflow.svg'
-//                        'zoomFit': 'img/twemoji/2194.svg',
-//                        'zoomIn': 'img/twemoji/1f50d.svg',
-//                        'zoomOut': 'img/twemoji/1f50e.svg'
-        },
         minCollision: 60,
         neo4jData: orijson,
         nodeRadius: 40,
@@ -252,7 +216,6 @@ function init(orijson,node_ID) {
                 node_ID = node.id;
                 var ret = getd3GraphById(node_ID,checkText);
                 neo4jd3.focusid = node_ID;
-                //relationsNumsDisplay(node_ID);
                 neo4jd3.updateWithNeo4jData(ret);
             }else{
                 node_ID = node.id;
@@ -262,58 +225,8 @@ function init(orijson,node_ID) {
                 view(obj, list);
                 relationsNumsDisplay(node_ID)
             }
-//                    var index = getdata(node.id);
-//                    var list = relationset[index];
-//                    var obj = dataset[index];
-//                    node_ID = node.id;
-//                    view(obj, list);
-//
-//                    neo4jd3.focusid = node_ID;
-//					relationsNumsDisplay(node_ID);
-//				    var node_ID = node.id;
-//				    var index = getdata(node_ID);
-//
-//                    var list = relationset[index];
-//                    var obj = dataset[index];
-//                    view(obj,list);
-//
-//                    var json = {nodes : [], relationships : []};
-//                    json.nodes.push({id : obj.metadata.id, labels : obj.metadata.labels, properties : obj.data});
-//                    for (var i = times[index] * 5; i < Math.min(times[index] * 5 + 5,list.length); i++) {
-//                        var ele = list[i];
-//                        var endid = parseInt(ele.end.substr(35));
-//                        var startid = parseInt(ele.start.substr(35));
-//                        json.relationships.push({
-//                            id: ele.metadata.id, type: rename(ele.type.substr(3)), startNode: startid,
-//                            endNode: endid, properties: {}
-//                        });
-//                        var otherid = endid;
-//                        if (otherid == node_ID) otherid = startid;
-//                        var tmpindex = getdata(otherid);
-//                        json.nodes.push({id : dataset[tmpindex].metadata.id, labels : dataset[tmpindex].metadata.labels, properties : dataset[tmpindex].data});
-//                        for (var j = 0; j < relationset[tmpindex].length; j++) {
-//                            var ele = relationset[tmpindex][j];
-//                            var endid = parseInt(ele.end.substr(35));
-//                            var startid = parseInt(ele.start.substr(35));
-//                            json.relationships.push({
-//                                id: ele.metadata.id, type: rename(ele.type.substr(3)), startNode: startid,
-//                                endNode: endid, properties: {}
-//                            });
-//                        }
-//                    }
-//                        times[index]++;
-//                        var jsonson = {graph : json};
-//                        var jsonfa = {data : [jsonson]};
-//                        var ret = {results : [jsonfa]};
-//                        neo4jd3.focusid = node_ID;
-//                    	relationsNumsDisplay(node_ID);
-//                        neo4jd3.updateWithNeo4jData(ret);
         },
         onNodeClick : function(d){
-            //var index = getdata(d.id);
-            //var list = relationset[index];
-            //var obj = dataset[index];
-            //view(obj, list);
         },
         onRelationshipDoubleClick: function(relationship) {
             console.log('double click on relationship: ' + JSON.stringify(relationship));
@@ -327,41 +240,6 @@ function init(orijson,node_ID) {
         //nodeOutlineFillColor:"black",
         nodeFillColor:"#F0F8FF" // ALICEBLUE
     });
-}
-// multi answer choose to change the all panel
-function sendid(node_ID){
-    var index = getdata(node_ID);
-    var list = relationset[index];
-    var obj = dataset[index];
-    var json = {nodes: [], relationships: []};
-    json.nodes.push({id: obj.metadata.id , labels: obj.metadata.labels , properties : obj.data});
-    var relLength = list.length;
-    for(var i = 0 ; i < relLength ; i++){
-        var relation = list[i];
-        var temp ;
-        var id_temp = relationset[0][i].end;
-        var node_id = id_temp.substr("http://127.0.0.1:7474/db/data/node/".length);
-        node_id = parseInt(node_id , 10);
-        $.ajax({
-                type: 'Post',
-                url: "GetNode",
-                data:{id : node_id},
-                async: false,
-                success:function(data){
-                    temp = data;
-                }
-            }
-        )
-        console.log(relation.metadata.type);
-        json.nodes.push({id : temp.metadata.id , labels : temp.metadata.labels , properties:temp.data});
-        json.relationships.push({id : relation.metadata.id , type : relation.metadata.type , startNode : node_ID , endNode : node_id});
-    }
-    var jsonson = {graph: json};
-    var jsonfa = {data: [jsonson]};
-    var ret = {results: [jsonfa]};
-    //relationsNumsDisplay(node_ID);
-
-    init(ret, node_ID);
 }
 
 function relationsNumsDisplay(node_ID){
@@ -391,15 +269,13 @@ function sendcypher(query){
     $.ajax({
         type: 'POST',
         url: "CypherQuery",
+        dataType: "json",
         data: query,
         async: false,
-        success: function (data) {
-            list = data;
-            //alert(project.name)
-        }
+        success: function(response) {list = response;}
     });
     if(!list.searchResult) {
-        alert("No Item Found!");
+        alert("No API SubGraph Found!");
     }else{
         anotherInit(list , 10000);
     }
@@ -424,38 +300,8 @@ function queryByText(){
 // query by type and name
 function queryByName() {
     var node_name = $("#queryText").val();
-    var thing = {
-        params: node_name};
+    var thing = {"query":node_name};
     sendcypher(thing);
-}
-function listshow(list){
-    $("#ListSelect").empty();
-    if (list.data.length > 0){
-        for (var i = 0; i < list.data.length; i++){
-            var content = list.data[i][0].metadata.id;
-            content  = list.data[i][0].data.fullName;
-            if (content == undefined) content = list.data[i][0].data.name;
-            if (content == undefined) content = list.data[i][0].data.UUID;
-            $("#ListSelect").append("<li><button type=\"button\" class=\"btn btn-default btn-block\"   onclick=\"sendid("+list.data[i][0].metadata.id+");\">" +
-                content +"</button></li>");
-        }
-        sendid(list.data[0][0].metadata.id);
-    }
-}
-
-function extendtree(node_ID){
-    var obj;
-    $.ajax({
-        type: 'POST',
-        url: "GetExtendsTree",
-        data: {id: node_ID},
-        async: false,
-        success: function (data) {
-            obj = data;
-        }
-    });
-    var ret = getd3Graph(obj);
-    init(ret, node_ID);
 }
 
 function hasRelations(node_ID,type){
@@ -470,12 +316,6 @@ function addRelations(type,node_ID){
     relationsNumsDisplay(node_ID);
     neo4jd3.updateWithNeo4jData(ret);
 }
-
-var otherInfoTypes = [
-    {name : "extendtree", show_name : "Extends Tree", types : ["Class", "Interface"]},
-    {name : "hasMethod", show_name : "Method Map", types : ["Class", "Interface"]},
-    {name : "hasField", show_name : "Field Map", types : ["Class", "Interface"]},
-    {name : "hasModifiedCode", show_name : "Modified Code", types : ["Class","Interface"]}];
 
 Array.prototype.contains = function(obj) {
     var i = this.length;
@@ -573,14 +413,13 @@ function getGraph(element){
         "type":"getGraph",
         index: element.value
     }
-    $.ajax({
-        type:'Post',
-        url:'CypherQuery',
-        data:parameters,
-        async:false,
-        success:function(data){
-            list = data;
-        }
+    $.ajax('CypherQuery', {
+    	dataType : 'json',
+    	contentType : 'application/json',
+    	type : 'POST',
+    	data : parameters
+    }).then(function(response) {
+    	list = response;
     });
     $("#relationSelect").empty();
     $("#relationSelect").append("<option>NONE</option>");
@@ -588,4 +427,3 @@ function getGraph(element){
     $("#data").empty();
     anotherInit(list , 19);
 }
-//start();

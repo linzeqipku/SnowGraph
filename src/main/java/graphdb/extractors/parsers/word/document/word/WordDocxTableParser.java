@@ -64,7 +64,9 @@ public class WordDocxTableParser {
                     cellInfo.setEndRowNum(rowNum);
                     cellInfo.setStartColNum(startColNum);
                     cellInfo.setEndColNum(colNum);
-                    cellInfo.addSubDocumentElement(new PlainTextInfo(cell.getText().trim()));
+                    PlainTextInfo plainTextInfo = new PlainTextInfo(cell.getText().trim());
+                    plainTextInfo.setEnglishText();
+                    cellInfo.addSubDocumentElement(plainTextInfo);
                 }
 
                 // 添加到父节点：row

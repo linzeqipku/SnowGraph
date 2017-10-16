@@ -1230,6 +1230,9 @@ pre[class^="language-"] > code[class^="language-"], pre[class^="language-"] > co
 .results--increase-value {
   font-size: 1.25em
 }
+.results--rank {
+  font-size: 1.25em
+}
 .icon-see_more:before {
   content: "\E009"
 }

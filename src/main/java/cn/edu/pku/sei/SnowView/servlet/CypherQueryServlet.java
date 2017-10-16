@@ -1,14 +1,11 @@
 package cn.edu.pku.sei.SnowView.servlet;
-import graphsearcher.GraphSearcher;
 import graphsearcher.SearchResult;
+
 import org.json.JSONObject;
-import org.neo4j.graphdb.GraphDatabaseService;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -17,16 +14,8 @@ import java.util.List;
  */
 public class CypherQueryServlet extends HttpServlet {
 
-    GraphDatabaseService db = null;
-    GraphSearcher searcher;
     List <SearchResult> resultCache;
     int resultLength;
-
-    public void init(ServletConfig config) throws ServletException{
-        //File databasePath = new File("E:\\SnowGraphData\\lucene\\graphdb-lucene-embedding");
-        db = GraphDbPool.get("lucene");
-        searcher = new GraphSearcher(db);
-    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,20 +25,20 @@ public class CypherQueryServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        System.out.println("test!");
-
+    	if (Config.sendToSlaveUrl(request,response,"CypherQuery")==1)
+    		return;
+    	
         request.setCharacterEncoding("UTF-8");
-        String queryText = request.getParameter("params");
-
+        String queryText = request.getParameter("query");
 
         JSONObject searchResult = new JSONObject();
 
-        List<SearchResult> results = searcher.query(queryText);
-        System.out.println(results.size());
+        List<SearchResult> results = Config.getGraphSearcher().query(queryText);
+        //System.out.println(results.size());
         if(results == null || results.size() == 0){
             searchResult = null;
         }else{
-            searchResult = results.get(0).toJSON(db);
+            searchResult = results.get(0).toJSON(Config.getGraphDB());
         }
         // 注释代码为返回结果为多个的时候，上下浏览的功能
         //null是初始搜索结果 getGraph 是浏览已存储的结果

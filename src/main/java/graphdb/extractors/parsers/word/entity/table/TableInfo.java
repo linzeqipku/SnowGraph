@@ -1,5 +1,6 @@
 package graphdb.extractors.parsers.word.entity.table;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,7 +89,24 @@ public class TableInfo extends DocumentElementInfo {
         this.tableParts = tableParts;
     }
 
-    public String toHtml() {
+    public String toEnglish() {
+        StringBuilder ret = new StringBuilder();
+        List<DocumentElementInfo> rows = getSubElements();
+
+        for(DocumentElementInfo row:rows) {
+            List<DocumentElementInfo> cellsInARow = row.getSubElements();
+            for(DocumentElementInfo cell: cellsInARow){
+                if (cell instanceof TableCellInfo) {
+                    TableCellInfo cellInfo = (TableCellInfo) cell;
+                    ret.append(cellInfo.getEnglishText() + "\t");
+                }
+            }
+            ret.append("\n");
+        }
+        return ret.toString();
+    }
+
+    public String toHtml(boolean en) {
         StringBuilder html = new StringBuilder("<table border=\"1\">\n");
         List<DocumentElementInfo> rows = getSubElements();
 
@@ -99,7 +117,10 @@ public class TableInfo extends DocumentElementInfo {
                 if (cell instanceof TableCellInfo) {
                     TableCellInfo cellInfo = (TableCellInfo) cell;
                     PlainTextInfo textCell = (PlainTextInfo) cellInfo.getSubElements().get(0);
-                    html.append("  <th>" + textCell.getText() + "</th>\n");
+                    if(en)
+                        html.append("  <th>" + textCell.getEnglishText() + "</th>\n");
+                    else
+                        html.append("  <th>" + textCell.getText() + "</th>\n");
                 }
             }
             html.append("</tr>");

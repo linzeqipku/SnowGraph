@@ -1,0 +1,4 @@
+db /home/linzeqi/SnowGraph/graphdb-lucene-final
+neo4jUrl http://127.0.0.1:7474
+exampleFilePath /home/linzeqi/SnowGraph/qaexample
+solrUrl http://127.0.0.1:8983/solr

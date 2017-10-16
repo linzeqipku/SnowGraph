@@ -1,5 +1,8 @@
 package graphdb.extractors.parsers.word.entity.utils;
 
+import graphdb.extractors.parsers.word.corpus.Translator;
+
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -8,6 +11,7 @@ import java.util.List;
 public class SectionInfo extends DocumentElementInfo {
 
     private String	title;
+    private String  englishTitle;
     private int		layer;
     private String	sectionNumber;
 
@@ -15,8 +19,20 @@ public class SectionInfo extends DocumentElementInfo {
         return title;
     }
 
+    public String getEnglishTitle() { return englishTitle; }
+
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setEnglishTitle(String title) {
+        englishTitle = "";
+        try {
+            this.englishTitle = Translator.ch2en(title);
+        }
+        catch (IOException e) {
+            System.out.println(title + " IOException in section title translation");
+        }
     }
 
     public int getLayer() {
@@ -39,12 +55,22 @@ public class SectionInfo extends DocumentElementInfo {
         return this.getClass().getSimpleName() + " - { title: " + this.title + " }";
     }
 
-    public String toHtml() {
+    public String toEnglish() {
+        StringBuilder ret = new StringBuilder();
+        ret.append(getEnglishTitle());
+        List<DocumentElementInfo> subElements = getSubElements();
+        for(DocumentElementInfo subEle : subElements) {
+            ret.append(subEle.toEnglish());
+        }
+        return ret.toString();
+    }
+
+    public String toHtml(boolean en) {
         StringBuilder html = new StringBuilder("<section>\n");
         html.append("<h" + getLayer() + ">" + getTitle() + "</h" + getLayer() + ">");
         List<DocumentElementInfo> subElements = getSubElements();
         for(DocumentElementInfo subEle : subElements) {
-            html.append(subEle.toHtml());
+            html.append(subEle.toHtml(en));
         }
         html.append("</section>\n");
         return html.toString();

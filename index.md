@@ -62,4 +62,35 @@ Coming soon...
 
 # [](#header-1)Reference
 
+* **Project Background**
+
+Intelligent Development Environment and Software Knowledge Graph [[PDF]](assets/papers/intellide.pdf)
+
+```
+@article{lin2017intelligent,
+  title={Intelligent Development Environment and Software Knowledge Graph},
+  author={Lin, Ze-Qi and Xie, Bing and Zou, Yan-Zhen and Zhao, Jun-Feng and Li, Xuan-Dong and Wei, Jun and Sun, Hai-Long and Yin, Gang},
+  journal={Journal of Computer Science and Technology},
+  volume={32},
+  number={2},
+  pages={242--249},
+  year={2017},
+  publisher={Springer}
+}
+```
+
+* **Question Answering Approach**
+
+Improving Software Text Retrieval using Conceptual Knowledge in Source Code [[PDF]](assets/papers/embedding.pdf)
+
+```
+@inproceedings{zou2015learning,
+  title={Improving Software Text Retrieval using Conceptual Knowledge in Source Code},
+  author={Lin, Zeqi and Zou, Yanzhen and Zhao, Junfeng and Bing, Xie},
+  booktitle={Automated Software Engineering (ASE), 2017 32th IEEE/ACM International Conference on},
+  year={2017},
+  organization={IEEE}
+}
+```
+
 # [](#header-1)People

@@ -90,6 +90,10 @@ solrUrl http://127.0.0.1:8983/solr
 
     8. Deploy *SnowGraph.war* in Apache Tomcat and start Tomcat server;
     9. Visit SnowGraph demo in *localhost:8080/SnowGraph/index.html*
+    
+* **Install SnowGraph for Your Own Software Project**
+
+//TODO
 
 # [](#header-1)Reference
 
@@ -123,3 +127,5 @@ solrUrl http://127.0.0.1:8983/solr
 ```
 
 # [](#header-1)People
+
+//TODO

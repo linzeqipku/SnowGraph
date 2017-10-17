@@ -27,81 +27,77 @@ Given a software project and various software engineering data of it, you can us
 
 * **Input**
 
-You can input a natural language question about Lucene in the search box.
-
-For the convenience of demonstration, we add a "get-random-question" link in this demo.
-Click this link, then the site will get a random question about Lucene from StackOverflow as an example input.
-
-![](assets/images/input.PNG)
+    You can input a natural language question about Lucene in the search box.
+    
+    For the convenience of demonstration, we add a "get-random-question" link in this demo.
+    Click this link, then the site will get a random question about Lucene from StackOverflow as an example input.
+    
+    ![](assets/images/input.PNG)
 
 * **Knowledge Graph Navigation**
 
-Given the natural language user question, our site will locate related code elements about the question, and discover structural dependencies between these code elements.
-This is an API subgraph about the question, as the following figure shows.
+    Given the natural language user question, our site will locate related code elements about the question, and discover structural dependencies between these code elements.
+    This is an API subgraph about the question, as the following figure shows.
 
-![](assets/images/graphsearcher.PNG)
+    ![](assets/images/graphsearcher.PNG)
 
-You can use the API subgraph as a starting point to navigate the knowledge graph of Lucene.
-Double-click an entity, then the "properties" panel will show its properties.
-If you want to see some neighbors of the entity, select a relationship type in the "expand" panel and double-click the entity again, then these neighbors will be shown in the "related API graph" panel.
+    You can use the API subgraph as a starting point to navigate the knowledge graph of Lucene.
+    Double-click an entity, then the "properties" panel will show its properties.
+    If you want to see some neighbors of the entity, select a relationship type in the "expand" panel and double-click the entity again, then these neighbors will be shown in the "related API graph" panel.
 
 * **Question Answering**
 
-Given the natural language user question, our site will search passages from documents in Lucene (including emails, bug reports, API documentation, StackOverflow answers, etc) to answer the question.
+    Given the natural language user question, our site will search passages from documents in Lucene (including emails, bug reports, API documentation, StackOverflow answers, etc) to answer the question.
 
-![](assets/images/docsearcher.PNG)
+    ![](assets/images/docsearcher.PNG)
 
-We leverage conceptual knowledge in Lucene's source code to improve the rank of these passages.
-In our experimental evaluation, SnowGraph ranks ground truth answers of test StackOverflow questions much higher than several state-of-the-art document ranking approaches, including Solr, LDA and neural language models.
+    We leverage conceptual knowledge in Lucene's source code to improve the rank of these passages.
+    In our experimental evaluation, SnowGraph ranks ground truth answers of test StackOverflow questions much higher than several state-of-the-art document ranking approaches, including Solr, LDA and neural language models.
 
 # [](#header-1)Installation
 
 * **Dependencies**
 
-1. JRE (>=1.8)
-2. Apache Tomcat
-3. Neo4j (3.2.0)
-4. Solr (>=7.0.1)
+    1. JRE (>=1.8)
+    2. Apache Tomcat
+    3. Neo4j (3.2.0)
+    4. Solr (>=7.0.1)
 
-Download resources:
+    Download resources:
 
-```
+    ```
 Netdisk-address：http://pan.baidu.com/s/1kV6745x
 Password：qnyj
 ```
 
 * **Demo Deployment**
 
-1. Download demo data (*graphdb-lucene.zip*, *solr-lucene.zip*, *qaexample-lucene*) from the above netdisk-address;
-2. unzip *solr-lucene.zip* and move directory *myCore* to *{solr-home}/server/solr/*;
-3. run ```./{solr-home}/bin/solr start```;
-4. unzip graphdb-lucene.zip and copy the directory *graphdb-lucene* to *graphdb-lucene-copy*;
-5. Open Neo4j desktop client, *Options... --> Database Configuration, Edit*, comment this line:
-*dbms.security.auth_enabled=true*
-6. Use Neo4j desktop client to run database *graphdb-lucene-copy*;
-7. Edit *WEB-INF/classes/conf* in *SnowGraph.war*:
+    1. Download demo data (*graphdb-lucene.zip*, *solr-lucene.zip*, *qaexample-lucene*) from the above netdisk-address;
+    2. unzip *solr-lucene.zip* and move directory *myCore* to *{solr-home}/server/solr/*;
+    3. run ```./{solr-home}/bin/solr start```;
+    4. unzip graphdb-lucene.zip and copy the directory *graphdb-lucene* to *graphdb-lucene-copy*;
+    5. Open Neo4j desktop client, *Options... --> Database Configuration, Edit*, comment this line:
+        *dbms.security.auth_enabled=true*
+    6. Use Neo4j desktop client to run database *graphdb-lucene-copy*;
+    7. Edit *WEB-INF/classes/conf* in *SnowGraph.war*:
 
-    ```
+        ```
 db {graphdb-lucene address}
 neo4jUrl http://127.0.0.1:7474
 exampleFilePath {qaexample-lucene address}
 solrUrl http://127.0.0.1:8983/solr
 ```
 
-8. Deploy *SnowGraph.war* in Apache Tomcat and start Tomcat server;
-9. Visit SnowGraph demo in *localhost:8080/SnowGraph/index.html*
-
-# [](#header-1)Internals
-
-Coming soon...
+    8. Deploy *SnowGraph.war* in Apache Tomcat and start Tomcat server;
+    9. Visit SnowGraph demo in *localhost:8080/SnowGraph/index.html*
 
 # [](#header-1)Reference
 
 * **Project Background**
 
-Intelligent Development Environment and Software Knowledge Graph [[PDF]](assets/papers/intellide.pdf)
+    Intelligent Development Environment and Software Knowledge Graph [[PDF]](assets/papers/intellide.pdf)
 
-```
+    ```
 @article{lin2017intelligent,
   title={Intelligent Development Environment and Software Knowledge Graph},
   author={Lin, Ze-Qi and Xie, Bing and Zou, Yan-Zhen and Zhao, Jun-Feng and Li, Xuan-Dong and Wei, Jun and Sun, Hai-Long and Yin, Gang},
@@ -116,9 +112,9 @@ Intelligent Development Environment and Software Knowledge Graph [[PDF]](assets/
 
 * **Question Answering Approach**
 
-Improving Software Text Retrieval using Conceptual Knowledge in Source Code [[PDF]](assets/papers/embedding.pdf)
+    Improving Software Text Retrieval using Conceptual Knowledge in Source Code [[PDF]](assets/papers/embedding.pdf)
 
-```
+    ```
 @inproceedings{lin2017improving,
   title={Improving Software Text Retrieval using Conceptual Knowledge in Source Code},
   author={Lin, Zeqi and Zou, Yanzhen and Zhao, Junfeng and Bing, Xie},

@@ -147,15 +147,6 @@ export function question(state = null, action) {
     }
 }
 
-export function richQuestion(state = null, action) {
-    switch (action.type) {
-        case SET_QUESTION:
-            return action.rich;
-        default:
-            return state;
-    }
-}
-
 export function documentResult(state = {fetching: false, result: null}, action) {
     switch (action.type) {
         case REQUEST_DOCUMENT_RESULT:

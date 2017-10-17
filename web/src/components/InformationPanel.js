@@ -45,7 +45,7 @@ class InformationPanel extends Component {
                 .map(x => {
                     let content = this.props.selectedNode.node.data[x];
                     content = (x === "content" || x === "comment") ?
-                        <CodeModal content={content}/> :
+                        <CodeModal code label="SHOW" content={content}/> :
                         <div className={classes.normalCell}>{content.toString()}</div>;
                     return {key: x, label: x, content};
                 });

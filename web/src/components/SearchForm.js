@@ -1,17 +1,16 @@
 import React, {Component} from 'react';
-import {fetchGraph} from "../redux/action";
+import {fetchDocumentResult} from "../redux/action";
 import {connect} from "react-redux";
-import {Card, CardContent, CardHeader, Input, withStyles} from "material-ui";
+import {Button, Input, withStyles} from "material-ui";
 import CodeModal from "./CodeModal";
 
 const mapStateToProps = (state) => ({
-    question: state.question,
-    richQuestion: state.richQuestion
+    question: state.question
 })
 
 const styles = theme => ({
     container: {
-      margin: theme.spacing.unit * 2
+        margin: theme.spacing.unit * 2
     },
     form: {
         width: "95%"
@@ -20,39 +19,62 @@ const styles = theme => ({
         marginLeft: theme.spacing.unit * 2,
         marginRight: theme.spacing.unit * 2,
         width: "100%",
-    }
+        flex: 1,
+        marginLeft: theme.spacing.unit * 2,
+        marginRight: theme.spacing.unit * 2,
+        color: theme.palette.common.white,
+        '&:before': {
+            backgroundColor: theme.palette.primary[400],
+        },
+        '&:hover:not(.disabled):before': {
+            backgroundColor: theme.palette.primary[200],
+        },
+        '&:after': {
+            backgroundColor: theme.palette.primary[50],
+        },
+    },
 });
 
 const mapDispatchToProps = {
-    fetchGraph: fetchGraph
+    fetchDocumentResult: fetchDocumentResult
 }
 
 class SearchForm extends Component {
-    constructor(props) {
-        super(props);
-
-        this.handleSubmit = this.handleSubmit.bind(this);
+    state = {
+        input: ""
     }
 
-    handleSubmit(event) {
+    componentDidMount() {
+        this.setState({input: this.props.question["query"]});
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({input: nextProps.question["query"]});
+    }
+
+    handleSubmit = event => {
         event.preventDefault();
-        this.props.fetchGraph(this.input.value);
+        this.props.fetchDocumentResult({query: this.state.input});
+    }
+
+    handleChange = event => {
+        this.setState({input: event.target.value});
     }
 
     render() {
         const {classes} = this.props;
 
         return (
-            <Card className={classes.container}>
-                <CardHeader title="Question"/>
-                <CardContent>
-                    <form className={classes.form} onSubmit={this.handleSubmit}>
-                        <Input className={classes.search} type="search" placeholder="Search" value={this.props.question}
-                               inputRef={input => this.input = input} multiline/>
-                    </form>
-                    <CodeModal content={this.props.richQuestion}/>
-                </CardContent>
-            </Card>
+            <div>
+                <form className={classes.form} onSubmit={this.handleSubmit}>
+                    <Input className={classes.search} type="search" placeholder="Search"
+                           value={this.state.input} onChange={this.handleChange}
+                           multiline/>
+                    <Button type="submit" color="contrast">Search</Button>
+                </form>
+                {this.props.question["query2"] &&
+                <CodeModal contrast label="Detail" content={this.props.question["query2"]}/>}
+            </div>
 
         );
     }

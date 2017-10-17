@@ -34,8 +34,8 @@ export function searchQuestion(question) {
     return {type: SEARCH_QUESTION, question};
 }
 
-export function setQuestion(question, rich) {
-    return {type: SET_QUESTION, question, rich};
+export function setQuestion(question) {
+    return {type: SET_QUESTION, question};
 }
 
 export function requestDocumentResult() {
@@ -47,11 +47,37 @@ export function receivedDocumentResult(result) {
 }
 
 export function fetchDocumentResult(question) {
+    if (question.query === "") {
+        return function (dispatch) {
+            $.post(`${URL}/Random`, {})
+                .done(question => {
+                    dispatch(setQuestion(question));
+                    dispatch(requestDocumentResult());
+                    $.post(`${URL}/Rank`, question)
+                        .done(result => {
+                            dispatch(receivedDocumentResult(result));
+                            dispatch(fetchGraph(result["query"]));
+                        })
+                        .fail(() => {
+                            show({
+                                text: "Could not connect to server",
+                                pos: "bottom-center",
+                            });
+                            dispatch(receivedNode(null));
+                        });
+                })
+                .fail(() => {
+                    show({
+                        text: "Failed to get a random question",
+                        pos: "bottom-center",
+                    });
+                });
+        }
+    }
     return function (dispatch) {
         dispatch(requestDocumentResult());
-        $.post(`${URL}/Rank`, {query: question, id: 175})
+        $.post(`${URL}/Rank`, question)
             .done(result => {
-                dispatch(setQuestion(result["query"], result["query2"]));
                 dispatch(receivedDocumentResult(result));
                 dispatch(fetchGraph(result["query"]));
             })
@@ -141,7 +167,7 @@ export function drawGraph(graph) {
 export function fetchGraph(query) {
     return function (dispatch) {
         dispatch(requestGraph());
-        $.post(`${URL}/CypherQuery`, {params: query})
+        $.post(`${URL}/CypherQuery`, {query: query})
             .done(result => dispatch(receivedGraph(result)))
             .fail(() => {
                 show({

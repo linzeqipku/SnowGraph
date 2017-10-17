@@ -8,6 +8,7 @@
     "lodash": "^4.17.4",
     "material-ui": "^1.0.0-beta.16",
     "material-ui-icons": "^1.0.0-beta.15",
+    "prismjs": "^1.8.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-redux": "^5.0.6",

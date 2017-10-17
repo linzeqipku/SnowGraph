@@ -54,9 +54,12 @@ class RankRow extends Component {
 
     render() {
         const {classes, rank, title, solrRank, detail, highlight} = this.props;
+        let delta = (solrRank - rank).toString();
+        if (delta[0] !== '-') delta = `+${delta}`;
+        const color = solrRank < rank ? "green" : (solrRank > rank ? "red" : "black");
         return (
             <TableRow style={highlight ? {background: "#EEEEEE"} : {}}>
-                <TableCell className={classes.cellRank}>{rank}</TableCell>
+                <TableCell className={classes.cellRank}>{rank}<span style={{color: color}}>{` (${delta})`}</span></TableCell>
                 <TableCell className={classes.cellMain}>
                     {title}
                     {!this.state.expand && <ExpandMoreIcon onClick={this.handleExpandMore}/>}

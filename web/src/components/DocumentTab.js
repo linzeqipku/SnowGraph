@@ -35,7 +35,7 @@ class DocumentTab extends Component {
     }
 
     render() {
-        const {classes, documentResult} = this.props;
+        const {classes, documentResult, question} = this.props;
         return (
             <div style={{display: this.props.visibility ? "flex" : "none"}} className={classes.container}>
                 {documentResult.fetching && <LinearProgress className={classes.progress}/>}
@@ -52,7 +52,7 @@ class DocumentTab extends Component {
                             return <RankRow
                                 key={r["answerId"]} rank={r["finalRank"]} title={r["title"]}
                                 solrRank={r["solrRank"]}
-                                detail={r["body"]} highlight={r["answerId"] === documentResult.result["answerId"]}
+                                detail={r["body"]} highlight={r["answerId"] === question["answerId"]}
                             />;
                         })}
                     </TableBody>

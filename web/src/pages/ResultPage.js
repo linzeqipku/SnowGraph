@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import SearchForm from "../components/SearchForm";
-import {AppBar, Tabs, Tab, Toolbar, Typography, withStyles} from "material-ui";
+import {AppBar, Tabs, Tab, Toolbar, Typography, withStyles, IconButton} from "material-ui";
+import SearchIcon from "material-ui-icons/Search";
 import {changeTab, gotoIndex} from "../redux/action";
 import {connect} from "react-redux";
 import GraphTab from "../components/GraphTab";
@@ -24,6 +25,14 @@ const mapDispatchToProps = {
 }
 
 class ResultPage extends Component {
+    state = {
+        open: false
+    }
+
+    handleSearchClick = () => {
+        this.setState({open: !this.state.open});
+    }
+
     render() {
         const {classes} = this.props;
         return (
@@ -34,10 +43,12 @@ class ResultPage extends Component {
                                     onClick={this.props.gotoIndex}>
                             SEI SNOW Project
                         </Typography>
+                        <IconButton color="contrast" onClick={this.handleSearchClick}>
+                            <SearchIcon/>
+                        </IconButton>
                     </Toolbar>
+                    {this.state.open && <SearchForm/>}
                 </AppBar>
-
-                <SearchForm/>
 
                 <Tabs value={this.props.tab} onChange={(e, v) => this.props.changeTab(v)}>
                     <Tab value="document" label="Document"/>

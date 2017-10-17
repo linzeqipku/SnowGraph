@@ -96,8 +96,7 @@ solrUrl http://127.0.0.1:8983/solr
 * **Project Background**
 
     Intelligent Development Environment and Software Knowledge Graph [[PDF]](assets/papers/intellide.pdf)
-
-    ```
+```
 @article{lin2017intelligent,
   title={Intelligent Development Environment and Software Knowledge Graph},
   author={Lin, Ze-Qi and Xie, Bing and Zou, Yan-Zhen and Zhao, Jun-Feng and Li, Xuan-Dong and Wei, Jun and Sun, Hai-Long and Yin, Gang},
@@ -113,8 +112,7 @@ solrUrl http://127.0.0.1:8983/solr
 * **Question Answering Approach**
 
     Improving Software Text Retrieval using Conceptual Knowledge in Source Code [[PDF]](assets/papers/embedding.pdf)
-
-    ```
+```
 @inproceedings{lin2017improving,
   title={Improving Software Text Retrieval using Conceptual Knowledge in Source Code},
   author={Lin, Zeqi and Zou, Yanzhen and Zhao, Junfeng and Bing, Xie},

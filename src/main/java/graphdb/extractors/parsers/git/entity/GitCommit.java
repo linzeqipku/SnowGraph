@@ -25,6 +25,7 @@ public class GitCommit {
     private String parentUUID = "";
     private String commitSvnUrl = "";
     private List<MutatedFile> mutatedFiles = null;
+    private boolean status = false;
 
     public String getUUID(){
         return UUID;
@@ -54,6 +55,9 @@ public class GitCommit {
         return mutatedFiles;
     }
 
+    public boolean getStatus(){
+        return status;
+    }
 
 
     public static void main(String[] args){
@@ -100,10 +104,12 @@ public class GitCommit {
                 parentUUID = parentUUID.replace("Parents : ", "").trim();
             }
             addMutatedFile(reader);
+            status = true;
             reader.close();
         }catch(Exception e){
+            status = false;
             System.out.print("parsing commit file meta info filed , commit file:" + commitFile.getAbsolutePath());
-            System.out.print(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 

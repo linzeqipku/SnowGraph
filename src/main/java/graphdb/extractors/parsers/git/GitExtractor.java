@@ -93,25 +93,21 @@ public class GitExtractor implements Extractor {
         this.gitFolderPath = path;
     }
 
-
-    public void run(GraphDatabaseService db) {
-        this.db = db;
-
-        Map<String , Node> APIs = getNodes("Class");
-
-        for(String key : commitNodeMap.keySet()){
-            Node commit = commitNodeMap.get(key);
-        }
-
-        File gitFolder = new File(gitFolderPath);
+    public void build(File gitFolder , Map<String , Node> APIs){
         for(File gitFile : gitFolder.listFiles()){
             //gitFile = new File("I:\\lucene-solr\\commit0014931b1c7e10ac7fcd7060245f59c939b75cdf");
-            if(gitFile.isFile()){
+            if(gitFile.isFile() ){
+                String postFix = gitFile.getName();
+                if(postFix.lastIndexOf(".txt") == postFix.length() - 4)
+                    continue;
                 //System.out.println(gitFile.getAbsolutePath());
                 try(Transaction tx = db.beginTx()) {
                     //region<create node for a commit>
                     Node commitNode = db.createNode();
+                    //System.out.println("insert node");
                     GitCommit commit = new GitCommit(gitFile);
+                    if(!commit.getStatus())
+                        continue;
                     commit.createCommitNode(commitNode);
                     commitNodeMap.put(commit.getUUID(), commitNode);
 
@@ -189,8 +185,24 @@ public class GitExtractor implements Extractor {
                     //endregion
                     tx.success();
                 }
+            }else if(gitFile.isDirectory()){
+                build(gitFile , APIs);
             }
         }
+    }
+
+
+    public void run(GraphDatabaseService db) {
+        this.db = db;
+
+        Map<String , Node> APIs = getNodes("Class");
+
+        for(String key : commitNodeMap.keySet()){
+            Node commit = commitNodeMap.get(key);
+        }
+
+        File gitFolder = new File(gitFolderPath);
+        build(gitFolder , APIs);
         try(Transaction tx = db.beginTx()) {
             Node childNode;
             String[] parentUUID;
@@ -239,24 +251,3 @@ public class GitExtractor implements Extractor {
         return result;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

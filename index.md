@@ -76,8 +76,7 @@ Password：qnyj
     2. unzip *solr-lucene.zip* and move directory *myCore* to *{solr-home}/server/solr/*;
     3. run ```./{solr-home}/bin/solr start```;
     4. unzip graphdb-lucene.zip and copy the directory *graphdb-lucene* to *graphdb-lucene-copy*;
-    5. Open Neo4j desktop client, *Options... --> Database Configuration, Edit*, comment this line:
-        *dbms.security.auth_enabled=true*
+    5. Open Neo4j desktop client, *Options... --> Database Configuration, Edit*, change line *dbms.security.auth_enabled=true* to *dbms.security.auth_enabled=false*;
     6. Use Neo4j desktop client to run database *graphdb-lucene-copy*;
     7. Edit *WEB-INF/classes/conf* in *SnowGraph.war*:
 

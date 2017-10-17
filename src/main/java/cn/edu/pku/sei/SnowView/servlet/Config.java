@@ -40,7 +40,7 @@ public class Config {
 		flag=true;
 		List<String> lines=new ArrayList<>();
 		try {
-			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"conf2"));
+			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"conf"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

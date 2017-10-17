@@ -72,24 +72,24 @@ Password：qnyj
 
 * **Demo Deployment**
 
-1. Download demo data (```graphdb-lucene.zip, solr-lucene.zip, qaexample-lucene```) from the above netdisk-address;
-2. unzip ```solr-lucene.zip``` and move directory ```myCore``` to ```{solr-home}/server/solr/```;
+1. Download demo data (*graphdb-lucene.zip*, *solr-lucene.zip*, *qaexample-lucene*) from the above netdisk-address;
+2. unzip *solr-lucene.zip* and move directory *myCore* to *{solr-home}/server/solr/*;
 3. run ```./{solr-home}/bin/solr start```;
-4. unzip graphdb-lucene.zip and copy the directory ```graphdb-lucene``` to ```graphdb-lucene-copy```;
-5. Open Neo4j desktop client, ```Options... --> Database Configuration, Edit```, comment this line:
-```dbms.security.auth_enabled=true```
-6. Neo4j run ```graphdb-lucene-copy```;
-7. Edit ```WEB-INF/classes/conf``` in ```SnowGraph.war```:
+4. unzip graphdb-lucene.zip and copy the directory *graphdb-lucene* to *graphdb-lucene-copy*;
+5. Open Neo4j desktop client, *Options... --> Database Configuration, Edit*, comment this line:
+*dbms.security.auth_enabled=true*
+6. Use Neo4j desktop client to run database *graphdb-lucene-copy*;
+7. Edit *WEB-INF/classes/conf* in *SnowGraph.war*:
 
-```
+    ```
 db {graphdb-lucene address}
 neo4jUrl http://127.0.0.1:7474
 exampleFilePath {qaexample-lucene address}
 solrUrl http://127.0.0.1:8983/solr
 ```
 
-8. Deploy ```SnowGraph.war``` in Apache Tomcat and start Tomcat server;
-9. Visit SnowGraph demo in ```localhost:8080/SnowGraph/index.html```
+8. Deploy *SnowGraph.war* in Apache Tomcat and start Tomcat server;
+9. Visit SnowGraph demo in *localhost:8080/SnowGraph/index.html*
 
 # [](#header-1)Internals
 

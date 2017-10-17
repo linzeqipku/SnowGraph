@@ -54,9 +54,42 @@ Given the natural language user question, our site will search passages from doc
 We leverage conceptual knowledge in Lucene's source code to improve the rank of these passages.
 In our experimental evaluation, SnowGraph ranks ground truth answers of test StackOverflow questions much higher than several state-of-the-art document ranking approaches, including Solr, LDA and neural language models.
 
-# [](#header-1)Deployment
+# [](#header-1)Installation
 
-Coming soon...
+* **Dependencies**
+
+1. JRE (>=1.8)
+2. Apache Tomcat
+3. Neo4j (3.2.0)
+4. Solr (>=7.0.1)
+
+Download resources:
+
+```
+Netdisk-address：http://pan.baidu.com/s/1kV6745x
+Password：qnyj
+```
+
+* **Demo Deployment**
+
+1. Download demo data (```graphdb-lucene.zip, solr-lucene.zip, qaexample-lucene```) from the above netdisk-address;
+2. unzip ```solr-lucene.zip``` and move directory ```myCore``` to ```{solr-home}/server/solr/```;
+3. run ```./{solr-home}/bin/solr start```;
+4. unzip graphdb-lucene.zip and copy the directory ```graphdb-lucene``` to ```graphdb-lucene-copy```;
+5. Open Neo4j desktop client, ```Options... --> Database Configuration, Edit```, comment this line:
+```dbms.security.auth_enabled=true```
+6. Neo4j run ```graphdb-lucene-copy```;
+7. Edit ```WEB-INF/classes/conf``` in ```SnowGraph.war```:
+
+```
+db {graphdb-lucene address}
+neo4jUrl http://127.0.0.1:7474
+exampleFilePath {qaexample-lucene address}
+solrUrl http://127.0.0.1:8983/solr
+```
+
+8. Deploy ```SnowGraph.war``` in Apache Tomcat and start Tomcat server;
+9. Visit SnowGraph demo in ```localhost:8080/SnowGraph/index.html```
 
 # [](#header-1)Internals
 

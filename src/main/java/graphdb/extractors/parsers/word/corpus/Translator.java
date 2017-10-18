@@ -19,6 +19,7 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,25 +59,35 @@ public class Translator {
     }
 
     public static String ch2en(String content) throws IOException {
-        int i;
-        for(i = 0; i < content.length(); i++) {
-            if(!Character.isUpperCase(content.charAt(i)) &&
-                    !Character.isLowerCase(content.charAt(i)) &&
-                    !Character.isDigit(content.charAt(i)))
-                break;
-        }
-        content = content.substring(i);
-        content = content.replaceAll(" ", "+");
         if(content.length() == 0) return "";
 
-        Document doc = Jsoup.connect("http://dict.youdao.com/search?q=" + content + "&keyfrom=dict.index").get();
+        int i;
+        for(i = 0; i < content.length(); i++) {
+            char c = content.charAt(i);
+            // make sure the query start with a chinese character
+            // chinese character in unicode: 0x4e00-0x9fbb
+            if(c >= 0x4e00 && c <= 0x9fbb)
+                break;
+        }
+        if(i == content.length())
+                return content;
+        content = content.substring(i);
+
+
+        String url = "http://dict.youdao.com/search?q=" + URLEncoder.encode( content, "UTF-8")  + "&keyfrom=dict.index";
+        Document doc = Jsoup.connect(url).timeout(8000).get();
+        //System.out.println(url);
+        //System.out.println(doc.body());
         Elements links = doc.getElementsByClass("trans-container");
         StringBuilder ret = new StringBuilder();
+
+        //System.out.println(links.size());
 
         for (Element link : links) {
             String linkText = link.text();
             linkText = linkText.replaceAll( "&#39;", "'" );
-            Pattern searchMeanPattern = Pattern.compile("(?s)[A-Za-z|\\s|.|,|'|!|:]+");
+            //System.out.println(linkText);
+            Pattern searchMeanPattern = Pattern.compile("(?s)[A-Za-z|0-9|\\s|.|,|'|!|:]+");
             Matcher m1 = searchMeanPattern.matcher(linkText);
             while(m1.find())
                 ret.append(m1.group(0));
@@ -87,7 +98,6 @@ public class Translator {
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println(ch2en("123bcd天空"));
 /*        List<String> lines=
                 //FileUtils.readLines(new File(Config.getApiTokensPath()));
                 FileUtils.readLines(new File(Config.getProjectApiTokenPath()));
@@ -115,5 +125,6 @@ public class Translator {
         fout.write(toPrint.toString().getBytes());
         System.out.println("TOTAL TOKENS: " + tot);
         System.out.println("TOKENS FAILED TO TRANSLATE: " + errCnt);*/
+        System.out.println(ch2en("bacdfdfd"));
     }
 }

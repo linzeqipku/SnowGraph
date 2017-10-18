@@ -48,6 +48,8 @@ public class PlainTextInfo extends DocumentElementInfo {
         }
         catch (IOException e) {
             System.out.println(text + " IOException in plain text translation");
+            //e.getMessage();
+            System.out.println(e.getMessage());
         }
 
         return ret;

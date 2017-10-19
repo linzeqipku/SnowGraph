@@ -28,6 +28,8 @@ import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import graphsearcher.GraphSearcher;
 import graphsearcher.SearchResult;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+
+import cn.edu.pku.sei.SnowView.servlet.Config;
 import solr.SolrKeeper;
 
 public class DocSearcher {
@@ -72,10 +74,7 @@ public class DocSearcher {
 	public List<DocSearchResult> search(String query){
 		List<DocSearchResult> r=new ArrayList<>();
 		
-		Map<Set<Long>, Double> seedMap=graphSearcher.findSubGraphs(query);
-		Set<Long> graph0=new HashSet<>();
-		if (seedMap.size()>0)
-			graph0=seedMap.keySet().iterator().next();
+		Set<Long> graph0=graphSearcher.query(query).nodes;
 
 		/*
 		 * Todo (lingcy):
@@ -105,7 +104,7 @@ public class DocSearcher {
 	 */
 	public void findExamples(){
 		try {
-			FileUtils.write(new File("E:\\tmp\\qaexample"), "");
+			FileUtils.write(new File(Config.getExampleFilePath()), "");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -115,7 +114,7 @@ public class DocSearcher {
 		Map<Long, String> queryMap=extractQueries(qaMap);
 		System.out.println("query size: " + queryMap.size());
 		int count=0, irCount = 0;
-		int qCnt = 0, qSize = queryMap.size();
+		int qCnt = 0;
 		for (long queryId:queryMap.keySet()){
 			qCnt++;
 			List<DocSearchResult> list=search(queryMap.get(queryId));
@@ -128,7 +127,7 @@ public class DocSearcher {
                                 + current.irRank+"-->"+current.newRank;
 						System.out.println(res+" ("+qCnt+")");
 					    try {
-							FileUtils.write(new File("E:\\tmp\\qaexample"), res+"\n", true);
+							FileUtils.write(new File(Config.getExampleFilePath()), res+"\n", true);
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -180,12 +179,7 @@ public class DocSearcher {
 	}
 
 	public static void main(String[] args){
-		String path = "E:\\SnowGraphData\\lucene\\graphdb-lucene-embedding";
-		GraphDatabaseFactory graphDbFactory = new GraphDatabaseFactory();
-		GraphDatabaseService graphDb = graphDbFactory.newEmbeddedDatabase(new File(path));
-		GraphSearcher graphSearcher = new GraphSearcher(graphDb);
-		SolrKeeper keeper = new SolrKeeper("http://localhost:8983/solr");
-		DocSearcher docSearcher = new DocSearcher(graphDb, graphSearcher, keeper);
+		DocSearcher docSearcher = Config.getDocSearcher();
 		docSearcher.findExamples();
 	}
 }

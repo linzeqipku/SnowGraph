@@ -33,13 +33,8 @@ public class CypherQueryServlet extends HttpServlet {
 
         JSONObject searchResult = new JSONObject();
 
-        List<SearchResult> results = Config.getGraphSearcher().query(queryText);
-        //System.out.println(results.size());
-        if(results == null || results.size() == 0){
-            searchResult = null;
-        }else{
-            searchResult = results.get(0).toJSON(Config.getGraphDB());
-        }
+        SearchResult graph = Config.getGraphSearcher().queryExpand(queryText);
+        searchResult = graph.toJSON(Config.getGraphDB());
         // 注释代码为返回结果为多个的时候，上下浏览的功能
         //null是初始搜索结果 getGraph 是浏览已存储的结果
         /*int index = 0;

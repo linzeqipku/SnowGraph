@@ -19,6 +19,8 @@ import org.jsoup.Jsoup;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
+import cn.edu.pku.sei.SnowView.servlet.Config;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -36,14 +38,14 @@ public class SolrKeeper {
     public void addGraphToIndex(GraphDatabaseService graphDb, GraphSearcher graphSearcher, String coreName){
         DocumentExtractor documentExtractor = new DocumentExtractor(graphDb);
         System.out.println("doc list size: " + documentExtractor.docIdList.size());
-
+        int c=0;
         List<SolrInputDocument> documentList = new ArrayList<>();
         for(long id : documentExtractor.docIdList){
-            System.out.println("id: " + id);
             String org_content = documentExtractor.getOrgText(graphDb, id);
             String content = Jsoup.parse("<html>" + org_content + "</html>").text();
-            SearchResult subGraph = graphSearcher.querySingle(content);
-            System.out.println("graph size: " + subGraph.nodes.size());
+            SearchResult subGraph = graphSearcher.query(content);
+            c++;
+            System.out.println(c+": " + id+" ("+subGraph.nodes.size()+")");
             StringBuilder nBuilder = new StringBuilder();
             for (long nodeId : subGraph.nodes){
                 nBuilder.append(nodeId + " ");
@@ -114,12 +116,8 @@ public class SolrKeeper {
     }
 
     public static void main(String args[]){
-        SolrKeeper keeper = new SolrKeeper("http://localhost:8983/solr");
-        String path = "E:\\SnowGraphData\\lucene\\graphdb-lucene-embedding";
-        GraphDatabaseFactory graphDbFactory = new GraphDatabaseFactory();
-        GraphDatabaseService graphDb = graphDbFactory.newEmbeddedDatabase(new File(path));
-        GraphSearcher graphSearcher = new GraphSearcher(graphDb);
-        keeper.addGraphToIndex(graphDb, graphSearcher, "myCore");
+        SolrKeeper keeper = new SolrKeeper(Config.getSolrUrl());
+        keeper.addGraphToIndex(Config.getGraphDB(), Config.getGraphSearcher(), "myCore");
         //keeper.querySolr("solr", "myCore");
     }
 }

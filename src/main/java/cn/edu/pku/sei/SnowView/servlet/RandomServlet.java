@@ -39,6 +39,8 @@ public class RandomServlet extends HttpServlet {
                                                                          "UTF-8"));
             String lineTxt = null;
             while ((lineTxt = br.readLine()) != null) {
+            	if (lineTxt.length()==0)
+            		continue;
                 String[] names = lineTxt.split(" ");
                 map.put(Integer.parseInt(names[0]), new ImmutablePair<Integer,Integer>(Integer.parseInt(names[1]), Integer.parseInt(names[2])));
             }

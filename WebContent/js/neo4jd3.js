@@ -355,7 +355,9 @@
                                 .attr('class', 'outline')
                                 .attr('r', options.nodeRadius)
                                 .style('fill', function(d) {
-                                	return options.classes[d.labels]["nodeFillColor"];
+                                	if (options.classes[d.labels] && options.classes[d.labels]["nodeFillColor"])
+                                	return options.classes[d.labels]["nodeFillColor"]; else
+                                		return options.classes["default"]["nodeFillColor"];
                                     //return options.nodeOutlineFillColor ? options.nodeOutlineFillColor : class2color(d.labels[0]);
                                 })
                                 .style('stroke', function(d) {
@@ -392,10 +394,14 @@
                                     return icon(d) ? (parseInt(Math.round(options.nodeRadius * 0.32)) + 'px') : '-12px';
                                 }).html(function(d){
                                 	if (options.classes[d.labels] == undefined) return d.labels;
-                                	if(options.showClassChnName)
-                                		return options.classes[d.labels]["chnName"];
-                                	else 
-                                		return options.classes[d.labels]["englishName"];
+                                	if(options.showClassChnName){
+                                		if (options.classes[d.labels]["chnName"])
+                                		return options.classes[d.labels]["chnName"]; else return d.labels;
+                                	}
+                                	else {
+                                		if (options.classes[d.labels]["englishName"])
+                                		return options.classes[d.labels]["englishName"];else return d.labels;
+                                	}
                                 })
                                 .append("tspan")
                                 .attr('x' , '0px')
@@ -412,7 +418,7 @@
 
                         function showtext(d){
                             var show;
-                            if (d.labels == "Class" || d.labels == "Interface" || d.labels == "Method" || d.labels == "Field") {
+                            /*if (d.labels == "Class" || d.labels == "Interface" || d.labels == "Method" || d.labels == "Field") {
                                 show = d.properties.name;
                             }else if(d.labels == "DocxFile"){
                             	show = d.properties.docxName;
@@ -423,8 +429,11 @@
                             	show = d.properties.sectionTitle;
                             }else if(d.labels == "DocxTable"){
                             	show = d.id;
-                            }
-                            if (show == undefined)  show = d.properties.displayName;
+                            }*/
+                            if (options.classes[d.labels] == undefined) return d.id;
+                            if (options.classes[d.labels]["displayName"] == undefined) return d.id;
+                            if (!d.properties[options.classes[d.labels]["displayName"]]) return d.id;
+                            return d.properties[options.classes[d.labels]["displayName"]];
                             return show;
                         }
 

@@ -1,37 +1,22 @@
 package cn.edu.pku.sei.SnowView.servlet;
-import graphdb.extractors.parsers.word.corpus.WordSegmenter;
 import graphsearcher.SearchResult;
-import org.json.JSONObject;
-import org.neo4j.graphdb.GraphDatabaseService;
 
-import javax.servlet.ServletConfig;
+import org.json.JSONObject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.File;
 import java.util.List;
-
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import graphsearcher.GraphSearcher;
 
 /**
  * Created by Administrator on 2017/5/26.
  */
 public class CypherQueryServlet extends HttpServlet {
-	
-	GraphDatabaseService db = null;
-	GraphSearcher searcher;
-	List <SearchResult> resultCache;
-	int resultLength;
-	
-	public void init(ServletConfig config) throws ServletException{
-		File databasePath = new File("E:\\CrawlData\\SnowGraphDataBase\\graphdb-lucene-embedding");
-        db = new GraphDatabaseFactory().newEmbeddedDatabase(databasePath);
-        searcher = new GraphSearcher(db);
-	}
-	
+
+    List <SearchResult> resultCache;
+    int resultLength;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request, response);
@@ -40,17 +25,19 @@ public class CypherQueryServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+    	if (Config.sendToSlaveUrl(request,response,"CypherQuery")==1)
+    		return;
+    	
         request.setCharacterEncoding("UTF-8");
-        //System.out.println("start query");
-        String query = request.getParameter("query");
-        String queryText = request.getParameter("params");
-        String requestType = request.getParameter("type");
-       /* type = new String(type.getBytes("GBK") , "GBK");
-        System.out.println(type);*/
+        String queryText = request.getParameter("query");
 
-        
         JSONObject searchResult = new JSONObject();
-        int index = 0;
+
+        SearchResult graph = Config.getGraphSearcher().queryExpand(queryText);
+        searchResult = graph.toJSON(Config.getGraphDB());
+        // 注释代码为返回结果为多个的时候，上下浏览的功能
+        //null是初始搜索结果 getGraph 是浏览已存储的结果
+        /*int index = 0;
         if(requestType == null){
         	resultCache = searcher.query(queryText);
         	searchResult = resultCache.get(0).toJSON(db);
@@ -60,34 +47,15 @@ public class CypherQueryServlet extends HttpServlet {
 	    	index = Integer.parseInt(request.getParameter("index"));
 	    	SearchResult results = resultCache.get(index);
 	    	searchResult = results.toJSON(db);
-	    }
-        
+	    }*/
+
         JSONObject result = new JSONObject();
         result.put("searchResult" , searchResult);
-        result.put("index", index);
-        result.put("max" , resultLength);
-        //System.out.println("end query");
+        //result.put("index", index);  //注释原因同上
+        //result.put("max" , resultLength);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         response.getWriter().print(result.toString());
 
-
-        //region original code
-        /*try {
-            JSONObject jsobj = new JSONObject();
-            JSONObject paraobj = new JSONObject(type);
-            jsobj.put("query", query);
-            jsobj.put("params", paraobj);
-            System.out.println(query);
-            System.out.println(paraobj.toString());
-            String p = PostUtil.sendPost("http://neo4j:1@127.0.0.1:7474/db/data/cypher", jsobj.toString());
-            //String p = PostUtil.sendGet("http://neo4j:123@127.0.0.1:7474/db/data/cypher");
-            //System.out.println(p);
-            response.setContentType("application/json");
-            response.getWriter().print(p);
-        }catch(Exception e){
-            System.out.println(e.getStackTrace());
-        }*/
-        //endregion
     }
 }

@@ -2,7 +2,9 @@ package solr;
 
 import graphsearcher.GraphSearcher;
 import graphsearcher.SearchResult;
-import javafx.util.Pair;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -14,9 +16,10 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.jsoup.Jsoup;
-import org.neo4j.cypher.internal.frontend.v2_3.perty.Doc;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+
+import cn.edu.pku.sei.SnowView.servlet.Config;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,13 +38,14 @@ public class SolrKeeper {
     public void addGraphToIndex(GraphDatabaseService graphDb, GraphSearcher graphSearcher, String coreName){
         DocumentExtractor documentExtractor = new DocumentExtractor(graphDb);
         System.out.println("doc list size: " + documentExtractor.docIdList.size());
-
+        int c=0;
         List<SolrInputDocument> documentList = new ArrayList<>();
         for(long id : documentExtractor.docIdList){
-            System.out.println("id: " + id);
             String org_content = documentExtractor.getOrgText(graphDb, id);
             String content = Jsoup.parse("<html>" + org_content + "</html>").text();
-            SearchResult subGraph = graphSearcher.querySingle(content);
+            SearchResult subGraph = graphSearcher.query(content);
+            c++;
+            System.out.println(c+": " + id+" ("+subGraph.nodes.size()+")");
             StringBuilder nBuilder = new StringBuilder();
             for (long nodeId : subGraph.nodes){
                 nBuilder.append(nodeId + " ");
@@ -55,7 +59,7 @@ public class SolrKeeper {
                 document.addField("node_set", nodeSet);
                 documentList.add(document);
             }
-            if (documentList.size() >= 600) {
+            if (documentList.size() >= 1000) {
                 try {
                     client.add(coreName, documentList);
                     System.out.println("add doc to server");
@@ -101,7 +105,7 @@ public class SolrKeeper {
                         nodeSet.add(Long.parseLong(node));
                     }
                 }
-                resPairList.add(new Pair<>(id, nodeSet));
+                resPairList.add(new ImmutablePair<>(id, nodeSet));
             }
         } catch (SolrServerException e) {
             e.printStackTrace();
@@ -112,12 +116,8 @@ public class SolrKeeper {
     }
 
     public static void main(String args[]){
-        SolrKeeper keeper = new SolrKeeper("http://localhost:8983/solr");
-        /*String path = "E:\\Ling\\graphdb-lucene-embedding";
-        GraphDatabaseFactory graphDbFactory = new GraphDatabaseFactory();
-        GraphDatabaseService graphDb = graphDbFactory.newEmbeddedDatabase(new File(path));
-        GraphSearcher graphSearcher = new GraphSearcher(graphDb);
-        keeper.addGraphToIndex(graphDb, graphSearcher, "myCore");*/
-        keeper.querySolr("solr", "myCore");
+        SolrKeeper keeper = new SolrKeeper(Config.getSolrUrl());
+        keeper.addGraphToIndex(Config.getGraphDB(), Config.getGraphSearcher(), "myCore");
+        //keeper.querySolr("solr", "myCore");
     }
 }

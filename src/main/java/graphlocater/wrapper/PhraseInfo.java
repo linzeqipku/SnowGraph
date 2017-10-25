@@ -1,10 +1,10 @@
 package graphlocater.wrapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tartarus.snowball.ext.EnglishStemmer;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PhraseInfo implements Serializable {
     private static final long serialVersionUID = -8383713376186053397L;
@@ -30,8 +30,9 @@ public class PhraseInfo implements Serializable {
 
     private String text;
     private String syntaxTree;
-    private List<Proof> proofs;
+    private Set<String> cleanWordSet = null;
 
+    private List<Proof> proofs;
     private String	proofString;
 	private int	proofScore = PROOF_SCORE_DEFAULT;
 
@@ -127,9 +128,18 @@ public class PhraseInfo implements Serializable {
         this.parentId = parentId;
     }
 
-    public int getOffsetInSentence() {
-        return offsetInSentence;
+    public Set<String> getCleanWordSet(){
+        if (cleanWordSet != null)
+            return cleanWordSet;
+        cleanWordSet = new HashSet<>();
+        String cleanText = text.replaceAll("[^a-zA-Z]", "")
+                .trim().toLowerCase();
+        EnglishStemmer stemmer = new EnglishStemmer();
+        for (String word : cleanText.split("\\s+")){
+            stemmer.setCurrent(word);
+            stemmer.stem();
+            cleanWordSet.add(stemmer.getCurrent());
+        }
+        return cleanWordSet;
     }
-
-    public void setOffsetInSentence(int offsetInSentence) { this.offsetInSentence = offsetInSentence; }
 }

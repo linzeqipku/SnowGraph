@@ -115,6 +115,7 @@ public class VPExtractor {
             System.out.println(phrase.getText());
             System.out.println(phrase.getSyntaxTree());
             System.out.println(phrase.printProofs());
+            System.out.println(phrase.getCleanWordSet().toString());
         }
     }
 }

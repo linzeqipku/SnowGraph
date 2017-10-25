@@ -3,12 +3,14 @@ package graphlocater;
 import graphdb.extractors.miners.codeembedding.line.LINEExtracter;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import org.neo4j.graphdb.*;
+import org.tartarus.snowball.ext.EnglishStemmer;
 
 import java.util.*;
 
 public class GraphLocater {
     GraphDatabaseService db = null;
     HashMap<HashSet<Long>, List<String>> nodeDescMap = new HashMap<>();
+    EnglishStemmer stemmer = new EnglishStemmer();
 
     public GraphLocater(GraphDatabaseService graphdb){
         this.db = graphdb;
@@ -41,7 +43,7 @@ public class GraphLocater {
         }
     }
 
-    public List<String> tokenizeCodeNames(String name){
+    public static List<String> tokenizeCodeNames(String name){
         List<String> result = new ArrayList<>(4);
 
         return result;

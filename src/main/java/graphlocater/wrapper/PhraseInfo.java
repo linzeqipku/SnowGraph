@@ -23,14 +23,9 @@ public class PhraseInfo implements Serializable {
      */
     private int parentId = -1;
 
-    /**
-     * The offset/index of this phrase in parent sentence
-     */
-    private int offsetInSentence = -1;
-
     private String text;
     private String syntaxTree;
-    private Set<String> cleanWordSet = null;
+    private Set<String> wordSet = null;
 
     private List<Proof> proofs;
     private String	proofString;
@@ -129,17 +124,19 @@ public class PhraseInfo implements Serializable {
     }
 
     public Set<String> getCleanWordSet(){
-        if (cleanWordSet != null)
-            return cleanWordSet;
-        cleanWordSet = new HashSet<>();
-        String cleanText = text.replaceAll("[^a-zA-Z]", "")
+        if (wordSet != null)
+            return wordSet;
+        wordSet = new HashSet<>();
+        String cleanText = text.replaceAll("[^a-zA-Z]", " ")
                 .trim().toLowerCase();
         EnglishStemmer stemmer = new EnglishStemmer();
         for (String word : cleanText.split("\\s+")){
+            if (word.length() <= 2)
+                continue;
             stemmer.setCurrent(word);
             stemmer.stem();
-            cleanWordSet.add(stemmer.getCurrent());
+            wordSet.add(stemmer.getCurrent());
         }
-        return cleanWordSet;
+        return wordSet;
     }
 }

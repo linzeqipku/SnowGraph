@@ -1,4 +1,4 @@
-db E:/SnowGraphData/lucene/graphdb-lucene
+db /media/laurence/TEMP/lucene-primitive
 neo4jUrl http://127.0.0.1:7474
 exampleFilePath E:/SnowGraphData/lucene/qaexample-lucene
 solrUrl http://127.0.0.1:8983/solr

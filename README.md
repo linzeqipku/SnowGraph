@@ -2,7 +2,7 @@
 
 http://linzeqipku.github.io/SnowGraph/
 
-# Developer Documentation
+# Developer Documentation (Chinese)
 
 [软件项目知识图谱简介](https://github.com/linzeqipku/SnowGraph/blob/master/resources/manual/cn/intro.md)
 

@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="graph" class="graphdb.framework.GraphBuilder">
-        <property name="graphPath" value="E:/SnowGraphData/lucene/graphdb-quickstart"/>
+        <property name="graphPath" value="C:/Users/Lin/Desktop/testdata/graphdb-primitive"/>
         <property name="extractors">
             <list>
                 <ref bean="codegraph" />
@@ -14,10 +14,10 @@
         </property>
     </bean>
     <bean id="codegraph" class="graphdb.extractors.parsers.javacode.JavaCodeExtractor">
-        <property name="srcPath" value="E:/SnowGraphData/lucene/sourcecode" />
+        <property name="srcPath" value="C:/Users/Lin/Desktop/testdata/sourcecode" />
     </bean>
     <bean id="sograph" class="graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor">
-        <property name="folderPath" value="E:/SnowGraphData/lucene/stackoverflow" />
+        <property name="folderPath" value="C:/Users/Lin/Desktop/testdata/stackoverflow" />
     </bean>
 	<bean id="linker" class="graphdb.extractors.linkers.codeindoc.CodeInDocExtractor">
         <property name="focusSet" >

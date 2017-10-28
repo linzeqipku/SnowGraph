@@ -7,7 +7,7 @@
 
 示例数据准备
 --------------------------------
-示例数据下载链接: https://pan.baidu.com/s/1kU77v6n 密码: c6nb
+示例数据下载链接: https://pan.baidu.com/s/1kV24ubX 密码: 8ccc
 
 示例数据包含开源软件项目Apache Lucene的java源代码数据与StackOverflow社区问答数据，解压后可以放在本地文件系统的任意位置.
 

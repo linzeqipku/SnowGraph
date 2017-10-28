@@ -33,23 +33,23 @@ git commit解析插件定义了如下类型的实体与关联：<br>
 * COMMITAUTHOR_NAME ：提交人姓名。 <br>
 
 ### MUTATEDFILE实体 <br>
-一个MUTATEDFILE实体代表一次提交中被修改的文件我，包含如下属性：
-* MUTATEDFILE_TYPE：被修改文件的修改类型，包含：ADDED（新增），DELETEED（删除），MODIFIED（修改），MODECHANGED()；<br>
+一个MUTATEDFILE实体代表一次提交中被修改的文件，包含如下属性：
+* MUTATEDFILE_TYPE：被修改文件的修改类型，包含：ADDED（新增），DELETEED（删除），MODIFIED（修改）；<br>
 * MUTATEDFILE_FILE_NAME：被修改文件的文件名； <br>
 * MUTATEDFILE_API_QUALIFIEDNAME：被修改文件中涉及到的类的全名，如：apache.lucene.codecs.bulkvint.BulkVIntPostingsFormat；<br>
 * MUTATEDFILE_API_NAME：被修改文件中涉及到的类的类名，如：BulkVIntPostingsFormat；<br>
 * MUTATEDFILE_FORMER_NAME：被修改文件修改前的文件名。注：新增（ADDED）文件无此属性；<br>
 * MUTATEDFILE_LATTER_NAME：被修改文件修改后的文件名。注：删除（DELETEED）文件无此属性；<br>
-* MUTATEDFILE_CREATER_UUID：新增文件对应的提交编号；<br>
-* MUTATEDFILE_DELETER_UUID：删除文件对应的提交编号；<br>
+* MUTATEDFILE_CREATER_UUID：文件在对应编号的提交中被添加；<br>
+* MUTATEDFILE_DELETER_UUID：文件在对应编号的提交中被删除；<br>
 
 ### 关联类型
 * IS_AUTHOR_OF_COMMIT：(a)-[IS_AUTHOR_OF_COMMIT]->(b)代表提交人a提交了b ； <br>
-* DELETER_OF_FILE：(a)-[DELETER_OF_FILE]->(b)代表在提交b删除了文件a ；<br>
-* CREATER_OF_FILE：(a)-[CREATER_OF_FILE]->(b)代表在提交b创建了文件a ；<br>
-* MODIFIER_OF_FILE：(a)-[MODIFIER_OF_FILE]->(b)代表在提交b修改了文件a ；<br>
+* DELETER_OF_FILE：(a)-[DELETER_OF_FILE]->(b)代表在提交b中删除了文件a ；<br>
+* CREATER_OF_FILE：(a)-[CREATER_OF_FILE]->(b)代表在提交b中创建了文件a ；<br>
+* MODIFIER_OF_FILE：(a)-[MODIFIER_OF_FILE]->(b)代表在提交b中修改了文件a ；<br>
 * PARENT_OF_COMMIT：(a)-[PARENT_OF_COMMIT]->(b)代表提交a是提交b的上一次提交 ； <br>
-* COMMIT_CHANGE_THE_CLASS：(a)-[COMMIT_CHANGE_THE_CLASS]->(b)代表提交a中修改类b ； <br>
-* FILE_CONTAIN_THE_CLASS：(a)-[FILE_CONTAIN_THE_CLASS]->(b)代表文件a中包含类b 。 <br>
+* COMMIT_CHANGE_THE_CLASS：(a)-[COMMIT_CHANGE_THE_CLASS]->(b)代表在提交a中修改了类b ； <br>
+* FILE_CONTAIN_THE_CLASS：(a)-[FILE_CONTAIN_THE_CLASS]->(b)代表文件a在修改中涉及到类b 。 <br>
 
   

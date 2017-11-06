@@ -49,13 +49,13 @@ public class VPExtractor {
                 return o2.getProofScore() - o1.getProofScore();
             }
         });
-        if (phrases.length < 5){
+        /*if (phrases.length < 5){
             return Arrays.asList(phrases);
         }
         if (count < 5){
             return Arrays.asList(phrases).subList(0, 5);
-        }
-        return Arrays.asList(phrases);
+        }*/
+        return Arrays.asList(phrases).subList(0, count);
 	}
 
 	public static Tree parseGrammaticalTree(String sentence) {

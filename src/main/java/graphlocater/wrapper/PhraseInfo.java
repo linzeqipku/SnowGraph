@@ -1,5 +1,6 @@
 package graphlocater.wrapper;
 
+import graphlocater.utils.WordsUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
@@ -129,14 +130,12 @@ public class PhraseInfo implements Serializable {
         wordSet = new HashSet<>();
         String cleanText = text.replaceAll("[^a-zA-Z]", " ")
                 .trim().toLowerCase();
-        EnglishStemmer stemmer = new EnglishStemmer();
         for (String word : cleanText.split("\\s+")){
             if (word.length() <= 2)
                 continue;
-            stemmer.setCurrent(word);
-            stemmer.stem();
-            wordSet.add(stemmer.getCurrent());
+            wordSet.add(word);
         }
+        wordSet = WordsUtils.lemmaAndRemoveStopWords(wordSet);
         return wordSet;
     }
 }

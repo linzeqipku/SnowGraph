@@ -1,6 +1,7 @@
 package graphlocater.utils;
 
 import cn.edu.pku.sei.SnowView.servlet.Config;
+import edu.cmu.lti.jawjaw.pobj.Word;
 import edu.cmu.lti.lexical_db.ILexicalDatabase;
 import edu.cmu.lti.lexical_db.NictWordNet;
 import edu.cmu.lti.ws4j.RelatednessCalculator;
@@ -13,10 +14,12 @@ import edu.stanford.nlp.util.CoreMap;
 import graphlocater.VPExtractor;
 import graphlocater.wrapper.PhraseInfo;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.jsoup.Jsoup;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -27,12 +30,15 @@ public class WordsUtils {
     public static EnglishStemmer stemmer = new EnglishStemmer();
     public static StanfordCoreNLP pipeline = null;
     public static Set<String> englishStopWords = new HashSet<>();
+    public static Map<String, double[]> word2VecMap = new HashMap<>();
     public static ILexicalDatabase db = new NictWordNet();
-     public static boolean debug = true;
+    public static boolean debug = true;
+    public static double MIN_WORDVEC_SIM = 0.25;
 
     static{
         initPipeline();
         loadStopWors();
+        loadWordVec();
     }
 
     public static void initPipeline(){
@@ -40,7 +46,28 @@ public class WordsUtils {
         props = new Properties();
         props.put("annotators", "tokenize, ssplit, pos, lemma");
         pipeline = new StanfordCoreNLP(props);
+    }
 
+    public static void loadWordVec(){
+        try{
+            Scanner scanner = new Scanner(new FileInputStream("C:\\Users\\Ling\\Documents\\glove.6B\\glove.6B.100d.txt"));
+            while(scanner.hasNext()) {
+                String[] line = scanner.nextLine().trim().split(" ");
+                String word = line[0];
+                if (word.length() <= 2 || englishStopWords.contains(word)) {
+                    continue;
+                }
+
+                double[] vec = new double[100];
+                for (int i = 1; i < line.length; ++i){
+                    vec[i-1] = Double.parseDouble(line[i]);
+                }
+                word2VecMap.put(word, vec);
+            }
+            System.out.println("word2vec map size: " + word2VecMap.size());
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public static void loadStopWors(){
@@ -182,43 +209,73 @@ public class WordsUtils {
         return score;
     }
 
-    public static double getWordSetSim(Set<String> tgtSet, Set<String>descSet){
+    public static double getWordSetSim(Set<String> orgTgtSet, Set<String> orgDescSet){
         double TP = 0;
+        int R = orgTgtSet.size(), P = orgDescSet.size();
+
+        // intersection of the two set
+        Set<String> matchedSet = new HashSet<>();
+        matchedSet.addAll(orgTgtSet);
+        matchedSet.retainAll(orgDescSet);
+        TP += matchedSet.size();
+
+        // remove intersection, do not change original set
+        Set<String> tgtSet = new HashSet<>();
+        tgtSet.addAll(orgTgtSet);
+        tgtSet.removeAll(matchedSet);
+        Set<String> descSet = new HashSet<>();
+        descSet.addAll(orgDescSet);
+        descSet.removeAll(matchedSet);
+
+        // for each word in desc set, find the match word with max similarity
         Map<String, Double> recallMap = new HashMap<>();
         for (String desc: descSet){
-            if (tgtSet.contains(desc)) {
-                TP++;
-            } else {
-                double maxSim = 0;
-                String matchedWord = "";
-                for (String word: tgtSet){
-                    double curSim = getSingleWordSim(desc, word);
-                    if (curSim > maxSim){
-                        maxSim = curSim;
-                        matchedWord = word;
-                    }
-                }
-                TP += maxSim;
-                Double preVal = recallMap.get(matchedWord);
-                if (preVal != null){
-                    double curVal = Math.min(preVal + maxSim, 1.0);
-                    recallMap.put(matchedWord, curVal);
-                } else {
-                    recallMap.put(matchedWord, maxSim);
+            double maxSim = 0;
+            String matchedWord = "";
+            for (String word: tgtSet){
+                double curSim = getSingleWordSimWord2Vec(desc, word);
+                if (curSim > maxSim){
+                    maxSim = curSim;
+                    matchedWord = word;
                 }
             }
+            if (maxSim < WordsUtils.MIN_WORDVEC_SIM) // filter small word sim below threshold
+                continue;
+            TP += maxSim;
+            Double preVal = recallMap.get(matchedWord);
+            if (preVal != null){
+                double curVal = Math.min(preVal + maxSim, 1.0);
+                recallMap.put(matchedWord, curVal);
+            } else {
+                recallMap.put(matchedWord, maxSim);
+            }
+
         }
-        double precision = TP / descSet.size();
+        double precision = TP / P;
         double recall = 0;
         for(String key: recallMap.keySet()){
             recall += recallMap.get(key);
         }
-        recall /= tgtSet.size();
-        double score = 5 * precision * recall / (precision + 4 * recall);
+        recall = (recall + matchedSet.size()) / R;
+        double score = 2 * precision * recall / (precision + recall);
         return score;
     }
 
-    public static double getSingleWordSim(String word1, String word2){
+    public static double getSingleWordSimWord2Vec(String w1, String w2) {
+        double[] v1 = word2VecMap.get(w1);
+        double[] v2 = word2VecMap.get(w2);
+        if (v1 == null || v2 == null)
+            return 0;
+        double product = 0.0, normA = 0.0, normB = 0.0;
+        for (int i = 0; i < v1.length; ++i){
+            product += v1[i] * v2[i];
+            normA += v1[i] * v1[i];
+            normB += v2[i] * v2[i];
+        }
+        return product / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
+    public static double getSingleWordSimWS4J(String word1, String word2){
         /*available options of metrics
 	        private static RelatednessCalculator[] rcs = { new HirstStOnge(db),
 			    new LeacockChodorow(db), new Lesk(db), new WuPalmer(db),
@@ -226,11 +283,11 @@ public class WordsUtils {
 	    */
         RelatednessCalculator rc1 = new WuPalmer(db);
         double sim = rc1.calcRelatednessOfWords(word1, word2);
-        //System.out.println(word1 + " " + word2 + " " + sim);
         return sim;
     }
 
     /*public static void main(String[] args){
-        getSingleWordSim("delete", "remove");
+        double s = getSingleWordSimWord2Vec("add", "remove");
+        System.out.println(s);
     }*/
 }

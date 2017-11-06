@@ -133,7 +133,7 @@ public class GraphLocater {
         System.out.println("total query count: " + count + " myquery: " + stackQuery.size());
         GraphLocater graphLocater = new GraphLocater(graphdb);
         text = "increasing the boolean query's static max clauses";
-        text = "parse the query with * ";
+        //text = "parse the query with * ";
         graphLocater.query(text);
         /*for (String query: stackQuery) {
             //System.out.println(query);

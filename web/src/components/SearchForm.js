@@ -71,9 +71,9 @@ class SearchForm extends Component {
                            value={this.state.input} onChange={this.handleChange}
                            multiline/>
                     <Button type="submit" color="contrast">Search</Button>
+                    {this.props.question["query2"] &&
+                    <CodeModal contrast label="Detail" content={this.props.question["query2"]}/>}
                 </form>
-                {this.props.question["query2"] &&
-                <CodeModal contrast label="Detail" content={this.props.question["query2"]}/>}
             </div>
 
         );

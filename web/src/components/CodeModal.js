@@ -33,7 +33,7 @@ class CodeModal extends Component {
         const content = this.props.code ? Prism.highlight(this.props.content, Prism.languages.javascript) : this.props.content;
 
         return (
-            <div>
+            <span>
                 <Button className={classes.button} color={this.props.contrast ? "contrast" : "default"}
                         onClick={this.handleClickOpen}>
                     {this.props.label}
@@ -41,7 +41,7 @@ class CodeModal extends Component {
                 <Dialog fullWidth maxWidth="md" onRequestClose={this.handleRequestClose} open={this.state.open}>
                     <pre className={classes.container} dangerouslySetInnerHTML={{__html: content}}/>
                 </Dialog>
-            </div>
+            </span>
         );
     }
 }

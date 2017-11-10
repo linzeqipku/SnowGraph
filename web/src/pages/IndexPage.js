@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Button, CircularProgress, Input, Typography, withStyles} from "material-ui";
 import SearchIcon from 'material-ui-icons/Search'
-import {fetchRandomDocumentResult, searchQuestion} from "../redux/action";
+import {searchQuestion} from "../redux/action";
 import {connect} from "react-redux";
 
 const styles = theme => ({
@@ -70,7 +70,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
     searchQuestion: searchQuestion,
-    fetchRandomDocumentResult: fetchRandomDocumentResult
 }
 
 class IndexPage extends Component {

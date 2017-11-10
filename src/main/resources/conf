@@ -1,5 +1,4 @@
-db /media/laurence/TEMP/lucene-primitive
-neo4jUrl http://127.0.0.1:7474
-exampleFilePath E:/SnowGraphData/lucene/qaexample-lucene
+db /home/woooking/lab/graphdb
+neo4jUrl http://neo4j:1@127.0.0.1:7474
+exampleFilePath /home/woooking/java/SnowGraph/resources/examples/lucene
 solrUrl http://127.0.0.1:8983/solr
---slaveUrl http://162.105.88.28:8080/SnowGraph/

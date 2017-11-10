@@ -13,6 +13,8 @@ log/
 *.iws
 
 resources/configs/*.xml
+src/main/resources/conf
+
 out/
 utils/mywork/
 bin/

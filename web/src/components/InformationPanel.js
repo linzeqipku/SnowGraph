@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
-import {Card, CardBody, CardTitle, Table} from "reactstrap";
 import {connect} from "react-redux";
-import './InformationPanel.css';
-
-var labelCnName = {
-    "Class": "类", "Interface": "接口", "Method": "方法", "Field": "域", "DocxFile": "文档文件",
-    "DocxSection": "文档章节", "DocxTable": "文档表格", "DocxPlainText": "文档文本信息"
-};
+import {
+    Card, CardContent, CardHeader, LinearProgress,
+    Table, TableBody, TableCell, TableRow, Typography, withStyles
+} from "material-ui";
+import CodeModal from "./CodeModal";
 
 const codePropertyCnName = {
     "name": "名称", "fullName": "全名", "access": "访问修饰符", "superClass": "父类", "implements": "实现接口",
@@ -27,9 +25,19 @@ const mapStateToProps = (state) => {
     }
 }
 
+const styles = theme => ({
+    normalCell: {
+        wordWrap: "break-word",
+        whiteSpace: "pre-wrap",
+        wordBreak: "break-word",
+    }
+});
+
 class InformationPanel extends Component {
     render() {
         let body = null;
+
+        const {classes} = this.props;
 
         if (this.props.selectedNode && this.props.selectedNode.fetched) {
             const properties = Object.keys(propertyCnName)
@@ -37,34 +45,35 @@ class InformationPanel extends Component {
                 .map(x => {
                     let content = this.props.selectedNode.node.data[x];
                     content = (x === "content" || x === "comment") ?
-                        <pre className="pre-scrollable" dangerouslySetInnerHTML={{__html: content}}/> : content;
-                    return {key: x, label: propertyCnName[x], content};
+                        <CodeModal code label="SHOW" content={content}/> :
+                        <div className={classes.normalCell}>{content.toString()}</div>;
+                    return {key: x, label: x, content};
                 });
             const label = this.props.selectedNode.node["metadata"].labels[0];
             body = <Table>
-                <tbody>
-                <tr>
-                    <th>类型：</th>
-                    <td>{`${label}(${labelCnName[label]})`}</td>
-                </tr>
-                {properties.map(p => <tr key={p.key}>
-                    <th>{p.label}</th>
-                    <td>{p.content}</td>
-                </tr>)}
-                </tbody>
+                <TableBody>
+                    <TableRow>
+                        <TableCell>Type: </TableCell>
+                        <TableCell>{`${label}`}</TableCell>
+                    </TableRow>
+                    {properties.map(p => <TableRow key={p.key}>
+                        <TableCell>{p.label}</TableCell>
+                        <TableCell>{p.content}</TableCell>
+                    </TableRow>)}
+                </TableBody>
             </Table>;
         } else if (this.props.selectedNode) {
-            body = <div>获取结点信息中...</div>;
+            body = <LinearProgress/>;
         } else {
-            body = <div>请先选择一个结点</div>;
+            body = <Typography component="p"> Please select a node first </Typography>;
         }
 
         return (
             <Card>
-                <CardBody className="CardBody">
-                    <CardTitle>实体详细信息</CardTitle>
+                <CardHeader title="Entity Properties"/>
+                <CardContent>
                     {body}
-                </CardBody>
+                </CardContent>
             </Card>
         );
     }
@@ -72,4 +81,4 @@ class InformationPanel extends Component {
 
 InformationPanel = connect(mapStateToProps)(InformationPanel)
 
-export default InformationPanel;
+export default withStyles(styles)(InformationPanel);

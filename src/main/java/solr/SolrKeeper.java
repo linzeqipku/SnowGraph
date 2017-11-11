@@ -3,6 +3,7 @@ package solr;
 import graphsearcher.GraphSearcher;
 import graphsearcher.SearchResult;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.solr.client.solrj.SolrClient;
@@ -17,11 +18,8 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.jsoup.Jsoup;
 import org.neo4j.graphdb.*;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-
 import cn.edu.pku.sei.SnowView.servlet.Config;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -35,28 +33,23 @@ public class SolrKeeper {
         client = new HttpSolrClient.Builder(baseUrl).build();
     }
 
-    public void addGraphToIndex(GraphDatabaseService graphDb, GraphSearcher graphSearcher, String coreName){
+    public void addGraphToIndex(GraphDatabaseService graphDb, GraphSearcher graphSearcher, String coreName, boolean graph){
         DocumentExtractor documentExtractor = new DocumentExtractor(graphDb);
         System.out.println("doc list size: " + documentExtractor.docIdList.size());
-        int c=0;
         List<SolrInputDocument> documentList = new ArrayList<>();
         for(long id : documentExtractor.docIdList){
-            String org_content = documentExtractor.getOrgText(graphDb, id);
+            String org_content = documentExtractor.getOrgText(id);
             String content = Jsoup.parse("<html>" + org_content + "</html>").text();
-            SearchResult subGraph = graphSearcher.query(content);
-            c++;
-            System.out.println(c+": " + id+" ("+subGraph.nodes.size()+")");
-            StringBuilder nBuilder = new StringBuilder();
-            for (long nodeId : subGraph.nodes){
-                nBuilder.append(nodeId + " ");
-            }
-            String nodeSet = nBuilder.toString().trim();
             if (content.length() > 0) {
                 SolrInputDocument document = new SolrInputDocument();
                 document.addField("id", id);
                 document.addField("content", content);
                 document.addField("org_content", org_content);
-                document.addField("node_set", nodeSet);
+                if (graph){
+                	SearchResult subGraph = graphSearcher.query(content);
+                	String nodeSet = StringUtils.join(subGraph.nodes, " ").trim();
+                	document.addField("node_set", nodeSet);
+                }
                 documentList.add(document);
             }
             if (documentList.size() >= 1000) {
@@ -117,7 +110,7 @@ public class SolrKeeper {
 
     public static void main(String args[]){
         SolrKeeper keeper = new SolrKeeper(Config.getSolrUrl());
-        keeper.addGraphToIndex(Config.getGraphDB(), Config.getGraphSearcher(), "myCore");
+        keeper.addGraphToIndex(Config.getGraphDB(), Config.getGraphSearcher(), "myCore", false);
         //keeper.querySolr("solr", "myCore");
     }
 }

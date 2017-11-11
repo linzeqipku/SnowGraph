@@ -108,8 +108,8 @@ public class GitCommit {
             reader.close();
         }catch(Exception e){
             status = false;
-            System.out.print("parsing commit file meta info filed , commit file:" + commitFile.getAbsolutePath());
-            System.out.println(e.getMessage());
+            //System.out.print("parsing commit file meta info filed , commit file:" + commitFile.getAbsolutePath());
+            //System.out.println(e.getMessage());
         }
     }
 
@@ -165,7 +165,7 @@ public class GitCommit {
                     String apiName = "";
                     line = reader.readLine();
                     if (line.indexOf("---") != 0) {
-                        System.out.print("parsing commit file mutated file filed , commit file UUID:" + this.UUID);
+                        //System.out.print("parsing commit file mutated file filed , commit file UUID:" + this.UUID);
                         break;
                     }
                     String formerName = line.split(" ")[1];
@@ -179,7 +179,7 @@ public class GitCommit {
                     // get file Name after mutated
                     line = reader.readLine();
                     if (line.indexOf("+++") != 0) {
-                        System.out.print("parsing commit file mutated file filed , commit file UUID:" + this.UUID);
+                        //System.out.print("parsing commit file mutated file filed , commit file UUID:" + this.UUID);
                         break;
                     }
                     String latterName = line.split(" ")[1];
@@ -205,8 +205,8 @@ public class GitCommit {
                                 apiQualifiedName = apiQualifiedName.substring(0 , apiQualifiedName.length() - ".java".length());
                             }
                             else{
-                                System.out.println("there are some class of which the qualified name can not be found.");
-                                System.out.println("the absolute path is: " + file.getAbsolutePath() + " creater:"  + file.getCreaterUUID() +"   modifier:" + file.getModifierUUID() + "  deleter:" + file.getDeleterUUID());
+                                //System.out.println("there are some class of which the qualified name can not be found.");
+                                //System.out.println("the absolute path is: " + file.getAbsolutePath() + " creater:"  + file.getCreaterUUID() +"   modifier:" + file.getModifierUUID() + "  deleter:" + file.getDeleterUUID());
                             }
                             file.setApiQualifiedName(apiQualifiedName);
                         }
@@ -217,7 +217,7 @@ public class GitCommit {
 
             }
         }catch(Exception e){
-            System.out.println("parsing commit file mutated file filed , commit file UUID:" + this.UUID);
+            //System.out.println("parsing commit file mutated file filed , commit file UUID:" + this.UUID);
         }
     }
 

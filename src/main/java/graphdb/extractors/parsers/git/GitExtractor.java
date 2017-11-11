@@ -165,8 +165,8 @@ public class GitExtractor implements Extractor {
                                 }
 
                             } catch (Exception e) {
-                                System.out.println("when bulid a mutated file node fail.");
-                                System.out.println("the commit uuid is :" + commit.getUUID());
+                                //System.out.println("when bulid a mutated file node fail.");
+                                //System.out.println("the commit uuid is :" + commit.getUUID());
                             }
                             //endregion<build the relation between commit and mutated file>
 
@@ -213,14 +213,14 @@ public class GitExtractor implements Extractor {
                 if (UUIDs.trim().length() != 0) {
                     parentUUID = UUIDs.split(" ");
                     if(parentUUID.length > 1){
-                        System.out.println("parent size > 2 : " + key + " , " + UUIDs);
+                        //System.out.println("parent size > 2 : " + key + " , " + UUIDs);
                     }
                     for (int i = 0; i < parentUUID.length; i++) {
                         Node parentNode = commitNodeMap.get(parentUUID[i]);
                         if (parentNode != null) {
                             GitCommit.createRelationshipTo(parentNode, childNode, GitExtractor.PARENT_OF_COMMIT);
                         } else {
-                            System.out.println(key + " has no parent : " + parentUUID);
+                            //System.out.println(key + " has no parent : " + parentUUID);
                         }
                     }
                 }

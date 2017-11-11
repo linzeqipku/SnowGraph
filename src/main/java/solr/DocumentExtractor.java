@@ -3,7 +3,6 @@ package solr;
 import graphdb.extractors.parsers.jira.JiraExtractor;
 import graphdb.extractors.parsers.mail.MailListExtractor;
 import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
-import org.jsoup.Jsoup;
 import org.neo4j.graphdb.*;
 
 import java.util.ArrayList;
@@ -13,9 +12,13 @@ import java.util.List;
  * Created by laurence on 17-9-29.
  */
 public class DocumentExtractor {
-    List<Long> docIdList = new ArrayList<>();
+    
+	GraphDatabaseService graphDb=null;
+	
+	List<Long> docIdList = new ArrayList<>();
 
     public DocumentExtractor(GraphDatabaseService graphDb) {
+    	this.graphDb=graphDb;
         try (Transaction tx = graphDb.beginTx()) {
             ResourceIterator<Node> iterator = graphDb.getAllNodes().iterator();
             while (iterator.hasNext()) {
@@ -29,7 +32,8 @@ public class DocumentExtractor {
             tx.success();
         }
     }
-    public String getOrgText(GraphDatabaseService graphDb, long id){
+    
+    public String getOrgText(long id){
         String text = "";
         try(Transaction tx = graphDb.beginTx()) {
             Node node = graphDb.getNodeById(id);
@@ -44,4 +48,5 @@ public class DocumentExtractor {
         }
         return text;
     }
+    
 }

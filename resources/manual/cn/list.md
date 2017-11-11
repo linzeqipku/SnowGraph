@@ -5,7 +5,7 @@
 源数据解析
 -----------------------------------
 - [Java源代码文件解析插件](https://github.com/linzeqipku/SnowGraph/blob/master/resources/manual/cn/extractors/JavaCode.md)
-- Git版本控制记录解析插件
+- [Git版本控制记录解析插件](https://github.com/linzeqipku/SnowGraph/blob/master/resources/manual/cn/extractors/GitCommit.md)
 - [StackOverflow归档解析插件](https://github.com/linzeqipku/SnowGraph/blob/master/resources/manual/cn/extractors/StackOverflow.md)
 - [MBOX邮件归档解析插件](https://github.com/linzeqipku/SnowGraph/blob/master/resources/manual/cn/extractors/MailList.md)
 - [JIRA缺陷追踪系统解析插件](https://github.com/linzeqipku/SnowGraph/blob/master/resources/manual/cn/extractors/Jira.md)

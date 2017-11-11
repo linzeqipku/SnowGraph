@@ -7,7 +7,7 @@
 
 示例数据准备
 --------------------------------
-示例数据下载链接: https://pan.baidu.com/s/1kU77v6n 密码: c6nb
+示例数据下载链接: https://pan.baidu.com/s/1kV24ubX 密码: 8ccc
 
 示例数据包含开源软件项目Apache Lucene的java源代码数据与StackOverflow社区问答数据，解压后可以放在本地文件系统的任意位置.
 
@@ -33,4 +33,4 @@
 
 图数据库的生成需要一段时间，请耐心等待程序运行完毕.
 
-生成图数据库后，可以通过Neo4j图数据库提供的客户端工具(https://neo4j.com/, 3.2.0版本)，可以对其进行浏览.
+生成图数据库后，通过Neo4j图数据库提供的客户端工具(https://neo4j.com/, 3.2.0版本)（网盘: http://pan.baidu.com/s/1kV6745x 密码: qnyj 位置: ./tools/Neo4j-CE-3.2.0-windows.zip），可以对其进行浏览.

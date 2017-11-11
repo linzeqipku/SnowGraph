@@ -4,7 +4,7 @@ import com.google.common.base.Joiner;
 import graphdb.extractors.miners.codesnippet.code.cfg.basiccfg.BasicCFGRegularBlock;
 import graphdb.extractors.miners.codesnippet.code.ir.IRExpression;
 import graphdb.extractors.miners.codesnippet.code.ir.IRScope;
-import graphdb.extractors.utils.StringUtils;
+import graphdb.extractors.utils.TokenizationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +32,12 @@ public class IRTry implements IRAbstractStatement {
 	public String toString() {
 		String result = String.format("try (%s):\n", Joiner.on(", ").join(resources));
 		for (IRAbstractStatement statement : tryStatements)
-			result += StringUtils.getNTabs(depth) + statement + "\n";
+			result += TokenizationUtils.getNTabs(depth) + statement + "\n";
 		if (!finallyStatements.isEmpty())
-			result += StringUtils.getNTabs(depth - 1) + "finally:\n";
+			result += TokenizationUtils.getNTabs(depth - 1) + "finally:\n";
 		for (IRAbstractStatement statement : finallyStatements)
-			result += StringUtils.getNTabs(depth) + statement + "\n";
-		result += StringUtils.getNTabs(depth - 1) + "end try";
+			result += TokenizationUtils.getNTabs(depth) + statement + "\n";
+		result += TokenizationUtils.getNTabs(depth - 1) + "end try";
 		return result;
 	}
 

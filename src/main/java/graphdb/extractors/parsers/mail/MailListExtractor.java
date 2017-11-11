@@ -42,8 +42,8 @@ public class MailListExtractor implements Extractor {
     public static final String MAIL_DATE = "date";
     @PropertyDeclaration(parent = MAIL)
     public static final String MAIL_BODY = "body";
-    @PropertyDeclaration(parent = MAIL)
-    public static final String MAIL_MAIN_TEXT = "mainText";
+    //@PropertyDeclaration(parent = MAIL)
+    //public static final String MAIL_MAIN_TEXT = "mainText";
 
     @EntityDeclaration
     public static final String MAILUSER = "MailUser";

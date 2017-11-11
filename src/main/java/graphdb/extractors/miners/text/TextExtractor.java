@@ -57,17 +57,17 @@ public class TextExtractor implements Extractor {
     	
     	if (node.hasLabel(Label.label(JiraExtractor.ISSUE))){
     		node.setProperty(TITLE, node.getProperty(JiraExtractor.ISSUE_SUMMARY));
-    		node.setProperty(TEXT, node.getProperty(JiraExtractor.ISSUE_SUMMARY)+" "+node.getProperty(JiraExtractor.ISSUE_DESCRIPTION));
+    		node.setProperty(TEXT, node.getProperty(JiraExtractor.ISSUE_DESCRIPTION));
     	}
     	
     	if (node.hasLabel(Label.label(MailListExtractor.MAIL))){
     		node.setProperty(TITLE, node.getProperty(MailListExtractor.MAIL_SUBJECT));
-    		node.setProperty(TEXT, node.getProperty(MailListExtractor.MAIL_SUBJECT)+" "+node.getProperty(MailListExtractor.MAIL_MAIN_TEXT));
+    		node.setProperty(TEXT, node.getProperty(MailListExtractor.MAIL_BODY));
     	}
     	
     	if (node.hasLabel(Label.label(StackOverflowExtractor.QUESTION))){
     		node.setProperty(TITLE, node.getProperty(StackOverflowExtractor.QUESTION_TITLE));
-    		node.setProperty(TEXT, node.getProperty(StackOverflowExtractor.QUESTION_TITLE)+" "+node.getProperty(StackOverflowExtractor.QUESTION_BODY));
+    		node.setProperty(TEXT, node.getProperty(StackOverflowExtractor.QUESTION_BODY));
     	}
     	
     	if (node.hasLabel(Label.label(StackOverflowExtractor.ANSWER))){
@@ -78,7 +78,7 @@ public class TextExtractor implements Extractor {
     		else
     			title=(String) iterator.next().getStartNode().getProperty(StackOverflowExtractor.QUESTION_TITLE);
     		node.setProperty(TITLE, title);
-    		node.setProperty(TEXT, title+" "+node.getProperty(StackOverflowExtractor.ANSWER_BODY));
+    		node.setProperty(TEXT, node.getProperty(StackOverflowExtractor.ANSWER_BODY));
     	}
     	
     }

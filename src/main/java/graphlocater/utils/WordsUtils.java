@@ -1,7 +1,6 @@
 package graphlocater.utils;
 
 import cn.edu.pku.sei.SnowView.servlet.Config;
-import edu.cmu.lti.jawjaw.pobj.Word;
 import edu.cmu.lti.lexical_db.ILexicalDatabase;
 import edu.cmu.lti.lexical_db.NictWordNet;
 import edu.cmu.lti.ws4j.RelatednessCalculator;
@@ -14,7 +13,6 @@ import edu.stanford.nlp.util.CoreMap;
 import graphlocater.VPExtractor;
 import graphlocater.wrapper.PhraseInfo;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.jsoup.Jsoup;
 import org.tartarus.snowball.ext.EnglishStemmer;
 

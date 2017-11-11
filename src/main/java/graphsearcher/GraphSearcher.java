@@ -29,6 +29,7 @@ import org.tartarus.snowball.ext.EnglishStemmer;
 
 import graphdb.extractors.miners.codeembedding.line.LINEExtracter;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
+import graphdb.extractors.utils.TokenizationUtils;
 
 public class GraphSearcher {
 
@@ -89,7 +90,7 @@ public class GraphSearcher {
 					continue;
 				Set<String> words = new HashSet<>();
 				for (String e : name.split("[^A-Za-z]+"))
-					for (String word : camelSplit(e)) {
+					for (String word : TokenizationUtils.camelSplit(e)) {
 						word = stem(word);
 						if (!word2Ids.containsKey(word))
 							word2Ids.put(word, new HashSet<>());
@@ -370,17 +371,7 @@ public class GraphSearcher {
 		return word;
 	}
 
-	static List<String> camelSplit(String e) {
-		List<String> r = new ArrayList<String>();
-		Matcher m = Pattern.compile("^([a-z]+)|([A-Z][a-z]+)|([A-Z]+(?=([A-Z]|$)))").matcher(e);
-		if (m.find()) {
-			String s = m.group().toLowerCase();
-			r.add(s);
-			if (s.length() < e.length())
-				r.addAll(camelSplit(e.substring(s.length())));
-		}
-		return r;
-	}
+	
 
 	public double dist(long node1, long node2) {
 		if (!id2Vec.containsKey(node1))

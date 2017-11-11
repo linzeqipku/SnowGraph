@@ -4,7 +4,7 @@ import graphdb.extractors.miners.codesnippet.code.cfg.basiccfg.BasicCFGCondition
 import graphdb.extractors.miners.codesnippet.code.cfg.basiccfg.BasicCFGRegularBlock;
 import graphdb.extractors.miners.codesnippet.code.ir.IRExpression;
 import graphdb.extractors.miners.codesnippet.code.ir.IRScope;
-import graphdb.extractors.utils.StringUtils;
+import graphdb.extractors.utils.TokenizationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +35,14 @@ public class IRIf implements IRAbstractStatement {
 	public String toString() {
 		String result = String.format("if (%s):\n", condition);
 		for (IRAbstractStatement statement : thenStatements)
-			result += StringUtils.getNTabs(depth) + statement + "\n";
+			result += TokenizationUtils.getNTabs(depth) + statement + "\n";
 		if (!elseStatements.isEmpty()) {
-			result += StringUtils.getNTabs(depth - 1) + "else:\n";
+			result += TokenizationUtils.getNTabs(depth - 1) + "else:\n";
 			for (IRAbstractStatement statement : elseStatements)
-				result += StringUtils.getNTabs(depth) + statement + "\n";
+				result += TokenizationUtils.getNTabs(depth) + statement + "\n";
 		}
 
-		result += StringUtils.getNTabs(depth - 1) + "end if";
+		result += TokenizationUtils.getNTabs(depth - 1) + "end if";
 		return result;
 	}
 

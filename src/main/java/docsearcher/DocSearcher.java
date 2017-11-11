@@ -27,22 +27,24 @@ import org.neo4j.graphdb.Transaction;
 import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import graphsearcher.GraphSearcher;
 import graphsearcher.SearchResult;
+import ir.LuceneSearchResult;
+import ir.LuceneSearcher;
+
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import cn.edu.pku.sei.SnowView.servlet.Config;
-import solr.SolrKeeper;
 
 public class DocSearcher {
 	
 	GraphDatabaseService graphDB=null;
 	DocDistScorer docDistScorer=null;
 	GraphSearcher graphSearcher=null;
-	SolrKeeper keeper=null;
+	LuceneSearcher keeper=null;
 	
-	public DocSearcher(GraphDatabaseService graphDB, GraphSearcher graphSearcher, SolrKeeper keeper){
+	public DocSearcher(GraphDatabaseService graphDB, GraphSearcher graphSearcher){
 		this.graphDB=graphDB;
 		this.graphSearcher=graphSearcher;
-		this.keeper = keeper;
+		this.keeper = new LuceneSearcher();
 		this.docDistScorer=new DocDistScorer(graphSearcher);
 	}
 	
@@ -81,13 +83,13 @@ public class DocSearcher {
 		 * irResultList: solr索引返回的前100个结果, {<id,nodes>}
 		 *
 		 */
-		List<Pair<Long, Set<Long>>> irResultList=keeper.querySolr(query, "myCore");;
+		List<LuceneSearchResult> irResultList=keeper.query(query);;
 		
 		for (int i=0;i<irResultList.size();i++){
 			DocSearchResult doc=new DocSearchResult();
-			doc.setId(irResultList.get(i).getKey());
+			doc.setId(irResultList.get(i).id);
 			doc.setIrRank(i+1);
-			doc.setDist(docDistScorer.score(irResultList.get(i).getValue(), graph0));
+			doc.setDist(docDistScorer.score(irResultList.get(i).nodeSet, graph0));
 			r.add(doc);
 		}
 		

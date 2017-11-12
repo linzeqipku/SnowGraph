@@ -1,4 +1,4 @@
-package graphsearcher;
+package searcher.graph;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

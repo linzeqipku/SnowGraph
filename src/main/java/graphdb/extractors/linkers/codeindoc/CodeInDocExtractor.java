@@ -8,13 +8,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import graphdb.extractors.miners.text.TextExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
-import graphdb.extractors.utils.NodeToTextUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
@@ -32,22 +33,27 @@ public class CodeInDocExtractor implements Extractor {
     GraphDatabaseService db = null;
     CodeIndexes codeIndexes = null;
 
-    Set<String> focusSet = new HashSet<String>();
     Map<Node, String> nodeToTextMap = new HashMap<Node, String>();
-
-    public void setFocusSet(Set<String> focusSet) {
-        this.focusSet.clear();
-        this.focusSet.addAll(focusSet);
-    }
 
     public void run(GraphDatabaseService db) {
         this.db = db;
         codeIndexes = new CodeIndexes(db);
-        try {
-            nodeToTextMap = NodeToTextUtil.prepareNodeToTextMap(db, focusSet);
-        } catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        try (Transaction tx=db.beginTx()){
+        	for (Node node:db.getAllNodes()){
+        		if (!node.hasProperty(TextExtractor.TEXT))
+        			continue;
+        		if (node.hasLabel(Label.label(JavaCodeExtractor.CLASS)))
+        			continue;
+        		if (node.hasLabel(Label.label(JavaCodeExtractor.METHOD)))
+        			continue;
+        		if (node.hasLabel(Label.label(JavaCodeExtractor.INTERFACE)))
+        			continue;
+        		if (node.hasLabel(Label.label(JavaCodeExtractor.FIELD)))
+        			continue;
+        		String text="<html>"+node.getProperty(TextExtractor.TEXT)+"</html>";
+        		nodeToTextMap.put(node, text);
+        	}
+        	tx.success();
         }
         findDocLevelReference();
         findLexLevelReference();
@@ -123,7 +129,7 @@ public class CodeInDocExtractor implements Extractor {
         try (Transaction tx = db.beginTx()) {
 
             for (Node srcNode : nodeToTextMap.keySet()) {
-                String content = nodeToTextMap.get(srcNode);
+                String content = Jsoup.parse(nodeToTextMap.get(srcNode)).text();
                 Set<String> lexes = new HashSet<String>();
                 Collections.addAll(lexes, content.split("\\W+"));
                 Set<Node> resultNodes = new HashSet<Node>();

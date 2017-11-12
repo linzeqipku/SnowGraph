@@ -5,6 +5,12 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="graph" class="graphdb.framework.GraphBuilder">
         <property name="graphPath" value="E:/SnowGraphData/lucene/graphdb-copy"/>
-		<property name="baseGraphPath" value="E:/SnowGraphData/lucene/graphdb-primitive"/>
+		<property name="baseGraphPath" value="E:/SnowGraphData/lucene/graphdb"/>
+		<property name="extractors">
+            <list>
+                <ref bean="text" />
+            </list>
+        </property>
     </bean>
+	<bean id="text" class="graphdb.extractors.miners.text.TextExtractor" />
 </beans>

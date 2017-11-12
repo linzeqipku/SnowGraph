@@ -4,7 +4,7 @@ import graphdb.extractors.miners.codesnippet.code.cfg.basiccfg.BasicCFGCondition
 import graphdb.extractors.miners.codesnippet.code.cfg.basiccfg.BasicCFGRegularBlock;
 import graphdb.extractors.miners.codesnippet.code.ir.IRExpression;
 import graphdb.extractors.miners.codesnippet.code.ir.IRScope;
-import graphdb.extractors.utils.StringUtils;
+import graphdb.extractors.utils.TokenizationUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -42,17 +42,17 @@ public class IRSwitch implements IRAbstractStatement {
 		String result = String.format("switch (%s):\n", expression);
 		for (Pair<IRExpression, List<IRAbstractStatement>> casePair : cases) {
 			IRExpression caseExpression = casePair.getKey();
-			result += StringUtils.getNTabs(depth - 1) + String.format("case (%s):\n", caseExpression);
+			result += TokenizationUtils.getNTabs(depth - 1) + String.format("case (%s):\n", caseExpression);
 			for (IRAbstractStatement statement : casePair.getValue())
-				result += StringUtils.getNTabs(depth) + statement + "\n";
+				result += TokenizationUtils.getNTabs(depth) + statement + "\n";
 		}
 
 		if (defaultCase != null) {
-			result += StringUtils.getNTabs(depth - 1) + "default:\n";
+			result += TokenizationUtils.getNTabs(depth - 1) + "default:\n";
 			for (IRAbstractStatement statement : defaultCase)
-				result += StringUtils.getNTabs(depth) + statement + "\n";
+				result += TokenizationUtils.getNTabs(depth) + statement + "\n";
 		}
-		result += StringUtils.getNTabs(depth - 1) + "end switch";
+		result += TokenizationUtils.getNTabs(depth - 1) + "end switch";
 		return result;
 	}
 

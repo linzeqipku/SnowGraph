@@ -191,7 +191,7 @@ public class MboxHandler extends AbstractContentHandler {
         node.setProperty(MailListExtractor.MAIL_RECEIVER_MAILS, String.join(", ", receiverMails));
         node.setProperty(MailListExtractor.MAIL_DATE, date);
         node.setProperty(MailListExtractor.MAIL_BODY, body);
-        node.setProperty(MailListExtractor.MAIL_MAIN_TEXT,MailUtil.extractMainText(body));
+        //node.setProperty(MailListExtractor.MAIL_MAIN_TEXT,MailUtil.extractMainText(body));
     }
 
     public Map<String, Node> getMailMap() {

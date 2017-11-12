@@ -22,15 +22,15 @@ import org.apache.http.message.BasicNameValuePair;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
-import docsearcher.DocSearcher;
-import graphsearcher.GraphSearcher;
-import solr.SolrKeeper;
+import searcher.DocSearcher;
+import searcher.graph.GraphSearcher;
+import searcher.ir.LuceneSearcher;
 public class Config {
 
 	static private GraphDatabaseService db=null;
 	static private String neo4jUrl = null;
 	static private String exampleFilePath = null;
-	static private String solrUrl = null;
+	static private String lucenePath = null;
 	static private GraphSearcher graphSearcher = null;
 	static private DocSearcher docSearcher =null;
 	static private String slaveUrl =null;
@@ -57,8 +57,8 @@ public class Config {
 					neo4jUrl=suf;
 				if (pre.equals("exampleFilePath"))
 					exampleFilePath=suf;
-				if (pre.equals("solrUrl"))
-					solrUrl=suf;
+				if (pre.equals("lucenePath"))
+					lucenePath=suf;
 				if (pre.equals("slaveUrl")&&suf.contains("."))
 					slaveUrl=suf;
 			}
@@ -66,7 +66,7 @@ public class Config {
 		if (slaveUrl==null){
 			db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(graphPath));
 			graphSearcher=new GraphSearcher(db);
-			docSearcher = new DocSearcher(db, graphSearcher, new SolrKeeper(Config.getSolrUrl()));
+			docSearcher = new DocSearcher(db, graphSearcher);
 		}
 	}
 	
@@ -85,10 +85,10 @@ public class Config {
 			init();
 		return exampleFilePath;
 	}
-	static public String getSolrUrl(){
+	static public String getLucenePath(){
 		if (!flag)
 			init();
-		return solrUrl;
+		return lucenePath;
 	}
 	static public GraphSearcher getGraphSearcher(){
 		if (!flag)
@@ -105,6 +105,7 @@ public class Config {
 			init();
 		return slaveUrl;
 	}
+	
 	static public int sendToSlaveUrl(HttpServletRequest request, HttpServletResponse response, String serv) throws ClientProtocolException, IOException{
 		if (Config.getComputerUrl()!=null){
     		request.setCharacterEncoding("UTF-8");

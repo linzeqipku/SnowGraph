@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<script type="text/javascript">
+	    function clickSearch(){
+	
+		var query=document.getElementById("searchQuery").value;
+	    
+		$.ajax({
+			type: 'POST',
+			url: "StandardIR",
+			data: {"query":query},
+			dataType: 'json',
+			async: false,
+			success: function(response) {
+				document.getElementById("resultPanel").innerHTML=''
+				for (var i=0;i<response.length;i++){
+					var id=response[i].id
+					var type=response[i].type
+					var title=response[i].title
+					var content=response[i].content
+					var collapse="<a data-toggle='collapse' style='color:#000000;background-color:#B0C4DE;border-style:solid;border-width:1px;border-color:#000080;padding:10px' href='#collapseDetails"+i+"'>"
+					    +i+". "+title+" ["+type+"]</a>"+"<br /><br /><div class='collapse' id='collapseDetails"+i+"' style='background-color: #EDEDED'>("+id+")<br /><br />"
+					    +content+"</div><br />"
+					document.getElementById("resultPanel").innerHTML+=collapse
+				}
+			}
+		});
+
+	    }
+	</script>
+  </head>
+  <body>
+    
+	<br />
+	<br />
+	<br />
+	<br />
+	
+	<div class="input-group col-md-6 col-md-offset-3">  
+       <input id="searchQuery" type="text" class="form-control" placeholder="请输入关键词" />  
+       <span class="input-group-btn">  
+           <button class="btn btn-primary btn-search" type="button" onclick="clickSearch()">搜索</button>  
+       </span>  
+	</div>
+
+	<br />
+	
+	<h5 class="page-header"></h5>
+	
+	<div id="resultPanel" style="font-size: 20px; margin: 1cm 1cm 1cm 3cm;"></div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery.json.js"></script>
+  </body>
+</html>

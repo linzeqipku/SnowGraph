@@ -4,6 +4,12 @@
 	<groupId>cn.edu.pku.sei</groupId>
 	<artifactId>SnowGraph</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<repositories>  
+        <repository>
+            <id>cogcomp</id>  
+            <url>http://cogcomp.org/m2repo/</url>  
+        </repository>  
+    </repositories>  
 	<build>
 		<plugins>
 			<plugin>
@@ -194,10 +200,25 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/parsemis.jar</systemPath>
         </dependency>
-		<dependency>
-			<groupId>org.apache.solr</groupId>
-			<artifactId>solr-solrj</artifactId>
-			<version>7.0.0</version>
-		</dependency>
+        <dependency>
+   			 <groupId>org.apache.lucene</groupId>
+  		     <artifactId>lucene-core</artifactId>
+             <version>5.5.0</version>
+        </dependency>
+        <dependency>
+              <groupId>org.apache.lucene</groupId>
+              <artifactId>lucene-analyzers-common</artifactId>
+              <version>5.5.0</version>
+        </dependency>
+        <dependency>
+              <groupId>org.apache.lucene</groupId>
+              <artifactId>lucene-queryparser</artifactId>
+              <version>5.5.0</version>
+        </dependency>
+        <dependency>
+              <groupId>edu.cmu.lti</groupId>
+              <artifactId>ws4j</artifactId>
+              <version>1.0.1</version>
+        </dependency>
 	</dependencies>
 </project>

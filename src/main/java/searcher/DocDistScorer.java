@@ -1,8 +1,8 @@
-package docsearcher;
+package searcher;
 
 import java.util.Set;
 
-import graphsearcher.GraphSearcher;
+import searcher.graph.GraphSearcher;
 
 public class DocDistScorer {
 	

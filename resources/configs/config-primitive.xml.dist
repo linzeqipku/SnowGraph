@@ -4,29 +4,35 @@
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="graph" class="graphdb.framework.GraphBuilder">
-        <property name="graphPath" value="E:/neusoft-graphdb"/>
         <property name="extractors">
             <list>
                 <ref bean="codegraph" />
-                <ref bean="embedding" />
-                <ref bean="wordgraph" />
-                <ref bean="linker" />
+                <ref bean="sograph" />
+				<ref bean="mailgraph" />
+                <ref bean="issuegraph" />
+                <ref bean="gitgraph" />
+                <ref bean="text" />
+                <ref bean="patchlinker" />
+                <ref bean="code2doc" />
             </list>
         </property>
     </bean>
     <bean id="codegraph" class="graphdb.extractors.parsers.javacode.JavaCodeExtractor">
         <property name="srcPath" value="E:/to_xiexq" />
     </bean>
-    <bean id="embedding" class="graphdb.extractors.miners.codeembedding.line.LINEExtractor" />
-    <bean id="wordgraph" class="graphdb.extractors.parsers.word.WordKnowledgeExtractor">
-    	<property name="docxFilePath" value="E:/to_xiexq" />
+    <bean id="gitgraph" class="graphdb.extractors.parsers.git.GitExtractor">
+        <property name="gitFolderPath" value="E:/SnowGraphData/lucene/git" />
     </bean>
-    <bean id="linker" class="graphdb.extractors.linkers.codeindoc.CodeInDocExtractor">
-    	<property name="focusSet">
-    		<set>
-    			<value>graphdb.extractors.parsers.word.WordKnowledgeExtractor.PLAIN_TEXT_ENGLISH_CONTENT</value>
-    			<value>graphdb.extractors.parsers.word.WordKnowledgeExtractor.SECTION_ENGLISH_CONTENT</value>
-    		</set>
-    	</property>
+    <bean id="sograph" class="graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor">
+        <property name="folderPath" value="E:/SnowGraphData/lucene/stackoverflow" />
     </bean>
+    <bean id="issuegraph" class="graphdb.extractors.parsers.jira.JiraExtractor">
+		<property name="issueFolderPath" value="E:/SnowGraphData/lucene/jira" />
+	</bean>
+	<bean id="mailgraph" class="graphdb.extractors.parsers.mail.MailListExtractor">
+		<property name="mboxPath" value="E:/SnowGraphData/lucene/mbox" />
+	</bean>
+	<bean id="patchlinker" class="graphdb.extractors.linkers.patchtocode.PatchToCodeExtractor" />
+	<bean id="text" class="graphdb.extractors.miners.text.TextExtractor" />
+	<bean id="code2doc" class="graphdb.extractors.linkers.codeindoc.CodeInDocExtractor" />
 </beans>

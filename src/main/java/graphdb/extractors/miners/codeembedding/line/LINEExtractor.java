@@ -7,7 +7,7 @@ import org.neo4j.graphdb.*;
 /**
  * Created by laurence on 17-7-15.
  */
-public class LINEExtracter implements Extractor{
+public class LINEExtractor implements Extractor{
     @PropertyDeclaration
     public static final String LINE_VEC = "lineVec";
     LINE line = null;
@@ -29,7 +29,7 @@ public class LINEExtracter implements Extractor{
                     line += x + " ";
                 line = line.trim();
                 Node node = db.getNodeById(key);
-                node.setProperty(LINEExtracter.LINE_VEC, line);
+                node.setProperty(LINEExtractor.LINE_VEC, line);
             }
             tx.success();
         }

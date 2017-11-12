@@ -112,32 +112,25 @@ public class WordKnowledgeExtractor implements Extractor {
             List<DocumentElementInfo> subElements = ele.getSubElements();
             String currentSectionContent =
                     "<section>\n<h" + sectionEle.getLayer() + ">" + sectionEle.getTitle() + "</h" + sectionEle.getLayer() + ">";
-            String currentEnglishSectionContent =
-                    "<section>\n<h" + sectionEle.getLayer() + ">" + sectionEle.getEnglishTitle() + "</h" + sectionEle.getLayer() + ">";
+            String currentEnglishSectionContent = sectionEle.getEnglishTitle();
             for(DocumentElementInfo subEle : subElements) {
                 Node subNode = dfs_ele(subEle);
                 if(subEle instanceof SectionInfo) {
                     currentSectionContent = currentSectionContent +
                             "\n" + subNode.getProperty(SECTION_CONTENT);
-                    currentEnglishSectionContent = currentEnglishSectionContent +
-                            "\n" + subNode.getProperty(SECTION_ENGLISH_CONTENT);
                 }
                 else if(subEle instanceof TableInfo) {
                     currentSectionContent = currentSectionContent +
                             "\n" + subNode.getProperty(TABLE_CONTENT);
-                    currentEnglishSectionContent = currentEnglishSectionContent +
-                            "\n" + subNode.getProperty(TABLE_ENGLISH_CONTENT);
                 }
                 else if(subEle instanceof PlainTextInfo) {
                     currentSectionContent = currentSectionContent +
                             "\n" + subNode.getProperty(PLAIN_TEXT_CONTENT);
-                    currentEnglishSectionContent = currentEnglishSectionContent +
-                            "\n" + subNode.getProperty(PLAIN_TEXT_ENGLISH_CONTENT);
                 }
                 node.createRelationshipTo(subNode, RelationshipType.withName(HAVE_SUB_ELEMENT));
             }
             node.setProperty(SECTION_CONTENT, currentSectionContent + "</section>\n");
-            node.setProperty(SECTION_ENGLISH_CONTENT, currentEnglishSectionContent + "</section>\n");
+            node.setProperty(SECTION_ENGLISH_CONTENT, currentEnglishSectionContent);
         }
         else if(ele instanceof TableInfo) {
             GraphNodeUtil.createTableNode((TableInfo) ele, node);

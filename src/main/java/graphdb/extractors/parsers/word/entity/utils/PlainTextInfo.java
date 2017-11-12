@@ -56,7 +56,8 @@ public class PlainTextInfo extends DocumentElementInfo {
     }
 
     public String toHtml(boolean en) {
-        if(en) return "<p>" + englishText + "</p>\n";
-        else return "<p>" + text + "</p>";
+        //if(en) return "<p>" + englishText + "</p>\n";
+        if(en) return englishText;
+    	else return "<p>" + text + "</p>";
     }
 }

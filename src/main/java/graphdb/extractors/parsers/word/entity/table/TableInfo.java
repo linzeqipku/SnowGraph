@@ -90,7 +90,8 @@ public class TableInfo extends DocumentElementInfo {
     }
 
     public String toEnglish() {
-        StringBuilder ret = new StringBuilder();
+        return "";
+    	/*StringBuilder ret = new StringBuilder();
         List<DocumentElementInfo> rows = getSubElements();
 
         for(DocumentElementInfo row:rows) {
@@ -103,10 +104,11 @@ public class TableInfo extends DocumentElementInfo {
             }
             ret.append("\n");
         }
-        return ret.toString();
+        return ret.toString();*/
     }
 
     public String toHtml(boolean en) {
+    	if(en) return "";
         StringBuilder html = new StringBuilder("<table border=\"1\">\n");
         List<DocumentElementInfo> rows = getSubElements();
 

@@ -27,7 +27,7 @@ import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.Transaction;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
-import graphdb.extractors.miners.codeembedding.line.LINEExtracter;
+import graphdb.extractors.miners.codeembedding.line.LINEExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 
 public class GraphSearcher {
@@ -68,9 +68,9 @@ public class GraphSearcher {
 						&& !node.hasLabel(Label.label(JavaCodeExtractor.INTERFACE))
 						&& !node.hasLabel(Label.label(JavaCodeExtractor.METHOD)))
 					continue;
-				if (!node.hasProperty(LINEExtracter.LINE_VEC))
+				if (!node.hasProperty(LINEExtractor.LINE_VEC))
 					continue;
-				String[] eles = ((String) node.getProperty(LINEExtracter.LINE_VEC)).trim().split("\\s+");
+				String[] eles = ((String) node.getProperty(LINEExtractor.LINE_VEC)).trim().split("\\s+");
 				List<Double> vec = new ArrayList<Double>();
 				for (String e : eles)
 					vec.add(Double.parseDouble(e));
@@ -293,13 +293,16 @@ public class GraphSearcher {
 		 * 例如：代码元素SoftKittyWarmKittyLittleBallOfFur, 查询单词soft,kitty, warm, little, fur
 		 */
 		for (Pair<Long, Integer> pair : countSet) {
+			if (pair.getValue() == maxCount&&typeSet.contains(pair.getKey()))
+				candidateNodes.add(pair.getKey());
+		}
+		if (candidateNodes.size() > 0)
+			return candidateNodes;
+		
+		for (Pair<Long, Integer> pair : countSet) {
 			if (pair.getValue() == maxCount)
 				candidateNodes.add(pair.getKey());
 		}
-
-		/**
-		 * 如果以上步骤能找到搜索的起点，那么就用它们 否则的话，再去找质量可能不是那么好的起点
-		 */
 		if (candidateNodes.size() > 0)
 			return candidateNodes;
 

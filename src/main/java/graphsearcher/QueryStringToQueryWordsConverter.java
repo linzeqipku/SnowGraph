@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
 import cn.edu.pku.sei.SnowView.servlet.Config;
+import graphdb.extractors.parsers.word.corpus.Translator;
 import graphdb.extractors.parsers.word.corpus.WordSegmenter;
 
 public class QueryStringToQueryWordsConverter {
@@ -70,7 +71,15 @@ public class QueryStringToQueryWordsConverter {
 	}
 	
 	Set<String> chineseConvert(String queryString){
-		Set<String> r=new HashSet<>();
+		Set<String> r = null;
+		try {
+			r = englishConvert(Translator.ch2en(queryString));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}
+		/*Set<String> r=new HashSet<>();
 		WordSegmenter.demo(queryString);
 		for (String queryWord:WordSegmenter.demo(queryString)) {
 			if (isChinese(queryWord) && !chineseStopWords.contains(queryWord))
@@ -84,7 +93,7 @@ public class QueryStringToQueryWordsConverter {
 				if (!englishStopWords.contains(queryWord))
 					r.add(queryWord);
 			}
-		}
+		}*/
 		return r;
 	}
 	

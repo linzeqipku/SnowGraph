@@ -56,16 +56,18 @@ public class SectionInfo extends DocumentElementInfo {
     }
 
     public String toEnglish() {
-        StringBuilder ret = new StringBuilder();
+        /*StringBuilder ret = new StringBuilder();
         ret.append(getEnglishTitle());
         List<DocumentElementInfo> subElements = getSubElements();
         for(DocumentElementInfo subEle : subElements) {
             ret.append(subEle.toEnglish());
         }
-        return ret.toString();
+        return ret.toString();*/
+    	return "";
     }
 
     public String toHtml(boolean en) {
+    	if(en) return "";
         StringBuilder html = new StringBuilder("<section>\n");
         html.append("<h" + getLayer() + ">" + getTitle() + "</h" + getLayer() + ">");
         List<DocumentElementInfo> subElements = getSubElements();

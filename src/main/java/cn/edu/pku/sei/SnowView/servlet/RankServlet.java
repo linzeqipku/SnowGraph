@@ -3,7 +3,9 @@ package cn.edu.pku.sei.SnowView.servlet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import docsearcher.DocSearchResult;
+
+import searcher.DocSearchResult;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

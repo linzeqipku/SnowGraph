@@ -22,9 +22,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
-import docsearcher.DocSearcher;
-import graphsearcher.GraphSearcher;
-import ir.LuceneSearcher;
+import searcher.DocSearcher;
+import searcher.graph.GraphSearcher;
+import searcher.ir.LuceneSearcher;
 public class Config {
 
 	static private GraphDatabaseService db=null;

@@ -1,7 +1,8 @@
 package cn.edu.pku.sei.SnowView.servlet;
-import graphsearcher.SearchResult;
-
 import org.json.JSONObject;
+
+import searcher.graph.SearchResult;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

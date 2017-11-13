@@ -42,8 +42,8 @@ public class MailListExtractor implements Extractor {
     public static final String MAIL_DATE = "date";
     @PropertyDeclaration(parent = MAIL)
     public static final String MAIL_BODY = "body";
-    @PropertyDeclaration(parent = MAIL)
-    public static final String MAIL_MAIN_TEXT = "mainText";
+    //@PropertyDeclaration(parent = MAIL)
+    //public static final String MAIL_MAIN_TEXT = "mainText";
 
     @EntityDeclaration
     public static final String MAILUSER = "MailUser";
@@ -73,7 +73,9 @@ public class MailListExtractor implements Extractor {
         this.db = db;
         MboxHandler myHandler = new MboxHandler();
         myHandler.setDb(db);
-        parser = new MimeStreamParser(new MimeConfig());
+        MimeConfig config=new MimeConfig();
+        config.setMaxLineLen(-1);
+        parser = new MimeStreamParser(config);
         parser.setContentHandler(myHandler);
         parse(new File(mboxPath));
         try (Transaction tx = db.beginTx()) {

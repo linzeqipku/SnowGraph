@@ -75,7 +75,7 @@ public class Translator {
 
 
         String url = "http://dict.youdao.com/search?q=" + URLEncoder.encode( content, "UTF-8")  + "&keyfrom=dict.index";
-        Document doc = Jsoup.connect(url).timeout(8000).get();
+        Document doc = Jsoup.connect(url).timeout(10000).get();
         //System.out.println(url);
         //System.out.println(doc.body());
         Elements links = doc.getElementsByClass("trans-container");
@@ -125,6 +125,6 @@ public class Translator {
         fout.write(toPrint.toString().getBytes());
         System.out.println("TOTAL TOKENS: " + tot);
         System.out.println("TOKENS FAILED TO TRANSLATE: " + errCnt);*/
-        System.out.println(ch2en("bacdfdfd"));
+        System.out.println(ch2en("你好"));
     }
 }

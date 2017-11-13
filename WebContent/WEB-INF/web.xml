@@ -49,6 +49,17 @@
     
     <servlet>
         <description></description>
+        <display-name>StandardIR</display-name>
+        <servlet-name>StandardIR</servlet-name>
+        <servlet-class>cn.edu.pku.sei.SnowView.servlet.StandardIRServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StandardIR</servlet-name>
+        <url-pattern>/StandardIR</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <description></description>
         <display-name>Random</display-name>
         <servlet-name>Random</servlet-name>
         <servlet-class>cn.edu.pku.sei.SnowView.servlet.RandomServlet</servlet-class>

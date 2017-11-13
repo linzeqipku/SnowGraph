@@ -28,9 +28,6 @@ public class RandomServlet extends HttpServlet {
 	
 	public void init(ServletConfig config) throws ServletException{
 		
-		if (Config.getComputerUrl()!=null)
-			return;
-		
 		rand = new Random();
 
         /* 读取数据 */
@@ -57,9 +54,6 @@ public class RandomServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	
-    	if (Config.sendToSlaveUrl(request,response,"Random")==1)
-    		return;
 
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");

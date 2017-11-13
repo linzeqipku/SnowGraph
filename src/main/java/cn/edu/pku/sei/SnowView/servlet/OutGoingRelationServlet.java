@@ -22,9 +22,6 @@ public class OutGoingRelationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	
-    	if (Config.sendToSlaveUrl(request,response,"OutGoingRelation")==1)
-    		return;
-    	
         String id = request.getParameter("id");
         //System.out.println("OutGoing: "+id);
 

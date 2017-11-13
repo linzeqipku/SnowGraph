@@ -25,9 +25,6 @@ public class CypherQueryServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    	if (Config.sendToSlaveUrl(request,response,"CypherQuery")==1)
-    		return;
     	
         request.setCharacterEncoding("UTF-8");
         String queryText = request.getParameter("query");

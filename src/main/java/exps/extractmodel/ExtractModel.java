@@ -88,7 +88,7 @@ public class ExtractModel {
 		for (Vertex vertex:graph.getAllVertexes()){
 			String longName=vertex.longName.toLowerCase();
 			if (longName.contains("codec")||longName.contains("util")||longName.contains("test")||longName.contains("exception")
-					||longName.contains("comparator"))
+					||longName.contains("comparator")||longName.contains("attribute"))
 				graph.remove(vertex);
 		}
 		return graph;
@@ -162,12 +162,24 @@ public class ExtractModel {
 			name=name.replaceAll("Iterat[a-z0-9]*", "");
 			name=name.replaceAll("Factory((?=[A-Z])|$)", "");
 			name=name.replaceAll("All((?=[A-Z])|$)", "");
+			name=name.replaceAll("Buffered((?=[A-Z])|$)", "");
 			name=name.replaceAll("Config[a-z0-9]*", "");
 			name=name.replaceAll("Wrapper((?=[A-Z])|$)", "");
 			name=name.replaceAll("Impl((?=[A-Z])|$)", "");
 			name=name.replaceAll("Base((?=[A-Z])|$)", "");
 			name=name.replaceAll("Set((?=[A-Z])|$)", "");
 			name=name.replaceAll("Map((?=[A-Z])|$)", "");
+			name=name.replaceAll("Array((?=[A-Z])|$)", "");
+			name=name.replaceAll("InputStream((?=[A-Z])|$)", "");
+			name=name.replaceAll("OutputStream((?=[A-Z])|$)", "");
+			name=name.replaceAll("Simple((?=[A-Z])|$)", "");
+			name=name.replaceAll("Default((?=[A-Z])|$)", "");
+			name=name.replaceAll("Mock((?=[A-Z])|$)", "");
+			name=name.replaceAll("Standard((?=[A-Z])|$)", "");
+			name=name.replaceAll("Context((?=[A-Z])|$)", "");
+			name=name.replaceAll("IO((?=[A-Z])|$)", "");
+			name=name.replaceAll("Holder((?=[A-Z])|$)", "");
+			name=name.replaceAll("\\d+", "");
 			EnglishStemmer stemmer=new EnglishStemmer();
 			stemmer.setCurrent(name);
 			name=stemmer.getCurrent();
@@ -176,6 +188,8 @@ public class ExtractModel {
 					map.put(name, new HashSet<>());
 				map.get(name).add(vertex);
 			}
+			else
+				graph.remove(vertex);
 		}
 		for (String name:map.keySet()){
 			graph.merge(map.get(name));

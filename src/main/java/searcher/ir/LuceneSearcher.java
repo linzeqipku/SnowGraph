@@ -24,6 +24,7 @@ import org.jsoup.Jsoup;
 import org.neo4j.graphdb.*;
 import cn.edu.pku.sei.SnowView.servlet.Config;
 import graphdb.extractors.miners.text.TextExtractor;
+import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import graphdb.extractors.utils.TokenizationUtils;
 import searcher.graph.GraphSearcher;
 import searcher.graph.SearchResult;
@@ -64,6 +65,15 @@ public class LuceneSearcher {
 			for (Node node:graphDb.getAllNodes()) {
 				if (!node.hasProperty(TextExtractor.TEXT))
 					continue;
+				
+				/*
+				 * TODO
+				 */
+				if (graph){
+					if (!node.hasLabel(Label.label(StackOverflowExtractor.ANSWER))||!(boolean)node.getProperty(StackOverflowExtractor.ANSWER_ACCEPTED))
+						continue;
+				}
+					
 				String org_content = (String) node.getProperty(TextExtractor.TEXT);
 				String title = (String) node.getProperty(TextExtractor.TITLE);
 				String content = dealWithDocument("<html><title>" + title + "</title>" + org_content + "</html>");

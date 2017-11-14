@@ -29,118 +29,81 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import searcher.DocSearcher;
 import searcher.graph.GraphSearcher;
 import searcher.ir.LuceneSearcher;
+
 public class Config {
 
-	static private GraphDatabaseService db=null;
+	static private GraphDatabaseService db = null;
 	static private String neo4jUrl = null;
 	static private String exampleFilePath = null;
 	static private String lucenePath = null;
 	static private GraphSearcher graphSearcher = null;
-	static private DocSearcher docSearcher =null;
-	static private String slaveUrl =null;
-	static private boolean flag=false;
-	
+	static private DocSearcher docSearcher = null;
+	static private boolean flag = false;
+
 	public static void init() {
-		flag=true;
-		List<String> lines=new ArrayList<>();
+		flag = true;
+		List<String> lines = new ArrayList<>();
 		try {
-			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"conf"));
+			lines = FileUtils.readLines(new File(Config.class.getResource("/").getPath() + "conf"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String graphPath=null;
-		for (String line:lines){
-			int p=line.indexOf(' ');
-			if (p>0){
-				String pre=line.substring(0, p);
-				String suf=line.substring(p+1);
+		String graphPath = null;
+		for (String line : lines) {
+			int p = line.indexOf(' ');
+			if (p > 0) {
+				String pre = line.substring(0, p);
+				String suf = line.substring(p + 1);
 				if (pre.equals("db"))
-					graphPath=suf;
+					graphPath = suf;
 				if (pre.equals("neo4jUrl"))
-					neo4jUrl=suf;
+					neo4jUrl = suf;
 				if (pre.equals("exampleFilePath"))
-					exampleFilePath=suf;
+					exampleFilePath = suf;
 				if (pre.equals("lucenePath"))
-					lucenePath=suf;
-				if (pre.equals("slaveUrl")&&suf.contains("."))
-					slaveUrl=suf;
+					lucenePath = suf;
 			}
 		}
-		if (slaveUrl==null){
-			db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(graphPath));
-			graphSearcher=new GraphSearcher(db);
-			docSearcher = new DocSearcher(db, graphSearcher);
-		}
+		db = new GraphDatabaseFactory().newEmbeddedDatabase(new File(graphPath));
+		graphSearcher = new GraphSearcher(db);
+		docSearcher = new DocSearcher(db, graphSearcher);
 	}
-	
-	static public GraphDatabaseService getGraphDB(){
+
+	static public GraphDatabaseService getGraphDB() {
 		if (!flag)
 			init();
 		return db;
 	}
-	static public String getUrl(){
+
+	static public String getUrl() {
 		if (!flag)
 			init();
 		return neo4jUrl;
 	}
-	static public String getExampleFilePath(){
+
+	static public String getExampleFilePath() {
 		if (!flag)
 			init();
 		return exampleFilePath;
 	}
-	static public String getLucenePath(){
+
+	static public String getLucenePath() {
 		if (!flag)
 			init();
 		return lucenePath;
 	}
-	static public GraphSearcher getGraphSearcher(){
+
+	static public GraphSearcher getGraphSearcher() {
 		if (!flag)
 			init();
 		return graphSearcher;
 	}
-	static public DocSearcher getDocSearcher(){
+
+	static public DocSearcher getDocSearcher() {
 		if (!flag)
 			init();
 		return docSearcher;
 	}
-	static public String getComputerUrl(){
-		if (!flag)
-			init();
-		return slaveUrl;
-	}
-	
-	static public int sendToSlaveUrl(HttpServletRequest request, HttpServletResponse response, String serv) throws ClientProtocolException, IOException{
-		if (Config.getComputerUrl()!=null){
-    		request.setCharacterEncoding("UTF-8");
-    		CloseableHttpClient client=HttpClients.createDefault();
-    		HttpPost post=new HttpPost(slaveUrl+serv);
-    		List<BasicNameValuePair> list = new ArrayList<BasicNameValuePair>();
-    		Enumeration<String> params=request.getParameterNames();
-    		while (params.hasMoreElements()){
-    			String param=params.nextElement();
-    			list.add(new BasicNameValuePair(param, request.getParameter(param)));
-    		}
-    		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list,"UTF-8"); 
-    		post.setEntity(entity);
-    		HttpResponse httpResponse = client.execute(post);
-    	    InputStream inputStream = null;
-    	    try {
-    	        inputStream = httpResponse.getEntity().getContent();
-    	        IOUtils.copy(inputStream, response.getOutputStream());
-    	    } catch (IllegalStateException | IOException e) {
-    	    }
-    	    finally{
-    	        if(inputStream != null)
-    	        {
-    	            try {
-    	                inputStream.close();
-    	            } catch (IOException e) {
-    	            }
-    	        }
-    	    }
-    	    return 1;
-    	}
-		return 0;
-	}
+
 }

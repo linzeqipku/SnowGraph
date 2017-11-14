@@ -14,6 +14,8 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
+import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
+
 public class Graph {
 
 	private Map<Long, Vertex> vertexes=new HashMap<>();
@@ -89,7 +91,7 @@ public class Graph {
 		}
 	}
 	
-	public void merge(Vertex v1, Vertex v2){
+	public Vertex merge(Vertex v1, Vertex v2){
 		Vertex vo=v1,vNew=v2;
 		if (vo.name.length()>vNew.name.length()){
 			vo=v2;
@@ -97,13 +99,14 @@ public class Graph {
 		}
 		for (String type:vNew.outgoingEdges.keySet())
 			for (Vertex v3:vNew.outgoingEdges.get(type))
-				if (!vo.equals(v3))
+				if (!vo.equals(v3)&&!v3.equals(vNew))
 					addEdge(vo, v3, type);
 		for (String type:vNew.incomingEdges.keySet())
 			for (Vertex v3:vNew.incomingEdges.get(type))
-				if (!vo.equals(v3))
+				if (!vo.equals(v3)&&!v3.equals(vNew))
 					addEdge(v3, vo, type);
 		remove(vNew);
+		return vo;
 	}
 	
 	public void merge(Set<Vertex> set){
@@ -112,7 +115,7 @@ public class Graph {
 		Iterator<Vertex> iter=set.iterator();
 		Vertex v0=iter.next();
 		while (iter.hasNext())
-			merge(v0, iter.next());
+			v0=merge(v0, iter.next());
 	}
 	
 	public void writeToNeo4j(String dbPath){
@@ -133,6 +136,36 @@ public class Graph {
 			tx.success();
 		}
 		db.shutdown();
+	}
+	
+	public boolean check(){
+		for (Vertex vertex:vertexes.values()){
+			for (String key:vertex.outgoingEdges.keySet())
+				for (Vertex vertex2:vertex.outgoingEdges.get(key)){
+					if (!vertexes.containsValue(vertex2)){
+						return false;
+					}
+					if (!vertex2.incomingEdges.containsKey(key)){
+						return false;
+					}
+					if (!vertex2.incomingEdges.get(key).contains(vertex)){
+						return false;
+					}
+				}
+			for (String key:vertex.incomingEdges.keySet())
+				for (Vertex vertex2:vertex.incomingEdges.get(key)){
+					if (!vertexes.containsValue(vertex2)){
+						return false;
+					}
+					if (!vertex2.outgoingEdges.containsKey(key)){
+						return false;
+					}
+					if (!vertex2.outgoingEdges.get(key).contains(vertex)){
+						return false;
+					}
+				}
+		}
+		return true;
 	}
 	
 }

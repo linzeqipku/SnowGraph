@@ -43,7 +43,7 @@ public class LuceneSearcher {
 	
 	public static void main(String[] args){
 		try {
-			new LuceneSearcher().index(false);
+			new LuceneSearcher().index(true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,6 +60,7 @@ public class LuceneSearcher {
 	    IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 	    iwc.setOpenMode(OpenMode.CREATE);
 	    IndexWriter writer = new IndexWriter(dir, iwc);
+	    
 
 		try (Transaction tx = graphDb.beginTx()) {
 			for (Node node:graphDb.getAllNodes()) {
@@ -123,8 +124,7 @@ public class LuceneSearcher {
 		try {
 			query=qp.parse(q);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return r;
 		}
 		TopDocs topDocs=null;
 		try {
@@ -150,14 +150,15 @@ public class LuceneSearcher {
 	}
 	
 	private String dealWithDocument(String content){
+		String r="";
 		content=Jsoup.parse(content).text();
-		content=StringUtils.join(content.split("[^A-Za-z]+")," ");
-		for (String token:content.split(" ")){
+		content=content.replaceAll("[^A-Za-z]+", " ");
+		for (String token:content.split("\\s+")){
 			List<String> eles=TokenizationUtils.camelSplit(token);
 			if (eles.size()>1)
-				content+=" "+StringUtils.join(eles," ");
+				r+=" "+StringUtils.join(eles," ");
 		}
-		return content;
+		return r.trim();
 	}
 	
 }

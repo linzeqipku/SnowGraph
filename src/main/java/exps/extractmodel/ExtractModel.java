@@ -22,7 +22,10 @@ public class ExtractModel {
 	
 	public static void main(String[] args){
 		ExtractModel extractModel=new ExtractModel("E://SnowGraphData//lucene//graphdb-copy");
-		extractModel.pipeline().writeToNeo4j("E://SnowGraphData//lucene//model");
+		Graph graph=extractModel.pipeline();
+		for (Vertex vertex:graph.getAllVertexes())
+			System.out.println(vertex.name);
+		graph.writeToNeo4j("E://SnowGraphData//lucene//model");
 	}
 	
 	public ExtractModel(String srcPath){
@@ -158,7 +161,8 @@ public class ExtractModel {
 		Map<String, Set<Vertex>> map=new HashMap<>();
 		for (Vertex vertex:graph.getAllVertexes()){
 			String name=vertex.name;
-			name=name.replaceAll("\\.\\w+", "");
+			name=name.replaceAll("^\\w+\\.", "");
+			name=name.replaceAll("\\d+", "");
 			name=name.replaceAll("Iterat[a-z0-9]*", "");
 			name=name.replaceAll("Factory((?=[A-Z])|$)", "");
 			name=name.replaceAll("All((?=[A-Z])|$)", "");
@@ -176,10 +180,10 @@ public class ExtractModel {
 			name=name.replaceAll("Default((?=[A-Z])|$)", "");
 			name=name.replaceAll("Mock((?=[A-Z])|$)", "");
 			name=name.replaceAll("Standard((?=[A-Z])|$)", "");
+			name=name.replaceAll("Common((?=[A-Z])|$)", "");
 			name=name.replaceAll("Context((?=[A-Z])|$)", "");
 			name=name.replaceAll("IO((?=[A-Z])|$)", "");
 			name=name.replaceAll("Holder((?=[A-Z])|$)", "");
-			name=name.replaceAll("\\d+", "");
 			EnglishStemmer stemmer=new EnglishStemmer();
 			stemmer.setCurrent(name);
 			name=stemmer.getCurrent();

@@ -34,7 +34,6 @@ public class Config {
 	static private String lucenePath = null;
 	static private GraphSearcher graphSearcher = null;
 	static private DocSearcher docSearcher = null;
-	static private String slaveUrl = null;
 	static private boolean flag = false;
 
 	public static void init() {

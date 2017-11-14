@@ -8,9 +8,9 @@
 		<property name="baseGraphPath" value="E:/SnowGraphData/lucene/graphdb"/>
 		<property name="extractors">
             <list>
-                <ref bean="text" />
+                <ref bean="line" />
             </list>
         </property>
     </bean>
-	<bean id="text" class="graphdb.extractors.miners.text.TextExtractor" />
+	<bean id="line" class="graphdb.extractors.miners.codeembedding.line.LINEExtractor" />
 </beans>

@@ -83,7 +83,7 @@ public class DocSearcher {
 		 * irResultList: solr索引返回的前100个结果, {<id,nodes>}
 		 *
 		 */
-		List<LuceneSearchResult> irResultList=keeper.query(query);;
+		List<LuceneSearchResult> irResultList=keeper.query(query);
 		
 		for (int i=0;i<irResultList.size();i++){
 			DocSearchResult doc=new DocSearchResult();
@@ -120,10 +120,13 @@ public class DocSearcher {
 		for (long queryId:queryMap.keySet()){
 			qCnt++;
 			List<DocSearchResult> list=search(queryMap.get(queryId));
+			if (list.size()<20)
+				continue;
 			for (int i=0;i<20;i++){
 			    DocSearchResult current = list.get(i);
 				if (current.id == qaMap.get(queryId)){
 					irCount++;
+					//System.out.println(current.newRank+" "+current.irRank);
 					if (current.newRank < current.irRank){
 					    String res = count+" " +queryId + " " + current.id + " "
                                 + current.irRank+"-->"+current.newRank;

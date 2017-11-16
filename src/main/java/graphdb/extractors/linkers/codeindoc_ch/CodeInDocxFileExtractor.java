@@ -1,6 +1,6 @@
 package graphdb.extractors.linkers.codeindoc_ch;
 
-import graphdb.extractors.linkers.codeindoc.CodeIndexes;
+import graphdb.extractors.linkers.apimention.CodeIndexes;
 import graphdb.extractors.linkers.designtorequire_ch.DesignToRequireExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import graphdb.extractors.parsers.word.WordKnowledgeExtractor;

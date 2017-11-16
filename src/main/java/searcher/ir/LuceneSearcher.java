@@ -43,7 +43,7 @@ public class LuceneSearcher {
 	
 	public static void main(String[] args){
 		try {
-			new LuceneSearcher().index(true);
+			new LuceneSearcher().index(false);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -61,7 +61,6 @@ public class LuceneSearcher {
 	    iwc.setOpenMode(OpenMode.CREATE);
 	    IndexWriter writer = new IndexWriter(dir, iwc);
 	    
-
 		try (Transaction tx = graphDb.beginTx()) {
 			for (Node node:graphDb.getAllNodes()) {
 				if (!node.hasProperty(TextExtractor.TEXT))

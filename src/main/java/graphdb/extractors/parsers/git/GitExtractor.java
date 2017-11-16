@@ -1,6 +1,6 @@
 package graphdb.extractors.parsers.git;
 
-import graphdb.extractors.linkers.codeindoc.CodeIndexes;
+import graphdb.extractors.linkers.apimention.CodeIndexes;
 import graphdb.extractors.parsers.git.entity.GitCommit;
 import graphdb.extractors.parsers.git.entity.GitCommitAuthor;
 import graphdb.extractors.parsers.git.entity.MutatedFile;
@@ -46,7 +46,7 @@ public class GitExtractor implements Extractor {
 
 
     @EntityDeclaration
-    public static final String MUTATEDFILE = "mutatedFile";
+    public static final String MUTATEDFILE = "gitMutatedFile";
     @PropertyDeclaration
     public static final String MUTATEDFILE_TYPE = "type";
     @PropertyDeclaration
@@ -67,17 +67,17 @@ public class GitExtractor implements Extractor {
     @RelationshipDeclaration
     public static final String IS_AUTHOR_OF_COMMIT = "person_is_author_of_commit";
     @RelationshipDeclaration
-    public static final String DELETER_OF_FILE = "deleter_of_file";
+    public static final String DELETER_OF_FILE = "deleter_of_gitMutatedFile";
     @RelationshipDeclaration
-    public static final String CREATER_OF_FILE = "creater_of_file";
+    public static final String CREATER_OF_FILE = "creater_of_gitMutatedFile";
     @RelationshipDeclaration
-    public static final String MODIFIER_OF_FILE = "modifier_of_file";
+    public static final String MODIFIER_OF_FILE = "modifier_of_gitMutatedFile";
     @RelationshipDeclaration
     public static final String PARENT_OF_COMMIT = "parent_of_commit";
     @RelationshipDeclaration
     public static final String COMMIT_CHANGE_THE_CLASS ="commit_change_the_class" ;
     @RelationshipDeclaration
-    public static final String FILE_CONTAIN_THE_CLASS = "file_contain_the_class";
+    public static final String FILE_CONTAIN_THE_CLASS = "gitMutatedFile_contain_the_class";
 
 
     GraphDatabaseService db = null;

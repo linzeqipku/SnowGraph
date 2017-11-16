@@ -1,11 +1,8 @@
 .neo4jd3-graph {
     font: 13px Helvetica Neue, Helvetica, Arial, sans-serif;
-    font-size: 20px
-}
-
-.neo4jd3-graph {
+    font-size: 20px;
     border: 1px solid #ddd;
-    border-radius: 5px
+    border-radius: 5px;
 }
 
 .neo4jd3-info {

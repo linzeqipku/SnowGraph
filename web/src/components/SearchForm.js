@@ -20,8 +20,6 @@ const styles = theme => ({
         marginRight: theme.spacing.unit * 2,
         width: "100%",
         flex: 1,
-        marginLeft: theme.spacing.unit * 2,
-        marginRight: theme.spacing.unit * 2,
         color: theme.palette.common.white,
         '&:before': {
             backgroundColor: theme.palette.primary[400],

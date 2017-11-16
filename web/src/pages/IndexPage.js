@@ -8,13 +8,10 @@ const styles = theme => ({
     page: {
         background: theme.palette.primary[500],
         display: "flex",
-        height: "100%",
-        width: "100%",
-        position: "absolute",
+        height: "100vh",
+        width: "100vw",
         alignItems: "center",
-        justifyContent: "center",
-        top: 0,
-        left: 0,
+        justifyContent: "center"
     },
     container: {
         display: "flex",

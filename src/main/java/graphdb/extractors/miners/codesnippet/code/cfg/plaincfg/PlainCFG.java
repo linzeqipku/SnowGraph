@@ -13,7 +13,7 @@ import graphdb.extractors.miners.codesnippet.code.cfg.basiccfg.CFGVariableImpl;
 import graphdb.extractors.miners.codesnippet.code.cfg.ddg.DDGBlock;
 import graphdb.extractors.miners.codesnippet.code.ir.VariableUnit;
 import graphdb.extractors.miners.codesnippet.code.ir.statement.IRStatement;
-import graphdb.extractors.utils.CollectionUtils;
+import utils.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;

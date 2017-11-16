@@ -1,6 +1,5 @@
 package exps.graphlocater.utils;
 
-import cn.edu.pku.sei.SnowView.servlet.Config;
 import edu.cmu.lti.lexical_db.ILexicalDatabase;
 import edu.cmu.lti.lexical_db.NictWordNet;
 import edu.cmu.lti.ws4j.RelatednessCalculator;
@@ -12,6 +11,7 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import exps.graphlocater.VPExtractor;
 import exps.graphlocater.wrapper.PhraseInfo;
+import servlet.Config;
 
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;

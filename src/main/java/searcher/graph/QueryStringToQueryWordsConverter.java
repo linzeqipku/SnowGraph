@@ -11,8 +11,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
-import cn.edu.pku.sei.SnowView.servlet.Config;
 import graphdb.extractors.parsers.word.corpus.WordSegmenter;
+import servlet.Config;
 
 public class QueryStringToQueryWordsConverter {
 	

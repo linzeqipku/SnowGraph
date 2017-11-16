@@ -43,7 +43,8 @@ public class ApiMentionExtractor implements Extractor {
         			continue;
         		if (node.hasLabel(Label.label(JavaCodeExtractor.FIELD)))
         			continue;
-        		String text=(String) node.getProperty(TextExtractor.TEXT);
+        		String text=(String) node.getProperty(TextExtractor.TITLE);
+        		text+=" "+node.getProperty(TextExtractor.TEXT);
         		nodeToTextMap.put(node, text);
         	}
         	tx.success();

@@ -1,11 +1,11 @@
 package graphdb.extractors.miners.apiusage.codeslice;
 
-import graphdb.extractors.utils.Stemmer;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import utils.Stemmer;
 
 public class NameRelevancy implements Comparable<NameRelevancy>
 {

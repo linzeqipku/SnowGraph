@@ -1,13 +1,15 @@
 package searcher;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,36 +18,28 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.Jsoup;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.ResourceIterator;
-import org.neo4j.graphdb.Transaction;
-
+import graphdb.extractors.miners.text.TextExtractor;
 import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import searcher.graph.GraphSearcher;
-import searcher.graph.SearchResult;
 import searcher.ir.LuceneSearchResult;
 import searcher.ir.LuceneSearcher;
-
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-
-import cn.edu.pku.sei.SnowView.servlet.Config;
+import servlet.Config;
 
 public class DocSearcher {
-	
-	GraphDatabaseService graphDB=null;
+
 	DocDistScorer docDistScorer=null;
 	GraphSearcher graphSearcher=null;
 	LuceneSearcher keeper=null;
+	Connection connection = null;
 	
-	public DocSearcher(GraphDatabaseService graphDB, GraphSearcher graphSearcher){
-		this.graphDB=graphDB;
+	Map<Long, Long> qaMap=null;
+	Map<Long, String> queryMap=null;
+	
+	public DocSearcher(GraphSearcher graphSearcher){
 		this.graphSearcher=graphSearcher;
 		this.keeper = new LuceneSearcher();
 		this.docDistScorer=new DocDistScorer(graphSearcher);
+		connection = Config.getNeo4jBoltConnection();
 	}
 	
 	/**
@@ -56,19 +50,18 @@ public class DocSearcher {
 	public Pair<String,String> getContent(long nodeId){
 		String plain="";
 		String rich="";
-		try (Transaction tx=graphDB.beginTx()){
-			
-			if (graphDB.getNodeById(nodeId).hasLabel(Label.label(StackOverflowExtractor.QUESTION))){
-				rich+="<h2>"+graphDB.getNodeById(nodeId).getProperty(StackOverflowExtractor.QUESTION_TITLE)+"</h2>";
-				rich+=" "+graphDB.getNodeById(nodeId).getProperty(StackOverflowExtractor.QUESTION_BODY);
-				plain+=Jsoup.parse("<html>"+rich+"</html>").text();
+		try (Statement statement = connection.createStatement()) {
+			String stat="match (n) where id(n)="+nodeId+" return labels(n)[0], n."+TextExtractor.TITLE+", n."+TextExtractor.TEXT;
+			ResultSet rs=statement.executeQuery(stat);
+			while (rs.next()){
+				String label=rs.getString("labels(n)[0]");
+				String text=rs.getString("n."+TextExtractor.TEXT);
+				String title=rs.getString("n."+TextExtractor.TITLE);
+				rich="<h2>"+title+"</h2>"+text;
+				plain=Jsoup.parse("<html>"+rich+"</html>").text();
 			}
-			else if (graphDB.getNodeById(nodeId).hasLabel(Label.label(StackOverflowExtractor.ANSWER))){
-				rich+=graphDB.getNodeById(nodeId).getProperty(StackOverflowExtractor.ANSWER_BODY);
-				plain+=Jsoup.parse("<html>"+rich+"</html>").text();
-			}
-			
-			tx.success();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return new ImmutablePair<String,String>(plain, rich);
 	}
@@ -78,11 +71,6 @@ public class DocSearcher {
 		
 		Set<Long> graph0=graphSearcher.query(query).nodes;
 
-		/*
-		 * Todo (lingcy):
-		 * irResultList: solr索引返回的前100个结果, {<id,nodes>}
-		 *
-		 */
 		List<LuceneSearchResult> irResultList=keeper.query(query);
 		
 		for (int i=0;i<irResultList.size();i++){
@@ -111,10 +99,7 @@ public class DocSearcher {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		Map<Long, Long> qaMap=extractQaMap();
-		System.out.println("qaMap size: " + qaMap.size());
-		Map<Long, String> queryMap=extractQueries(qaMap);
-		System.out.println("query size: " + queryMap.size());
+		extractQaMap();
 		int count=0, irCount = 0;
 		int qCnt = 0;
 		for (long queryId:queryMap.keySet()){
@@ -146,41 +131,29 @@ public class DocSearcher {
 		System.out.println("irCount: " + irCount);
 	}
 	
-	/**
-	 * 从图数据库中抽取出QA对
-	 * @return map: qId-->aId
-	 */
-	Map<Long, Long> extractQaMap(){
-		Map<Long, Long> map=new HashMap<>();
-		try (Transaction tx=graphDB.beginTx()){
-			ResourceIterator<Node> answers=graphDB.findNodes(Label.label(StackOverflowExtractor.ANSWER));
-			while (answers.hasNext()){
-				Node answerNode=answers.next();
-				if (answerNode.hasProperty(StackOverflowExtractor.ANSWER_ACCEPTED)&&((boolean)answerNode.getProperty(StackOverflowExtractor.ANSWER_ACCEPTED))){
-					Node questionNode=answerNode.getRelationships(RelationshipType.withName(StackOverflowExtractor.HAVE_ANSWER),Direction.INCOMING).iterator().next().getStartNode();
-					long qId=questionNode.getId();
-					long aId=answerNode.getId();
-					map.put(qId, aId);
-				}
-			}
-			tx.success();
-		}
-		return map;
-	}
-	
-	Map<Long, String> extractQueries(Map<Long,Long> qaMap){
-		Map<Long, String> rMap=new HashMap<>();
-		try (Transaction tx=graphDB.beginTx()){
-			for (long id:qaMap.keySet()){
-				String query="";
-				query+="<html><title>"+graphDB.getNodeById(id).getProperty(StackOverflowExtractor.QUESTION_TITLE)+"</title>";
-				query+=" "+graphDB.getNodeById(id).getProperty(StackOverflowExtractor.QUESTION_BODY)+"</html>";
+
+	void extractQaMap(){
+		Map<Long, Long> qaMap=new HashMap<>();
+		Map<Long, String> qMap=new HashMap<>();
+		try (Statement statement = connection.createStatement()) {
+			String stat="match (q:"+StackOverflowExtractor.QUESTION+")-[:"+StackOverflowExtractor.HAVE_ANSWER+"]->(a:"
+					+StackOverflowExtractor.ANSWER+") where a."+StackOverflowExtractor.ANSWER_ACCEPTED+"=TRUE return id(q),id(a),q."
+					+StackOverflowExtractor.QUESTION_TITLE+", q."+StackOverflowExtractor.QUESTION_BODY;
+			ResultSet rs=statement.executeQuery(stat);
+			while (rs.next()){
+				long qId=rs.getLong("id(q)");
+				long aId=rs.getLong("id(a)");
+				String query="<html><title>"+rs.getString("q."+StackOverflowExtractor.QUESTION_TITLE)+"</title>";
+				query+=" "+rs.getString("q."+StackOverflowExtractor.QUESTION_BODY)+"</html>";
 				query=Jsoup.parse(query).text();
-				rMap.put(id, query);
+				qaMap.put(qId, aId);
+				qMap.put(qId, query);
 			}
-			tx.success();
+		} catch (SQLException e){
+			e.printStackTrace();
 		}
-		return rMap;
+		this.qaMap=qaMap;
+		this.queryMap=qMap;
 	}
 
 	public static void main(String[] args){

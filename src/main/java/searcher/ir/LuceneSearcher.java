@@ -21,21 +21,21 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.jsoup.Jsoup;
-import org.neo4j.graphdb.*;
-import cn.edu.pku.sei.SnowView.servlet.Config;
+
 import graphdb.extractors.miners.text.TextExtractor;
 import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
-import graphdb.extractors.utils.TokenizationUtils;
 import searcher.graph.GraphSearcher;
 import searcher.graph.SearchResult;
+import servlet.Config;
+import utils.TokenizationUtils;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
-/**
- * Created by laurence on 17-9-28.
- */
 public class LuceneSearcher {
 
 	QueryParser qp=new QueryParser("content", new EnglishAnalyzer());
@@ -43,16 +43,15 @@ public class LuceneSearcher {
 	
 	public static void main(String[] args){
 		try {
-			new LuceneSearcher().index(false);
+			new LuceneSearcher().index(true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void index(boolean graph) throws IOException {
-		
-		GraphDatabaseService graphDb=Config.getGraphDB();
+	public void index(boolean test) throws IOException {
+
 		GraphSearcher graphSearcher=Config.getGraphSearcher();
 		
 		Directory dir = FSDirectory.open(Paths.get(Config.getLucenePath()));
@@ -61,30 +60,24 @@ public class LuceneSearcher {
 	    iwc.setOpenMode(OpenMode.CREATE);
 	    IndexWriter writer = new IndexWriter(dir, iwc);
 	    
-		try (Transaction tx = graphDb.beginTx()) {
-			for (Node node:graphDb.getAllNodes()) {
-				if (!node.hasProperty(TextExtractor.TEXT))
-					continue;
-				
-				/*
-				 * TODO
-				 */
-				if (graph){
-					if (!node.hasLabel(Label.label(StackOverflowExtractor.ANSWER))||!(boolean)node.getProperty(StackOverflowExtractor.ANSWER_ACCEPTED))
-						continue;
-				}
-					
-				String org_content = (String) node.getProperty(TextExtractor.TEXT);
-				String title = (String) node.getProperty(TextExtractor.TITLE);
+		try (Statement statement = Config.getNeo4jBoltConnection().createStatement()) {
+			String stat="match (n) where exists(n."+TextExtractor.TEXT+") return n."+TextExtractor.TITLE+" n."+TextExtractor.TEXT;
+			if (test)
+				stat="match (n:"+StackOverflowExtractor.ANSWER+") where exists(n."+TextExtractor.TEXT+") and n."+StackOverflowExtractor.ANSWER_ACCEPTED+"=TRUE "
+						+"return n."+TextExtractor.TITLE+", n."+TextExtractor.TEXT+", id(n), labels(n)[0]";
+			ResultSet rs=statement.executeQuery(stat);
+			while (rs.next()) {
+				String org_content = rs.getString("n."+TextExtractor.TEXT);
+				String title = rs.getString("n."+TextExtractor.TITLE);
 				String content = dealWithDocument("<html><title>" + title + "</title>" + org_content + "</html>");
 				if (content.length() > 0) {
 					Document document = new Document();
-					document.add(new StringField("id", ""+node.getId(), Field.Store.YES));
-					document.add(new StringField("type", node.getLabels().iterator().next().name(), Field.Store.YES));
+					document.add(new StringField("id", ""+rs.getLong("id(n)"), Field.Store.YES));
+					document.add(new StringField("type", rs.getString("labels(n)[0]"), Field.Store.YES));
 					document.add(new StringField("title", title, Field.Store.YES));
 					document.add(new TextField("content", content, Field.Store.YES));
 					document.add(new TextField("org_content", org_content, Field.Store.YES));
-					if (graph) {
+					if (test) {
 						SearchResult subGraph = graphSearcher.query(content);
 						String nodeSet = StringUtils.join(subGraph.nodes, " ").trim();
 						document.add(new StringField("node_set", nodeSet, Field.Store.YES));
@@ -94,6 +87,8 @@ public class LuceneSearcher {
 					writer.addDocument(document);
 				}
 			}
+		} catch (SQLException e){
+			e.printStackTrace();
 		}
 		
 		writer.close();

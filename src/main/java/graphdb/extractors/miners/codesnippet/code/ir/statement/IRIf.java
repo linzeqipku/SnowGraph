@@ -4,7 +4,7 @@ import graphdb.extractors.miners.codesnippet.code.cfg.basiccfg.BasicCFGCondition
 import graphdb.extractors.miners.codesnippet.code.cfg.basiccfg.BasicCFGRegularBlock;
 import graphdb.extractors.miners.codesnippet.code.ir.IRExpression;
 import graphdb.extractors.miners.codesnippet.code.ir.IRScope;
-import graphdb.extractors.utils.TokenizationUtils;
+import utils.TokenizationUtils;
 
 import java.util.ArrayList;
 import java.util.List;

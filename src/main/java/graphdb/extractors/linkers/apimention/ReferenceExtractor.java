@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import graphdb.extractors.miners.text.TextExtractor;
 import graphdb.extractors.parsers.git.GitExtractor;
@@ -54,19 +56,24 @@ public class ReferenceExtractor implements Extractor {
         			continue;
         		
         		String text="";
-        		if (node.hasLabel(Label.label(StackOverflowExtractor.QUESTION)))
-        			text=(String) node.getProperty(StackOverflowExtractor.QUESTION_BODY);
+        		if (node.hasLabel(Label.label(StackOverflowExtractor.QUESTION))){
+        			text="<h2>"+node.getProperty(StackOverflowExtractor.QUESTION_TITLE)+"</h2>";
+        			text+=(String) node.getProperty(StackOverflowExtractor.QUESTION_BODY);
+        		}
         		else if (node.hasLabel(Label.label(StackOverflowExtractor.ANSWER)))
         			text=(String) node.getProperty(StackOverflowExtractor.ANSWER_BODY);
         		else if (node.hasLabel(Label.label(StackOverflowExtractor.COMMENT)))
         			text=(String) node.getProperty(StackOverflowExtractor.COMMENT_TEXT);
-        		else
-        			text=(String) node.getProperty(TextExtractor.TEXT);
+        		else {
+        			text=(String) node.getProperty(TextExtractor.TITLE);
+            		text+=" "+node.getProperty(TextExtractor.TEXT);
+        		}
         		
         		nodeToTextMap.put(node, text);
         	}
         	fromHtmlToCodeElement();
         	fromTextToJiraOrCommit();
+        	fromPatchToCodeElement();
         	tx.success();
         }
     }
@@ -165,7 +172,7 @@ public class ReferenceExtractor implements Extractor {
                 }
                 for (String version:commitMap.keySet()){
                 	if (tokenSet.contains(version)||tokenSet.contains("r"+version))
-                		srcNode.createRelationshipTo(jiraMap.get(version), RelationshipType.withName(REFERENCE));
+                		srcNode.createRelationshipTo(commitMap.get(version), RelationshipType.withName(REFERENCE));
                 }
             }
             tx.success();
@@ -173,8 +180,25 @@ public class ReferenceExtractor implements Extractor {
     }
 
     void fromPatchToCodeElement(){
+    	
     	HashMap<String, Node> patchMap = new HashMap<>();
-        
+    	try (Transaction tx = db.beginTx()) {
+    		for (Node node:db.getAllNodes()){
+    			if (node.hasLabel(Label.label(JiraExtractor.PATCH))){
+    				String name=(String) node.getProperty(JiraExtractor.PATCH_NAME);
+    				patchMap.put(name, node);
+    			}
+    		}
+    		for (Node patchNode:patchMap.values()){
+    			String content=(String) patchNode.getProperty(JiraExtractor.PATCH_CONTENT);
+    			for (String typeName:codeIndexes.typeMap.keySet()){
+    				String str=typeName.replace(".", "/")+".java";
+    				if (content.contains(str))
+    					patchNode.createRelationshipTo(db.getNodeById(codeIndexes.typeMap.get(typeName)), RelationshipType.withName(REFERENCE));
+    			}
+    		}
+    		tx.success();
+    	}
     }
     
 }

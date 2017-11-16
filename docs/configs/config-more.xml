@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="graph" class="graphdb.framework.GraphBuilder">
+        <property name="graphPath" value="E:/SnowGraphData/lucene/graphdb-more"/>
+		<property name="baseGraphPath" value="E:/SnowGraphData/lucene/graphdb-base"/>
+		<property name="extractors">
+            <list>
+                <ref bean="line" />
+                <ref bean="text" />
+                <ref bean="apimention" />
+                <ref bean="reference" />
+            </list>
+        </property>
+    </bean>
+	<bean id="line" class="graphdb.extractors.miners.codeembedding.line.LINEExtractor" />
+	<bean id="text" class="graphdb.extractors.miners.text.TextExtractor" />
+	<bean id="apimention" class="graphdb.extractors.linkers.apimention.ApiMentionExtractor" />
+	<bean id="reference" class="graphdb.extractors.linkers.apimention.ReferenceExtractor" />
+</beans>

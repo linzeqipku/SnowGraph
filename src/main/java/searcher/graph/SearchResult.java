@@ -4,6 +4,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.neo4j.graphdb.*;
 
+import cn.edu.pku.sei.SnowView.servlet.Config;
+import cn.edu.pku.sei.SnowView.utils.PostUtil;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +19,7 @@ public class SearchResult {
 	public Set<Long> edges=new HashSet<>();
 	public double cost=0;
 
-	public JSONObject toJSON(GraphDatabaseService db){
+	public JSONObject toJSON(){
 		if(nodes.size() == 0)
 			return null;
 
@@ -28,38 +31,24 @@ public class SearchResult {
 		JSONArray resultsArray = new JSONArray();
 		JSONObject returnResult = new JSONObject();
 
-		//region add nodes
 		for(long nodeID : nodes){
-			Node node;
-			try(Transaction tx = db.beginTx();
-			){
-				node = db.getNodeById(nodeID);
-				JSONObject temp = new JSONObject();
-				temp.put("id" , nodeID);
-				temp.put("labels" , node.getLabels().iterator().next().toString());
-				Map<String , Object>properties = node.getAllProperties();
-				JSONObject jsonProperties = new JSONObject();
-				for(Entry<String , Object> entry : properties.entrySet()){
-					jsonProperties.put(entry.getKey() , entry.getValue());
-				}
-				temp.put("properties" , jsonProperties);
-				nodesArray.put(temp);
-			}
-
+			String str=PostUtil.sendGet(Config.getNeo4jHttpUrl()+"/db/data/node/"+nodeID);
+			JSONObject response = new JSONObject(str);
+			JSONObject temp = new JSONObject();
+			temp.put("id", nodeID);
+			temp.put("labels", response.getJSONObject("metadata").getJSONArray("labels"));
+			temp.put("properties" , response.getJSONObject("data"));
+			nodesArray.put(temp);
 		}
-		//endregion
 		for(long edgeID : edges){
-			Relationship edge;
-			try(Transaction tx = db.beginTx()) {
-				edge = db.getRelationshipById(edgeID);
-				JSONObject temp = new JSONObject();
-				temp.put("id" , edgeID);
-				temp.put("type" , edge.getType().toString());
-				temp.put("startNode" , edge.getStartNode().getId());
-				temp.put("endNode" , edge.getEndNode().getId());
-				relationshipsArray.put(temp);
-			}
-
+			String str=PostUtil.sendGet(Config.getNeo4jHttpUrl()+"/db/data/relationship/"+edgeID);
+			JSONObject response = new JSONObject(str);
+			JSONObject temp = new JSONObject();
+			temp.put("id", edgeID);
+			temp.put("type", response.getString("type"));
+			temp.put("startNode" , Long.parseLong(response.getString("start").substring((Config.getNeo4jHttpUrl()+"/db/data/node/").length()+1)));
+			temp.put("endNode" , Long.parseLong(response.getString("end").substring((Config.getNeo4jHttpUrl()+"/db/data/node/").length()+1)));
+			relationshipsArray.put(temp);
 		}
 
 		graph.put("nodes" , nodesArray);

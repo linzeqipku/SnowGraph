@@ -1,5 +1,10 @@
 package searcher.graph;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,39 +14,21 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.neo4j.graphalgo.GraphAlgoFactory;
-import org.neo4j.graphalgo.PathFinder;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Path;
-import org.neo4j.graphdb.PathExpanders;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.ResourceIterable;
-import org.neo4j.graphdb.Transaction;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
+import cn.edu.pku.sei.SnowView.servlet.Config;
 import graphdb.extractors.miners.codeembedding.line.LINEExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import graphdb.extractors.utils.TokenizationUtils;
 
 public class GraphSearcher {
 
-	GraphDatabaseService db = null;
-	PathFinder<Path> pathFinder = GraphAlgoFactory
-			.shortestPath(PathExpanders.forTypesAndDirections(RelationshipType.withName(JavaCodeExtractor.EXTEND),
-					Direction.BOTH, RelationshipType.withName(JavaCodeExtractor.IMPLEMENT), Direction.BOTH,
-					RelationshipType.withName(JavaCodeExtractor.THROW), Direction.BOTH,
-					RelationshipType.withName(JavaCodeExtractor.PARAM), Direction.BOTH,
-					RelationshipType.withName(JavaCodeExtractor.RT), Direction.BOTH,
-					RelationshipType.withName(JavaCodeExtractor.HAVE_METHOD), Direction.BOTH,
-					RelationshipType.withName(JavaCodeExtractor.HAVE_FIELD), Direction.BOTH,
-					RelationshipType.withName(JavaCodeExtractor.CALL_METHOD), Direction.BOTH,
-					RelationshipType.withName(JavaCodeExtractor.CALL_FIELD), Direction.BOTH,
-					RelationshipType.withName(JavaCodeExtractor.TYPE), Direction.BOTH,
-					RelationshipType.withName(JavaCodeExtractor.VARIABLE), Direction.BOTH), 10);
+	Connection connection = null;
+
+	String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
+			+ JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD + "|"
+			+ JavaCodeExtractor.HAVE_FIELD + "|" + JavaCodeExtractor.CALL_METHOD + "|" + JavaCodeExtractor.CALL_FIELD
+			+ "|" + JavaCodeExtractor.TYPE + "|" + JavaCodeExtractor.VARIABLE;
 
 	static EnglishStemmer stemmer = new EnglishStemmer();
 	static QueryStringToQueryWordsConverter converter = new QueryStringToQueryWordsConverter();
@@ -56,33 +43,39 @@ public class GraphSearcher {
 
 	Set<String> queryWordSet = new HashSet<>();
 
-	public GraphSearcher(GraphDatabaseService db) {
-		this.db = db;
-		try (Transaction tx = db.beginTx()) {
-			ResourceIterable<Node> nodes = db.getAllNodes();
-			for (Node node : nodes) {
-				if (!node.hasLabel(Label.label(JavaCodeExtractor.CLASS))
-						&& !node.hasLabel(Label.label(JavaCodeExtractor.INTERFACE))
-						&& !node.hasLabel(Label.label(JavaCodeExtractor.METHOD)))
-					continue;
-				if (!node.hasProperty(LINEExtractor.LINE_VEC))
-					continue;
-				String[] eles = ((String) node.getProperty(LINEExtractor.LINE_VEC)).trim().split("\\s+");
+	public GraphSearcher() {
+		try {
+			init();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	void init() throws SQLException {
+		connection = Config.getNeo4jBoltConnection();
+		try (Statement statement = connection.createStatement()) {
+			String stat = "match (n) where not n:" + JavaCodeExtractor.FIELD + " and exists(n." + LINEExtractor.LINE_VEC
+					+ ") return " + "id(n), n." + LINEExtractor.LINE_VEC + ", n." + JavaCodeExtractor.SIGNATURE;
+			ResultSet rs = statement.executeQuery(stat);
+			while (rs.next()) {
+				String[] eles = rs.getString("n." + LINEExtractor.LINE_VEC).trim().split("\\s+");
 				List<Double> vec = new ArrayList<Double>();
 				for (String e : eles)
 					vec.add(Double.parseDouble(e));
-				long id = node.getId();
-				String sig = (String) node.getProperty(JavaCodeExtractor.SIGNATURE);
+				long id = rs.getLong("id(n)");
+				String sig = rs.getString("n." + JavaCodeExtractor.SIGNATURE);
 				if (sig.toLowerCase().contains("test"))
 					continue;
-				String name = "";
-				if (node.hasLabel(Label.label(JavaCodeExtractor.CLASS)))
-					name = (String) node.getProperty(JavaCodeExtractor.CLASS_NAME);
-				if (node.hasLabel(Label.label(JavaCodeExtractor.INTERFACE)))
-					name = (String) node.getProperty(JavaCodeExtractor.INTERFACE_NAME);
-				if (node.hasLabel(Label.label(JavaCodeExtractor.METHOD)))
-					name = (String) node.getProperty(JavaCodeExtractor.METHOD_NAME);
-				if (node.hasLabel(Label.label(JavaCodeExtractor.METHOD)) && name.matches("[A-Z]\\w+"))
+				String name = sig;
+				boolean m = false;
+				if (name.contains("(")) {
+					name = name.substring(0, name.indexOf("("));
+					m = true;
+				}
+				if (name.contains("."))
+					name = name.substring(name.indexOf(".") + 1);
+				if (m && name.matches("[A-Z]\\w+"))
 					continue;
 				Set<String> words = new HashSet<>();
 				for (String e : name.split("[^A-Za-z]+"))
@@ -96,45 +89,49 @@ public class GraphSearcher {
 				id2Words.put(id, words);
 				id2Vec.put(id, vec);
 				id2Sig.put(id, sig);
-				if (node.hasLabel(Label.label(JavaCodeExtractor.CLASS))
-						|| node.hasLabel(Label.label(JavaCodeExtractor.INTERFACE)))
+				if (!m)
 					typeSet.add(id);
 				id2Name.put(id, stem(name.toLowerCase()));
 				if (!word2Ids.containsKey(id2Name.get(id)))
 					word2Ids.put(id2Name.get(id), new HashSet<>());
 				word2Ids.get(id2Name.get(id)).add(id);
 			}
-			tx.success();
+
 		}
 	}
 
-	public SearchResult queryExpand(String queryString) {
+	public SearchResult queryExpand(String queryString){
 		SearchResult r = new SearchResult();
 		SearchResult searchResult1 = query(queryString);
-		try (Transaction tx = db.beginTx()) {
-			r.nodes.addAll(searchResult1.nodes);
-			r.cost = searchResult1.cost;
-			Set<Long> flags = new HashSet<>();
-			for (long seed1 : searchResult1.nodes) {
-				if (flags.contains(seed1))
+		r.nodes.addAll(searchResult1.nodes);
+		r.cost = searchResult1.cost;
+		Set<Long> flags = new HashSet<>();
+		for (long seed1 : searchResult1.nodes) {
+			if (flags.contains(seed1))
+				continue;
+			for (long seed2 : searchResult1.nodes) {
+				if (seed1 == seed2)
 					continue;
-				for (long seed2 : searchResult1.nodes) {
-					if (seed1 == seed2)
-						continue;
-					if (flags.contains(seed2))
-						continue;
-					Path path = pathFinder.findSinglePath(db.getNodeById(seed1), db.getNodeById(seed2));
-					if (path != null) {
-						for (Node node : path.nodes())
-							r.nodes.add(node.getId());
-						for (Relationship edge : path.relationships())
-							r.edges.add(edge.getId());
+				if (flags.contains(seed2))
+					continue;
+				try (Statement statement = connection.createStatement()){
+					String stat="match p=shortestPath((n1)-[:"+codeRels+"*..10]-(n2)) where id(n1)="+seed1+" and id(n2)="+seed2
+							+" unwind relationships(p) as r return id(startNode(r)), id(endNode(r)), id(r)";
+					ResultSet rs=statement.executeQuery(stat);
+					while (rs.next()){
+						long node1=rs.getLong("id(startNode(r))");
+						long node2=rs.getLong("id(endNode(r))");
+						long rel=rs.getLong("id(r)");
+						r.nodes.add(node1);
+						r.nodes.add(node2);
+						r.edges.add(rel);
 						flags.add(seed2);
 					}
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-				flags.add(seed1);
 			}
-			tx.success();
+			flags.add(seed1);
 		}
 		return r;
 	}
@@ -150,16 +147,12 @@ public class GraphSearcher {
 		SearchResult r = graphs.get(0);
 
 		/*
-		for (long id : r.nodes) {
-			System.out.print(id2Name.get(id) + ":");
-			List<String> wordSet = new ArrayList<>();
-			for (String word : id2Words.get(id))
-				if (queryWordSet.contains(word))
-					wordSet.add(word);
-			System.out.print(StringUtils.join(wordSet, "/") + " ");
-		}
-		System.out.println();
-		*/
+		 * for (long id : r.nodes) { System.out.print(id2Name.get(id) + ":");
+		 * List<String> wordSet = new ArrayList<>(); for (String word :
+		 * id2Words.get(id)) if (queryWordSet.contains(word)) wordSet.add(word);
+		 * System.out.print(StringUtils.join(wordSet, "/") + " "); }
+		 * System.out.println();
+		 */
 
 		return r;
 	}
@@ -287,7 +280,8 @@ public class GraphSearcher {
 
 		/**
 		 * 如果一个代码元素对应到了多个查询单词，且是最多的，则它可以作为搜索的起点
-		 * 例如：代码元素SoftKittyWarmKittyLittleBallOfFur, 查询单词soft,kitty, warm, little, fur
+		 * 例如：代码元素SoftKittyWarmKittyLittleBallOfFur, 查询单词soft,kitty, warm,
+		 * little, fur
 		 */
 		for (Pair<Long, Integer> pair : countSet) {
 			if (pair.getValue() == maxCount)
@@ -366,8 +360,6 @@ public class GraphSearcher {
 		}
 		return word;
 	}
-
-	
 
 	public double dist(long node1, long node2) {
 		if (!id2Vec.containsKey(node1))

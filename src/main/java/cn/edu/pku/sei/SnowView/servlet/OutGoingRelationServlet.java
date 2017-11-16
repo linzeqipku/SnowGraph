@@ -25,7 +25,7 @@ public class OutGoingRelationServlet extends HttpServlet {
         String id = request.getParameter("id");
         //System.out.println("OutGoing: "+id);
 
-        String p = PostUtil.sendGet(Config.getUrl()+"/db/data/node/"+id+"/relationships/all");
+        String p = PostUtil.sendGet(Config.getNeo4jHttpUrl()+"/db/data/node/"+id+"/relationships/all");
         JSONArray jsarr = new JSONArray(p);
         Map<String,Integer> cnt = new HashMap<>();
         Iterator<Object> it = jsarr.iterator();
@@ -57,7 +57,7 @@ public class OutGoingRelationServlet extends HttpServlet {
             for (JSONObject obj : list){
                 if (obj.getString("type").equals(k)) {
                     String flag = "in_";
-                    if (obj.getString("start").equals(Config.getUrl()+"/db/data/node/"+id)) flag = "ou_";
+                    if (obj.getString("start").equals(Config.getNeo4jHttpUrl()+"/db/data/node/"+id)) flag = "ou_";
                     if (flag.equals("in_")) continue;
                     obj.put("type",flag+k);
                     rejsarr.put(obj);
@@ -66,7 +66,7 @@ public class OutGoingRelationServlet extends HttpServlet {
             for (JSONObject obj : list){
                 if (obj.getString("type").equals(k)) {
                     String flag = "in_";
-                    if (obj.getString("start").equals(Config.getUrl()+"/db/data/node/"+id)) flag = "ou_";
+                    if (obj.getString("start").equals(Config.getNeo4jHttpUrl()+"/db/data/node/"+id)) flag = "ou_";
                     if (flag.equals("ou_")) continue;
                     obj.put("type",flag+k);
                     rejsarr.put(obj);

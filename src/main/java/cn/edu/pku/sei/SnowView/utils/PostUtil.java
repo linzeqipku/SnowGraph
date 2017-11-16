@@ -69,7 +69,7 @@ public class PostUtil {
         return response;
     }
     public static void main(String args[]){
-        String p = PostUtil.sendGet("http://neo4j:123@127.0.0.1:7474/db/data/cypher");
+        String p = PostUtil.sendGet("http://neo4j:123@127.0.0.1:7474/db/data/node/1000");
         System.out.println(p);
     }
 }

@@ -145,13 +145,6 @@
 			<version>1.0.6</version>
 		</dependency>
 		<dependency>
-			<groupId>parsemis</groupId>
-			<artifactId>de.parsemis</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/parsemis.jar</systemPath>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
 			<version>3.16</version>

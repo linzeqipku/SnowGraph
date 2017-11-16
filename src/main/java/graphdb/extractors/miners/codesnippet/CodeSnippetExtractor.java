@@ -11,11 +11,12 @@ import graphdb.extractors.miners.codesnippet.stackoverflow.entity.ContentInfo;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import graphdb.extractors.parsers.mail.MailListExtractor;
 import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
-import graphdb.extractors.utils.ParseUtil;
 import graphdb.framework.Extractor;
 import graphdb.framework.annotations.EntityDeclaration;
 import graphdb.framework.annotations.PropertyDeclaration;
 import graphdb.framework.annotations.RelationshipDeclaration;
+import utils.ParseUtil;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;

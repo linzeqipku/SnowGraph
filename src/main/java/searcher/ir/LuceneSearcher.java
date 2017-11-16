@@ -21,12 +21,13 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.jsoup.Jsoup;
-import cn.edu.pku.sei.SnowView.servlet.Config;
+
 import graphdb.extractors.miners.text.TextExtractor;
 import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
-import graphdb.extractors.utils.TokenizationUtils;
 import searcher.graph.GraphSearcher;
 import searcher.graph.SearchResult;
+import servlet.Config;
+import utils.TokenizationUtils;
 
 import java.io.IOException;
 import java.nio.file.Paths;

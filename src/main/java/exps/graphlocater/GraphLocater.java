@@ -1,11 +1,11 @@
 package exps.graphlocater;
 
 
-import cn.edu.pku.sei.SnowView.servlet.Config;
 import exps.graphlocater.utils.WordsUtils;
 import exps.graphlocater.wrapper.PhraseInfo;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
+import servlet.Config;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.neo4j.graphdb.*;

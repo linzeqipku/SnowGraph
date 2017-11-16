@@ -2,7 +2,8 @@ package graphdb.extractors.miners.codesnippet;
 
 import com.google.common.collect.Lists;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
-import graphdb.extractors.utils.GraphUtil;
+import utils.GraphUtil;
+
 import org.eclipse.jdt.core.dom.*;
 import org.neo4j.graphdb.*;
 

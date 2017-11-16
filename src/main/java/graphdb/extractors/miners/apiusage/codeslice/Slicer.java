@@ -6,7 +6,8 @@ import graphdb.extractors.miners.apiusage.codeanalyse.StatementAST;
 import graphdb.extractors.miners.apiusage.codeanalyse.VariableAST;
 import graphdb.extractors.miners.apiusage.entity.APIMethodData;
 import graphdb.extractors.miners.apiusage.entity.Slice;
-import graphdb.extractors.utils.CollectionUtils;
+import utils.CollectionUtils;
+
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 

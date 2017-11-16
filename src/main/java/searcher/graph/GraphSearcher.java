@@ -16,10 +16,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
-import cn.edu.pku.sei.SnowView.servlet.Config;
 import graphdb.extractors.miners.codeembedding.line.LINEExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
-import graphdb.extractors.utils.TokenizationUtils;
+import servlet.Config;
+import utils.TokenizationUtils;
 
 public class GraphSearcher {
 

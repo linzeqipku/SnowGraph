@@ -23,8 +23,7 @@ import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import searcher.graph.GraphSearcher;
 import searcher.ir.LuceneSearchResult;
 import searcher.ir.LuceneSearcher;
-
-import cn.edu.pku.sei.SnowView.servlet.Config;
+import servlet.Config;
 
 public class DocSearcher {
 

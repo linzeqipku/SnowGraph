@@ -4,8 +4,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.neo4j.graphdb.*;
 
-import cn.edu.pku.sei.SnowView.servlet.Config;
-import cn.edu.pku.sei.SnowView.utils.PostUtil;
+import servlet.Config;
+import utils.PostUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;

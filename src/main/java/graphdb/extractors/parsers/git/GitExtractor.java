@@ -213,13 +213,13 @@ public class GitExtractor implements Extractor {
                         for(MutatedContent content : contents){
                             String fileName = content.getFileName();
                             if(fileNodeMap.containsKey(fileName)){
-                                Node contentNode = null;
+                                Node contentNode = db.createNode();
                                 content.createMutatedFileNode(contentNode);
                                 Node fileNode = fileNodeMap.get(fileName);
                                 MutatedFile.createrRelationshipTo(fileNode , contentNode , GitExtractor.MUTATEDCONTENT_OF_MUTATEDFILE);
                                 GitCommit.createRelationshipTo(commitNode , contentNode , GitExtractor.MUTATEDCONTENT_OF_COMMIT);
                             }else{
-                                System.out.println("there are some mutatedContent without fileName in commit" + content.getCommitUUID() + );
+                                System.out.println("there are some mutatedContent without fileName in commit" + content.getCommitUUID()  );
                             }
                         }
                     }

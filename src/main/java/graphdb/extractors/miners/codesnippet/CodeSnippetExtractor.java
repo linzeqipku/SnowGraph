@@ -15,7 +15,7 @@ import graphdb.framework.Extractor;
 import graphdb.framework.annotations.EntityDeclaration;
 import graphdb.framework.annotations.PropertyDeclaration;
 import graphdb.framework.annotations.RelationshipDeclaration;
-import utils.ParseUtil;
+import utils.parse.ParseUtil;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -40,7 +40,7 @@ public class CodeSnippetExtractor implements Extractor {
 	@RelationshipDeclaration
 	public static final String CONTAIN_SNIPPET = "containSnippet";
 	@RelationshipDeclaration
-	public static final String CONTAINS_API = "containsAPI";
+	public static final String EXAMPLE_USES_API = "exampleUsesAPI";
 	@RelationshipDeclaration
 	public static final String CODE_EXAMPLE = "codeExample";
 
@@ -66,7 +66,7 @@ public class CodeSnippetExtractor implements Extractor {
 			ResourceIterator<Node> ite = db.findNodes(Label.label(JavaCodeExtractor.METHOD));
 			while (ite.hasNext()) {
 				Node node = ite.next();
-				Iterable<Relationship> edges = node.getRelationships(RelationshipType.withName(CONTAINS_API));
+				Iterable<Relationship> edges = node.getRelationships(RelationshipType.withName(EXAMPLE_USES_API));
 				List<Pair<Node, String>> snippets = StreamSupport.stream(edges.spliterator(), false)
 					.map(r -> r.getOtherNode(node))
 					.map(n -> Pair.of(n, n.getProperty(CodeSnippetExtractor.CODE_SNIPPET_BODY).toString()))
@@ -76,7 +76,7 @@ public class CodeSnippetExtractor implements Extractor {
 				snippets.forEach(p -> ddgs.put(p.getLeft(), DDG.createCFG(p.getRight())));
 				List<Graph<MiningNode, Integer>> frequents = Miner.mineGraphFromDDG(ddgs.values(), Miner.createSetting(3, 3));
 				List<Node> result = Sorter.sort(ddgs, frequents);
-				result.stream().limit(5).forEach(r -> node.createRelationshipTo(r, RelationshipType.withName(CODE_EXAMPLE)));
+				result.stream().forEach(r -> node.createRelationshipTo(r, RelationshipType.withName(CODE_EXAMPLE)));
 			}
 			tx.success();
 		}

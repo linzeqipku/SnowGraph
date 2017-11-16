@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import utils.Stemmer;
+import utils.parse.Stemmer;
 
 public class NameRelevancy implements Comparable<NameRelevancy>
 {

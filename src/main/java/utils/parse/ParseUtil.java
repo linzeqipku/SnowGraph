@@ -1,4 +1,4 @@
-package utils;
+package utils.parse;
 
 import com.google.common.collect.Lists;
 import org.eclipse.jdt.core.JavaCore;

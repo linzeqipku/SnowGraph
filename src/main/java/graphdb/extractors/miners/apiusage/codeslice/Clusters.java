@@ -1,7 +1,7 @@
 package graphdb.extractors.miners.apiusage.codeslice;
 
 import graphdb.extractors.miners.apiusage.entity.Slice;
-import utils.CollectionUtils;
+import utils.parse.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.*;

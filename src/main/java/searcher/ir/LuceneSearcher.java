@@ -27,7 +27,7 @@ import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import searcher.graph.GraphSearcher;
 import searcher.graph.SearchResult;
 import servlet.Config;
-import utils.TokenizationUtils;
+import utils.parse.TokenizationUtils;
 
 import java.io.IOException;
 import java.nio.file.Paths;

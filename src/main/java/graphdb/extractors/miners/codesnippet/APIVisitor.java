@@ -2,7 +2,7 @@ package graphdb.extractors.miners.codesnippet;
 
 import com.google.common.collect.Lists;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
-import utils.GraphUtil;
+import utils.parse.GraphUtil;
 
 import org.eclipse.jdt.core.dom.*;
 import org.neo4j.graphdb.*;
@@ -106,7 +106,7 @@ public class APIVisitor extends ASTVisitor {
 	}
 
 	private boolean resolveMethod(SimpleType t, List<Node> methods) {
-		Node classNode = db.findNode(Label.label(JavaCodeExtractor.CLASS), JavaCodeExtractor.CLASS_NAME, t.getName().getFullyQualifiedName());
+		Node classNode = db.findNode(Label.label(JavaCodeExtractor.CLASS), JavaCodeExtractor.CLASS_FULLNAME, t.getName().getFullyQualifiedName());
 		return classNode != null && resolveMethod(classNode, methods);
 	}
 
@@ -120,10 +120,10 @@ public class APIVisitor extends ASTVisitor {
 	}
 
 	private void createLink(Node from, Node to) {
-		Iterable<Relationship> edges = from.getRelationships(RelationshipType.withName(CodeSnippetExtractor.CONTAINS_API));
+		Iterable<Relationship> edges = from.getRelationships(RelationshipType.withName(CodeSnippetExtractor.EXAMPLE_USES_API));
 		for (Relationship edge : edges) {
 			if (edge.getOtherNode(from).equals(to)) return;
 		}
-		from.createRelationshipTo(to, RelationshipType.withName(CodeSnippetExtractor.CONTAINS_API));
+		from.createRelationshipTo(to, RelationshipType.withName(CodeSnippetExtractor.EXAMPLE_USES_API));
 	}
 }

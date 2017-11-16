@@ -19,7 +19,7 @@ import org.tartarus.snowball.ext.EnglishStemmer;
 import graphdb.extractors.miners.codeembedding.line.LINEExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import servlet.Config;
-import utils.TokenizationUtils;
+import utils.parse.TokenizationUtils;
 
 public class GraphSearcher {
 

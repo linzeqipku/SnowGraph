@@ -28,7 +28,7 @@ export const GOTO_INDEX = 'GOTO_INDEX';
 
 export const CHANGE_TAB = 'CHANGE_TAB';
 
-const URL = "http://162.105.88.181:8080";
+const URL = "http://127.0.0.1:8080/SnowGraph";
 
 export function searchQuestion(question) {
     return {type: SEARCH_QUESTION, question};

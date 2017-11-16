@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Card, CardContent, CardHeader} from "material-ui";
-import Neo4jd3 from '../neo4jd3.js';
+import {Neo4jD3} from '../neo4jd3.js';
 import {drawGraph, fetchNode, fetchRelationList, selectNode} from "../redux/action";
 import {connect} from "react-redux";
 import {translation} from "../translation";
@@ -38,7 +38,7 @@ class GraphPanel extends Component {
     }
 
     updateD3() {
-        const neo4jd3 = new Neo4jd3('#neo4jd3', {
+        const neo4jd3 = new Neo4jD3('#neo4jd3', {
             showClassChnName: false,
             classes: translation.classes,
             showRlationshipsChnName: false,
@@ -92,7 +92,8 @@ class GraphPanel extends Component {
                 this.props.fetchRelationList(node.id, this.getRelationLists(), this.getGraph());
                 this.props.selectNode(node.id);
             },
-            onNodeDoubleClick: () => {
+            onNodeDoubleClick: (node) => {
+                neo4jd3.removeNode(node);
             },
             onRelationshipDoubleClick: () => {
             },

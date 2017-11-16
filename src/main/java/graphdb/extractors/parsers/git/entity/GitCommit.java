@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -25,8 +27,11 @@ public class GitCommit {
     private String parentUUID = "";
     private String commitSvnUrl = "";
     private List<MutatedFile> mutatedFiles = null;
+    private List<MutatedContent> mutatedContents = null;
     private boolean status = false;
 
+
+    //region <getter>
     public String getUUID(){
         return UUID;
     }
@@ -55,10 +60,15 @@ public class GitCommit {
         return mutatedFiles;
     }
 
+    public List<MutatedContent> getMutatedContents(){
+        return mutatedContents;
+    }
+
     public boolean getStatus(){
         return status;
     }
 
+    //endregion <getter>
 
     public static void main(String[] args){
 
@@ -121,6 +131,16 @@ public class GitCommit {
             mutatedFiles.add(file);
         }
     }
+
+    private void addMutatedContent(MutatedContent content){
+        if(mutatedContents != null){
+            mutatedContents.add(content);
+        }else{
+            mutatedContents = new ArrayList<MutatedContent>();
+            mutatedContents.add(content);
+        }
+    }
+
     private void addMutatedFile(BufferedReader reader){
         try{
             String line;
@@ -165,7 +185,7 @@ public class GitCommit {
                     String apiName = "";
                     line = reader.readLine();
                     if (line.indexOf("---") != 0) {
-                        //System.out.print("parsing commit file mutated file filed , commit file UUID:" + this.UUID);
+                        System.out.print("parsing commit file mutated file filed , commit file UUID:" + this.UUID);
                         break;
                     }
                     String formerName = line.split(" ")[1];
@@ -214,6 +234,45 @@ public class GitCommit {
                     }
                     addMutatedFile(file);
                 }
+                line = reader.readLine();
+                Pattern pattern = Pattern.compile("@@ -([0-9]+),([0-9]+) +([0-9]+),([0-9]+) @@");
+                Matcher matcher = pattern.matcher(line);
+
+                if(matcher.find()){
+                    MutatedContent content = new MutatedContent();
+
+                    content.setType(file.getMutatedType());
+                    content.setCommitUUID(this.UUID);
+                    content.setFormerName(file.getFormerName());
+                    content.setLatterName(file.getLatterName());
+
+                    int formerStartLineNum = Integer.parseInt( matcher.group(1) );
+                    int formerLines = Integer.parseInt( matcher.group(2) );
+                    int latterStartLineNum = Integer.parseInt( matcher.group(3) );
+                    int latterLines = Integer.parseInt( matcher.group(4));
+
+                    content.setFormerStartLineNum(formerStartLineNum ) ;
+                    content.setFormerLines( formerLines );
+                    content.setLatterStartLineNum( latterStartLineNum );
+                    content.setLatterLines( latterLines ) ;
+
+                    String contentString = "";
+                    while(formerLines > 0 || latterLines > 0){
+                        line = reader.readLine();
+                        if( line.startsWith( "+" ) ) latterLines -- ;
+                        else if( line.startsWith( "-" ) ) formerLines --;
+                        else{
+                            formerLines --;
+                            latterLines -- ;
+                        }
+                        contentString += (line + "\n");
+                    }
+
+                    content.setContent(contentString);
+                    addMutatedContent(content);
+                }
+
+
 
             }
         }catch(Exception e){

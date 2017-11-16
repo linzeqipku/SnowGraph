@@ -4,6 +4,7 @@
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="graph" class="graphdb.framework.GraphBuilder">
+    	<property name="graphPath" value="E:/SnowGraphData/lucene/graphdb-base"/>
         <property name="extractors">
             <list>
                 <ref bean="codegraph" />
@@ -11,14 +12,11 @@
 				<ref bean="mailgraph" />
                 <ref bean="issuegraph" />
                 <ref bean="gitgraph" />
-                <ref bean="text" />
-                <ref bean="patchlinker" />
-                <ref bean="code2doc" />
             </list>
         </property>
     </bean>
     <bean id="codegraph" class="graphdb.extractors.parsers.javacode.JavaCodeExtractor">
-        <property name="srcPath" value="E:/to_xiexq" />
+        <property name="srcPath" value="E:/SnowGraphData/lucene/sourcecode" />
     </bean>
     <bean id="gitgraph" class="graphdb.extractors.parsers.git.GitExtractor">
         <property name="gitFolderPath" value="E:/SnowGraphData/lucene/git" />
@@ -32,7 +30,4 @@
 	<bean id="mailgraph" class="graphdb.extractors.parsers.mail.MailListExtractor">
 		<property name="mboxPath" value="E:/SnowGraphData/lucene/mbox" />
 	</bean>
-	<bean id="patchlinker" class="graphdb.extractors.linkers.patchtocode.PatchToCodeExtractor" />
-	<bean id="text" class="graphdb.extractors.miners.text.TextExtractor" />
-	<bean id="code2doc" class="graphdb.extractors.linkers.codeindoc.CodeInDocExtractor" />
 </beans>

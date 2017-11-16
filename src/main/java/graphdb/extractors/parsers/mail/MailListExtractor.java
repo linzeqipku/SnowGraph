@@ -112,14 +112,12 @@ public class MailListExtractor implements Extractor {
         }
         try (Transaction tx = db.beginTx()) {
             for (CharBufferWrapper message : iterator) {
-            	/*
                 if (message.toString().contains("Subject: svn commit"))
                     continue;
                 if (message.toString().contains("Subject: cvs commit"))
                     continue;
                 if (message.toString().contains("Subject: ["))
                     continue;
-                    */
                 parse(message);
             }
             tx.success();

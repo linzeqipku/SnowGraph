@@ -199,13 +199,6 @@
             <version>1.0.6</version>
         </dependency>
         <dependency>
-            <groupId>parsemis</groupId>
-            <artifactId>de.parsemis</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/parsemis.jar</systemPath>
-        </dependency>
-        <dependency>
    			 <groupId>org.apache.lucene</groupId>
   		     <artifactId>lucene-core</artifactId>
              <version>5.5.0</version>

@@ -72,9 +72,6 @@ public class GitCommit {
 
     public static void main(String[] args){
 
-        GitCommit c = new GitCommit();
-        //System.out.println(MutatedFile.MutatedType.ADDED.toString());
-        //GitCommit commit = new GitCommit("I:\\lucene-solr\\commitffdfceba5371b1c3f96b44c727025f2f27bbf12b");
     }
 
     public GitCommit(){
@@ -234,11 +231,13 @@ public class GitCommit {
                     }
                     addMutatedFile(file);
                 }
+
+
                 line = reader.readLine();
-                Pattern pattern = Pattern.compile("@@ -([0-9]+),([0-9]+) +([0-9]+),([0-9]+) @@");
+                Pattern pattern = Pattern.compile("@@ -([0-9]+),([0-9]+) \\+([0-9]+),([0-9]+) @@");
                 Matcher matcher = pattern.matcher(line);
 
-                if(matcher.find()){
+                while(matcher.find()){
                     MutatedContent content = new MutatedContent();
 
                     content.setType(file.getMutatedType());
@@ -270,6 +269,9 @@ public class GitCommit {
 
                     content.setContent(contentString);
                     addMutatedContent(content);
+
+                    line = reader.readLine();
+                    matcher = pattern.matcher(line);
                 }
 
 

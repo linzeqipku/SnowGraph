@@ -1,4 +1,7 @@
-db E:/SnowGraphData/lucene/graphdb
-neo4jUrl http://127.0.0.1:7474
-exampleFilePath E:/SnowGraphData/lucene/qaexample-lucene
-lucenePath E:/SnowGraphData/lucene/index
+db /home/woooking/lab/snowgraph/lucene/graph.db
+neo4jUrl http://neo4j:1@127.0.0.1:7474
+exampleFilePath /home/woooking/java/SnowGraph/resources/examples/qaexample-lucene
+solrUrl http://127.0.0.1:8983/solr
+lucenePath /home/woooking/lab/snowgraph/lucene/index
+--slaveUrl http://162.105.88.28:8080/SnowGraph/
+

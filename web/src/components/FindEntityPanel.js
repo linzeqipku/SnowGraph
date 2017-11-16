@@ -1,16 +1,25 @@
 import React, {Component} from 'react';
-import {Button, Card, CardBody, CardTitle, Form, FormGroup, Input, Label} from "reactstrap";
 import {connect} from "react-redux";
 import {getNodeIDFromRelation, rename} from "../utils";
-import {fetchNode, fetchRelationList, requestShowRelation} from "../action";
+import {fetchNode, fetchRelationList, requestShowRelation} from "../redux/action";
+import {
+    Button, Card, CardContent, CardHeader, FormControl,
+    Input, InputLabel, LinearProgress, Select, Typography, withStyles
+} from "material-ui";
 
+const styles = theme => ({
+    formControl: {
+        margin: theme.spacing.unit,
+        minWidth: 240,
+    }
+});
 
 const mapStateToProps = (state) => {
     return {
         selectedNode: state.selectedNode,
         nodes: state.nodes,
         relationLists: state.relationLists,
-        graph: state.graph
+        graph: state.graph.instance
     }
 }
 
@@ -65,27 +74,27 @@ class FindEntityPanel extends Component {
 
         if (selectedRelationList && selectedRelationList.fetched) {
             const relationTypes = [...new Set(selectedRelationList.relationList.map(x => x["raw"].type))];
-            body = <Form onSubmit={this.handleSubmit}>
-                <FormGroup>
-                    <Label for="relation-type">选择关联实体类型</Label>
-                    <Input type="select" id="relation-type" innerRef={(input) => this.input = input}>
+            body = <form onSubmit={this.handleSubmit}>
+                <FormControl className={this.props.classes.formControl}>
+                    <InputLabel htmlFor="relation-type">Relation Type</InputLabel>
+                    <Select native input={<Input id="relation-type" inputRef={(input) => this.input = input}/>}>
                         {relationTypes.map(t => <option key={t} value={t}>{rename(t)}</option>)}
-                    </Input>
-                </FormGroup>
-                <Button>Submit</Button>
-            </Form>;
+                    </Select>
+                </FormControl>
+                <Button type="submit">Submit</Button>
+            </form>;
         } else if (selectedRelationList) {
-            body = <div>获取结点信息中...</div>;
+            body = <LinearProgress/>;
         } else {
-            body = <div>请先选择一个结点</div>;
+            body = <Typography component="p"> Please select a node first </Typography>;
         }
 
         return (
             <Card>
-                <CardBody>
-                    <CardTitle>查找关联实体</CardTitle>
+                <CardHeader title="Expand Related Entity"/>
+                <CardContent>
                     {body}
-                </CardBody>
+                </CardContent>
             </Card>
 
         );
@@ -94,4 +103,4 @@ class FindEntityPanel extends Component {
 
 FindEntityPanel = connect(mapStateToProps, mapDispatchToProps)(FindEntityPanel)
 
-export default FindEntityPanel;
+export default withStyles(styles)(FindEntityPanel);

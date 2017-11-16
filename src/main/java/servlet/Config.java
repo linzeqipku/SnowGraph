@@ -1,5 +1,9 @@
 package servlet;
 
+import org.apache.commons.io.FileUtils;
+import searcher.DocSearcher;
+import searcher.graph.GraphSearcher;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -7,10 +11,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-import searcher.DocSearcher;
-import searcher.graph.GraphSearcher;
 
 public class Config {
 
@@ -48,7 +48,7 @@ public class Config {
 			}
 		}
 		try {
-			neo4jBoltConnection=DriverManager.getConnection("jdbc:neo4j:"+neo4jBoltUrl);
+			neo4jBoltConnection=DriverManager.getConnection("jdbc:neo4j:"+neo4jBoltUrl, "neo4j", "123");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

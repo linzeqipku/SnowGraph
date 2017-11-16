@@ -1,4 +1,4 @@
 neo4jHttpUrl http://neo4j:123@127.0.0.1:7474
-neo4jBoltUrl bolt://neo4j:123@127.0.0.1:7687
+neo4jBoltUrl bolt://127.0.0.1:7687
 lucenePath /home/woooking/lab/snowgraph/lucene/index
 exampleFilePath /home/woooking/java/SnowGraph/resources/examples/qaexample-lucene

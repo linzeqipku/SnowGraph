@@ -3,6 +3,7 @@ package graphdb.extractors.parsers.git;
 import graphdb.extractors.linkers.apimention.CodeIndexes;
 import graphdb.extractors.parsers.git.entity.GitCommit;
 import graphdb.extractors.parsers.git.entity.GitCommitAuthor;
+import graphdb.extractors.parsers.git.entity.MutatedContent;
 import graphdb.extractors.parsers.git.entity.MutatedFile;
 import graphdb.framework.Extractor;
 import graphdb.framework.annotations.EntityDeclaration;
@@ -64,6 +65,27 @@ public class GitExtractor implements Extractor {
     @PropertyDeclaration
     public static final String MUTATEDFILE_DELETER_UUID = "deleterUUID";
 
+    @EntityDeclaration
+    public static final String MUTATEDCONTENT = "gitMutatedContent";
+    @PropertyDeclaration
+    public static final String MUTATEDCONTENT_COMMIT_UUID = "commitUUID";
+    @PropertyDeclaration
+    public static final String MUTATEDCONTENT_FORMER_NAME = "formerName";
+    @PropertyDeclaration
+    public static final String MUTATEDCONTENT_LATTER_NAME = "latterName";
+    @PropertyDeclaration
+    public static final String MUTATEDCONTENT_CONTENT = "content";
+    @PropertyDeclaration
+    public static final String MUTATEDCONTENT_TYPE = "type";
+    @PropertyDeclaration
+    public static final String MUTATEDCONTENT_FORMER_START_LINE_NUM = "formerStartLineNum";
+    @PropertyDeclaration
+    public static final String MUTATEDCONTENT_FORMER_LINES = "formerLines";
+    @PropertyDeclaration
+    public static final String MUTATEDCONTENT_LATTER_START_LINE_NUM = "latterStartLineNum";
+    @PropertyDeclaration
+    public static final String MUTATEDCONTENT_LATTER_LINES = "latterLines" ;
+
     @RelationshipDeclaration
     public static final String IS_AUTHOR_OF_COMMIT = "person_is_author_of_commit";
     @RelationshipDeclaration
@@ -78,7 +100,10 @@ public class GitExtractor implements Extractor {
     public static final String COMMIT_CHANGE_THE_CLASS ="commit_change_the_class" ;
     @RelationshipDeclaration
     public static final String FILE_CONTAIN_THE_CLASS = "gitMutatedFile_contain_the_class";
-
+    @RelationshipDeclaration
+    public static final String MUTATEDCONTENT_OF_COMMIT = "mutatedContent_of_commit";
+    @RelationshipDeclaration
+    public static final String MUTATEDCONTENT_OF_MUTATEDFILE = "mutatedContent_of_mutatedFile";
 
     GraphDatabaseService db = null;
 
@@ -88,6 +113,7 @@ public class GitExtractor implements Extractor {
     private Map<String , Node> commitNodeMap = new HashMap<String , Node>();
     private Map<String , Node> authorNodeMap = new HashMap<String , Node>();
     private Map<String , Node> fileNodeMap = new HashMap<String , Node>();
+    private Map<String , Node> mutatedContentMap = new HashMap<>();
 
     public void setGitFolderPath(String path){
         this.gitFolderPath = path;
@@ -95,7 +121,6 @@ public class GitExtractor implements Extractor {
 
     public void build(File gitFolder , Map<String , Node> APIs){
         for(File gitFile : gitFolder.listFiles()){
-            //gitFile = new File("I:\\lucene-solr\\commit0014931b1c7e10ac7fcd7060245f59c939b75cdf");
             if(gitFile.isFile() ){
                 String postFix = gitFile.getName();
                 if(postFix.lastIndexOf(".txt") == postFix.length() - 4)
@@ -138,7 +163,7 @@ public class GitExtractor implements Extractor {
                             //region<build the relation between commit and mutated file>
                             try {
                                 String fileName = file.getAbsolutePath();
-                                if(fileName.length() > 0) {
+                                if (fileName.length() > 0) {
                                     if (fileNodeMap.containsKey(fileName)) {
                                         fileNode = fileNodeMap.get(fileName);
                                     } else {
@@ -171,18 +196,34 @@ public class GitExtractor implements Extractor {
                             //endregion<build the relation between commit and mutated file>
 
                             String apiQualifiedName = file.getApiQualifiedName();
-                            if(apiQualifiedName.length() > 0){
+                            if (apiQualifiedName.length() > 0) {
                                 Node apiNode = APIs.get(apiQualifiedName);
-                                if(apiNode != null){
-                                    GitCommit.createRelationshipTo(commitNode , apiNode , GitExtractor.COMMIT_CHANGE_THE_CLASS);
-                                    MutatedFile.createrRelationshipTo(fileNode , apiNode , GitExtractor.FILE_CONTAIN_THE_CLASS );
+                                if (apiNode != null) {
+                                    GitCommit.createRelationshipTo(commitNode, apiNode, GitExtractor.COMMIT_CHANGE_THE_CLASS);
+                                    MutatedFile.createrRelationshipTo(fileNode, apiNode, GitExtractor.FILE_CONTAIN_THE_CLASS);
                                 }
                             }
                         }
 
                     }
-
                     //endregion
+
+                    List<MutatedContent> contents = commit.getMutatedContents();
+                    if(contents != null){
+                        for(MutatedContent content : contents){
+                            String fileName = content.getFileName();
+                            if(fileNodeMap.containsKey(fileName)){
+                                Node contentNode = null;
+                                content.createMutatedFileNode(contentNode);
+                                Node fileNode = fileNodeMap.get(fileName);
+                                MutatedFile.createrRelationshipTo(fileNode , contentNode , GitExtractor.MUTATEDCONTENT_OF_MUTATEDFILE);
+                                GitCommit.createRelationshipTo(commitNode , contentNode , GitExtractor.MUTATEDCONTENT_OF_COMMIT);
+                            }else{
+                                System.out.println("there are some mutatedContent without fileName in commit" + content.getCommitUUID() + );
+                            }
+                        }
+                    }
+
                     tx.success();
                 }
             }else if(gitFile.isDirectory()){

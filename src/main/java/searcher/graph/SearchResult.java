@@ -2,16 +2,13 @@ package searcher.graph;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.neo4j.graphdb.*;
-
 import servlet.Config;
-import utils.PostUtil;
 
-import java.util.HashMap;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class SearchResult {
 	
@@ -32,23 +29,25 @@ public class SearchResult {
 		JSONObject returnResult = new JSONObject();
 
 		for(long nodeID : nodes){
-			String str=PostUtil.sendGet(Config.getNeo4jHttpUrl()+"/db/data/node/"+nodeID);
-			JSONObject response = new JSONObject(str);
-			JSONObject temp = new JSONObject();
-			temp.put("id", nodeID);
-			temp.put("labels", response.getJSONObject("metadata").getJSONArray("labels"));
-			temp.put("properties" , response.getJSONObject("data"));
-			nodesArray.put(temp);
+			try (Statement statement = Config.getNeo4jBoltConnection().createStatement()) {
+	        	String stat="match (n) where id(n)="+nodeID+" return n";
+	        	ResultSet rs=statement.executeQuery(stat);
+	        	while (rs.next())
+	        		nodesArray.put(new JSONObject(rs.getString("n")));
+	        } catch (SQLException e){
+	        	e.printStackTrace();
+	        }
 		}
 		for(long edgeID : edges){
-			String str=PostUtil.sendGet(Config.getNeo4jHttpUrl()+"/db/data/relationship/"+edgeID);
-			JSONObject response = new JSONObject(str);
-			JSONObject temp = new JSONObject();
-			temp.put("id", edgeID);
-			temp.put("type", response.getString("type"));
-			temp.put("startNode" , Long.parseLong(response.getString("start").substring((Config.getNeo4jHttpUrl()+"/db/data/node/").length()+1)));
-			temp.put("endNode" , Long.parseLong(response.getString("end").substring((Config.getNeo4jHttpUrl()+"/db/data/node/").length()+1)));
-			relationshipsArray.put(temp);
+			try (Statement statement = Config.getNeo4jBoltConnection().createStatement()) {
+	        	String stat="match p=(n)-[r]-(x) where id(n)="+edgeID+" return r";
+	        	ResultSet rs=statement.executeQuery(stat);
+	        	while (rs.next()){
+	        		relationshipsArray.put(new JSONObject(rs.getString("r")));
+	        	}
+	        } catch (SQLException e){
+	        	e.printStackTrace();
+	        }
 		}
 
 		graph.put("nodes" , nodesArray);

@@ -14,7 +14,6 @@ import java.util.List;
 
 public class Config {
 
-	static private String neo4jHttpUrl = null;
 	static private String neo4jBoltUrl = null;
 	static private Connection neo4jBoltConnection = null;
 	static private String exampleFilePath = null;
@@ -37,8 +36,6 @@ public class Config {
 			if (p > 0) {
 				String pre = line.substring(0, p);
 				String suf = line.substring(p + 1);
-				if (pre.equals("neo4jHttpUrl"))
-					neo4jHttpUrl = suf;
 				if (pre.equals("neo4jBoltUrl"))
 					neo4jBoltUrl = suf;
 				if (pre.equals("exampleFilePath"))
@@ -48,19 +45,14 @@ public class Config {
 			}
 		}
 		try {
+			Class.forName("org.neo4j.jdbc.Driver").newInstance();
 			neo4jBoltConnection=DriverManager.getConnection("jdbc:neo4j:"+neo4jBoltUrl, "neo4j", "123");
-		} catch (SQLException e) {
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		graphSearcher = new GraphSearcher();
 		docSearcher = new DocSearcher(graphSearcher);
-	}
-
-	static public String getNeo4jHttpUrl() {
-		if (!flag)
-			init();
-		return neo4jHttpUrl;
 	}
 
 	static public String getExampleFilePath() {

@@ -35,7 +35,7 @@ public class OutGoingRelationServlet extends HttpServlet {
         	String stat="match p=(n)-[r]-(x) where id(n)="+id+" return r";
         	ResultSet rs=statement.executeQuery(stat);
         	while (rs.next()){
-        		JSONObject jsobj = new JSONObject(rs.getString("r"));
+        		JSONObject jsobj=new JSONObject((Map)rs.getObject("r"));
         		list.add(jsobj);
         		String key = jsobj.getString("type");
                 if (cnt.containsKey(key)){

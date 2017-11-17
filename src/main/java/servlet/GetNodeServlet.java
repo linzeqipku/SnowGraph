@@ -4,10 +4,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2017/5/26.
@@ -28,8 +31,10 @@ public class GetNodeServlet extends HttpServlet {
         try (Statement statement = Config.getNeo4jBoltConnection().createStatement()) {
         	String stat="match (n) where id(n)="+id+" return n";
         	ResultSet rs=statement.executeQuery(stat);
-        	while (rs.next())
-        		response.getWriter().print(rs.getString("n"));
+        	while (rs.next()){
+        		JSONObject obj=new JSONObject((Map)rs.getObject("n"));
+        		response.getWriter().print(obj);
+        	}
         } catch (SQLException e){
         	e.printStackTrace();
         }

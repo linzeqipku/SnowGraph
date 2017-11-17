@@ -58,7 +58,7 @@ SnowGraph is tool for data analytics, knowledge mining and question answering in
 
 Example input data:
 
-[Lucene-data.zip](http://pan.baidu.com/s/1gfF4PZt)
+* [Lucene-data.zip](http://pan.baidu.com/s/1gfF4PZt)
 
 Write a spring bean property xml file, like this:
 

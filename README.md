@@ -1,11 +1,17 @@
-# HomePage
+# Software Knowledge Graph
 
-http://linzeqipku.github.io/SnowGraph/
+SnowGraph is tool for data analytics, knowledge mining and question answering in software development, maintenance and reuse activities.
 
-# Developer Documentation (Chinese)
+* Data analytics
 
-[软件项目知识图谱简介](https://github.com/linzeqipku/SnowGraph/blob/master/resources/manual/cn/intro.md)
+  * SnowGraph transforms multi-source and heterogeneous software engineering data (e.g., source code, version control, documentation, mailing list, issue tracker and online forum) into a uniform graph.
+    
+    * Entities (e.g., classes, methods, commits, document sections, users, emails, issue reports and forum posts) are extracted from data and represented as labeled nodes.
+    
+    * Traces between entities are recovered automatically and represented as labled directed edges.
+    
+  * SnowGraph provides the support of graph query language and graphical browsing interface for the graph.
 
-[Quick-Start](https://github.com/linzeqipku/SnowGraph/blob/master/resources/manual/cn/quick-start.md)
+* Knowledge mining
 
-[数据解析/知识提炼插件列表](https://github.com/linzeqipku/SnowGraph/blob/master/resources/manual/cn/list.md)
+* Question answering

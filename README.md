@@ -4,14 +4,32 @@ SnowGraph is tool for data analytics, knowledge mining and question answering in
 
 * Data analytics
 
-  * SnowGraph transforms multi-source and heterogeneous software engineering data (e.g., source code, version control, documentation, mailing list, issue tracker and online forum) into a uniform graph.
+  * From multi-source and heterogeneous software engineering data (e.g., source code, version control, documentation, mailing list, issue tracker and online forum) to a uniform graph
     
-    * Entities (e.g., classes, methods, commits, document sections, users, emails, issue reports and forum posts) are extracted from data and represented as labeled nodes.
+    * Entities: classes, methods, commits, document sections, users, emails, issue reports, forum posts, ...
     
-    * Traces between entities are recovered automatically and represented as labled directed edges.
+    * Traces (relations): inheritance, method_invocation, have_document_section, code_element_mentioned_in, ...
     
-  * SnowGraph provides the support of graph query language and graphical browsing interface for the graph.
+  * Graph query language and graphical browsing interface
+  
+  * High extendability for various data types
 
 * Knowledge mining
 
+  * Extract knowledge from the graph
+  
+    * API usage examples, API semantic representations, business topics, domain ontologies, ...
+    
+  * High extendability for various knowledge mining algorithms
+
 * Question answering
+
+  * Graph-based question answering
+
+    * Question example: "Which developer answered the most emails about class RAMDirectory?"
+  
+  * Text-based question answering
+
+    * Find passages from the graph to answer questions
+    
+    * Question example: "How to get all field names in an IndexReader?"

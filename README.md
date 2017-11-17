@@ -1,6 +1,7 @@
-[![StatusInDev](https://img.shields.io/badge/Status-InDev-bronze.svg)]
-
 # Software Knowledge Graph
+
+![status](https://img.shields.io/badge/status-InDev-bronze.svg)
+![licence](https://img.shields.io/badge/license-Apache2.0-blue.svg)
 
 SnowGraph is tool for data analytics, knowledge mining and question answering in software development, maintenance and reuse activities.
 

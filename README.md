@@ -2,6 +2,8 @@
 
 SnowGraph is tool for data analytics, knowledge mining and question answering in software development, maintenance and reuse activities.
 
+## Features
+
 * Data analytics
 
   * From multi-source and heterogeneous software engineering data (e.g., source code, version control, documentation, mailing list, issue tracker and online forum) to a uniform graph
@@ -33,3 +35,56 @@ SnowGraph is tool for data analytics, knowledge mining and question answering in
     * Find passages from the graph to answer questions
     
     * Question example: "How to get all field names in an IndexReader?"
+    
+## Building a Graph
+
+Write a spring bean property xml file, like this:
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="graph" class="graphdb.framework.GraphBuilder">
+    	<property name="graphPath" value="E:/SnowGraphData/lucene/graphdb-base"/>
+        <property name="extractors">
+            <list>
+                <ref bean="codegraph" />
+                <ref bean="sograph" />
+                <ref bean="mailgraph" />
+                <ref bean="issuegraph" />
+                <ref bean="gitgraph" />
+                <ref bean="line" />
+                <ref bean="text" />
+                <ref bean="apimention" />
+                <ref bean="reference" />
+            </list>
+        </property>
+    </bean>
+    <bean id="codegraph" class="graphdb.extractors.parsers.javacode.JavaCodeExtractor">
+        <property name="srcPath" value="E:/SnowGraphData/lucene/sourcecode" />
+    </bean>
+    <bean id="gitgraph" class="graphdb.extractors.parsers.git.GitExtractor">
+        <property name="gitFolderPath" value="E:/SnowGraphData/lucene/git" />
+    </bean>
+    <bean id="sograph" class="graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor">
+        <property name="folderPath" value="E:/SnowGraphData/lucene/stackoverflow" />
+    </bean>
+    <bean id="issuegraph" class="graphdb.extractors.parsers.jira.JiraExtractor">
+        <property name="issueFolderPath" value="E:/SnowGraphData/lucene/jira" />
+    </bean>
+    <bean id="mailgraph" class="graphdb.extractors.parsers.mail.MailListExtractor">
+        <property name="mboxPath" value="E:/SnowGraphData/lucene/mbox" />
+    </bean>
+    <bean id="line" class="graphdb.extractors.miners.codeembedding.line.LINEExtractor" />
+    <bean id="text" class="graphdb.extractors.miners.text.TextExtractor" />
+    <bean id="apimention" class="graphdb.extractors.linkers.apimention.ApiMentionExtractor" />
+    <bean id="reference" class="graphdb.extractors.linkers.apimention.ReferenceExtractor" />
+</beans>
+```
+
+Run ```graphdb.GraphdbGenerator {property_xml_file_path}``` (need a large memory allocation pool for JVM, for example, set VM arguments to ```-Xms5000m -Xmx5000m```).
+This process may take a long time.
+
+With the above property file, the graph database is generated in ```E:/SnowGraphData/lucene/graphdb-base```.

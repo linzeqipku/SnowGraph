@@ -39,6 +39,21 @@ SnowGraph is tool for data analytics, knowledge mining and question answering in
     
     * Question example: "How to get all field names in an IndexReader?"
     
+## Dependencies
+
+* Programming language
+ 
+  ![java](https://img.shields.io/badge/java->=1.8.0-blue.svg)
+  ![react](https://img.shields.io/badge/react->=16.0.22-blue.svg)
+  
+* Project management
+ 
+  ![maven](https://img.shields.io/badge/maven->=3.0.0-blue.svg)
+  
+* Graph database engine
+ 
+  ![neo4j](https://img.shields.io/badge/neo4j->=3.2.0-blue.svg)
+    
 ## Building a Graph
 
 Write a spring bean property xml file, like this:

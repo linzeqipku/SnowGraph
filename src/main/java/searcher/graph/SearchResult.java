@@ -46,7 +46,7 @@ public class SearchResult {
 		}
 		for(long edgeID : edges){
 			try (Statement statement = Config.getNeo4jBoltConnection().createStatement()) {
-	        	String stat="match p=(n)-[r]-(x) where id(n)="+edgeID+" return r";
+	        	String stat="match p=(n)-[r]-(x) where id(r)="+edgeID+" return r";
 	        	ResultSet rs=statement.executeQuery(stat);
 	        	while (rs.next()){
 	        		JSONObject obj=new JSONObject((Map)rs.getObject("r"));

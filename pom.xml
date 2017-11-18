@@ -4,6 +4,7 @@
 	<groupId>cn.edu.pku.sei</groupId>
 	<artifactId>SnowGraph</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
 	<repositories>  
         <repository>
             <id>cogcomp</id>  
@@ -51,6 +52,10 @@
             </resource>
         </resources>
 		<plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -86,11 +91,6 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlets</artifactId>
 			<version>9.4.7.v20170914</version>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
@@ -163,26 +163,6 @@
             <artifactId>spring-context</artifactId>
             <version>4.3.1.RELEASE</version>
         </dependency>
-        <dependency>
-	  		<groupId>org.eclipse.jdt</groupId>
-	  		<artifactId>org.eclipse.jdt.core</artifactId>
-	  		<version>3.10.0</version>
-	  	</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>22.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.opensagres.xdocreport</groupId>
-			<artifactId>org.apache.poi.xwpf.converter.core</artifactId>
-			<version>1.0.6</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.opensagres.xdocreport</groupId>
-			<artifactId>org.apache.poi.xwpf.converter.xhtml</artifactId>
-			<version>1.0.6</version>
-		</dependency>
 		<dependency>
 			<groupId>parsemis</groupId>
 			<artifactId>de.parsemis</artifactId>

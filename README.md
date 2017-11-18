@@ -48,7 +48,7 @@ SnowGraph is a tool for data analytics, knowledge mining and question answering 
   
 * Project management
  
-  ![maven](https://img.shields.io/badge/maven->=3.0.0-blue.svg)
+  ![maven](https://img.shields.io/badge/maven->=3.2.0-blue.svg)
   
 * Graph database engine
  

@@ -24,6 +24,9 @@
             <properties>
                 <profiles.active>dev/huacy</profiles.active>
             </properties>
+	        <activation>
+		        <activeByDefault>true</activeByDefault>
+	        </activation>
         </profile>
         <!--生产环境-->
         <profile>
@@ -31,9 +34,6 @@
             <properties>
                 <profiles.active>pro</profiles.active>
             </properties>
-	        <activation>
-		        <activeByDefault>true</activeByDefault>
-	        </activation>
         </profile>
     </profiles>
 	<build>

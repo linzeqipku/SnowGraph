@@ -37,16 +37,31 @@ public class DocSearcher {
 	}
 
 	public Pair<String,String> getContent(long nodeId){
-		return new ImmutablePair<>(queryMap.get(nodeId), queryMap.get(nodeId));
+		String plain="";
+		String rich="";
+		try (Statement statement = connection.createStatement()) {
+			String stat="match (n) where id(n)="+nodeId+" return labels(n)[0], n."+TextExtractor.TITLE+", n."+TextExtractor.TEXT;
+			ResultSet rs=statement.executeQuery(stat);
+			while (rs.next()){
+				String label=rs.getString("labels(n)[0]");
+				String text=rs.getString("n."+TextExtractor.TEXT);
+				String title=rs.getString("n."+TextExtractor.TITLE);
+				rich="<h2>"+title+"</h2>"+text;
+				plain=Jsoup.parse("<html>"+rich+"</html>").text();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return new ImmutablePair<>(plain, rich);
 	}
-	
+
 	public List<DocSearchResult> search(String query){
 		List<DocSearchResult> r=new ArrayList<>();
-		
+
 		Set<Long> graph0=graphSearcher.query(query).nodes;
 
 		List<LuceneSearchResult> irResultList=keeper.query(query);
-		
+
 		for (int i=0;i<irResultList.size();i++){
 			DocSearchResult doc=new DocSearchResult();
 			doc.setId(irResultList.get(i).id);
@@ -54,15 +69,15 @@ public class DocSearcher {
 			doc.setDist(docDistScorer.score(irResultList.get(i).nodeSet, graph0));
 			r.add(doc);
 		}
-		
+
 		r.sort(Comparator.comparingDouble(DocSearchResult::getDist));
-		
+
 		for (int i=0;i<r.size();i++)
 			r.get(i).setNewRank(i+1);
-		
+
 		return r;
 	}
-	
+
 	/**
 	 * 寻找重排序后效果好的StackOverflow问答对作为例子
 	 */
@@ -85,6 +100,7 @@ public class DocSearcher {
 			    DocSearchResult current = list.get(i);
 				if (current.id == qaMap.get(queryId)){
 					irCount++;
+					//System.out.println(current.newRank+" "+current.irRank);
 					if (current.newRank < current.irRank){
 					    String res = count+" " +queryId + " " + current.id + " "
                                 + current.irRank+"-->"+current.newRank;
@@ -99,10 +115,11 @@ public class DocSearcher {
 					}
 				}
 			}
+			//System.out.println("query count: " + qCnt + " " + qCnt * 1.0 / qSize * 100 + "%");
 		}
 		System.out.println("irCount: " + irCount);
 	}
-	
+
 
 	void extractQaMap(){
 		Map<Long, Long> qaMap=new HashMap<>();

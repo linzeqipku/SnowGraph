@@ -59,11 +59,11 @@ public class RandomServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         long id = rand.nextInt(map.size());
-        String query = Config.getDocSearcher().getQuery(map.get((int)id).getLeft());
+        String query = Config.getDocSearcher().getQuery(map.get(id).getLeft());
         JSONObject searchResult = new JSONObject();
         searchResult.put("query", query);
         searchResult.put("query2", query);
-        searchResult.put("answerId", map.get((int)id).getRight());
+        searchResult.put("answerId", map.get(id).getRight());
 
         response.getWriter().print(searchResult.toString());
     }

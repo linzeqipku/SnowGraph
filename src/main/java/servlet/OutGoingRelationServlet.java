@@ -31,7 +31,7 @@ public class OutGoingRelationServlet extends HttpServlet {
         Map<String,Integer> cnt = new HashMap<>();
 
         try (Statement statement = Config.getNeo4jBoltConnection().createStatement()) {
-        	String stat="match p=(n)-[r]-(x) where id(r)="+id+" return id(r), id(startNode(r)), id(endNode(r)), type(r)";
+        	String stat="match p=(n)-[r]-(x) where id(n)="+id+" return id(r), id(startNode(r)), id(endNode(r)), type(r)";
         	ResultSet rs=statement.executeQuery(stat);
         	while (rs.next()){
         		JSONObject jsobj=new JSONObject();

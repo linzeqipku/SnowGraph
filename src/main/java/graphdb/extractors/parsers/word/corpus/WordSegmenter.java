@@ -3,13 +3,10 @@ package graphdb.extractors.parsers.word.corpus;
 import graphdb.extractors.parsers.word.document.DocumentParser;
 import graphdb.extractors.parsers.word.entity.utils.DocumentInfo;
 import graphdb.extractors.parsers.word.entity.word.WordDocumentInfo;
-import graphdb.extractors.parsers.word.utils.Config;
 import org.ansj.domain.Result;
 import org.ansj.splitWord.analysis.ToAnalysis;
-import org.neo4j.cypher.internal.frontend.v2_3.ast.functions.Has;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;

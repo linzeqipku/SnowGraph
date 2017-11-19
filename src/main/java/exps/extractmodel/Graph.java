@@ -14,8 +14,6 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
-import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
-
 public class Graph {
 
 	private Map<Long, Vertex> vertexes=new HashMap<>();

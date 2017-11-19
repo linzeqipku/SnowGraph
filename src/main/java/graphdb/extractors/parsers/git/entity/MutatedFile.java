@@ -1,7 +1,6 @@
 package graphdb.extractors.parsers.git.entity;
 
 import graphdb.extractors.parsers.git.GitExtractor;
-import org.eclipse.jdt.core.dom.QualifiedName;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;

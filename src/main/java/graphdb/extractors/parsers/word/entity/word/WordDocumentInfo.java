@@ -7,7 +7,6 @@ import graphdb.extractors.parsers.word.entity.utils.DocumentInfo;
 import graphdb.extractors.parsers.word.entity.utils.PlainTextInfo;
 import graphdb.extractors.parsers.word.entity.utils.SectionInfo;
 
-import java.util.HashSet;
 import java.util.List;
 
 /**

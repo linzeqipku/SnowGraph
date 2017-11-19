@@ -1,6 +1,5 @@
 package graphdb.extractors.parsers.word.entity.table;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

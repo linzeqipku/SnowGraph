@@ -61,13 +61,13 @@ public class ExtractModel {
 				}
 				if (node.hasLabel(Label.label(JavaCodeExtractor.METHOD))){
 					String name=(String) node.getProperty(JavaCodeExtractor.METHOD_NAME);
-					String longName=(String) node.getProperty(JavaCodeExtractor.METHOD_BELONGTO)+"."+name;
+					String longName=node.getProperty(JavaCodeExtractor.METHOD_BELONGTO).toString()+"."+name;
 					Vertex vertex=new Vertex(node.getId(), name, longName, JavaCodeExtractor.METHOD);
 					graph.add(vertex);
 				}
 				if (node.hasLabel(Label.label(JavaCodeExtractor.FIELD))){
 					String name=(String) node.getProperty(JavaCodeExtractor.FIELD_NAME);
-					String longName=(String) node.getProperty(JavaCodeExtractor.FIELD_BELONGTO)+"."+name;
+					String longName=node.getProperty(JavaCodeExtractor.FIELD_BELONGTO).toString()+"."+name;
 					Vertex vertex=new Vertex(node.getId(), name, longName, JavaCodeExtractor.FIELD);
 					graph.add(vertex);
 				}

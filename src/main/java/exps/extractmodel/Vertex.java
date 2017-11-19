@@ -22,10 +22,8 @@ public class Vertex {
 	}
 	
 	@Override
-	public boolean equals(Object v){
-		if (v instanceof Vertex)
-			return id==((Vertex)v).id;
-		return false;
+	public boolean equals(Object v) {
+		return v instanceof Vertex && id == ((Vertex) v).id;
 	}
 	
 }

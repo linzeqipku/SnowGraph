@@ -44,7 +44,6 @@ SnowGraph is a tool for data analytics, knowledge mining and question answering 
 * Programming language
  
   ![java](https://img.shields.io/badge/java->=1.8.0-blue.svg)
-  ![react](https://img.shields.io/badge/react->=16.0.22-blue.svg)
   
 * Project management
  
@@ -106,7 +105,7 @@ Write a spring bean property xml file, like this:
 </beans>
 ```
 
-Run ```graphdb.GraphdbGenerator {property_xml_file_path}``` (need a large memory allocation pool for JVM, for example, set VM arguments to ```-Xms5000m -Xmx5000m```).
+Run ```utils.GraphdbGenerator {property_xml_file_path}``` (need a large memory allocation pool for JVM, for example, set VM arguments to ```-Xms5000m -Xmx5000m```).
 This process may take a long time.
 
 With the above property file, the graph database is generated in ```E:/SnowGraphData/lucene/graphdb-base```.

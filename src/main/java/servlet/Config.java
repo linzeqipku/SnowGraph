@@ -1,21 +1,21 @@
 package servlet;
 
 import org.apache.commons.io.FileUtils;
+import org.neo4j.driver.v1.AuthTokens;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.GraphDatabase;
 import searcher.DocSearcher;
 import searcher.graph.GraphSearcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Config {
 
 	static private String neo4jBoltUrl = null;
-	static private Connection neo4jBoltConnection = null;
+	static private Driver neo4jBoltConnection = null;
 	static private String exampleFilePath = null;
 	static private String lucenePath = null;
 	static private GraphSearcher graphSearcher = null;
@@ -46,8 +46,8 @@ public class Config {
 		}
 		try {
 			Class.forName("org.neo4j.jdbc.Driver").newInstance();
-			neo4jBoltConnection=DriverManager.getConnection("jdbc:neo4j:"+neo4jBoltUrl, "neo4j", "123");
-		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			neo4jBoltConnection= GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -79,7 +79,7 @@ public class Config {
 		return docSearcher;
 	}
 
-	public static Connection getNeo4jBoltConnection() {
+	public static Driver getNeo4jBoltDriver() {
 		if (!flag)
 			init();
 		return neo4jBoltConnection;

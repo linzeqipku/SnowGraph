@@ -8,6 +8,10 @@ import java.util.*;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.StatementResult;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
 import graphdb.extractors.miners.codeembedding.line.LINEExtractor;
@@ -17,7 +21,7 @@ import utils.parse.TokenizationUtils;
 
 public class GraphSearcher {
 
-    Connection connection = null;
+    Driver connection = null;
 
     String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
             + JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD + "|"
@@ -47,18 +51,19 @@ public class GraphSearcher {
     }
 
     void init() throws SQLException {
-        connection = Config.getNeo4jBoltConnection();
-        Statement statement = connection.createStatement();
+        connection = Config.getNeo4jBoltDriver();
+        Session session = Config.getNeo4jBoltDriver().session();
         String stat = "match (n) where not n:" + JavaCodeExtractor.FIELD + " and exists(n." + LINEExtractor.LINE_VEC
                 + ") return " + "id(n), n." + LINEExtractor.LINE_VEC + ", n." + JavaCodeExtractor.SIGNATURE;
-        ResultSet rs = statement.executeQuery(stat);
-        while (rs.next()) {
-            String[] eles = rs.getString("n." + LINEExtractor.LINE_VEC).trim().split("\\s+");
+        StatementResult rs = session.run(stat);
+        while (rs.hasNext()) {
+            Record item = rs.next();
+            String[] eles = item.get("n." + LINEExtractor.LINE_VEC).asString().trim().split("\\s+");
             List<Double> vec = new ArrayList<>();
             for (String e : eles)
                 vec.add(Double.parseDouble(e));
-            long id = rs.getLong("id(n)");
-            String sig = rs.getString("n." + JavaCodeExtractor.SIGNATURE);
+            long id = item.get("id(n)").asLong();
+            String sig = item.get("n." + JavaCodeExtractor.SIGNATURE).asString();
             if (sig.toLowerCase().contains("test"))
                 continue;
             String name = sig;
@@ -90,7 +95,7 @@ public class GraphSearcher {
                 word2Ids.put(id2Name.get(id), new HashSet<>());
             word2Ids.get(id2Name.get(id)).add(id);
         }
-        statement.close();
+        session.close();
     }
 
     public SearchResult queryExpand(String queryString) {
@@ -107,23 +112,21 @@ public class GraphSearcher {
                     continue;
                 if (flags.contains(seed2))
                     continue;
-                try (Statement statement = connection.createStatement()) {
-                    String stat = "match p=shortestPath((n1)-[:" + codeRels + "*..10]-(n2)) where id(n1)=" + seed1 + " and id(n2)=" + seed2
-                            + " unwind relationships(p) as r return id(startNode(r)), id(endNode(r)), id(r)";
-                    ResultSet rs = statement.executeQuery(stat);
-                    while (rs.next()) {
-                        long node1 = rs.getLong("id(startNode(r))");
-                        long node2 = rs.getLong("id(endNode(r))");
-                        long rel = rs.getLong("id(r)");
-                        r.nodes.add(node1);
-                        r.nodes.add(node2);
-                        r.edges.add(rel);
-                        flags.add(seed2);
-                    }
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                Session session = Config.getNeo4jBoltDriver().session();
+                String stat = "match p=shortestPath((n1)-[:" + codeRels + "*..10]-(n2)) where id(n1)=" + seed1 + " and id(n2)=" + seed2
+                        + " unwind relationships(p) as r return id(startNode(r)), id(endNode(r)), id(r)";
+                StatementResult rs = session.run(stat);
+                while (rs.hasNext()) {
+                    Record item=rs.next();
+                    long node1 = item.get("id(startNode(r))").asLong();
+                    long node2 = item.get("id(endNode(r))").asLong();
+                    long rel = item.get("id(r)").asLong();
+                    r.nodes.add(node1);
+                    r.nodes.add(node2);
+                    r.edges.add(rel);
+                    flags.add(seed2);
                 }
+                session.close();
             }
             flags.add(seed1);
         }

@@ -26,8 +26,8 @@ public class RandomServlet extends HttpServlet {
 	Random rand ;
 	Map<Long, Pair<Long,Long>> map = new HashMap<>();
 	
-	public void init(ServletConfig config) throws ServletException{
-		
+	public void init() throws ServletException{
+
 		rand = new Random();
 
         /* 读取数据 */

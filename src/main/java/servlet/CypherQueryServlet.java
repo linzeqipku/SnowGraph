@@ -29,7 +29,7 @@ public class CypherQueryServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String queryText = request.getParameter("query");
 
-        JSONObject searchResult = new JSONObject();
+        JSONObject searchResult;
 
         SearchResult graph = Config.getGraphSearcher().queryExpand(queryText);
         searchResult = graph.toJSON();

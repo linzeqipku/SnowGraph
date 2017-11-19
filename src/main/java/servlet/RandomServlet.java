@@ -24,7 +24,7 @@ import java.util.Random;
 public class RandomServlet extends HttpServlet {
 
 	Random rand ;
-	Map<Integer, Pair<Integer,Integer>> map = new HashMap<Integer, Pair<Integer,Integer>>();
+	Map<Integer, Pair<Long,Long>> map = new HashMap<>();
 	
 	public void init(ServletConfig config) throws ServletException{
 		
@@ -34,12 +34,12 @@ public class RandomServlet extends HttpServlet {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(Config.getExampleFilePath())),
                                                                          "UTF-8"));
-            String lineTxt = null;
+            String lineTxt;
             while ((lineTxt = br.readLine()) != null) {
             	if (lineTxt.length()==0)
             		continue;
                 String[] names = lineTxt.split(" ");
-                map.put(Integer.parseInt(names[0]), new ImmutablePair<Integer,Integer>(Integer.parseInt(names[1]), Integer.parseInt(names[2])));
+                map.put(Integer.parseInt(names[0]), new ImmutablePair<>(Long.parseLong(names[1]), Long.parseLong(names[2])));
             }
             br.close();
         } catch (Exception e) {
@@ -59,12 +59,10 @@ public class RandomServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         long id = rand.nextInt(map.size());
-        String query = Config.getDocSearcher().getContent(map.get((int)id).getLeft()).getLeft();
-        String query2 = Config.getDocSearcher().getContent(map.get((int)id).getLeft()).getRight();
+        String query = Config.getDocSearcher().getQuery(map.get((int)id).getLeft());
         JSONObject searchResult = new JSONObject();
-
         searchResult.put("query", query);
-        searchResult.put("query2", query2);
+        searchResult.put("query2", query);
         searchResult.put("answerId", map.get((int)id).getRight());
 
         response.getWriter().print(searchResult.toString());

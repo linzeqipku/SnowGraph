@@ -55,6 +55,10 @@ public class DocSearcher {
 		return new ImmutablePair<>(plain, rich);
 	}
 
+	public String getQuery(long queryId){
+		return queryMap.get(queryId);
+	}
+
 	public List<DocSearchResult> search(String query){
 		List<DocSearchResult> r=new ArrayList<>();
 

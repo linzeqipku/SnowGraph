@@ -6,12 +6,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -40,29 +35,9 @@ public class DocSearcher {
 		this.docDistScorer=new DocDistScorer(graphSearcher);
 		connection = Config.getNeo4jBoltConnection();
 	}
-	
-	/**
-	 * 
-	 * @param nodeId
-	 * @return {<plain-text,rich-text>}
-	 */
+
 	public Pair<String,String> getContent(long nodeId){
-		String plain="";
-		String rich="";
-		try (Statement statement = connection.createStatement()) {
-			String stat="match (n) where id(n)="+nodeId+" return labels(n)[0], n."+TextExtractor.TITLE+", n."+TextExtractor.TEXT;
-			ResultSet rs=statement.executeQuery(stat);
-			while (rs.next()){
-				String label=rs.getString("labels(n)[0]");
-				String text=rs.getString("n."+TextExtractor.TEXT);
-				String title=rs.getString("n."+TextExtractor.TITLE);
-				rich="<h2>"+title+"</h2>"+text;
-				plain=Jsoup.parse("<html>"+rich+"</html>").text();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return new ImmutablePair<String,String>(plain, rich);
+		return new ImmutablePair<>(queryMap.get(nodeId), queryMap.get(nodeId));
 	}
 	
 	public List<DocSearchResult> search(String query){
@@ -80,7 +55,7 @@ public class DocSearcher {
 			r.add(doc);
 		}
 		
-		Collections.sort(r,(r1, r2) -> Double.compare(r1.getDist(), r2.getDist()));
+		r.sort(Comparator.comparingDouble(DocSearchResult::getDist));
 		
 		for (int i=0;i<r.size();i++)
 			r.get(i).setNewRank(i+1);
@@ -110,7 +85,6 @@ public class DocSearcher {
 			    DocSearchResult current = list.get(i);
 				if (current.id == qaMap.get(queryId)){
 					irCount++;
-					//System.out.println(current.newRank+" "+current.irRank);
 					if (current.newRank < current.irRank){
 					    String res = count+" " +queryId + " " + current.id + " "
                                 + current.irRank+"-->"+current.newRank;
@@ -125,7 +99,6 @@ public class DocSearcher {
 					}
 				}
 			}
-			//System.out.println("query count: " + qCnt + " " + qCnt * 1.0 / qSize * 100 + "%");
 		}
 		System.out.println("irCount: " + irCount);
 	}
@@ -142,9 +115,7 @@ public class DocSearcher {
 			while (rs.next()){
 				long qId=rs.getLong("id(q)");
 				long aId=rs.getLong("id(a)");
-				String query="<html><title>"+rs.getString("q."+StackOverflowExtractor.QUESTION_TITLE)+"</title>";
-				query+=" "+rs.getString("q."+StackOverflowExtractor.QUESTION_BODY)+"</html>";
-				query=Jsoup.parse(query).text();
+				String query=rs.getString("q."+StackOverflowExtractor.QUESTION_TITLE);
 				qaMap.put(qId, aId);
 				qMap.put(qId, query);
 			}

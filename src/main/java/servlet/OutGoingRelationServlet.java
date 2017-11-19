@@ -67,7 +67,7 @@ public class OutGoingRelationServlet extends HttpServlet {
             for (JSONObject obj : list){
                 if (obj.getString("type").equals(k)) {
                     String flag = "in_";
-                    if (obj.getString("startId").equals(id)) flag = "ou_";
+                    if (obj.getString("startNode").equals(id)) flag = "ou_";
                     if (flag.equals("in_")) continue;
                     obj.put("type",flag+k);
                     rejsarr.put(obj);

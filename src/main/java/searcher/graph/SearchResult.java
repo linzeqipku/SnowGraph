@@ -52,7 +52,7 @@ public class SearchResult {
 					obj.put("startNode", rs.getLong("id(startNode(r))"));
 					obj.put("endNode", rs.getLong("id(endNode(r))"));
 					obj.put("properties",new JSONArray());
-					System.out.println(obj);
+					//System.out.println(obj);
 	        		relationshipsArray.put(obj);
 	        	}
 	        } catch (SQLException e){

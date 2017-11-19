@@ -31,10 +31,15 @@ public class OutGoingRelationServlet extends HttpServlet {
         Map<String,Integer> cnt = new HashMap<>();
 
         try (Statement statement = Config.getNeo4jBoltConnection().createStatement()) {
-        	String stat="match p=(n)-[r]-(x) where id(r)="+id+" return r";
+        	String stat="match p=(n)-[r]-(x) where id(r)="+id+" return id(r), id(startNode(r)), id(endNode(r)), type(r)";
         	ResultSet rs=statement.executeQuery(stat);
         	while (rs.next()){
-        		JSONObject jsobj=new JSONObject((Map)rs.getObject("r"));
+        		JSONObject jsobj=new JSONObject();
+        		jsobj.put("type",rs.getString("type(r)"));
+        		jsobj.put("id", rs.getLong("id(r)"));
+                jsobj.put("startNode", rs.getLong("id(startNode(r))"));
+                jsobj.put("endNode", rs.getLong("id(endNode(r))"));
+                jsobj.put("properties",new JSONArray());
         		list.add(jsobj);
         		String key = jsobj.getString("type");
                 if (cnt.containsKey(key)){

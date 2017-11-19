@@ -120,7 +120,7 @@ public class GitCommit {
         if(mutatedFiles != null){
             mutatedFiles.add(file);
         }else{
-            mutatedFiles = new ArrayList<MutatedFile>();
+            mutatedFiles = new ArrayList<>();
             mutatedFiles.add(file);
         }
     }
@@ -129,7 +129,7 @@ public class GitCommit {
         if(mutatedContents != null){
             mutatedContents.add(content);
         }else{
-            mutatedContents = new ArrayList<MutatedContent>();
+            mutatedContents = new ArrayList<>();
             mutatedContents.add(content);
         }
     }

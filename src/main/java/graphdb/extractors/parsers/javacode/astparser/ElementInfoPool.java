@@ -18,10 +18,10 @@ public class ElementInfoPool {
 
     public ElementInfoPool(String srcDir) {
         this.srcDir = srcDir;
-        classInfoMap = new HashMap<String, ClassInfo>();
-        interfaceInfoMap = new HashMap<String, InterfaceInfo>();
-        methodInfoMap = new HashMap<String, MethodInfo>();
-        fieldInfoMap = new HashMap<String, FieldInfo>();
+        classInfoMap = new HashMap<>();
+        interfaceInfoMap = new HashMap<>();
+        methodInfoMap = new HashMap<>();
+        fieldInfoMap = new HashMap<>();
     }
 
 }

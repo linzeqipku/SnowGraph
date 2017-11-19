@@ -80,7 +80,7 @@ public class Slicer {
 	// 如果调用的是相同的方法，会解析成相同的MethodBinding
 	// 如果名称相同，不论签名如何，都是相同的String methodName
 	private void findTestTarget() {
-		targetMethods = new ArrayList<String>();
+		targetMethods = new ArrayList<>();
 
 		String testMethodName = methodAST.getMethodDeclarationNode().getName().toString();
 
@@ -99,7 +99,7 @@ public class Slicer {
 				String methodInvoctaionName = methodInvocation.getName().toString();
 				if (!invokedMethodDirectory.containsKey(methodInvoctaionName)) {
 					invokedMethodDirectory.put(methodInvoctaionName,
-						new ArrayList<MethodInvocation>());
+                            new ArrayList<>());
 				}
 
 				invokedMethodDirectory.get(methodInvoctaionName).add(methodInvocation);

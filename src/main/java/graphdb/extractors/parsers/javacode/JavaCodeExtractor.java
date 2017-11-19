@@ -143,11 +143,11 @@ public class JavaCodeExtractor implements Extractor {
     public static final String VARIABLE = "variable";
 
     ElementInfoPool elementInfoPool = null;
-    private Map<String, Pair<ClassInfo, Node>> classDecMap = new HashMap<String, Pair<ClassInfo, Node>>();
-    private Map<String, Pair<InterfaceInfo, Node>> interfaceDecMap = new HashMap<String, Pair<InterfaceInfo, Node>>();
-    private Map<String, Pair<MethodInfo, Node>> methodDecMap = new HashMap<String, Pair<MethodInfo, Node>>();
-    private Map<String, Pair<FieldInfo, Node>> fieldDecMap = new HashMap<String, Pair<FieldInfo, Node>>();
-    private Map<IMethodBinding, Pair<MethodInfo, Node>> methodBindingMap = new HashMap<IMethodBinding, Pair<MethodInfo, Node>>();
+    private Map<String, Pair<ClassInfo, Node>> classDecMap = new HashMap<>();
+    private Map<String, Pair<InterfaceInfo, Node>> interfaceDecMap = new HashMap<>();
+    private Map<String, Pair<MethodInfo, Node>> methodDecMap = new HashMap<>();
+    private Map<String, Pair<FieldInfo, Node>> fieldDecMap = new HashMap<>();
+    private Map<IMethodBinding, Pair<MethodInfo, Node>> methodBindingMap = new HashMap<>();
 
     String srcPath = "";
     GraphDatabaseService db = null;
@@ -178,7 +178,7 @@ public class JavaCodeExtractor implements Extractor {
             for (ClassInfo classInfo : elementInfoPool.classInfoMap.values()) {
                 Node node = db.createNode();
                 JavaCodeUtils.createClassNode(classInfo, node);
-                classDecMap.put(classInfo.fullName, new ImmutablePair<ClassInfo, Node>(classInfo, node));
+                classDecMap.put(classInfo.fullName, new ImmutablePair<>(classInfo, node));
             }
             tx.success();
         }
@@ -186,7 +186,7 @@ public class JavaCodeExtractor implements Extractor {
             for (InterfaceInfo interfaceInfo : elementInfoPool.interfaceInfoMap.values()) {
                 Node node = db.createNode();
                 JavaCodeUtils.createInterfaceNode(interfaceInfo, node);
-                interfaceDecMap.put(interfaceInfo.fullName, new ImmutablePair<InterfaceInfo, Node>(interfaceInfo, node));
+                interfaceDecMap.put(interfaceInfo.fullName, new ImmutablePair<>(interfaceInfo, node));
             }
             tx.success();
         }
@@ -194,7 +194,7 @@ public class JavaCodeExtractor implements Extractor {
             for (MethodInfo methodInfo : elementInfoPool.methodInfoMap.values()) {
                 Node node = db.createNode();
                 JavaCodeUtils.createMethodNode(methodInfo, node);
-                Pair<MethodInfo, Node> methodSchema = new ImmutablePair<MethodInfo, Node>(methodInfo, node);
+                Pair<MethodInfo, Node> methodSchema = new ImmutablePair<>(methodInfo, node);
                 methodDecMap.put(methodInfo.hashName(), methodSchema);
                 methodBindingMap.put(methodInfo.methodBinding, methodSchema);
             }
@@ -204,7 +204,7 @@ public class JavaCodeExtractor implements Extractor {
             for (FieldInfo fieldInfo : elementInfoPool.fieldInfoMap.values()) {
                 Node node = db.createNode();
                 JavaCodeUtils.createFieldNode(fieldInfo, node);
-                fieldDecMap.put(fieldInfo.hashName(), new ImmutablePair<FieldInfo, Node>(fieldInfo, node));
+                fieldDecMap.put(fieldInfo.hashName(), new ImmutablePair<>(fieldInfo, node));
             }
             tx.success();
         }

@@ -14,7 +14,7 @@ public class TokenizationUtils {
 	}
 	
 	public static List<String> camelSplit(String e) {
-		List<String> r = new ArrayList<String>();
+		List<String> r = new ArrayList<>();
 		Matcher m = Pattern.compile("^([a-z]+)|([A-Z][a-z]+)|([A-Z]+(?=([A-Z]|$)))").matcher(e);
 		if (m.find()) {
 			String s = m.group().toLowerCase();

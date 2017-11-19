@@ -40,7 +40,7 @@ public class WordBagInstance {
 	
 	private static void load() throws IOException{
 		List<String> lines=FileUtils.readLines(new File(Config.getWordBagPath()));
-		wordBag=new HashSet<String>();
+		wordBag= new HashSet<>();
 		for (String line:lines)
 			wordBag.add(line);
 	}

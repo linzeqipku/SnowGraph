@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 
 public class WordBag {
 
-	List<WordBagItem>	wordBag	= new ArrayList<WordBagItem>();
+	List<WordBagItem>	wordBag	= new ArrayList<>();
 
 	public static void main(String[] args) {
 		WordBag wb = new WordBag(new File("data/label/titles.txt"));
@@ -81,7 +81,7 @@ public class WordBag {
 	}
 
 	public void record(String path) {
-		List<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<>();
 		for (WordBagItem item : wordBag){
 			String s=item.word.replaceAll("\\s", "_(SPACE)_");
 			s+=" " + item.count;

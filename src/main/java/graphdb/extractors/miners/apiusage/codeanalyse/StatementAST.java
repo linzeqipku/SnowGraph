@@ -57,10 +57,10 @@ public class StatementAST
 	{
 		this.statementNode = statement;
 
-		relevantVariables = new HashSet<VariableAST>();
+		relevantVariables = new HashSet<>();
 
-		usedVariables = new HashSet<VariableAST>();
-		definedVariables = new HashSet<VariableAST>();
+		usedVariables = new HashSet<>();
+		definedVariables = new HashSet<>();
 
 		parse();
 	}
@@ -303,7 +303,7 @@ public class StatementAST
 
 			copyRelevantVariables(new ExpressionAST(stmt.getExpression()));
 
-			subStatements = new ArrayList<StatementAST>();
+			subStatements = new ArrayList<>();
 			parseStatementListToSubStatements(stmt.statements());
 
 		}
@@ -413,7 +413,7 @@ public class StatementAST
 
 	private void parseBodyToSubStatements(Statement body)
 	{
-		subStatements = new ArrayList<StatementAST>();
+		subStatements = new ArrayList<>();
 
 		if (body == null)
 			return;
@@ -434,7 +434,7 @@ public class StatementAST
 
 	private void parseBodyToSubStatements2(Statement body)
 	{
-		subStatements2 = new ArrayList<StatementAST>();
+		subStatements2 = new ArrayList<>();
 
 		if (body == null)
 			return;

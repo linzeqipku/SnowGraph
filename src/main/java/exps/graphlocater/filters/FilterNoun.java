@@ -14,7 +14,7 @@ import java.util.HashSet;
 
 public class FilterNoun {
 	private PhraseInfo phrase;
-	private HashSet<String>	nouns	= new HashSet<String>();
+	private HashSet<String>	nouns	= new HashSet<>();
 
 	public FilterNoun(PhraseInfo phrase) {
 		this.phrase = phrase;

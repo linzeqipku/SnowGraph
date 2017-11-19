@@ -15,7 +15,7 @@ public class TablePropertyKeyInfo implements Serializable {
 
     public TablePropertyKeyInfo() {
         super();
-        keyCellInfos = new ArrayList<TableCellInfo>();
+        keyCellInfos = new ArrayList<>();
     }
 
     public TablePropertyKeyInfo(TableCellInfo uniqueKeyCell) {

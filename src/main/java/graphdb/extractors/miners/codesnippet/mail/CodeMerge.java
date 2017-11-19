@@ -27,7 +27,7 @@ public class CodeMerge {
 	}
 	
 	public static List<Segment> continualCodeMerge(List<Segment> srcList) {
-		List<Segment> result = new ArrayList<Segment>();
+		List<Segment> result = new ArrayList<>();
 
 		int preIndex = 0, currentIndex = 1;
 		while (currentIndex < srcList.size()) {
@@ -62,7 +62,7 @@ public class CodeMerge {
 	}
 	
 	public static List<Segment> SplitCodeSegment(List<Segment> srcList){
-		List<Segment> result = new ArrayList<Segment>();
+		List<Segment> result = new ArrayList<>();
 		List<String> list;
  		for (Segment seg : srcList){
 			if (!seg.isCode()){

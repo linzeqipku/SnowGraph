@@ -134,8 +134,8 @@ public class JiraExtractor implements Extractor {
 
     private Map<String, Node> userNodeMap = new HashMap<>();
     private List<String> duplicateList = new ArrayList<>();// "a b"代表a指向b
-    private Map<String, Node> issueNodeMap = new HashMap<String, Node>();
-    private Map<String, Node> patchNodeMap = new HashMap<String, Node>();
+    private Map<String, Node> issueNodeMap = new HashMap<>();
+    private Map<String, Node> patchNodeMap = new HashMap<>();
 
     public void setIssueFolderPath(String path) {
         this.issueFolderPath = path;
@@ -441,11 +441,11 @@ public class JiraExtractor implements Extractor {
 
         IssueUserInfo user = new IssueUserInfo(name, EmailAddressDecoder.decode(emailAddress), displayName, active);
         if (userNodeMap.containsKey(name))
-            return new ImmutablePair<String, Node>(name, userNodeMap.get(name));
+            return new ImmutablePair<>(name, userNodeMap.get(name));
         Node node = db.createNode();
         JiraUtils.createIssueUserNode(user, node);
         userNodeMap.put(name, node);
-        return new ImmutablePair<String, Node>(name, userNodeMap.get(name));
+        return new ImmutablePair<>(name, userNodeMap.get(name));
     }
 
 }

@@ -33,9 +33,9 @@ public class TransExtractor implements Extractor {
     }
 
     private void prepare() {
-        List<String> entities = new ArrayList<String>();
-        List<String> relations = new ArrayList<String>();
-        List<Triple<String, String, String>> triples = new ArrayList<Triple<String, String, String>>();
+        List<String> entities = new ArrayList<>();
+        List<String> relations = new ArrayList<>();
+        List<Triple<String, String, String>> triples = new ArrayList<>();
         try (Transaction tx = db.beginTx()) {
             for (Node node : db.getAllNodes()) {
                 if (!node.hasLabel(Label.label(JavaCodeExtractor.CLASS)) &&
@@ -59,7 +59,7 @@ public class TransExtractor implements Extractor {
                         !node2.hasLabel(Label.label(JavaCodeExtractor.METHOD)) &&
                         !node2.hasLabel(Label.label(JavaCodeExtractor.FIELD)))
                     continue;
-                triples.add(new ImmutableTriple<String, String, String>("" + node1.getId(), "" + node2.getId(), rel.getType().name()));
+                triples.add(new ImmutableTriple<>("" + node1.getId(), "" + node2.getId(), rel.getType().name()));
                 if (!relations.contains(rel.getType().name()))
                     relations.add(rel.getType().name());
             }
@@ -70,7 +70,7 @@ public class TransExtractor implements Extractor {
 
     private void writeVecLines() {
         Map<String, double[]> embeddings = transE.getEntityVecMap();
-        List<String> keys = new ArrayList<String>(embeddings.keySet());
+        List<String> keys = new ArrayList<>(embeddings.keySet());
         for (int i = 0; i < keys.size(); i += 1000) {
             try (Transaction tx = db.beginTx()) {
                 for (int j = 0; j < 1000; j++) {

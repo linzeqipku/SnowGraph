@@ -24,6 +24,7 @@ public class DocSearchResult {
 	public void setNewRank(int newRank) {
 		this.newRank = newRank;
 	}
+
 	public double getDist() {
 		return dist;
 	}

@@ -12,7 +12,7 @@ public class TableHeadingInfo implements Serializable {
     private List<TableColumnHeadInfo> columnHeads;
 
     public TableHeadingInfo() {
-        columnHeads = new ArrayList<TableColumnHeadInfo>();
+        columnHeads = new ArrayList<>();
     }
 
     public List<TableColumnHeadInfo> getColumnHeads() {
@@ -29,7 +29,7 @@ public class TableHeadingInfo implements Serializable {
      * @Description 单元格对应的表头有哪些，将所有有交叉的都返回。
      */
     public List<TableColumnHeadInfo> getOverlappedColumnHeads(TableCellInfo dataCell) {
-        List<TableColumnHeadInfo> overlappedHeads = new ArrayList<TableColumnHeadInfo>();
+        List<TableColumnHeadInfo> overlappedHeads = new ArrayList<>();
         int start = dataCell.getStartColNum();
         int end = dataCell.getEndColNum();
 

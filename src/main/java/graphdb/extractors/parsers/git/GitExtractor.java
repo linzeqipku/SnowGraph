@@ -110,9 +110,9 @@ public class GitExtractor implements Extractor {
     String gitFolderPath = null;
 
 
-    private Map<String , Node> commitNodeMap = new HashMap<String , Node>();
-    private Map<String , Node> authorNodeMap = new HashMap<String , Node>();
-    private Map<String , Node> fileNodeMap = new HashMap<String , Node>();
+    private Map<String , Node> commitNodeMap = new HashMap<>();
+    private Map<String , Node> authorNodeMap = new HashMap<>();
+    private Map<String , Node> fileNodeMap = new HashMap<>();
     private Map<String , Node> mutatedContentMap = new HashMap<>();
 
     public void setGitFolderPath(String path){
@@ -273,7 +273,7 @@ public class GitExtractor implements Extractor {
     }
 
     private Map<String , Node> getNodes(String nodeType){
-        Map<String , Node> result = new HashMap<String , Node>();
+        Map<String , Node> result = new HashMap<>();
         switch (nodeType){
             case "Class":
             case "Interface":{

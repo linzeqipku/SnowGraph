@@ -11,7 +11,7 @@ public class ClassInfo {
     public boolean isAbstract = false;
     public boolean isFinal = false;
     public String superClassType;
-    public List<String> superInterfaceTypeList = new ArrayList<String>();
+    public List<String> superInterfaceTypeList = new ArrayList<>();
     public String comment = "";
     public String content;
 }

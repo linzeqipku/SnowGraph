@@ -33,46 +33,46 @@ public class TransE {
     private double[][] relation_tmp, entity_tmp;
 
     public void prepare(List<String> entities, List<String> relations, List<Triple<String, String, String>> triples) {
-        ok = new HashSet<Triple<Integer, Integer, Integer>>();
+        ok = new HashSet<>();
 
-        entity2id = new HashMap<String, Integer>();
-        id2entity = new HashMap<Integer, String>();
+        entity2id = new HashMap<>();
+        id2entity = new HashMap<>();
         for (int i = 0; i < entities.size(); i++) {
             entity2id.put(entities.get(i), i);
             id2entity.put(i, entities.get(i));
         }
         entity_num = entities.size();
-        relation2id = new HashMap<String, Integer>();
-        id2relation = new HashMap<Integer, String>();
+        relation2id = new HashMap<>();
+        id2relation = new HashMap<>();
         for (int i = 0; i < relations.size(); i++) {
             relation2id.put(relations.get(i), i);
             id2relation.put(i, relations.get(i));
         }
         relation_num = relations.size();
 
-        left_entity = new HashMap<Integer, Map<Integer, Integer>>();
-        right_entity = new HashMap<Integer, Map<Integer, Integer>>();
-        fb_h = new ArrayList<Integer>();
-        fb_r = new ArrayList<Integer>();
-        fb_l = new ArrayList<Integer>();
+        left_entity = new HashMap<>();
+        right_entity = new HashMap<>();
+        fb_h = new ArrayList<>();
+        fb_r = new ArrayList<>();
+        fb_l = new ArrayList<>();
         for (Triple<String, String, String> triple : triples) {
             if (!left_entity.containsKey(relation2id.get(triple.getRight())))
-                left_entity.put(relation2id.get(triple.getRight()), new HashMap<Integer, Integer>());
+                left_entity.put(relation2id.get(triple.getRight()), new HashMap<>());
             if (!left_entity.get(relation2id.get(triple.getRight())).containsKey(entity2id.get(triple.getLeft())))
                 left_entity.get(relation2id.get(triple.getRight())).put(entity2id.get(triple.getLeft()), 0);
             left_entity.get(relation2id.get(triple.getRight())).put(entity2id.get(triple.getLeft()),
                     left_entity.get(relation2id.get(triple.getRight())).get(entity2id.get(triple.getLeft())) + 1);
 
             if (!right_entity.containsKey(relation2id.get(triple.getRight())))
-                right_entity.put(relation2id.get(triple.getRight()), new HashMap<Integer, Integer>());
+                right_entity.put(relation2id.get(triple.getRight()), new HashMap<>());
             if (!right_entity.get(relation2id.get(triple.getRight())).containsKey(entity2id.get(triple.getMiddle())))
                 right_entity.get(relation2id.get(triple.getRight())).put(entity2id.get(triple.getMiddle()), 0);
             right_entity.get(relation2id.get(triple.getRight())).put(entity2id.get(triple.getMiddle()),
                     right_entity.get(relation2id.get(triple.getRight())).get(entity2id.get(triple.getMiddle())) + 1);
             add(entity2id.get(triple.getLeft()), entity2id.get(triple.getMiddle()), relation2id.get(triple.getRight()));
         }
-        left_num = new HashMap<Integer, Double>();
-        right_num = new HashMap<Integer, Double>();
+        left_num = new HashMap<>();
+        right_num = new HashMap<>();
         for (int i = 0; i < relation_num; i++) {
             double sum1 = 0, sum2 = 0;
             for (Entry<Integer, Integer> it : left_entity.get(i).entrySet()) {
@@ -112,7 +112,7 @@ public class TransE {
     }
 
     public Map<String, double[]> getEntityVecMap() {
-        Map<String, double[]> r = new HashMap<String, double[]>();
+        Map<String, double[]> r = new HashMap<>();
         for (int i = 0; i < entity_num; i++) {
             String name = id2entity.get(i);
             double[] vec = entity_vec[i];
@@ -140,11 +140,11 @@ public class TransE {
                     if (method == 0)
                         pr = 500;
                     if (rand_max(1000) < pr) {
-                        while (ok.contains(new ImmutableTriple<Integer, Integer, Integer>(fb_h.get(i), fb_r.get(i), j)))
+                        while (ok.contains(new ImmutableTriple<>(fb_h.get(i), fb_r.get(i), j)))
                             j = rand_max(entity_num);
                         train_kb(fb_h.get(i), fb_l.get(i), fb_r.get(i), fb_h.get(i), j, fb_r.get(i));
                     } else {
-                        while (ok.contains(new ImmutableTriple<Integer, Integer, Integer>(j, fb_r.get(i), fb_l.get(i))))
+                        while (ok.contains(new ImmutableTriple<>(j, fb_r.get(i), fb_l.get(i))))
                             j = rand_max(entity_num);
                         train_kb(fb_h.get(i), fb_l.get(i), fb_r.get(i), j, fb_l.get(i), fb_r.get(i));
                     }
@@ -243,7 +243,7 @@ public class TransE {
         fb_h.add(e1);
         fb_r.add(r);
         fb_l.add(e2);
-        Triple<Integer, Integer, Integer> triple = new ImmutableTriple<Integer, Integer, Integer>(e1, r, e2);
+        Triple<Integer, Integer, Integer> triple = new ImmutableTriple<>(e1, r, e2);
         ok.add(triple);
     }
 

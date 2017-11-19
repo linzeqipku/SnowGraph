@@ -16,14 +16,14 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
  */
 public class WordDocxListParser {
 
-    HashMap<String,List<XWPFParagraph>> map=new HashMap<String,List<XWPFParagraph>>();
-    HashMap<XWPFParagraph,String> index=new HashMap<XWPFParagraph,String>();
+    HashMap<String,List<XWPFParagraph>> map= new HashMap<>();
+    HashMap<XWPFParagraph,String> index= new HashMap<>();
 
     public void addPara(XWPFParagraph para){
         BigInteger numID=para.getNumID();
         if (numID!=null){
             if (!map.containsKey(""+numID.intValue()))
-                map.put(""+numID.intValue(),new ArrayList<XWPFParagraph>());
+                map.put(""+numID.intValue(), new ArrayList<>());
             map.get(""+numID.intValue()).add(para);
             index.put(para, ""+numID.intValue());
         }
@@ -41,7 +41,7 @@ public class WordDocxListParser {
             return;
         }
 
-        List<DocumentElementInfo> r=new ArrayList<DocumentElementInfo>();
+        List<DocumentElementInfo> r= new ArrayList<>();
         int p=0;
         WordItemListInfo listInfo=null;
         XWPFParagraph para=null;

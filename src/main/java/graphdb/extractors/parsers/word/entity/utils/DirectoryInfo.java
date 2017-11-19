@@ -23,8 +23,8 @@ public class DirectoryInfo implements Serializable {
     private boolean				isParsed	= false;
     public DirectoryInfo() {
         super();
-        subDirectories = new ArrayList<DirectoryInfo>();
-        subFiles = new ArrayList<DocumentInfo>();
+        subDirectories = new ArrayList<>();
+        subFiles = new ArrayList<>();
         uuid = UUID.randomUUID().toString();
     }
 

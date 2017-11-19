@@ -18,7 +18,7 @@ public class WTTablePartParser {
 
     public static List<TablePartInfo> parseTableToParts(TableInfo tableInfo) {
         // 要产生的完整表格的分部列表
-        List<TablePartInfo> tableParts = new ArrayList<TablePartInfo>();
+        List<TablePartInfo> tableParts = new ArrayList<>();
 
         // 原始表格的行列表
         List<DocumentElementInfo> rowInfos = tableInfo.getSubElements();
@@ -373,7 +373,7 @@ public class WTTablePartParser {
             subTableInfo.setVerticalTitle(firstCellOfLastRow);
         }
 
-        List<Integer> startColNumOfHeads = new ArrayList<Integer>();// 记录每个表头的开始位置，划分到最细粒度。
+        List<Integer> startColNumOfHeads = new ArrayList<>();// 记录每个表头的开始位置，划分到最细粒度。
         for (int i = headingRows.size() - 1; i >= 0; i--) {
             // 从后向前遍历所有行
             TableRowInfo curRow = headingRows.get(i);

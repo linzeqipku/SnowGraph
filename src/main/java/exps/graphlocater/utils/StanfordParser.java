@@ -35,7 +35,7 @@ public class StanfordParser implements Callable<Tree> {
 
 	public static Tree parseTree(String str) {
 		StanfordParser parser = new StanfordParser(str);
-		FutureTask<Tree> parserTask = new FutureTask<Tree>(parser);
+		FutureTask<Tree> parserTask = new FutureTask<>(parser);
 		ThreadGroup stanfordParserThreadGroup = new ThreadGroup(Thread.currentThread().getThreadGroup(),
 				"Stanford-Parser-TG");
 		Thread parserThread = new Thread(stanfordParserThreadGroup, parserTask);

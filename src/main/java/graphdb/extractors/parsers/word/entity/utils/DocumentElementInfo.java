@@ -21,7 +21,7 @@ public class DocumentElementInfo implements Serializable {
 
     public DocumentElementInfo() {
         uuid = UUID.randomUUID().toString();
-        subElements = new ArrayList<DocumentElementInfo>();
+        subElements = new ArrayList<>();
         apiList = new HashSet<>();
     }
 

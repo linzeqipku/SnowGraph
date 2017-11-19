@@ -53,7 +53,7 @@ public class DocumentParser {
 		if (StringUtils.isBlank(sentence))
 			return Pair.of(sentence, new CodeTermInfo[0]);
 
-		List<CodeTermInfo> codeTerms = new ArrayList<CodeTermInfo>();
+		List<CodeTermInfo> codeTerms = new ArrayList<>();
 
 		/** find code terms by html tags. **/
 		String codeTagBegin = "<code>";

@@ -36,8 +36,8 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 
 	private void splitMethodNames()
 	{
-		apiMethodWords = new ArrayList<String>(Arrays.asList(camelCaseSplit(apiMethodName)));
-		testMethodWords = new ArrayList<String>(Arrays.asList(camelCaseSplit(testMethodName)));
+		apiMethodWords = new ArrayList<>(Arrays.asList(camelCaseSplit(apiMethodName)));
+		testMethodWords = new ArrayList<>(Arrays.asList(camelCaseSplit(testMethodName)));
 		testMethodWords.removeAll(Arrays.asList(stopWordsList));
 	}
 
@@ -46,7 +46,7 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 	{
 		Stemmer stemmer = new Stemmer();
 
-		stemmedAPIWords = new ArrayList<String>();
+		stemmedAPIWords = new ArrayList<>();
 		for (int i = 0; i < apiMethodWords.size(); i++)
 		{
 			// trim digit
@@ -67,7 +67,7 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 			}
 		}
 
-		stemmedTestWords = new ArrayList<String>();
+		stemmedTestWords = new ArrayList<>();
 		for (int i = 0; i < testMethodWords.size(); i++)
 		{
 			// trim digit
@@ -91,8 +91,8 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 
 	private void findCommonWords()
 	{
-		List<String> commonWordsList = new ArrayList<String>();
-		List<Integer> matchedAPIWords = new ArrayList<Integer>();
+		List<String> commonWordsList = new ArrayList<>();
+		List<Integer> matchedAPIWords = new ArrayList<>();
 		for (int i = 0; i < stemmedTestWords.size(); i++)
 		{
 			boolean matched = false;
@@ -123,12 +123,12 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 	// 包含数字的切词 Jira432html5 --> jira432 html5
 	public static String[] camelCaseSplit(String string)
 	{
-		List<String> splitWords = new ArrayList<String>();
+		List<String> splitWords = new ArrayList<>();
 
 		String[] subStrings = Pattern.compile("_").split(string);
 		for (String str : subStrings)
 		{
-			List<Integer> camelPos = new ArrayList<Integer>();
+			List<Integer> camelPos = new ArrayList<>();
 			camelPos.add(0);
 			for (int i = 1; i < str.length(); i++)
 			{
@@ -189,13 +189,13 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 	@SuppressWarnings("unused")
 	private String[] findCommonWords0(String[] testMethodWords, String[] apiMethodWords)
 	{
-		List<String> cmn = new ArrayList<String>();
+		List<String> cmn = new ArrayList<>();
 
 		// 更准确的匹配和检索，以后实现
 		// 可以考虑动态规划方法的检测
 		
-		List<Integer> matched1 = new ArrayList<Integer>();
-		List<Integer> matched2 = new ArrayList<Integer>();
+		List<Integer> matched1 = new ArrayList<>();
+		List<Integer> matched2 = new ArrayList<>();
 
 		for (int i = 0; i < testMethodWords.length; i++)
 		{
@@ -225,10 +225,10 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 		String[] words1 = camelCaseSplit(str1);
 		String[] words2 = camelCaseSplit(str2);
 
-		List<String> cmn = new ArrayList<String>();
+		List<String> cmn = new ArrayList<>();
 
-		List<Integer> matched1 = new ArrayList<Integer>();
-		List<Integer> matched2 = new ArrayList<Integer>();
+		List<Integer> matched1 = new ArrayList<>();
+		List<Integer> matched2 = new ArrayList<>();
 
 		for (int i = 0; i < words1.length; i++)
 		{

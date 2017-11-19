@@ -130,7 +130,7 @@ public class JavaASTVisitor extends ASTVisitor {
     }
 
     private List<FieldInfo> createFieldInfos(FieldDeclaration node, String belongTo) {
-        List<FieldInfo> fieldInfos = new ArrayList<FieldInfo>();
+        List<FieldInfo> fieldInfos = new ArrayList<>();
         Type type = node.getType();
         Set<String> types = getTypes(type);
         String typeString = type.toString();
@@ -174,7 +174,7 @@ public class JavaASTVisitor extends ASTVisitor {
             methodInfo.comment = sourceContent.substring(node.getJavadoc().getStartPosition(), node.getJavadoc().getStartPosition() + node.getJavadoc().getLength());
         methodInfo.belongTo = belongTo;
         List<SingleVariableDeclaration> params = node.parameters();
-        List<String> paramStringList = new ArrayList<String>();
+        List<String> paramStringList = new ArrayList<>();
         for (SingleVariableDeclaration param : params) {
             String name = param.getName().getFullyQualifiedName();
             Type type = param.getType();
@@ -196,7 +196,7 @@ public class JavaASTVisitor extends ASTVisitor {
         if (methodBody == null)
             return;
         List<Statement> statementList = methodBody.statements();
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = new ArrayList<>();
         for (int i = 0; i < statementList.size(); i++) {
             statements.add(statementList.get(i));
         }
@@ -386,7 +386,7 @@ public class JavaASTVisitor extends ASTVisitor {
     }
 
     private Set<String> getTypes(Type oType) {
-        Set<String> types = new HashSet<String>();
+        Set<String> types = new HashSet<>();
         if (oType == null)
             return types;
         ITypeBinding typeBinding = oType.resolveBinding();

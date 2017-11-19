@@ -35,6 +35,7 @@ public class GetNodeServlet extends HttpServlet {
         		JSONObject obj=new JSONObject((Map)rs.getObject("n"));
         		response.getWriter().print(obj);
         	}
+        	statement.close();
         } catch (SQLException e){
         	e.printStackTrace();
         }

@@ -88,6 +88,7 @@ public class LuceneSearcher {
 					writer.addDocument(document);
 				}
 			}
+			statement.close();
 		} catch (SQLException e){
 			e.printStackTrace();
 		}

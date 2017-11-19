@@ -37,6 +37,7 @@ public class SearchResult {
 	        		JSONObject obj=new JSONObject((Map)rs.getObject("n"));
 	        		nodesArray.put(obj);
 	        	}
+	        	statement.close();
 	        } catch (SQLException e){
 	        	e.printStackTrace();
 	        }
@@ -55,6 +56,7 @@ public class SearchResult {
 					//System.out.println(obj);
 	        		relationshipsArray.put(obj);
 	        	}
+	        	statement.close();
 	        } catch (SQLException e){
 	        	e.printStackTrace();
 	        }

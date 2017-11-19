@@ -24,7 +24,7 @@ import java.util.Random;
 public class RandomServlet extends HttpServlet {
 
 	Random rand ;
-	Map<Integer, Pair<Long,Long>> map = new HashMap<>();
+	Map<Long, Pair<Long,Long>> map = new HashMap<>();
 	
 	public void init(ServletConfig config) throws ServletException{
 		
@@ -39,7 +39,7 @@ public class RandomServlet extends HttpServlet {
             	if (lineTxt.length()==0)
             		continue;
                 String[] names = lineTxt.split(" ");
-                map.put(Integer.parseInt(names[0]), new ImmutablePair<>(Long.parseLong(names[1]), Long.parseLong(names[2])));
+                map.put(Long.parseLong(names[0]), new ImmutablePair<>(Long.parseLong(names[1]), Long.parseLong(names[2])));
             }
             br.close();
         } catch (Exception e) {

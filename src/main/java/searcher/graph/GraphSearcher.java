@@ -73,7 +73,7 @@ public class GraphSearcher {
 					m = true;
 				}
 				if (name.contains("."))
-					name = name.substring(name.indexOf(".") + 1);
+					name = name.substring(name.lastIndexOf(".") + 1);
 				if (m && name.matches("[A-Z]\\w+"))
 					continue;
 				Set<String> words = new HashSet<>();

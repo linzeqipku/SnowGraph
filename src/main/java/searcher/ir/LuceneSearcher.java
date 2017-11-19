@@ -80,6 +80,7 @@ public class LuceneSearcher {
 					if (test) {
 						SearchResult subGraph = graphSearcher.query(content);
 						String nodeSet = StringUtils.join(subGraph.nodes, " ").trim();
+						System.out.println(subGraph.nodes.size());
 						document.add(new StringField("node_set", nodeSet, Field.Store.YES));
 					}
 					else

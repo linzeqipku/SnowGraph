@@ -1,7 +1,6 @@
 package servlet;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.neo4j.time.SystemNanoClock;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,7 +31,7 @@ public class OutGoingRelationServlet extends HttpServlet {
         Map<String,Integer> cnt = new HashMap<>();
 
         try (Statement statement = Config.getNeo4jBoltConnection().createStatement()) {
-        	String stat="match p=(n)-[r]-(x) where id(n)="+id+" return r";
+        	String stat="match p=(n)-[r]-(x) where id(r)="+id+" return r";
         	ResultSet rs=statement.executeQuery(stat);
         	while (rs.next()){
         		JSONObject jsobj=new JSONObject((Map)rs.getObject("r"));
@@ -48,8 +47,8 @@ public class OutGoingRelationServlet extends HttpServlet {
         Object [] tmp = cnt.keySet().toArray();
         for (int i = 0; i < tmp.length; i++){
             for (int j = i+1; j < tmp.length; j++){
-                int t1 = cnt.get((String)tmp[i]);
-                int t2 = cnt.get((String)tmp[j]);
+                int t1 = cnt.get(tmp[i].toString());
+                int t2 = cnt.get(tmp[j].toString());
                 if (t2 < t1) {
                     Object tt = tmp[i];
                     tmp[i] = tmp[j];

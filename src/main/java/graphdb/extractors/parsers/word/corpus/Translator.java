@@ -1,7 +1,5 @@
 package graphdb.extractors.parsers.word.corpus;
 
-import graphdb.extractors.parsers.word.utils.Config;
-import org.apache.commons.io.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -16,11 +14,8 @@ import org.jsoup.select.Elements;
  * Created by maxkibble on 2017/7/9.
  */
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

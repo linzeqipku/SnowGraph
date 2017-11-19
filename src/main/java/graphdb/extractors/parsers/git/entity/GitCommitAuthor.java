@@ -5,8 +5,6 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.RelationshipType;
 
-import java.util.Iterator;
-
 /**
  * Created by oliver on 2017/5/23.
  */

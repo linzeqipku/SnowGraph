@@ -3,7 +3,6 @@ package graphdb.extractors.parsers.javacode;
 import graphdb.extractors.parsers.javacode.entity.ClassInfo;
 import graphdb.extractors.parsers.javacode.entity.InterfaceInfo;
 import graphdb.extractors.parsers.javacode.entity.MethodInfo;
-import scala.annotation.meta.field;
 
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;

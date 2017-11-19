@@ -1,7 +1,6 @@
 package graphdb.extractors.parsers.word;
 
 import graphdb.extractors.parsers.word.document.DocumentParser;
-import graphdb.extractors.parsers.word.entity.table.TableCellInfo;
 import graphdb.extractors.parsers.word.entity.table.TableInfo;
 import graphdb.extractors.parsers.word.entity.utils.*;
 import graphdb.extractors.parsers.word.entity.word.WordDocumentInfo;

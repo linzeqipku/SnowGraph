@@ -5,11 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import graphdb.extractors.parsers.javacode.entity.InterfaceInfo;
-import graphdb.extractors.parsers.word.utils.ApiJudge;
-import graphdb.extractors.parsers.word.utils.Config;
-import org.apache.lucene.analysis.ar.ArabicAnalyzer;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ArrayInitializer;

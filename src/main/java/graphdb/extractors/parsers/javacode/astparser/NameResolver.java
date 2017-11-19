@@ -1,6 +1,5 @@
 package graphdb.extractors.parsers.javacode.astparser;
 
-import java.io.File;
 import java.util.Set;
 
 import org.eclipse.jdt.core.dom.ASTNode;

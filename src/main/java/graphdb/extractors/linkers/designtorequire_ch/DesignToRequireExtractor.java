@@ -1,6 +1,5 @@
 package graphdb.extractors.linkers.designtorequire_ch;
 
-import graphdb.extractors.linkers.codeindoc_ch.CodeInDocxFileExtractor;
 import graphdb.extractors.parsers.word.WordKnowledgeExtractor;
 import graphdb.extractors.parsers.word.utils.Config;
 import graphdb.framework.Extractor;

@@ -1,7 +1,6 @@
 package exps.graphlocater.wrapper;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tartarus.snowball.ext.EnglishStemmer;
 
 import exps.graphlocater.utils.WordsUtils;
 

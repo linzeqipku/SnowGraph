@@ -13,11 +13,11 @@ log/
 *.iws
 
 resources/configs/*.xml
-src/main/resources/conf
 
 out/
 utils/mywork/
 bin/
 classes/
+src/main/resources/dev/
 
 node_modules/

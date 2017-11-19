@@ -14,15 +14,9 @@
     <profiles>
         <!--本地开发环境-->
         <profile>
-            <id>dev-linzq</id>
+            <id>dev</id>
             <properties>
-                <profiles.active>dev/linzq</profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>dev-huacy</id>
-            <properties>
-                <profiles.active>dev/huacy</profiles.active>
+                <profiles.active>dev</profiles.active>
             </properties>
         </profile>
         <!--生产环境-->
@@ -41,8 +35,7 @@
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
                 <excludes>
-                    <exclude>dev/linzq/*</exclude>
-                    <exclude>dev/huacy/*</exclude>
+                    <exclude>dev/*</exclude>
                     <exclude>pro/*</exclude>
                 </excludes>
             </resource>

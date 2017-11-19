@@ -1,3 +1,0 @@
-neo4jBoltUrl bolt://127.0.0.1:7687/
-lucenePath /home/woooking/lab/snowgraph/lucene/index
-exampleFilePath /home/woooking/lab/snowgraph/lucene/example

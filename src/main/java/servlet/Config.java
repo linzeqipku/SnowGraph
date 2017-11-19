@@ -38,19 +38,13 @@ public class Config {
 				String suf = line.substring(p + 1);
 				if (pre.equals("neo4jBoltUrl"))
 					neo4jBoltUrl = suf;
-				if (pre.equals("exampleFilePath"))
-					exampleFilePath = suf;
-				if (pre.equals("lucenePath"))
-					lucenePath = suf;
+				if (pre.equals("dataPath")) {
+					exampleFilePath = suf+"/qaexamples";
+					lucenePath = suf+"/index";
+				}
 			}
 		}
-		try {
-			Class.forName("org.neo4j.jdbc.Driver").newInstance();
-			neo4jBoltConnection= GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		neo4jBoltConnection= GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
 		graphSearcher = new GraphSearcher();
 		docSearcher = new DocSearcher(graphSearcher);
 	}

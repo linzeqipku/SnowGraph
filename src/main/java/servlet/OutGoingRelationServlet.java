@@ -46,6 +46,7 @@ public class OutGoingRelationServlet extends HttpServlet {
                     cnt.put(key,cnt.get(key)+1);
                 }else cnt.put(key,1);
         	}
+        	statement.close();
         } catch (SQLException e){
         	e.printStackTrace();
         }

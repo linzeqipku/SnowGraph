@@ -49,6 +49,7 @@ public class DocSearcher {
 				rich="<h2>"+title+"</h2>"+text;
 				plain=Jsoup.parse("<html>"+rich+"</html>").text();
 			}
+			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -63,6 +64,7 @@ public class DocSearcher {
 			while (rs.next()){
 				title=rs.getString("n."+TextExtractor.TITLE);
 			}
+			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -150,6 +152,7 @@ public class DocSearcher {
 				qaMap.put(qId, aId);
 				qMap.put(qId, query);
 			}
+			statement.close();
 		} catch (SQLException e){
 			e.printStackTrace();
 		}

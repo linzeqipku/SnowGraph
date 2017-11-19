@@ -56,7 +56,17 @@ public class DocSearcher {
 	}
 
 	public String getQuery(long queryId){
-		return queryMap.get(queryId);
+		String title="";
+		try (Statement statement = connection.createStatement()) {
+			String stat="match (n) where id(n)="+queryId+" return n."+TextExtractor.TITLE;
+			ResultSet rs=statement.executeQuery(stat);
+			while (rs.next()){
+				title=rs.getString("n."+TextExtractor.TITLE);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return title;
 	}
 
 	public List<DocSearchResult> search(String query){

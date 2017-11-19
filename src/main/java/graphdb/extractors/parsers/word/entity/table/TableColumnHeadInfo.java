@@ -14,7 +14,7 @@ public class TableColumnHeadInfo implements Serializable {
     private int						endColNum;
 
     public TableColumnHeadInfo() {
-        headCells = new ArrayList<TableCellInfo>();
+        headCells = new ArrayList<>();
     }
 
     public int getStartColNum() {

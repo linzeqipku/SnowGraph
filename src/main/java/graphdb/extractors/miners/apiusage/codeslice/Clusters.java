@@ -60,8 +60,8 @@ public class Clusters implements Serializable {
 				rankedSimilarities.put(i, avrg_similarity);
 			}
 
-			List<Map.Entry<Integer, Double>> similarityEntries = new ArrayList<Map.Entry<Integer, Double>>(
-				rankedSimilarities.entrySet());
+			List<Map.Entry<Integer, Double>> similarityEntries = new ArrayList<>(
+                    rankedSimilarities.entrySet());
 			Collections.sort(similarityEntries, new Comparator<Map.Entry<Integer, Double>>() {
 				public int compare(Map.Entry<Integer, Double> o1, Map.Entry<Integer, Double> o2) {
 					return (int) (10000 * (o1.getValue() - o2.getValue()));

@@ -63,7 +63,7 @@ public enum ProofType {
 		return name;
 	}
 
-	private final static Map<String, ProofType> PROOF_MAP = new HashMap<String, ProofType>();
+	private final static Map<String, ProofType> PROOF_MAP = new HashMap<>();
 	static {
 		for (ProofType v : values()) {
 			PROOF_MAP.put(v.getName(), v);

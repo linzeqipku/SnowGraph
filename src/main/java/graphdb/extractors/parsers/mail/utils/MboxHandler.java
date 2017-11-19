@@ -24,10 +24,10 @@ import graphdb.extractors.parsers.mail.entity.MailInfo;
 public class MboxHandler extends AbstractContentHandler {
 
     private GraphDatabaseService db = null;
-    private Map<String, Node> mailMap = new HashMap<String, Node>();
-    private Map<String, Node> mailUserMap = new HashMap<String, Node>();
-    private Map<String, String> mailReplyMap = new HashMap<String, String>();
-    private Map<String, Set<String>> mailUserNameMap = new HashMap<String, Set<String>>();
+    private Map<String, Node> mailMap = new HashMap<>();
+    private Map<String, Node> mailUserMap = new HashMap<>();
+    private Map<String, String> mailReplyMap = new HashMap<>();
+    private Map<String, Set<String>> mailUserNameMap = new HashMap<>();
     private MailInfo mailInfo = new MailInfo();
 
     public void setDb(GraphDatabaseService db) {
@@ -167,7 +167,7 @@ public class MboxHandler extends AbstractContentHandler {
         }
         userNode = mailUserMap.get(userAddress);
         if (!mailUserNameMap.containsKey(userAddress))
-            mailUserNameMap.put(userAddress, new HashSet<String>());
+            mailUserNameMap.put(userAddress, new HashSet<>());
         mailUserNameMap.get(userAddress).add(userName);
         if (sender)
             mailNode.createRelationshipTo(userNode, RelationshipType.withName(MailListExtractor.MAIL_SENDER));

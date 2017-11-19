@@ -14,7 +14,7 @@ public class TableSubTableInfo extends TablePartInfo {
     private TableHeadingInfo			heading;
 
     public TableSubTableInfo() {
-        headingRows = new ArrayList<TableRowInfo>();
+        headingRows = new ArrayList<>();
     }
 
     public TableCellInfo getHorizontalTitle() {

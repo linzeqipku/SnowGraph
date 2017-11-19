@@ -39,8 +39,8 @@ public enum FileType {
         return getName();
     }
 
-    private final static Map<String, FileType>	DOC_MAP		= new HashMap<String, FileType>();
-    private static Map<FileType, Integer>		TYPE_STATS	= new HashMap<FileType, Integer>(); // 统计每类类型数量
+    private final static Map<String, FileType>	DOC_MAP		= new HashMap<>();
+    private static Map<FileType, Integer>		TYPE_STATS	= new HashMap<>(); // 统计每类类型数量
     static {
         for (FileType v : values()) {
             DOC_MAP.put(v.getName(), v);
@@ -81,7 +81,7 @@ public enum FileType {
         names.add("c");
         names.add("docx");
         names.add("ey932hd");
-        List<FileType> ft = new ArrayList<FileType>();
+        List<FileType> ft = new ArrayList<>();
         for (String name : names) {
             FileType ft1 = FileType.getDocumentTypeByName(name);
             if (ft1 == OTHER)

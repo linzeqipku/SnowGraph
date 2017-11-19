@@ -311,7 +311,7 @@ public class FileUtils {
     }*/
 
     public static void main(String[] args) {
-        List<String> s = new ArrayList<String>();
+        List<String> s = new ArrayList<>();
         s.add("sdfjksd.dsfsdf.sdds");
         s.add("fsgfwgr");
         s.add("sgfdgdf.tt");

@@ -31,7 +31,7 @@ public class StackOverflowDumpExtractionUtils {
         String commentXmlPath=remoteQaPath+"/Comments.xml";
         cExtractor.extractQaCommentXmlFile(commentXmlPath, cPath);
 
-        Set<Integer> allUserIdSet = new HashSet<Integer>();
+        Set<Integer> allUserIdSet = new HashSet<>();
         allUserIdSet.addAll(qExtractor.userIdSet);
         allUserIdSet.addAll(aExtractor.userIdSet);
         allUserIdSet.addAll(cExtractor.userIdSet);
@@ -49,8 +49,8 @@ public class StackOverflowDumpExtractionUtils {
 class QuestionExtractor
 {
 
-    Set<Integer> questionIdSet = new HashSet<Integer>();
-    Set<Integer> userIdSet = new HashSet<Integer>();
+    Set<Integer> questionIdSet = new HashSet<>();
+    Set<Integer> userIdSet = new HashSet<>();
 
     Pattern tagsRe=null;
     static Pattern idRe=Pattern.compile("id=\"(\\d+)\"");
@@ -165,9 +165,9 @@ class QaUserExtractor {
 
 class QaCommentExtractor {
 
-    Set<Integer> questionIdSet = new HashSet<Integer>();
-    Set<Integer> answerIdSet = new HashSet<Integer>();
-    Set<Integer> userIdSet = new HashSet<Integer>();
+    Set<Integer> questionIdSet = new HashSet<>();
+    Set<Integer> answerIdSet = new HashSet<>();
+    Set<Integer> userIdSet = new HashSet<>();
 
     static Pattern postIdRe = Pattern.compile("postid=\"(\\d+)\"");
     static Pattern userIdRe = Pattern.compile("userid=\"(\\d+)\"");
@@ -222,9 +222,9 @@ class QaCommentExtractor {
 
 class AnswerExtractor {
 
-    Set<Integer> questionIdSet = new HashSet<Integer>();
-    Set<Integer> answerIdSet = new HashSet<Integer>();
-    Set<Integer> userIdSet = new HashSet<Integer>();
+    Set<Integer> questionIdSet = new HashSet<>();
+    Set<Integer> answerIdSet = new HashSet<>();
+    Set<Integer> userIdSet = new HashSet<>();
 
     static Pattern parentIdRe = Pattern.compile("parentid=\"(\\d+)\"");
     static Pattern idRe = Pattern.compile("id=\"(\\d+)\"");

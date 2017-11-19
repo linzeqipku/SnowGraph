@@ -14,7 +14,7 @@ public class Tokenizer {
 
 	public static List<String> token(String s){
 		String[] eles=s.split("[\r\n]+");
-		List<String> v=new ArrayList<String>();
+		List<String> v= new ArrayList<>();
 		for (String e:eles){
 			e=e.trim();
 			Matcher m=title.matcher(e);

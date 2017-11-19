@@ -14,18 +14,18 @@ import org.neo4j.graphdb.Transaction;
 
 public class CodeIndexes {
 
-    public Map<String, Long> typeMap = new HashMap<String, Long>();
-    public Map<Long, String> idToTypeNameMap = new HashMap<Long, String>();
-    public Map<String, Set<Long>> methodMap = new HashMap<String, Set<Long>>();
-    public Map<Long, String> idToMethodNameMap = new HashMap<Long, String>();
-    public Map<String, Set<Long>> typeShortNameMap = new HashMap<String, Set<Long>>();
-    public Map<String, Set<Long>> methodMidNameMap = new HashMap<String, Set<Long>>();
-    public Map<String, Set<Long>> methodShortNameMap = new HashMap<String, Set<Long>>();
+    public Map<String, Long> typeMap = new HashMap<>();
+    public Map<Long, String> idToTypeNameMap = new HashMap<>();
+    public Map<String, Set<Long>> methodMap = new HashMap<>();
+    public Map<Long, String> idToMethodNameMap = new HashMap<>();
+    public Map<String, Set<Long>> typeShortNameMap = new HashMap<>();
+    public Map<String, Set<Long>> methodMidNameMap = new HashMap<>();
+    public Map<String, Set<Long>> methodShortNameMap = new HashMap<>();
 
     public CodeIndexes(GraphDatabaseService db) {
         try (Transaction tx = db.beginTx()) {
             ResourceIterator<Node> nodes = db.getAllNodes().iterator();
-            Set<Node> codeNodes = new HashSet<Node>();
+            Set<Node> codeNodes = new HashSet<>();
             while (nodes.hasNext()) {
                 Node node = nodes.next();
                 if (node.hasLabel(Label.label(JavaCodeExtractor.CLASS)) || node.hasLabel(Label.label(JavaCodeExtractor.INTERFACE)) || node.hasLabel(Label.label(JavaCodeExtractor.METHOD))) {
@@ -54,11 +54,11 @@ public class CodeIndexes {
                     if (p > 0)
                         shortName = shortName.substring(p + 1, shortName.length());
                     if (!typeShortNameMap.containsKey(shortName))
-                        typeShortNameMap.put(shortName, new HashSet<Long>());
+                        typeShortNameMap.put(shortName, new HashSet<>());
                     typeShortNameMap.get(shortName).add(codeNode.getId());
                 } else {
                     if (!methodMap.containsKey(name))
-                        methodMap.put(name, new HashSet<Long>());
+                        methodMap.put(name, new HashSet<>());
                     methodMap.get(name).add(codeNode.getId());
                     idToMethodNameMap.put(codeNode.getId(), name);
                     int p1 = name.lastIndexOf('.');
@@ -72,10 +72,10 @@ public class CodeIndexes {
                         shortName = name.substring(p1 + 1);
                     }
                     if (!methodMidNameMap.containsKey(midName))
-                        methodMidNameMap.put(midName, new HashSet<Long>());
+                        methodMidNameMap.put(midName, new HashSet<>());
                     methodMidNameMap.get(midName).add(codeNode.getId());
                     if (!methodShortNameMap.containsKey(shortName))
-                        methodShortNameMap.put(shortName, new HashSet<Long>());
+                        methodShortNameMap.put(shortName, new HashSet<>());
                     methodShortNameMap.get(shortName).add(codeNode.getId());
                 }
             }

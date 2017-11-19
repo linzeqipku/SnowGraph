@@ -33,7 +33,7 @@ public class ReferenceExtractor implements Extractor {
     GraphDatabaseService db = null;
     CodeIndexes codeIndexes = null;
 
-    Map<Node, String> nodeToTextMap = new HashMap<Node, String>();
+    Map<Node, String> nodeToTextMap = new HashMap<>();
 
     public void run(GraphDatabaseService db) {
         this.db = db;
@@ -78,14 +78,14 @@ public class ReferenceExtractor implements Extractor {
         try (Transaction tx = db.beginTx()) {
             for (Node srcNode : nodeToTextMap.keySet()) {
                 String content = nodeToTextMap.get(srcNode);
-                Set<String> tokens = new HashSet<String>();
+                Set<String> tokens = new HashSet<>();
                 for (String token : content.split("\\W+"))
                     if (token.length() > 0)
                         tokens.add(token);
                 
                 //链接的类和方法
-                Set<Long> linkTypeSet = new HashSet<Long>();
-                Set<Long> linkMethodSet = new HashSet<Long>();
+                Set<Long> linkTypeSet = new HashSet<>();
+                Set<Long> linkMethodSet = new HashSet<>();
                 //所有的链接地址
                 String ahrefs = "";
                 Elements links = Jsoup.parse("<html>"+content+"</html>").select("a[href]");
@@ -103,12 +103,12 @@ public class ReferenceExtractor implements Extractor {
                 }
 
                 //找到所有名字在文本中出现过的类
-                Map<String, Set<Long>> occTypeMap = new HashMap<String, Set<Long>>();
+                Map<String, Set<Long>> occTypeMap = new HashMap<>();
                 for (String typeShortName : codeIndexes.typeShortNameMap.keySet())
                     if (tokens.contains(typeShortName))
                         occTypeMap.put(typeShortName, codeIndexes.typeShortNameMap.get(typeShortName));
                 //找到所有名字在文本中出现过的方法
-                Map<String, Set<Long>> occMethodMap = new HashMap<String, Set<Long>>();
+                Map<String, Set<Long>> occMethodMap = new HashMap<>();
                 for (String methodShortName : codeIndexes.methodShortNameMap.keySet())
                     if (tokens.contains(methodShortName))
                         occMethodMap.put(methodShortName, codeIndexes.methodShortNameMap.get(methodShortName));

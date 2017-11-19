@@ -26,7 +26,7 @@ public class ApiMentionExtractor implements Extractor {
     GraphDatabaseService db = null;
     CodeIndexes codeIndexes = null;
 
-    Map<Node, String> nodeToTextMap = new HashMap<Node, String>();
+    Map<Node, String> nodeToTextMap = new HashMap<>();
 
     public void run(GraphDatabaseService db) {
         this.db = db;
@@ -57,9 +57,9 @@ public class ApiMentionExtractor implements Extractor {
 
             for (Node srcNode : nodeToTextMap.keySet()) {
                 String content = Jsoup.parse(nodeToTextMap.get(srcNode)).text();
-                Set<String> lexes = new HashSet<String>();
+                Set<String> lexes = new HashSet<>();
                 Collections.addAll(lexes, content.split("\\W+"));
-                Set<Node> resultNodes = new HashSet<Node>();
+                Set<Node> resultNodes = new HashSet<>();
 
                 //类/接口
                 for (String typeShortName : codeIndexes.typeShortNameMap.keySet())

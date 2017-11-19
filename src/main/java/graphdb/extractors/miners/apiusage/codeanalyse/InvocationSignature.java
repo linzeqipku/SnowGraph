@@ -177,7 +177,7 @@ public class InvocationSignature extends ASTVisitor {
 			signature.append(methodInvocation.getName().toString());
 
 			// 方法调用的诸参数表达式的分析
-			List<InvocationSignature> argumentsSignature = new ArrayList<InvocationSignature>();
+			List<InvocationSignature> argumentsSignature = new ArrayList<>();
 
 			for (Expression argument : (List<Expression>) methodInvocation.arguments()) {
 				InvocationSignature arguSignature = new InvocationSignature(argument);

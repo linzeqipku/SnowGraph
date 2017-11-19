@@ -37,7 +37,7 @@ public class AutoWordBagInstance {
 
 	private static void mark() throws IOException {
 		List<String> lines = FileUtils.readLines(new File(semanticTitlePath));
-		List<String> r = new ArrayList<String>();
+		List<String> r = new ArrayList<>();
 		for (String line : lines) {
 			if (line.endsWith("T"))
 				return;

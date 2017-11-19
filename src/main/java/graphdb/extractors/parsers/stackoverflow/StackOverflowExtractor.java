@@ -117,10 +117,10 @@ public class StackOverflowExtractor implements Extractor {
     public static final String DUPLICATE = "soDuplicate";
 
     String folderPath = null;
-    private Map<Integer, QuestionInfo> questionMap = new HashMap<Integer, QuestionInfo>();
-    private Map<Integer, AnswerInfo> answerMap = new HashMap<Integer, AnswerInfo>();
-    private Map<Integer, QaCommentInfo> commentMap = new HashMap<Integer, QaCommentInfo>();
-    private Map<Integer, QaUserInfo> userMap = new HashMap<Integer, QaUserInfo>();
+    private Map<Integer, QuestionInfo> questionMap = new HashMap<>();
+    private Map<Integer, AnswerInfo> answerMap = new HashMap<>();
+    private Map<Integer, QaCommentInfo> commentMap = new HashMap<>();
+    private Map<Integer, QaUserInfo> userMap = new HashMap<>();
     private List<Pair<Integer, Integer>> duplicateLinkList = new ArrayList<>();
 
     String questionXmlPath = null, answerXmlPath = null, commentXmlPath = null, userXmlPath = null, postLinkXmlPath = null;

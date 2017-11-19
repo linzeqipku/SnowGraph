@@ -21,8 +21,8 @@ public class JavaParser {
         ElementInfoPool elementInfoPool = new ElementInfoPool(srcDir);
 
         Collection<File> javaFiles = FileUtils.listFiles(new File(srcDir), new String[]{"java"}, true);
-        Set<String> srcPathSet = new HashSet<String>();
-        Set<String> srcFolderSet = new HashSet<String>();
+        Set<String> srcPathSet = new HashSet<>();
+        Set<String> srcFolderSet = new HashSet<>();
         for (File javaFile : javaFiles) {
             String srcPath = javaFile.getAbsolutePath();
             String srcFolderPath = javaFile.getParentFile().getAbsolutePath();
@@ -39,7 +39,7 @@ public class JavaParser {
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setEnvironment(null, srcFolderPaths, null, true);
         parser.setResolveBindings(true);
-        Map<String, String> options = new Hashtable<String, String>();
+        Map<String, String> options = new Hashtable<>();
         options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
         options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
         options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);

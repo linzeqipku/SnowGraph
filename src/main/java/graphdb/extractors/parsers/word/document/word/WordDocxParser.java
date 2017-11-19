@@ -243,7 +243,7 @@ public class WordDocxParser {
     }
 
     private static class SectionContainer {
-        private Stack<SectionInfo>	sectionStack	= new Stack<SectionInfo>();
+        private Stack<SectionInfo>	sectionStack	= new Stack<>();
 
         /*
          * return the last section which satisfies the condition that

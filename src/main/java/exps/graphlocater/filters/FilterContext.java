@@ -14,7 +14,7 @@ public class FilterContext {
 	private static HashSet<String>	qaContextList;
 
 	static {
-		qaContextList = new HashSet<String>();
+		qaContextList = new HashSet<>();
 
 		qaContextList.addAll(Arrays.asList(Rules.qa_phrases));
 		qaContextList.addAll(Arrays.asList(Rules.qa_verbs));

@@ -1,4 +1,4 @@
-package utils;
+package apps;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -6,7 +6,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import graphdb.framework.GraphBuilder;
 
 
-public class GraphdbGenerator {
+public class BuildGraph {
 
     public static void main(String[] args) {
         run(args[0]);

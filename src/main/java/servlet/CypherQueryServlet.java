@@ -1,4 +1,5 @@
 package servlet;
+import apps.Config;
 import org.json.JSONObject;
 
 import searcher.graph.SearchResult;

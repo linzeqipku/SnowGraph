@@ -2,10 +2,6 @@ package searcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 
 import org.apache.commons.io.FileUtils;
@@ -21,7 +17,7 @@ import org.neo4j.driver.v1.StatementResult;
 import searcher.graph.GraphSearcher;
 import searcher.ir.LuceneSearchResult;
 import searcher.ir.LuceneSearcher;
-import servlet.Config;
+import apps.Config;
 
 public class DocSearcher {
 
@@ -158,8 +154,4 @@ public class DocSearcher {
         this.queryMap = qMap;
     }
 
-    public static void main(String[] args) {
-        DocSearcher docSearcher = Config.getDocSearcher();
-        docSearcher.findExamples();
-    }
 }

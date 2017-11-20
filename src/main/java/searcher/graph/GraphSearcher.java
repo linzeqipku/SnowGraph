@@ -1,9 +1,6 @@
 package searcher.graph;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -16,7 +13,7 @@ import org.tartarus.snowball.ext.EnglishStemmer;
 
 import graphdb.extractors.miners.codeembedding.line.LINEExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
-import servlet.Config;
+import apps.Config;
 import utils.parse.TokenizationUtils;
 
 public class GraphSearcher {

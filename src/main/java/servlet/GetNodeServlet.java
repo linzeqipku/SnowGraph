@@ -1,5 +1,6 @@
 package servlet;
 
+import apps.Config;
 import org.json.JSONObject;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;

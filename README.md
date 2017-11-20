@@ -101,7 +101,7 @@ Write a spring bean property xml file, like this:
     <bean id="line" class="graphdb.extractors.miners.codeembedding.line.LINEExtractor" />
     <bean id="text" class="graphdb.extractors.miners.text.TextExtractor" />
     <bean id="apimention" class="graphdb.extractors.linkers.apimention.ApiMentionExtractor" />
-    <bean id="reference" class="graphdb.extractors.linkers.apimention.ReferenceExtractor" />
+    <bean id="reference" class="graphdb.extractors.linkers.ref.ReferenceExtractor" />
 </beans>
 ```
 

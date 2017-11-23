@@ -11,7 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
 import graphdb.extractors.parsers.word.corpus.WordSegmenter;
-import servlet.Config;
+import apps.Config;
 
 public class QueryStringToQueryWordsConverter {
 	

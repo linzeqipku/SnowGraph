@@ -101,11 +101,11 @@ Write a spring bean property xml file, like this:
     <bean id="line" class="graphdb.extractors.miners.codeembedding.line.LINEExtractor" />
     <bean id="text" class="graphdb.extractors.miners.text.TextExtractor" />
     <bean id="apimention" class="graphdb.extractors.linkers.apimention.ApiMentionExtractor" />
-    <bean id="reference" class="graphdb.extractors.linkers.apimention.ReferenceExtractor" />
+    <bean id="reference" class="graphdb.extractors.linkers.ref.ReferenceExtractor" />
 </beans>
 ```
 
-Run ```utils.GraphdbGenerator {property_xml_file_path}``` (need a large memory allocation pool for JVM, for example, set VM arguments to ```-Xms5000m -Xmx5000m```).
+Run ```apps.BuildGraph {property_xml_file_path}``` (need a large memory allocation pool for JVM, for example, set VM arguments to ```-Xms5000m -Xmx5000m```).
 This process may take a long time.
 
 With the above property file, the graph database is generated in ```E:/SnowGraphData/lucene/graphdb-base```.

@@ -11,7 +11,7 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import exps.graphlocater.VPExtractor;
 import exps.graphlocater.wrapper.PhraseInfo;
-import servlet.Config;
+import apps.Config;
 
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;

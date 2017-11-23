@@ -29,29 +29,17 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import searcher.graph.GraphSearcher;
 import searcher.graph.SearchResult;
-import servlet.Config;
+import apps.Config;
 import utils.parse.TokenizationUtils;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 
 public class LuceneSearcher {
 
     QueryParser qp = new QueryParser("content", new EnglishAnalyzer());
     IndexSearcher indexSearcher = null;
-
-    public static void main(String[] args) {
-        try {
-            new LuceneSearcher().index(true);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
 
     public void index(boolean test) throws IOException {
 

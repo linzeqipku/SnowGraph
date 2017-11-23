@@ -5,13 +5,9 @@ import org.json.JSONObject;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
-import servlet.Config;
+import apps.Config;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class SearchResult {

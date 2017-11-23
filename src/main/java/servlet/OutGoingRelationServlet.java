@@ -1,5 +1,6 @@
 package servlet;
 
+import apps.Config;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.neo4j.driver.v1.Record;
@@ -11,8 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 /**

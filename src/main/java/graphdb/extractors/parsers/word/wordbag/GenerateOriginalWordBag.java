@@ -18,7 +18,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
 
-public class GenerateOriginalWordBag {
+class GenerateOriginalWordBag {
 
 	public static void main(String args[]) {
 		String projectPath = "C:/csp-copy-all/东方红配置库/01工作库/03设计/02详细设计/02平台服务/authservice";

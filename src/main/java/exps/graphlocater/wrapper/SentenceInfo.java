@@ -2,7 +2,7 @@ package exps.graphlocater.wrapper;
 
 import java.io.Serializable;
 
-public class SentenceInfo implements Serializable {
+class SentenceInfo implements Serializable {
 	private static final long	serialVersionUID	= 1896002261136446138L;
 	public static final String	TABLE_NAME			= "sentences";
 	private int	id;

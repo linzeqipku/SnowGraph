@@ -116,7 +116,7 @@ public class PlainCFG implements CFG {
 	 * 从控制流图中删除一个基本块，该基本块非入口或出口
 	 * @param block 从控制流图中删除的基本块，如果block为entry或exit，则该函数不会做任何改变
 	 */
-	public void removeBlock(PlainCFGBlock block) {
+    private void removeBlock(PlainCFGBlock block) {
 		if (block == entry || block == exit) return;
 		CollectionUtils.cartesianProduct(block.getPrevs(), block.getNexts()).forEach(p -> p.getLeft().addNext(p.getRight()));
 		block.getNexts().forEach(block::removeNext);

@@ -20,14 +20,14 @@ import java.util.List;
 public class DesignToRequireExtractor implements Extractor {
 
     @RelationshipDeclaration
-    public static final String DESIGNED_BY = "function_designed_by";
+    private static final String DESIGNED_BY = "function_designed_by";
 
-    GraphDatabaseService db;
-    HashMap<String, ArrayList<Node>> designSectionMap = new HashMap<>();
-    HashMap<String, ArrayList<Node>> requireSectionMap = new HashMap<>();
-    HashSet<String> designRequirePair = new HashSet<>();
-    static HashSet<String> sectionNameStopWords = new HashSet<>();
-    static HashSet<String> subSectionStopWords = new HashSet<>();
+    private GraphDatabaseService db;
+    private HashMap<String, ArrayList<Node>> designSectionMap = new HashMap<>();
+    private HashMap<String, ArrayList<Node>> requireSectionMap = new HashMap<>();
+    private HashSet<String> designRequirePair = new HashSet<>();
+    private static HashSet<String> sectionNameStopWords = new HashSet<>();
+    private static HashSet<String> subSectionStopWords = new HashSet<>();
 
     public static boolean isLeafSection(Node node) {
         if(!node.hasLabel(Label.label(WordKnowledgeExtractor.DOCX_SECTION)))
@@ -41,7 +41,7 @@ public class DesignToRequireExtractor implements Extractor {
         return true;
     }
 
-    public void addNode(String projectName, Node node, boolean isDesign) {
+    private void addNode(String projectName, Node node, boolean isDesign) {
         if(projectName.equals("")) return;
 
         HashMap<String, ArrayList<Node>> map;
@@ -60,7 +60,7 @@ public class DesignToRequireExtractor implements Extractor {
         }
     }
 
-    public void initSectionMap() {
+    private void initSectionMap() {
         try(Transaction tx = db.beginTx()) {
             for(Node node : db.getAllNodes()) {
                 if(!node.hasLabel(Label.label(WordKnowledgeExtractor.DOCX_SECTION)))
@@ -78,7 +78,7 @@ public class DesignToRequireExtractor implements Extractor {
         }
     }
 
-    public static void loadStopWords() throws IOException {
+    private static void loadStopWords() throws IOException {
         List<String> lines= FileUtils.readLines(new File(Config.getSectionTitleStopWordPath()));
         for (String line : lines)
             sectionNameStopWords.add(line);
@@ -87,7 +87,7 @@ public class DesignToRequireExtractor implements Extractor {
             subSectionStopWords.add(line);
     }
 
-    public static boolean similarTitle(String s, String t) {
+    private static boolean similarTitle(String s, String t) {
         try {
             loadStopWords();
         }
@@ -129,7 +129,7 @@ public class DesignToRequireExtractor implements Extractor {
         return true;
     }
 
-    public void buildRelationship(Node dNode, Node rNode) {
+    private void buildRelationship(Node dNode, Node rNode) {
         String designId = Long.toString(dNode.getId());
         String requireId = Long.toString(rNode.getId());
         String pairId = designId + requireId;

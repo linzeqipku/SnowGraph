@@ -83,21 +83,21 @@ public class BugzillaExtractor implements Extractor {
 
     // 定义关联
     @RelationshipDeclaration
-    public static final String HAVE_COMMENT = "bugzilla_have_comment";
+    private static final String HAVE_COMMENT = "bugzilla_have_comment";
     @RelationshipDeclaration
-    public static final String IS_REPORTER_OF_ISSUE = "bugzilla_is_reporter_of_issue";
+    private static final String IS_REPORTER_OF_ISSUE = "bugzilla_is_reporter_of_issue";
     @RelationshipDeclaration
-    public static final String IS_ASSIGNEE_OF_ISSUE = "bugzilla_is_assignee_of_issue";
+    private static final String IS_ASSIGNEE_OF_ISSUE = "bugzilla_is_assignee_of_issue";
     @RelationshipDeclaration
-    public static final String IS_CREATOR_OF_COMMENT = "bugzilla_is_creator_of_comment";
+    private static final String IS_CREATOR_OF_COMMENT = "bugzilla_is_creator_of_comment";
 
-    GraphDatabaseService db = null;
+    private GraphDatabaseService db = null;
 
     // 文件路径
-    String folderPath = null;
+    private String folderPath = null;
 
     // 用户名 - 图节点
-    Map<String, Node> userNodeMap = new HashMap<>();
+    private Map<String, Node> userNodeMap = new HashMap<>();
 
     public void setFolderPath(String path) {
         this.folderPath = path;

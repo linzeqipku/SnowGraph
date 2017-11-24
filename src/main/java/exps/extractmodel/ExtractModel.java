@@ -14,9 +14,9 @@ import org.tartarus.snowball.ext.EnglishStemmer;
 
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 
-public class ExtractModel {
+class ExtractModel {
 	
-	GraphDatabaseService db=null;
+	private GraphDatabaseService db=null;
 
 	public static void main(String[] args){
 		ExtractModel extractModel=new ExtractModel("E://SnowGraphData//lucene//graphdb-copy");
@@ -26,11 +26,11 @@ public class ExtractModel {
 		graph.writeToNeo4j("E://SnowGraphData//lucene//model");
 	}
 	
-	public ExtractModel(String srcPath){
+	private ExtractModel(String srcPath){
 		db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(srcPath));
 	}
 	
-	public Graph pipeline(){
+	private Graph pipeline(){
 		Graph graph=extractProgramAbstract();
 		graph=longNameFilter(graph);
 		graph=omitMethodsAndFields(graph);
@@ -38,7 +38,7 @@ public class ExtractModel {
 		return graph;
 	}
 	
-	Graph extractProgramAbstract(){
+	private Graph extractProgramAbstract(){
 		
 		Graph graph=new Graph();
 		
@@ -84,7 +84,7 @@ public class ExtractModel {
 		
 	}
 	
-	Graph longNameFilter(Graph graph){
+	private Graph longNameFilter(Graph graph){
 		for (Vertex vertex:graph.getAllVertexes()){
 			String longName=vertex.longName.toLowerCase();
 			if (longName.contains("codec")||longName.contains("util")||longName.contains("test")||longName.contains("exception")
@@ -94,7 +94,7 @@ public class ExtractModel {
 		return graph;
 	}
 	
-	Graph omitMethodsAndFields(Graph graph){
+	private Graph omitMethodsAndFields(Graph graph){
 		for (Vertex vertex:graph.getAllVertexes()){
 			if (vertex.labels.contains(JavaCodeExtractor.CLASS)||vertex.labels.contains(JavaCodeExtractor.INTERFACE))
 				continue;
@@ -149,7 +149,7 @@ public class ExtractModel {
 		return graph;
 	}
 	
-	Graph dealWithInheritance(Graph graph){
+	private Graph dealWithInheritance(Graph graph){
 		Map<Vertex, Set<Vertex>> parentMap=new HashMap<>();
 		for (Vertex vertex:graph.getAllVertexes())
 			setParents(vertex,parentMap);
@@ -161,7 +161,7 @@ public class ExtractModel {
 		return graph;
 	}
 
-	void setParents(Vertex vertex, Map<Vertex, Set<Vertex>> parentMap){
+	private void setParents(Vertex vertex, Map<Vertex, Set<Vertex>> parentMap){
 		if (parentMap.containsKey(vertex))
 			return;
 		Set<Vertex> directParents=vertex.outgoingEdges.get("isA");

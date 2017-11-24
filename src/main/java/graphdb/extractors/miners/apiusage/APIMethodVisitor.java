@@ -10,7 +10,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import java.util.HashSet;
 import java.util.Set;
 
-public class APIMethodVisitor extends ASTVisitor {
+class APIMethodVisitor extends ASTVisitor {
 	private Set<Slice> slices = new HashSet<>();
 
 	@Override

@@ -10,20 +10,20 @@ import java.util.List;
 public class Proof implements Serializable {
 	private static final long					serialVersionUID		= 2493710153498582714L;
 
-	public static final String					PROOF_SEPARATOR			= "|";
-	public static final String					PROOF_PREFIX			= "<PROOF>";
-	public static final String					TAG_SEPARATOR			= "\t";
-	public static final String					TAG_END_MARKER			= "</>";
-	public static final String					PROOF_TYPE_TAG			= "<Type>";
-	public static final String					PROOF_EVIDENCE_TAG		= "<Evidence>";
-	public static final String					PROOF_EVIDENCE_TREE_TAG	= "<Evidence_Tree>";
+	private static final String					PROOF_SEPARATOR			= "|";
+	private static final String					PROOF_PREFIX			= "<PROOF>";
+	private static final String					TAG_SEPARATOR			= "\t";
+	private static final String					TAG_END_MARKER			= "</>";
+	private static final String					PROOF_TYPE_TAG			= "<Type>";
+	private static final String					PROOF_EVIDENCE_TAG		= "<Evidence>";
+	private static final String					PROOF_EVIDENCE_TREE_TAG	= "<Evidence_Tree>";
 
-	public static final int						MIN						= -100;
-	public static final int						NEGA_10					= -10;
-	public static final int						NEGA_5					= -5;
-	public static final int						MID						= 0;
-	public static final int						POSI_5					= 5;
-	public static final int						POSI_10					= 10;
+	private static final int						MIN						= -100;
+	private static final int						NEGA_10					= -10;
+	private static final int						NEGA_5					= -5;
+	private static final int						MID						= 0;
+	private static final int						POSI_5					= 5;
+	private static final int						POSI_10					= 10;
 	public static final int						MAX						= 100;
 
 	private ProofType							type;
@@ -106,7 +106,7 @@ public class Proof implements Serializable {
 	}
 
 	/** build a proof from its string representation **/
-	public static Proof of(String proofString) {
+	private static Proof of(String proofString) {
 		if (StringUtils.isBlank(proofString) || !proofString.contains(PROOF_PREFIX)
 				|| !proofString.contains(PROOF_TYPE_TAG))
 			return null;

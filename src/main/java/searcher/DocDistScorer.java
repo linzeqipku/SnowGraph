@@ -4,9 +4,9 @@ import java.util.Set;
 
 import searcher.graph.GraphSearcher;
 
-public class DocDistScorer {
+class DocDistScorer {
 	
-	GraphSearcher graphSearcher=null;
+	private GraphSearcher graphSearcher=null;
 	
 	public DocDistScorer(GraphSearcher graphSearcher){
 		this.graphSearcher=graphSearcher;

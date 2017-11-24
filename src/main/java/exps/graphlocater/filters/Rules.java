@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Rules {
+class Rules {
     public static final int			THRESHOLD				= 0;
 
 	private static final String		QA_PHRASES_FILE			= "qa_phrases.dat";
@@ -37,7 +37,7 @@ public class Rules {
 	public static String[]			HAVE_VERBS				= { "have", "has", "had", "having", "'ve", "'s",
 			"'d" };
 	public static final String[]	NEGATIVE_WORDS			= { "not", "n't", "never" };
-	public static final String[]	DETERMINERS				= { "this", "that", "these", "those" };
+	private static final String[]	DETERMINERS				= { "this", "that", "these", "those" };
 	public static final String[]	VALID_PRONOUNS			= { "it", "them" };
 	public static final String[]	VALID_TWOLETTER_WORDS	= { "an", "as", "at", "by", "db", "in", "ip",
 			"of", "on", "or", "to" };
@@ -66,7 +66,7 @@ public class Rules {
 	    loadWordList();
     }
 
-    public static String[] readFile(String filepath){
+    private static String[] readFile(String filepath){
         BufferedReader reader;
 		List<String> tempList = new ArrayList<>();;
 		// stop-verbs
@@ -91,7 +91,7 @@ public class Rules {
 		return tempList.toArray(new String[tempList.size()]);
     }
 
-    public static void loadWordList() {
+    private static void loadWordList() {
 		String dir = "src/main/resources/rules" + File.separator;
 		// stop-verbs
         stop_verbs = readFile(dir + STOP_VERBS_FILE);

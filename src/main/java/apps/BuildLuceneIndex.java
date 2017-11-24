@@ -4,7 +4,7 @@ import searcher.ir.LuceneSearcher;
 
 import java.io.IOException;
 
-public class BuildLuceneIndex {
+class BuildLuceneIndex {
 
     public static void main(String[] args) {
         try {

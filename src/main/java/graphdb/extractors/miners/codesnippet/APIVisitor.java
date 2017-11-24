@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class APIVisitor extends ASTVisitor {
+class APIVisitor extends ASTVisitor {
 	private Logger logger = Logger.getLogger(this.getClass().toString());
 
 	private GraphDatabaseService db;

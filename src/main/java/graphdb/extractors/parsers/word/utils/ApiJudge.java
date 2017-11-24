@@ -19,16 +19,16 @@ public class ApiJudge {
 
     public static HashSet<String> globalApiList = new HashSet<>();
     public static HashSet<String> globalPackageList = new HashSet<>();
-    public static HashSet<String> apiStopWords = new HashSet<>();
-    public static Logger logger = Logger.getLogger(ApiJudge.class);
+    private static HashSet<String> apiStopWords = new HashSet<>();
+    private static Logger logger = Logger.getLogger(ApiJudge.class);
 
-    public static boolean isLetter(char c) {
+    private static boolean isLetter(char c) {
         if(c >= 'A' && c <= 'Z') return true;
         if(c >= 'a' && c <= 'z') return true;
         return false;
     }
 
-    public static boolean isCamelCase(String ele) {
+    private static boolean isCamelCase(String ele) {
         int len = ele.length();
         if(len == 0) {
             return false;
@@ -77,7 +77,7 @@ public class ApiJudge {
         return true;
     }
 
-    public static void loadStopWords() throws IOException {
+    private static void loadStopWords() throws IOException {
         List<String> lines= FileUtils.readLines(new File(Config.getApiStopWordPath()));
         for (String line:lines)
             apiStopWords.add(line);

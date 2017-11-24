@@ -34,7 +34,7 @@ public class BasicCFG implements CFG {
 	private BasicCFG() {
 	}
 
-	public static CFG createCFG(IRRepresentation irRepresentation, boolean isSSAForm) {
+	private static CFG createCFG(IRRepresentation irRepresentation, boolean isSSAForm) {
 		BasicCFG cfg = new BasicCFG();
 		cfg.entry = new BasicCFGSpecialBlock.Entry(cfg, cfg.maxBlockNum++);
 		cfg.exit = new BasicCFGSpecialBlock.Exit(cfg, cfg.maxBlockNum++);

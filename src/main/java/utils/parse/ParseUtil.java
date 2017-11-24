@@ -52,7 +52,7 @@ public class ParseUtil {
 		return node;
 	}
 
-	public static List<MethodDeclaration> getMethodsFromType(AbstractTypeDeclaration type) {
+	private static List<MethodDeclaration> getMethodsFromType(AbstractTypeDeclaration type) {
 		List<MethodDeclaration> methods = new ArrayList<>();
 
 		if (type instanceof TypeDeclaration) {

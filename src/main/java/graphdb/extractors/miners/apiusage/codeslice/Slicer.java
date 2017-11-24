@@ -198,7 +198,7 @@ public class Slicer {
 		}
 	}
 
-	public boolean isCodePattern_ConsecutiveAssertion() {
+	private boolean isCodePattern_ConsecutiveAssertion() {
 		List<String> signatureLines = new ArrayList<>(Arrays.asList(signature.getTestSignature()
 			.toString().split("\n")));
 
@@ -240,7 +240,7 @@ public class Slicer {
 		return sliceSnippets;
 	}
 
-	public boolean isCodePattern_TargetAssertionCycle() {
+	private boolean isCodePattern_TargetAssertionCycle() {
 		if (targetMethods != null && !targetMethods.isEmpty()) {
 			List<String> signatureLines = signature.getTargetTestCycleSignatureLines(targetMethods);
 			boolean hasTarget = false;
@@ -336,7 +336,7 @@ public class Slicer {
 		return sliceSnippets;
 	}
 
-	public boolean isCodePattern_WeakConsecutiveAssetions(List<String> signatureLines) {
+	private boolean isCodePattern_WeakConsecutiveAssetions(List<String> signatureLines) {
 		if (signatureLines.size() < WEAK_CONSECUTIVE_ASSETION_LENGTH_THRESHOLD)
 			return false;
 
@@ -355,7 +355,7 @@ public class Slicer {
 			return false;
 	}
 
-	public boolean isCodePattern_WeakConsecutiveAssetionsWithBlock() {
+	private boolean isCodePattern_WeakConsecutiveAssetionsWithBlock() {
 		return isCodePattern_WeakConsecutiveAssetions(Arrays.asList(signature
 			.getTestSignatureByStatements().split("\n")));
 	}

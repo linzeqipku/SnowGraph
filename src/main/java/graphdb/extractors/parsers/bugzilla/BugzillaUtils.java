@@ -8,7 +8,7 @@ import org.neo4j.graphdb.Node;
 /**
  * Created by xiaohan on 2017/4/4.
  */
-public class BugzillaUtils {
+class BugzillaUtils {
 
     public static void creatBugzillaIssueNode(BugInfo bugInfo, Node node) {
         node.addLabel(Label.label(BugzillaExtractor.BUGZILLAISSUE));

@@ -4,7 +4,7 @@ public class DocSearchResult {
 	
 	long id;
 	int irRank,newRank;
-	double dist;
+	private double dist;
 	
 	public long getId() {
 		return id;

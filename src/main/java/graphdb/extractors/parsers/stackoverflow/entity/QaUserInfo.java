@@ -7,7 +7,7 @@ import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 
 public class QaUserInfo {
 
-    Node node = null;
+    private Node node = null;
     private int userId;
     private String displayName;
 

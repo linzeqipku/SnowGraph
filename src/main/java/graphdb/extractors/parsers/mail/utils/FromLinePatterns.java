@@ -19,7 +19,7 @@ package graphdb.extractors.parsers.mail.utils;
  * under the License.                                           *
  ****************************************************************/
 
-public interface FromLinePatterns {
+interface FromLinePatterns {
 
     /**
      * Match a line like: From ieugen@apache.org Fri Sep 09 14:04:52 2011

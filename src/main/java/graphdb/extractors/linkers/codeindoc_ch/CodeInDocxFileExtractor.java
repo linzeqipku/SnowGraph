@@ -17,9 +17,9 @@ import java.util.Set;
 public class CodeInDocxFileExtractor implements Extractor {
 
     @RelationshipDeclaration
-    public static final String API_EXPLAINED_BY = "api_explained_by";
+    private static final String API_EXPLAINED_BY = "api_explained_by";
 
-    GraphDatabaseService db = null;
+    private GraphDatabaseService db = null;
 
     public void run(GraphDatabaseService db) {
         this.db = db;

@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by maxkibble on 2017/5/25.
  */
-public class WordDocxTableParser {
+class WordDocxTableParser {
 
     public static TableInfo parseWordTable(XWPFTable table, String caption) {
         if (table == null) {
@@ -87,7 +87,7 @@ public class WordDocxTableParser {
     /*
      * Judge whether a cell is merged vertically or not
      */
-    public static boolean isVMerge(XWPFTableCell cell) {
+    private static boolean isVMerge(XWPFTableCell cell) {
         if (cell == null)
             return false;
         CTTcPr tcPr = cell.getCTTc().getTcPr();
@@ -100,7 +100,7 @@ public class WordDocxTableParser {
     /*
      * judge whether a cell is restart or not
      */
-    public static boolean isVMergeRestart(XWPFTableCell cell) {
+    private static boolean isVMergeRestart(XWPFTableCell cell) {
         if (cell == null)
             return false;
         CTTcPr tcPr = cell.getCTTc().getTcPr();
@@ -114,7 +114,7 @@ public class WordDocxTableParser {
     /*
      * @Description GridSpan记录跨列的列数，也就是跨越单元格的数量。
      */
-    public static int getGridSpan(XWPFTableCell cell) {
+    private static int getGridSpan(XWPFTableCell cell) {
         if (cell == null)
             return -1;
         CTTcPr tcPr = cell.getCTTc().getTcPr();

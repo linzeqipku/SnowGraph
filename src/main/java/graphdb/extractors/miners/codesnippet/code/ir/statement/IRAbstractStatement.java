@@ -15,20 +15,20 @@ public interface IRAbstractStatement {
 		private Stream.Builder<IRExpression> builder = Stream.builder();
 		private List<Stream<IRExpression>> streams = new ArrayList<>();
 
-		public abstract boolean filter(IRExpression expression);
+		protected abstract boolean filter(IRExpression expression);
 
-		public final ExpressionFilter add(IRExpression expression) {
+		final ExpressionFilter add(IRExpression expression) {
 			if (filter(expression)) builder.add(expression);
 			return this;
 		}
 
-		public final ExpressionFilter addAll(IRExpression[] expressions){
+		final ExpressionFilter addAll(IRExpression[] expressions){
 			if (expressions == null) return this;
 			streams.add(Stream.of(expressions).filter(this::filter));
 			return this;
 		}
 
-		public final Stream<IRExpression> build(){
+		final Stream<IRExpression> build(){
 			Stream<IRExpression> result = builder.build();
 			return streams.stream().reduce(result, Stream::concat);
 		}

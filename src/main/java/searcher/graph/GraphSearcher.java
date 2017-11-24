@@ -13,43 +13,42 @@ import org.tartarus.snowball.ext.EnglishStemmer;
 
 import graphdb.extractors.miners.codeembedding.line.LINEExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
-import apps.Config;
 import utils.parse.TokenizationUtils;
 
 public class GraphSearcher {
 
-    Driver connection = null;
+    public Driver connection = null;
 
-    String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
+    private static String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
             + JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD + "|"
             + JavaCodeExtractor.HAVE_FIELD + "|" + JavaCodeExtractor.CALL_METHOD + "|" + JavaCodeExtractor.CALL_FIELD
             + "|" + JavaCodeExtractor.TYPE + "|" + JavaCodeExtractor.VARIABLE;
 
-    static EnglishStemmer stemmer = new EnglishStemmer();
-    static QueryStringToQueryWordsConverter converter = new QueryStringToQueryWordsConverter();
+    private static EnglishStemmer stemmer = new EnglishStemmer();
+    private static QueryStringToQueryWordsConverter converter = new QueryStringToQueryWordsConverter();
 
     public Map<Long, List<Double>> id2Vec = new HashMap<>();
-    Map<Long, String> id2Sig = new HashMap<>();
-    Map<Long, String> id2Name = new HashMap<>();
-    Map<Long, Set<String>> id2Words = new HashMap<>();
-    Set<Long> typeSet = new HashSet<>();
+    private Map<Long, String> id2Sig = new HashMap<>();
+    private Map<Long, String> id2Name = new HashMap<>();
+    private Map<Long, Set<String>> id2Words = new HashMap<>();
+    private Set<Long> typeSet = new HashSet<>();
 
-    Map<String, Set<Long>> word2Ids = new HashMap<>();
+    private Map<String, Set<Long>> word2Ids = new HashMap<>();
 
-    Set<String> queryWordSet = new HashSet<>();
+    private Set<String> queryWordSet = new HashSet<>();
 
-    public GraphSearcher() {
+    public GraphSearcher(Driver driver) {
         try {
-            init();
+            init(driver);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    void init() throws SQLException {
-        connection = Config.getNeo4jBoltDriver();
-        Session session = Config.getNeo4jBoltDriver().session();
+    private void init(Driver driver) throws SQLException {
+        connection = driver;
+        Session session = connection.session();
         String stat = "match (n) where not n:" + JavaCodeExtractor.FIELD + " and exists(n." + LINEExtractor.LINE_VEC
                 + ") return " + "id(n), n." + LINEExtractor.LINE_VEC + ", n." + JavaCodeExtractor.SIGNATURE;
         StatementResult rs = session.run(stat);
@@ -109,7 +108,7 @@ public class GraphSearcher {
                     continue;
                 if (flags.contains(seed2))
                     continue;
-                Session session = Config.getNeo4jBoltDriver().session();
+                Session session = connection.session();
                 String stat = "match p=shortestPath((n1)-[:" + codeRels + "*..10]-(n2)) where id(n1)=" + seed1 + " and id(n2)=" + seed2
                         + " unwind relationships(p) as r return id(startNode(r)), id(endNode(r)), id(r)";
                 StatementResult rs = session.run(stat);
@@ -137,7 +136,7 @@ public class GraphSearcher {
             String[] eles=queryString.trim().split("\\s+");
             for (String e:eles)
                 if (e.length()>0) {
-                    Session session = Config.getNeo4jBoltDriver().session();
+                    Session session = connection.session();
                     long id=Long.parseLong(e);
                     String stat="match (n) where id(n)="+id+" return id(n)";
                     StatementResult rs = session.run(stat);
@@ -163,7 +162,7 @@ public class GraphSearcher {
         return r;
     }
 
-    public List<SearchResult> findSubGraphs(String queryString) {
+    private List<SearchResult> findSubGraphs(String queryString) {
 
         List<SearchResult> r = new ArrayList<>();
 
@@ -253,7 +252,7 @@ public class GraphSearcher {
 
     }
 
-    Set<Long> candidate() {
+    private Set<Long> candidate() {
 
         Set<Long> candidateNodes = new HashSet<>();
 
@@ -300,7 +299,7 @@ public class GraphSearcher {
         return candidateNodes;
     }
 
-    Set<Long> findAnchors() {
+    private Set<Long> findAnchors() {
 
         Set<Long> anchors = new HashSet<>();
 
@@ -331,7 +330,7 @@ public class GraphSearcher {
 
     }
 
-    double sumDist(long cNode, Set<Long> minDistNodeSet) {
+    private double sumDist(long cNode, Set<Long> minDistNodeSet) {
         double r = 0;
         for (long node : minDistNodeSet) {
             double dist = dist(cNode, node);
@@ -340,7 +339,7 @@ public class GraphSearcher {
         return r;
     }
 
-    String stem(String word) {
+    private String stem(String word) {
         if (word.matches("\\w+")) {
             stemmer.setCurrent(word.toLowerCase());
             stemmer.stem();

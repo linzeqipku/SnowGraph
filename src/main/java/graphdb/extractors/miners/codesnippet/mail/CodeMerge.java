@@ -19,7 +19,7 @@ import java.util.List;
  * @author Fang Lu, fanglupku@gmail.com
  */
 
-public class CodeMerge {
+class CodeMerge {
 
 	private static ASTParser astParser;
 	static{

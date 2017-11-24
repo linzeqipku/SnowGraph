@@ -17,7 +17,7 @@ public class TablePlainCellInfo extends TablePartInfo {
         subElements.add(tableCellInfo);
     }
 
-    public TableCellInfo getCell() {
+    private TableCellInfo getCell() {
         if (subElements != null && subElements.size() == 1) {
             DocumentElementInfo ele = subElements.get(0);
             if (ele != null && ele instanceof TableCellInfo)

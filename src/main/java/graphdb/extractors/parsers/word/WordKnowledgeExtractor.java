@@ -43,9 +43,9 @@ public class WordKnowledgeExtractor implements Extractor {
     @PropertyDeclaration(parent = DOCX_SECTION)
     public static final String SECTION_USAGE_TYPE = "sectionUsageType";
     @PropertyDeclaration(parent = DOCX_SECTION)
-    public static final String SECTION_CONTENT = "sectionContent";
+    private static final String SECTION_CONTENT = "sectionContent";
     @PropertyDeclaration(parent = DOCX_SECTION)
-    public static final String SECTION_ENGLISH_CONTENT = "sectionEnglishContent";
+    private static final String SECTION_ENGLISH_CONTENT = "sectionEnglishContent";
     @PropertyDeclaration(parent = DOCX_SECTION)
     public static final String SECTION_PACKAGE = "sectionPackage";
     @PropertyDeclaration(parent = DOCX_SECTION)
@@ -64,9 +64,9 @@ public class WordKnowledgeExtractor implements Extractor {
     @PropertyDeclaration(parent = DOCX_TABLE)
     public static final String TABLE_ROW_NUM = "tableRowNum";
     @PropertyDeclaration(parent = DOCX_TABLE)
-    public static final String TABLE_CONTENT = "tableContent";
+    private static final String TABLE_CONTENT = "tableContent";
     @PropertyDeclaration(parent = DOCX_TABLE)
-    public static final String TABLE_ENGLISH_CONTENT = "tableEnglishContent";
+    private static final String TABLE_ENGLISH_CONTENT = "tableEnglishContent";
 
     @PropertyDeclaration
     public static final String DOCX_PLAIN_TEXT = "DocxPlainText";
@@ -78,14 +78,14 @@ public class WordKnowledgeExtractor implements Extractor {
     @RelationshipDeclaration
     public static final String HAVE_SUB_ELEMENT = "have_sub_element";
 
-    String docxDirPath = "";
-    GraphDatabaseService db = null;
+    private String docxDirPath = "";
+    private GraphDatabaseService db = null;
 
     public void setDocxFilePath(String docxFilePath) {
         this.docxDirPath = docxFilePath;
     }
 
-    public void dfs(WordDocumentInfo doc) {
+    private void dfs(WordDocumentInfo doc) {
         Node node = db.createNode();
         GraphNodeUtil.createDocumentNode(doc, node);
         for(DocumentElementInfo elementInfo : doc.getSubElements()) {
@@ -94,7 +94,7 @@ public class WordKnowledgeExtractor implements Extractor {
         }
     }
 
-    public Node dfs_ele(DocumentElementInfo ele) {
+    private Node dfs_ele(DocumentElementInfo ele) {
         Node node = db.createNode();
         if(ele == null) {
             System.out.println("Meet a null element in docx file:"
@@ -139,7 +139,7 @@ public class WordKnowledgeExtractor implements Extractor {
         return node;
     }
 
-    public void parseDocxFile(String path) {
+    private void parseDocxFile(String path) {
         File file = new File(path);
         if(file == null || !file.getName().toLowerCase().endsWith(".docx"))
             return;
@@ -163,7 +163,7 @@ public class WordKnowledgeExtractor implements Extractor {
         //System.out.println("----------------------------");
     }
 
-    public void traverseFolder(String path) {
+    private void traverseFolder(String path) {
         File file = new File(path);
         if (!file.exists()) return;
         if (!file.isDirectory()) {

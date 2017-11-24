@@ -5,7 +5,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 
 public class GraphUtil {
-	public static boolean hasRelationShip(Node nodeA, Node nodeB, RelationshipType t) {
+	private static boolean hasRelationShip(Node nodeA, Node nodeB, RelationshipType t) {
 		for (Relationship relationship : nodeA.getRelationships(t)) {
 			if (relationship.getOtherNode(nodeA).equals(nodeB)) return true;
 		}

@@ -9,7 +9,7 @@ import org.neo4j.graphdb.Node;
 
 import graphdb.extractors.parsers.javacode.entity.FieldInfo;
 
-public class JavaCodeUtils {
+class JavaCodeUtils {
 
     public static void createClassNode(ClassInfo classInfo, Node node) {
         node.addLabel(Label.label(JavaCodeExtractor.CLASS));

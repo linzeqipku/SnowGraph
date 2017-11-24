@@ -8,14 +8,14 @@ import graphdb.extractors.parsers.word.wordbag.WordBagInstance;
 /**
  * Created by maxkibble on 2017/5/25.
  */
-public class WTRowSignature {
+class WTRowSignature {
     public static final String	KEY					= "K";
     public static final String	VALUE				= "V";
 
     private static final double	keyDominationRate	= 0.5;
     private static final double	valueDominationRate	= 0.5;
 
-    public static int countKey(String signature) {
+    private static int countKey(String signature) {
         int count = 0;
         for (int i = 0; i < signature.length(); i++) {
             if (KEY.equals(signature.substring(i, i + 1)))
@@ -24,7 +24,7 @@ public class WTRowSignature {
         return count;
     }
 
-    public static int countValue(String signature) {
+    private static int countValue(String signature) {
         int count = 0;
         for (int i = 0; i < signature.length(); i++) {
             if (VALUE.equals(signature.substring(i, i + 1)))

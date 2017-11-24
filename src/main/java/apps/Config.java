@@ -46,28 +46,34 @@ public class Config {
 			}
 		}
 		neo4jBoltConnection= GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
-		graphSearcher = new GraphSearcher();
+		graphSearcher = new GraphSearcher(neo4jBoltConnection);
 		docSearcher = new DocSearcher(graphSearcher);
+		docSearcher.setQaExamplePath(exampleFilePath);
 		flag = true;
 	}
 
 	static public String getExampleFilePath() {
+		init();
 		return exampleFilePath;
 	}
 
 	static public String getLucenePath() {
+		init();
 		return lucenePath;
 	}
 
 	static public GraphSearcher getGraphSearcher() {
+		init();
 		return graphSearcher;
 	}
 
 	static public DocSearcher getDocSearcher() {
+		init();
 		return docSearcher;
 	}
 
 	public static Driver getNeo4jBoltDriver() {
+		init();
 		return neo4jBoltConnection;
 	}
 

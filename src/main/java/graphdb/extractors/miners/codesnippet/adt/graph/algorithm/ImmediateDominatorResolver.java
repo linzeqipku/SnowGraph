@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ImmediateDominatorResolver {
+class ImmediateDominatorResolver {
 	private static int dfsIndex;
 	private static WrappedNode[] dfn;
 	private static Map<Node, WrappedNode> map = new HashMap<>();
@@ -124,13 +124,13 @@ public class ImmediateDominatorResolver {
 		private WrappedNode idom;           // immediate dominator
 		private Set<WrappedNode> bucket;    // all nodes whose semidominator is this
 
-		public WrappedNode(Node wrappingNode) {
+		WrappedNode(Node wrappingNode) {
 			this.wrappingNode = wrappingNode;
 			this.dfn = -1;
 			this.bucket = new HashSet<>();
 		}
 
-		public void init(int dfn, WrappedNode parent) {
+		void init(int dfn, WrappedNode parent) {
 			this.dfn = dfn;
 			this.semi = this;
 			this.label = this;

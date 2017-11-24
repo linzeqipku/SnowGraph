@@ -110,20 +110,24 @@ public class StackOverflowExtractor implements Extractor {
     @RelationshipDeclaration
     public static final String HAVE_ANSWER = "haveSoAnswer";
     @RelationshipDeclaration
-    public static final String HAVE_COMMENT = "haveSoComment";
+    private static final String HAVE_COMMENT = "haveSoComment";
     @RelationshipDeclaration
-    public static final String AUTHOR = "soAuthor";
+    private static final String AUTHOR = "soAuthor";
     @RelationshipDeclaration
-    public static final String DUPLICATE = "soDuplicate";
+    private static final String DUPLICATE = "soDuplicate";
 
-    String folderPath = null;
+    private String folderPath = null;
     private Map<Integer, QuestionInfo> questionMap = new HashMap<>();
     private Map<Integer, AnswerInfo> answerMap = new HashMap<>();
     private Map<Integer, QaCommentInfo> commentMap = new HashMap<>();
     private Map<Integer, QaUserInfo> userMap = new HashMap<>();
     private List<Pair<Integer, Integer>> duplicateLinkList = new ArrayList<>();
 
-    String questionXmlPath = null, answerXmlPath = null, commentXmlPath = null, userXmlPath = null, postLinkXmlPath = null;
+    private String questionXmlPath = null;
+    private String answerXmlPath = null;
+    private String commentXmlPath = null;
+    private String userXmlPath = null;
+    private String postLinkXmlPath = null;
 
     public void setFolderPath(String path) {
         this.folderPath = path;

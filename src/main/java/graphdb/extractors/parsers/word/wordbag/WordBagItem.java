@@ -1,6 +1,6 @@
 package graphdb.extractors.parsers.word.wordbag;
 
-public class WordBagItem {
+class WordBagItem {
 
 	public String word;
 	public int count;

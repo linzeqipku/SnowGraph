@@ -21,7 +21,7 @@ public class LuceneSearchResult {
 	public String type;
 	public String title;
 	public String content;
-	public double score;
+	private double score;
 	public Set<Long> nodeSet;
 	
 }

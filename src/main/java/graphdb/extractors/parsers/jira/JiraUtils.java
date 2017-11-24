@@ -7,7 +7,7 @@ import graphdb.extractors.parsers.jira.entity.PatchInfo;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 
-public class JiraUtils {
+class JiraUtils {
 
     public static void createIssueNode(IssueInfo issueInfo, Node node) {
         node.addLabel(Label.label(JiraExtractor.ISSUE));

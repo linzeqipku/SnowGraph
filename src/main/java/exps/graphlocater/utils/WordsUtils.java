@@ -26,13 +26,13 @@ import java.util.*;
  * Created by laurence on 17-10-26.
  */
 public class WordsUtils {
-    public static EnglishStemmer stemmer = new EnglishStemmer();
-    public static StanfordCoreNLP pipeline = null;
-    public static Set<String> englishStopWords = new HashSet<>();
-    public static Map<String, double[]> word2VecMap = new HashMap<>();
-    public static ILexicalDatabase db = new NictWordNet();
-    public static boolean debug = true;
-    public static double MIN_WORDVEC_SIM = 0.25;
+    private static EnglishStemmer stemmer = new EnglishStemmer();
+    private static StanfordCoreNLP pipeline = null;
+    private static Set<String> englishStopWords = new HashSet<>();
+    private static Map<String, double[]> word2VecMap = new HashMap<>();
+    private static ILexicalDatabase db = new NictWordNet();
+    private static boolean debug = true;
+    private static double MIN_WORDVEC_SIM = 0.25;
 
     static{
         initPipeline();
@@ -40,14 +40,14 @@ public class WordsUtils {
         loadWordVec();
     }
 
-    public static void initPipeline(){
+    private static void initPipeline(){
         Properties props;
         props = new Properties();
         props.put("annotators", "tokenize, ssplit, pos, lemma");
         pipeline = new StanfordCoreNLP(props);
     }
 
-    public static void loadWordVec(){
+    private static void loadWordVec(){
         try{
             Scanner scanner = new Scanner(new FileInputStream("C:\\Users\\Ling\\Documents\\glove.6B\\glove.6B.100d.txt"));
             while(scanner.hasNext()) {
@@ -69,7 +69,7 @@ public class WordsUtils {
         }
     }
 
-    public static void loadStopWors(){
+    private static void loadStopWors(){
         List<String> lines=new ArrayList<>();
 		try {
 			lines= FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"stopwords_lcy.txt"));
@@ -102,7 +102,7 @@ public class WordsUtils {
         return res;
     }
 
-    public static Set<String> lemmatize(Set<String> wordSet){
+    private static Set<String> lemmatize(Set<String> wordSet){
         Set<String> res = new HashSet<>();
         String text = String.join(" ", wordSet);
         Annotation document = new Annotation(text);
@@ -260,7 +260,7 @@ public class WordsUtils {
         return score;
     }
 
-    public static double getSingleWordSimWord2Vec(String w1, String w2) {
+    private static double getSingleWordSimWord2Vec(String w1, String w2) {
         double[] v1 = word2VecMap.get(w1);
         double[] v2 = word2VecMap.get(w2);
         if (v1 == null || v2 == null)

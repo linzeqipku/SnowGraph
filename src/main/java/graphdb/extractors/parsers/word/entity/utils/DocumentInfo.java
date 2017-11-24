@@ -13,16 +13,16 @@ import java.util.UUID;
 public class DocumentInfo implements Serializable {
 
     protected String					name;
-    protected DirectoryInfo				parentDirectory;
-    protected String					absolutePath;
-    protected FileType					type;
-    protected String					usageType;
-    protected String					uuid;
-    protected String                    projectName;
+    private DirectoryInfo				parentDirectory;
+    private String					absolutePath;
+    private FileType					type;
+    private String					usageType;
+    private String					uuid;
+    private String                    projectName;
 
-    protected List<DocumentElementInfo>	subElements;
+    private List<DocumentElementInfo>	subElements;
 
-    public DocumentInfo() {
+    protected DocumentInfo() {
         uuid = UUID.randomUUID().toString();
         subElements = new ArrayList<>();
     }

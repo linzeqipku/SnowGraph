@@ -13,9 +13,9 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 public class GraphBuilder {
 
-    List<Extractor> extractors = new ArrayList<>();
-    public String graphPath = null;
-    public String baseGraphPath = null;
+    private List<Extractor> extractors = new ArrayList<>();
+    private String graphPath = null;
+    private String baseGraphPath = null;
 
     public void setExtractors(List<Extractor> extractors) {
         this.extractors = new ArrayList<>(extractors);

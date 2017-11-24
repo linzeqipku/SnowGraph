@@ -6,7 +6,7 @@ import exps.graphlocater.filters.*;
 import exps.graphlocater.wrapper.PhraseInfo;
 
 
-public class PhraseFilter {
+class PhraseFilter {
 	public static final Logger logger = Logger.getLogger(PhraseFilter.class);
 
 	public static void filter(PhraseInfo phrase, String sentence) {

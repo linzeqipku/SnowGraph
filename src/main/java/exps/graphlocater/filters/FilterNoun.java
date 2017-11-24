@@ -88,7 +88,7 @@ public class FilterNoun {
 		return false;
 	}
 
-	public boolean filterCODEElement() {
+	private boolean filterCODEElement() {
 		boolean flag = true;
 		if (nouns != null) {
 			for (String noun : nouns) {
@@ -105,7 +105,7 @@ public class FilterNoun {
 		return flag;
 	}
 
-	public boolean filterQANouns() {
+	private boolean filterQANouns() {
 		boolean flag = true;
 		if (nouns != null) {
 			for (String noun : nouns) {
@@ -120,7 +120,7 @@ public class FilterNoun {
 		return flag;
 	}
 
-	public boolean filterStopNouns() {
+	private boolean filterStopNouns() {
 		boolean flag = true;
 		if (nouns != null) {
 			for (String noun : nouns) {
@@ -135,7 +135,7 @@ public class FilterNoun {
 		return flag;
 	}
 
-	public boolean filterUnlikeNouns() {
+	private boolean filterUnlikeNouns() {
 		boolean flag = true;
 		if (nouns != null) {
 			for (String noun : nouns) {

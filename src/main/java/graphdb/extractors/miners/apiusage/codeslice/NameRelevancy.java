@@ -114,14 +114,14 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 		commonWords = commonWordsList;
 	}
 
-	public static String trimDigits(String word)
+	private static String trimDigits(String word)
 	{
 		return word.replaceAll("[0-9]", "");
 	}
 
 	// getIDNumber --> get ID Number; 注意连续大写字母的切词
 	// 包含数字的切词 Jira432html5 --> jira432 html5
-	public static String[] camelCaseSplit(String string)
+	private static String[] camelCaseSplit(String string)
 	{
 		List<String> splitWords = new ArrayList<>();
 
@@ -253,7 +253,7 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 	}
 	
 
-	public boolean hasSameRelevancyWith(Object o)
+	private boolean hasSameRelevancyWith(Object o)
 	{
 		if (o != null && o instanceof NameRelevancy)
 			return commonWordsRatio == ((NameRelevancy) o).commonWordsRatio;
@@ -293,7 +293,7 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 		return commonWordsRatio;
 	}
 
-	public List<String> getTestMethodWords()
+	private List<String> getTestMethodWords()
 	{
 		return testMethodWords;
 	}
@@ -303,7 +303,7 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 		return apiMethodWords;
 	}
 
-	public List<String> getStemmedTestWords()
+	private List<String> getStemmedTestWords()
 	{
 		return stemmedTestWords;
 	}
@@ -313,7 +313,7 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 		return stemmedAPIWords;
 	}
 
-	public List<String> getCommonWords()
+	private List<String> getCommonWords()
 	{
 		return commonWords;
 	}

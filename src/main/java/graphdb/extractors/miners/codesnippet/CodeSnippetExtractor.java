@@ -34,20 +34,20 @@ import java.util.stream.StreamSupport;
 public class CodeSnippetExtractor implements Extractor {
 
 	@EntityDeclaration
-	public static final String CODE_SNIPPET = "CodeSnippet";
+    private static final String CODE_SNIPPET = "CodeSnippet";
 	@PropertyDeclaration(parent = CODE_SNIPPET)
-	public static final String CODE_SNIPPET_BODY = "body";
+    private static final String CODE_SNIPPET_BODY = "body";
 	@RelationshipDeclaration
-	public static final String CONTAIN_SNIPPET = "containSnippet";
+    private static final String CONTAIN_SNIPPET = "containSnippet";
 	@RelationshipDeclaration
 	public static final String EXAMPLE_USES_API = "exampleUsesAPI";
 	@RelationshipDeclaration
-	public static final String CODE_EXAMPLE = "codeExample";
+    private static final String CODE_EXAMPLE = "codeExample";
 
 	private boolean parseMail = true;
 	private boolean parseStackoverflow = true;
 
-	public void createContainsAPILink(GraphDatabaseService db) {
+	private void createContainsAPILink(GraphDatabaseService db) {
 		try (Transaction tx = db.beginTx()) {
 			ResourceIterator<Node> ite = db.findNodes(Label.label(CodeSnippetExtractor.CODE_SNIPPET));
 			while (ite.hasNext()) {
@@ -61,7 +61,7 @@ public class CodeSnippetExtractor implements Extractor {
 		}
 	}
 
-	public void createCodeExampleLink(GraphDatabaseService db) {
+	private void createCodeExampleLink(GraphDatabaseService db) {
 		try (Transaction tx = db.beginTx()) {
 			ResourceIterator<Node> ite = db.findNodes(Label.label(JavaCodeExtractor.METHOD));
 			while (ite.hasNext()) {
@@ -106,7 +106,7 @@ public class CodeSnippetExtractor implements Extractor {
 		createCodeExampleLink(db);
 	}
 
-	public void extractFromMail(GraphDatabaseService db) {
+	private void extractFromMail(GraphDatabaseService db) {
 		try (Transaction tx = db.beginTx()) {
 			long total = db.findNodes(Label.label(MailListExtractor.MAIL)).stream().count();
 			long count = 0;
@@ -147,7 +147,7 @@ public class CodeSnippetExtractor implements Extractor {
 		}
 	}
 
-	public void extractFromStackoverflow(GraphDatabaseService db) {
+	private void extractFromStackoverflow(GraphDatabaseService db) {
 		try (Transaction tx = db.beginTx()) {
 			long total = db.findNodes(Label.label(StackOverflowExtractor.QUESTION)).stream().count();
 			total += db.findNodes(Label.label(StackOverflowExtractor.ANSWER)).stream().count();

@@ -17,29 +17,34 @@ import org.neo4j.driver.v1.StatementResult;
 import searcher.graph.GraphSearcher;
 import searcher.ir.LuceneSearchResult;
 import searcher.ir.LuceneSearcher;
-import apps.Config;
 
 public class DocSearcher {
 
-    DocDistScorer docDistScorer = null;
-    GraphSearcher graphSearcher = null;
-    LuceneSearcher keeper = null;
-    Driver connection = null;
+    private String qaExamplePath=null;
 
-    Map<Long, Long> qaMap = null;
-    Map<Long, String> queryMap = null;
+    private DocDistScorer docDistScorer = null;
+    private GraphSearcher graphSearcher = null;
+    private LuceneSearcher keeper = null;
+    private Driver connection = null;
+
+    private Map<Long, Long> qaMap = null;
+    private Map<Long, String> queryMap = null;
 
     public DocSearcher(GraphSearcher graphSearcher) {
         this.graphSearcher = graphSearcher;
         this.keeper = new LuceneSearcher();
         this.docDistScorer = new DocDistScorer(graphSearcher);
-        connection = Config.getNeo4jBoltDriver();
+        connection = graphSearcher.connection;
+    }
+
+    public void setQaExamplePath(String path){
+        qaExamplePath=path;
     }
 
     public Pair<String, String> getContent(long nodeId) {
         String plain = "";
         String rich = "";
-        Session session = Config.getNeo4jBoltDriver().session();
+        Session session = connection.session();
         String stat = "match (n) where id(n)=" + nodeId + " return labels(n)[0], n." + TextExtractor.TITLE + ", n." + TextExtractor.TEXT;
         StatementResult rs = session.run(stat);
         while (rs.hasNext()) {
@@ -56,7 +61,7 @@ public class DocSearcher {
 
     public String getQuery(long queryId) {
         String title = "";
-        Session session = Config.getNeo4jBoltDriver().session();
+        Session session = connection.session();
         String stat = "match (n) where id(n)=" + queryId + " return n." + TextExtractor.TITLE;
         StatementResult rs = session.run(stat);
         while (rs.hasNext()) {
@@ -95,7 +100,7 @@ public class DocSearcher {
      */
     public void findExamples() {
         try {
-            FileUtils.write(new File(Config.getExampleFilePath()), "");
+            FileUtils.write(new File(qaExamplePath), "");
         } catch (IOException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -118,7 +123,7 @@ public class DocSearcher {
                                 + current.irRank + "-->" + current.newRank;
                         System.out.println(res + " (" + qCnt + ")");
                         try {
-                            FileUtils.write(new File(Config.getExampleFilePath()), res + "\n", true);
+                            FileUtils.write(new File(qaExamplePath), res + "\n", true);
                         } catch (IOException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -133,10 +138,10 @@ public class DocSearcher {
     }
 
 
-    void extractQaMap() {
+    private void extractQaMap() {
         Map<Long, Long> qaMap = new HashMap<>();
         Map<Long, String> qMap = new HashMap<>();
-        Session session = Config.getNeo4jBoltDriver().session();
+        Session session = connection.session();
         String stat = "match (q:" + StackOverflowExtractor.QUESTION + ")-[:" + StackOverflowExtractor.HAVE_ANSWER + "]->(a:"
                 + StackOverflowExtractor.ANSWER + ") where a." + StackOverflowExtractor.ANSWER_ACCEPTED + "=TRUE return id(q),id(a),q."
                 + StackOverflowExtractor.QUESTION_TITLE + ", q." + StackOverflowExtractor.QUESTION_BODY;

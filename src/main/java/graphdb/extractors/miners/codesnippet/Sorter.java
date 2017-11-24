@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class Sorter {
-	public static double rank(DDG ddg, List<Graph<MiningNode, Integer>> minedGraphs) {
+class Sorter {
+	private static double rank(DDG ddg, List<Graph<MiningNode, Integer>> minedGraphs) {
 		return minedGraphs.stream().filter(g -> MiningGraph.findSubDDG(ddg, g) != null).count();
 	}
 

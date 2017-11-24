@@ -13,10 +13,10 @@ import java.util.ArrayList;
 
 public class TokenChExtractor implements Extractor {
     @PropertyDeclaration
-    public static final String TOKENS_CH = "tokensCh";
+    private static final String TOKENS_CH = "tokensCh";
 
-    GraphDatabaseService db = null;
-    public static Dictionary dictionary = new Dictionary();
+    private GraphDatabaseService db = null;
+    private static Dictionary dictionary = new Dictionary();
 
     private ArrayList<String> setChineseTokens(String comment, String name) {
         ArrayList<String> ret;

@@ -16,8 +16,8 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
  */
 public class WordDocxListParser {
 
-    HashMap<String,List<XWPFParagraph>> map= new HashMap<>();
-    HashMap<XWPFParagraph,String> index= new HashMap<>();
+    private HashMap<String,List<XWPFParagraph>> map= new HashMap<>();
+    private HashMap<XWPFParagraph,String> index= new HashMap<>();
 
     public void addPara(XWPFParagraph para){
         BigInteger numID=para.getNumID();
@@ -34,7 +34,7 @@ public class WordDocxListParser {
             refactor(e);
     }
 
-    public void refactor(DocumentElementInfo element){
+    private void refactor(DocumentElementInfo element){
         if (element instanceof WordItemListInfo){
             for (DocumentElementInfo e:element.getSubElements())
                 refactor(e);

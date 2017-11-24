@@ -4,7 +4,7 @@ import de.parsemis.parsers.LabelParser;
 
 import java.text.ParseException;
 
-public class MiningNodeParser implements LabelParser<MiningNode> {
+class MiningNodeParser implements LabelParser<MiningNode> {
 
 	private static final long serialVersionUID = -8921418174456111602L;
 

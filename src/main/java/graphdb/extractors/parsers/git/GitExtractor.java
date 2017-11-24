@@ -87,27 +87,27 @@ public class GitExtractor implements Extractor {
     public static final String MUTATEDCONTENT_LATTER_LINES = "latterLines" ;
 
     @RelationshipDeclaration
-    public static final String IS_AUTHOR_OF_COMMIT = "person_is_author_of_commit";
+    private static final String IS_AUTHOR_OF_COMMIT = "person_is_author_of_commit";
     @RelationshipDeclaration
-    public static final String DELETER_OF_FILE = "deleter_of_gitMutatedFile";
+    private static final String DELETER_OF_FILE = "deleter_of_gitMutatedFile";
     @RelationshipDeclaration
-    public static final String CREATER_OF_FILE = "creater_of_gitMutatedFile";
+    private static final String CREATER_OF_FILE = "creater_of_gitMutatedFile";
     @RelationshipDeclaration
-    public static final String MODIFIER_OF_FILE = "modifier_of_gitMutatedFile";
+    private static final String MODIFIER_OF_FILE = "modifier_of_gitMutatedFile";
     @RelationshipDeclaration
-    public static final String PARENT_OF_COMMIT = "parent_of_commit";
+    private static final String PARENT_OF_COMMIT = "parent_of_commit";
     @RelationshipDeclaration
-    public static final String COMMIT_CHANGE_THE_CLASS ="commit_change_the_class" ;
+    private static final String COMMIT_CHANGE_THE_CLASS ="commit_change_the_class" ;
     @RelationshipDeclaration
-    public static final String FILE_CONTAIN_THE_CLASS = "gitMutatedFile_contain_the_class";
+    private static final String FILE_CONTAIN_THE_CLASS = "gitMutatedFile_contain_the_class";
     @RelationshipDeclaration
-    public static final String MUTATEDCONTENT_OF_COMMIT = "mutatedContent_of_commit";
+    private static final String MUTATEDCONTENT_OF_COMMIT = "mutatedContent_of_commit";
     @RelationshipDeclaration
-    public static final String MUTATEDCONTENT_OF_MUTATEDFILE = "mutatedContent_of_mutatedFile";
+    private static final String MUTATEDCONTENT_OF_MUTATEDFILE = "mutatedContent_of_mutatedFile";
 
-    GraphDatabaseService db = null;
+    private GraphDatabaseService db = null;
 
-    String gitFolderPath = null;
+    private String gitFolderPath = null;
 
 
     private Map<String , Node> commitNodeMap = new HashMap<>();
@@ -119,7 +119,7 @@ public class GitExtractor implements Extractor {
         this.gitFolderPath = path;
     }
 
-    public void build(File gitFolder , Map<String , Node> APIs){
+    private void build(File gitFolder, Map<String, Node> APIs){
         for(File gitFile : gitFolder.listFiles()){
             if(gitFile.isFile() ){
                 String postFix = gitFile.getName();

@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-public class ExpressionAST {
+class ExpressionAST {
 	private Expression expressionNode;
 
 	private HashSet<VariableAST> relevantVariables = new HashSet<>();

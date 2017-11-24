@@ -30,7 +30,7 @@ public class WordDocumentInfo extends DocumentInfo {
         return ret.toString();
     }
 
-    public String getEleStr(DocumentElementInfo element) {
+    private String getEleStr(DocumentElementInfo element) {
         StringBuilder ret = new StringBuilder("");
 
         if (element == null) return ret.toString();

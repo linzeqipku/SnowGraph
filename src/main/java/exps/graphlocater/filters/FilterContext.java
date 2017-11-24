@@ -74,7 +74,7 @@ public class FilterContext {
 			return false;
 	}
 
-	public static String getPrecedingContext(String phrase, String context) {
+	private static String getPrecedingContext(String phrase, String context) {
 		// System.out.println(context + "\t" + phrase);
 		if (phrase == null || context == null)
 			return null;
@@ -91,7 +91,7 @@ public class FilterContext {
 		return sentence;
 	}
 
-	public void setSentence(String sentence) {
+	private void setSentence(String sentence) {
 		this.sentence = sentence;
 	}
 

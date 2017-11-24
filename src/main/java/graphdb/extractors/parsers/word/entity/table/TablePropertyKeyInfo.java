@@ -23,7 +23,7 @@ public class TablePropertyKeyInfo implements Serializable {
         keyCellInfos.add(uniqueKeyCell);
     }
 
-    public String toKeyString() {
+    private String toKeyString() {
         try {
             StringBuilder key = new StringBuilder("");
             for (int i = 0; i < keyCellInfos.size(); i++) {

@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 /**
  * Created by linzeqi on 2017/5/9.
  */
-public class StackOverflowDumpExtractionUtils {
+class StackOverflowDumpExtractionUtils {
 
     public static void main(String[] args){
         extract("jfreechart","E:/stackoverflow",
@@ -21,7 +21,7 @@ public class StackOverflowDumpExtractionUtils {
 
     }
 
-    public static void extract(String projectName, String remoteQaPath, String qPath, String aPath, String cPath, String uPath, String plPath){
+    private static void extract(String projectName, String remoteQaPath, String qPath, String aPath, String cPath, String uPath, String plPath){
         QuestionExtractor qExtractor=new QuestionExtractor(projectName);
         String postXmlPath=remoteQaPath+"/Posts.xml";
         qExtractor.extractQuestionXmlFile(postXmlPath, qPath);
@@ -52,10 +52,10 @@ class QuestionExtractor
     Set<Integer> questionIdSet = new HashSet<>();
     Set<Integer> userIdSet = new HashSet<>();
 
-    Pattern tagsRe=null;
-    static Pattern idRe=Pattern.compile("id=\"(\\d+)\"");
-    static Pattern userIdRe = Pattern.compile("owneruserid=\"(\\d+)\"");
-    String projectName = "";
+    private Pattern tagsRe=null;
+    private static Pattern idRe=Pattern.compile("id=\"(\\d+)\"");
+    private static Pattern userIdRe = Pattern.compile("owneruserid=\"(\\d+)\"");
+    private String projectName = "";
 
     public QuestionExtractor(String projectName)
     {
@@ -165,12 +165,12 @@ class QaUserExtractor {
 
 class QaCommentExtractor {
 
-    Set<Integer> questionIdSet = new HashSet<>();
-    Set<Integer> answerIdSet = new HashSet<>();
+    private Set<Integer> questionIdSet = new HashSet<>();
+    private Set<Integer> answerIdSet = new HashSet<>();
     Set<Integer> userIdSet = new HashSet<>();
 
-    static Pattern postIdRe = Pattern.compile("postid=\"(\\d+)\"");
-    static Pattern userIdRe = Pattern.compile("userid=\"(\\d+)\"");
+    private static Pattern postIdRe = Pattern.compile("postid=\"(\\d+)\"");
+    private static Pattern userIdRe = Pattern.compile("userid=\"(\\d+)\"");
 
     public QaCommentExtractor(Set<Integer> questionIdSet, Set<Integer> answerIdSet) {
         this.questionIdSet = questionIdSet;
@@ -222,13 +222,13 @@ class QaCommentExtractor {
 
 class AnswerExtractor {
 
-    Set<Integer> questionIdSet = new HashSet<>();
+    private Set<Integer> questionIdSet = new HashSet<>();
     Set<Integer> answerIdSet = new HashSet<>();
     Set<Integer> userIdSet = new HashSet<>();
 
-    static Pattern parentIdRe = Pattern.compile("parentid=\"(\\d+)\"");
-    static Pattern idRe = Pattern.compile("id=\"(\\d+)\"");
-    static Pattern userIdRe = Pattern.compile("owneruserid=\"(\\d+)\"");
+    private static Pattern parentIdRe = Pattern.compile("parentid=\"(\\d+)\"");
+    private static Pattern idRe = Pattern.compile("id=\"(\\d+)\"");
+    private static Pattern userIdRe = Pattern.compile("owneruserid=\"(\\d+)\"");
 
     public AnswerExtractor(Set<Integer> questionIdSet) {
         this.questionIdSet = questionIdSet;

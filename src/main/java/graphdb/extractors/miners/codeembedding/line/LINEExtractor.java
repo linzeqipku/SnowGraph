@@ -10,8 +10,8 @@ import org.neo4j.graphdb.*;
 public class LINEExtractor implements Extractor{
     @PropertyDeclaration
     public static final String LINE_VEC = "lineVec";
-    LINE line = null;
-    GraphDatabaseService db = null;
+    private LINE line = null;
+    private GraphDatabaseService db = null;
 
     public void run(GraphDatabaseService db) {
         this.db = db;
@@ -27,7 +27,7 @@ public class LINEExtractor implements Extractor{
         line.run();
         writeData();
     }
-    public void writeData(){
+    private void writeData(){
         try(Transaction tx = db.beginTx()){
             for (long key : line.vertex.keySet()){
                 double[] embedding = line.vertex.get(key).emb_vertex;

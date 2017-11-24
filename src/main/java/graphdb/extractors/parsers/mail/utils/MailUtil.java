@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class MailUtil {
+class MailUtil {
 
     private static final String MAIL_REGEX = "[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+";
     private static final Pattern MAIL_PATTERN = Pattern.compile(MAIL_REGEX);
@@ -22,8 +22,8 @@ public class MailUtil {
     private static final String SIGNATURE_LINE = "--";
     private static final String SIGNATURE_LINE2 = "__";
 
-    public static final String	REF_LINE	= "wrote:";
-    public static final String	REF_TAG		= ">";
+    private static final String	REF_LINE	= "wrote:";
+    private static final String	REF_TAG		= ">";
 
     /*
      * 从包含用户邮件地址和用户名称的字符串中，提取出用户的邮件地址和用户名称。

@@ -142,15 +142,15 @@ public class JavaCodeExtractor implements Extractor {
     @RelationshipDeclaration
     public static final String VARIABLE = "variable";
 
-    ElementInfoPool elementInfoPool = null;
+    private ElementInfoPool elementInfoPool = null;
     private Map<String, Pair<ClassInfo, Node>> classDecMap = new HashMap<>();
     private Map<String, Pair<InterfaceInfo, Node>> interfaceDecMap = new HashMap<>();
     private Map<String, Pair<MethodInfo, Node>> methodDecMap = new HashMap<>();
     private Map<String, Pair<FieldInfo, Node>> fieldDecMap = new HashMap<>();
     private Map<IMethodBinding, Pair<MethodInfo, Node>> methodBindingMap = new HashMap<>();
 
-    String srcPath = "";
-    GraphDatabaseService db = null;
+    private String srcPath = "";
+    private GraphDatabaseService db = null;
     
     public static void main(String[] args){
     	try {
@@ -165,7 +165,7 @@ public class JavaCodeExtractor implements Extractor {
     	p.run(db);
     }
 
-    public void setSrcPath(String srcPath) {
+    private void setSrcPath(String srcPath) {
         this.srcPath = srcPath;
     }
 

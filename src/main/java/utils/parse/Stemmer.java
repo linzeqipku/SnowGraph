@@ -82,7 +82,7 @@ public class Stemmer
 	 * characters, you can call stem(void) to stem the word.
 	 */
 
-	public void add(char ch)
+    private void add(char ch)
 	{
 		if (i == b.length)
 		{

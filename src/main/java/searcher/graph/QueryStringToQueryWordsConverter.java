@@ -13,10 +13,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class QueryStringToQueryWordsConverter {
+class QueryStringToQueryWordsConverter {
 	
-	static EnglishStemmer stemmer=new EnglishStemmer();
-	static Set<String> englishStopWords=new HashSet<>();
+	private static EnglishStemmer stemmer=new EnglishStemmer();
+	private static Set<String> englishStopWords=new HashSet<>();
 	
 	public QueryStringToQueryWordsConverter(){
 		List<String> lines=new ArrayList<>();
@@ -44,7 +44,7 @@ public class QueryStringToQueryWordsConverter {
 		return chineseConvert(queryString);
 	}
 	
-	Set<String> englishConvert(String queryString){
+	private Set<String> englishConvert(String queryString){
 		Set<String> r=new HashSet<>();
 		
 		for (String token:queryString.toLowerCase().split("[^a-z]+")){
@@ -60,7 +60,7 @@ public class QueryStringToQueryWordsConverter {
 		return r;
 	}
 	
-	Set<String> chineseConvert(String queryString){
+	private Set<String> chineseConvert(String queryString){
 		return englishConvert(StringUtils.join(WordSegmenter.demo(queryString)," "));
 	}
 	
@@ -72,7 +72,7 @@ public class QueryStringToQueryWordsConverter {
 				|| ub == Character.UnicodeBlock.GENERAL_PUNCTUATION;
 	}
 
-    public static boolean isChinese(String strName) {
+    private static boolean isChinese(String strName) {
         char[] ch = strName.toCharArray();
 		for (char c : ch) {
 			if (isChinese(c)) {

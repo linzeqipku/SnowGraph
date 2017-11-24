@@ -6,13 +6,13 @@ package graphdb.extractors.parsers.word.entity.utils;
 public class StyleType {
 
     /* TOC */
-    public static final String	TOC_REGEX		= "toc \\d+";
+    private static final String	TOC_REGEX		= "toc \\d+";
 
     /* chapter */
-    public static final String	HEADING_REGEX	= "heading \\d+";
+    private static final String	HEADING_REGEX	= "heading \\d+";
 
-    public static final String	LIST			= "a4";
-    public static final String	CAPTION			= "a3";
+    private static final String	LIST			= "a4";
+    private static final String	CAPTION			= "a3";
 
     public static boolean isCaption(String style) {
         return CAPTION.equalsIgnoreCase(style);

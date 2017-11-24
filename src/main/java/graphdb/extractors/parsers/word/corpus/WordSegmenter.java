@@ -16,8 +16,8 @@ import java.util.HashSet;
  */
 
 public class WordSegmenter {
-    public static String[] stopTokens = {"，","。","“","”","","【","】","\n", "\t","_","；","、","：","[","]","-","."," ", "(",")",";",","};
-    public static HashSet<String> wordsCN = new HashSet<>();
+    private static String[] stopTokens = {"，","。","“","”","","【","】","\n", "\t","_","；","、","：","[","]","-","."," ", "(",")",";",","};
+    private static HashSet<String> wordsCN = new HashSet<>();
 
     public static ArrayList<String> demo(String strToParse) {
         String str = strToParse;
@@ -34,7 +34,7 @@ public class WordSegmenter {
         return ret;
     }
 
-    public static void tokenizeDocxFile(String filePath) {
+    private static void tokenizeDocxFile(String filePath) {
         File file = new File(filePath);
         DocumentInfo doc = DocumentParser.parseFileToDocumentInfo(file);
         if(doc instanceof WordDocumentInfo) {
@@ -57,7 +57,7 @@ public class WordSegmenter {
         else System.out.println("Not a docx file");
     }
 
-    public static void traverseFolder(String path) {
+    private static void traverseFolder(String path) {
         File file = new File(path);
         if(!file.exists()) return;
         if(!file.isDirectory()) {

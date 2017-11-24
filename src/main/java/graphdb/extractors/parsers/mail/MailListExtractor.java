@@ -48,20 +48,20 @@ public class MailListExtractor implements Extractor {
     @EntityDeclaration
     public static final String MAILUSER = "MailUser";
     @PropertyDeclaration(parent = MAILUSER)
-    public static final String MAILUSER_NAMES = "names";
+    private static final String MAILUSER_NAMES = "names";
     @PropertyDeclaration(parent = MAILUSER)
     public static final String MAILUSER_MAIL = "mail";
 
     @RelationshipDeclaration
-    public static final String MAIL_IN_REPLY_TO = "mailInReplyTo";
+    private static final String MAIL_IN_REPLY_TO = "mailInReplyTo";
     @RelationshipDeclaration
     public static final String MAIL_SENDER = "mailSender";
     @RelationshipDeclaration
     public static final String MAIL_RECEIVER = "mailReceiver";
 
-    public String mboxPath = null;
-    GraphDatabaseService db = null;
-    MimeStreamParser parser = null;
+    private String mboxPath = null;
+    private GraphDatabaseService db = null;
+    private MimeStreamParser parser = null;
     private static Charset charset = Charset.forName("UTF-8");
     private final static CharsetDecoder DECODER = charset.newDecoder();
 
@@ -96,7 +96,7 @@ public class MailListExtractor implements Extractor {
         }
     }
 
-    public void parse(File mboxFile) {
+    private void parse(File mboxFile) {
         if (mboxFile.isDirectory()) {
             for (File f : mboxFile.listFiles())
                 parse(f);
@@ -124,7 +124,7 @@ public class MailListExtractor implements Extractor {
         }
     }
 
-    public void parse(CharBufferWrapper message) {
+    private void parse(CharBufferWrapper message) {
         try {
             parser.parse(new ByteArrayInputStream(message.toString().trim().getBytes()));
         } catch (MimeException | IOException e) {

@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.StringTokenizer;
 
-public class StringDealer {
+class StringDealer {
 
 	public static void main(String args[]) {
 		String testString = "\n\npublic boolean compile()\n\n"
@@ -29,7 +29,7 @@ public class StringDealer {
 		}
 	}
 
-	public static int getLineNumber(String origin) {
+	private static int getLineNumber(String origin) {
 		int result = 0;
 		try {
 			StringReader sr = new StringReader(origin);
@@ -53,7 +53,7 @@ public class StringDealer {
 	 * 
 	 * @return
 	 */
-	public static String trimEmptyLine(String origin) {
+	private static String trimEmptyLine(String origin) {
 		StringBuffer sb = new StringBuffer();
 		try {
 			StringReader sr = new StringReader(origin);

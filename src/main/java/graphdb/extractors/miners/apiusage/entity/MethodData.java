@@ -1,13 +1,13 @@
 package graphdb.extractors.miners.apiusage.entity;
 
-public abstract class MethodData
+abstract class MethodData
 {
-	protected String projectName;
-	protected String packageName;
-	protected String className;
+	String projectName;
+	String packageName;
+	String className;
 
-	protected String name;
-	protected String text;
+	String name;
+	String text;
 	
 	public abstract String getSignature();
 
@@ -16,7 +16,7 @@ public abstract class MethodData
 		return projectName;
 	}
 
-	public void setProjectName(String projectName)
+	void setProjectName(String projectName)
 	{
 		this.projectName = projectName;
 	}
@@ -26,7 +26,7 @@ public abstract class MethodData
 		return packageName;
 	}
 
-	public void setPackageName(String packageName)
+	void setPackageName(String packageName)
 	{
 		this.packageName = packageName;
 	}
@@ -46,7 +46,7 @@ public abstract class MethodData
 		return text;
 	}
 
-	public void setText(String text)
+	void setText(String text)
 	{
 		this.text = text;
 	}
@@ -56,7 +56,7 @@ public abstract class MethodData
 		return className;
 	}
 
-	public void setClassName(String className)
+	void setClassName(String className)
 	{
 		this.className = className;
 	}

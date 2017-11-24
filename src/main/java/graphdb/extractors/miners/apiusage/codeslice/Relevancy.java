@@ -1,6 +1,6 @@
 package graphdb.extractors.miners.apiusage.codeslice;
 
-public class Relevancy implements Comparable<Relevancy>
+class Relevancy implements Comparable<Relevancy>
 {
 	private String invokedMethodKey;
 	private String testMethodKey;
@@ -50,7 +50,7 @@ public class Relevancy implements Comparable<Relevancy>
 		this.nameRelevancy = nameRelevancy;
 	}
 
-	public int getCallCount()
+	private int getCallCount()
 	{
 		return callCount;
 	}
@@ -60,7 +60,7 @@ public class Relevancy implements Comparable<Relevancy>
 		this.callCount = callCount;
 	}
 
-	public double getTfidf()
+	private double getTfidf()
 	{
 		return tfidf;
 	}

@@ -38,8 +38,8 @@ import java.util.*;
 
 public class LuceneSearcher {
 
-    QueryParser qp = new QueryParser("content", new EnglishAnalyzer());
-    IndexSearcher indexSearcher = null;
+    private QueryParser qp = new QueryParser("content", new EnglishAnalyzer());
+    private IndexSearcher indexSearcher = null;
 
     public void index(boolean test) throws IOException {
 

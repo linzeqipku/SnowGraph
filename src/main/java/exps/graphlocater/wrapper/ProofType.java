@@ -59,7 +59,7 @@ public enum ProofType {
 		this.name = name;
 	}
 
-	public String getName() {
+	private String getName() {
 		return name;
 	}
 

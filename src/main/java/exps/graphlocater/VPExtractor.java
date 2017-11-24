@@ -18,7 +18,7 @@ import java.util.*;
 
 public class VPExtractor {
     public static final Logger logger = Logger.getLogger(VPExtractor.class);
-    public static final float PROOF_SCORE_THRESHOLD = -5;
+    private static final float PROOF_SCORE_THRESHOLD = -5;
 
     public static List<PhraseInfo> parseSentence(String sentence) {
 		if (StringUtils.isBlank(sentence))
@@ -59,7 +59,7 @@ public class VPExtractor {
         return Arrays.asList(phrases).subList(0, count);
 	}
 
-	public static Tree parseGrammaticalTree(String sentence) {
+	private static Tree parseGrammaticalTree(String sentence) {
 		if (DocumentParser.hasTooManyIllegalSymbols(sentence))
 			return null;
 		// Add a period to the end of sentence, if there is none.
@@ -76,7 +76,7 @@ public class VPExtractor {
 		return tree;
 	}
 
-    public static PhraseInfo[] extractVerbPhrases(Tree sentenceTree) {
+    private static PhraseInfo[] extractVerbPhrases(Tree sentenceTree) {
 		if (sentenceTree == null)
 			return null;
 		List<PhraseInfo> phraseList = new ArrayList<>();

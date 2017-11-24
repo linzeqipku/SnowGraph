@@ -94,7 +94,7 @@ public class DocumentParser {
         }
     }
 
-    public static boolean IsCode(FileType f) {
+    private static boolean IsCode(FileType f) {
         if (f == FileType.APK || f == FileType.APP || f == FileType.ASP || f == FileType.ASPX
                 || f == FileType.BAK || f == FileType.BAT || f == FileType.BIN || f == FileType.C
                 || f == FileType.CLASS || f == FileType.CLASSPATH || f == FileType.CSS
@@ -109,7 +109,7 @@ public class DocumentParser {
         return false;
     }
 
-    public static String getUsageTypeByName(File f) {
+    private static String getUsageTypeByName(File f) {
         String pureName = FileUtils.getNameWithoutExtension(f.getName());
         String fileUsageType = getType(pureName);
         // System.out.println(pureName+"+"+fileUsageType);
@@ -124,7 +124,7 @@ public class DocumentParser {
         return fileUsageType;
     }
 
-    public static String getProjectName(File f) {
+    private static String getProjectName(File f) {
         File curFile = f;
         while(curFile.getParentFile() != null) {
             String fileName = curFile.getName();
@@ -134,7 +134,7 @@ public class DocumentParser {
         return "";
     }
 
-    public static String getType(String name) {
+    private static String getType(String name) {
         if (name.contains("设计")) {
             return UsageType.DESIGN;
         }

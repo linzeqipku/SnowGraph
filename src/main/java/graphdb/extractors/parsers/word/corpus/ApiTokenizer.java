@@ -15,7 +15,7 @@ import java.util.HashSet;
 /**
  * Created by maxkibble on 2017/7/9.
  */
-public class ApiTokenizer {
+class ApiTokenizer {
     private static String graphPath = Config.getProjectGraphPath();
     private static HashSet<String> tokens = new HashSet<>();
 

@@ -11,7 +11,7 @@ public class PlainCFGBlock implements CFGBlock {
 	private int id;
 	private PlainCFG cfg;
 	private IRStatement statement;
-	protected HashSet<PlainCFGBlock> prevs = new HashSet<>();
+	private HashSet<PlainCFGBlock> prevs = new HashSet<>();
 	private HashSet<PlainCFGBlock> nexts = new HashSet<>();
 
 	public PlainCFGBlock(PlainCFG cfg) {

@@ -58,7 +58,7 @@ public enum FileType {
         return type;
     }
 
-    public static Map<FileType, Integer> getTypeStats() {
+    private static Map<FileType, Integer> getTypeStats() {
         return TYPE_STATS;
     }
 

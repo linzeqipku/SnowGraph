@@ -50,7 +50,7 @@ import graphdb.extractors.parsers.javacode.entity.ClassInfo;
 import graphdb.extractors.parsers.javacode.entity.FieldInfo;
 import graphdb.extractors.parsers.javacode.entity.MethodInfo;
 
-public class JavaASTVisitor extends ASTVisitor {
+class JavaASTVisitor extends ASTVisitor {
 
     private ElementInfoPool elementInfoPool;
     private String sourceContent;

@@ -11,8 +11,8 @@ public class MailBodyProcessor {
 	private static final String SIGNATURE_LINE = "--";
 	private static final String SIGNATURE_LINE2 = "__";
 
-	public static final String	REF_LINE	= "wrote:";
-	public static final String	REF_TAG		= ">";
+	private static final String	REF_LINE	= "wrote:";
+	private static final String	REF_TAG		= ">";
 
 	private static boolean isSignatureStart(String str) {
 		return !(str == null || str.length() == 0) && (str.trim().toLowerCase().startsWith(SIGNATURE_LINE) || str.trim().startsWith(SIGNATURE_LINE2));

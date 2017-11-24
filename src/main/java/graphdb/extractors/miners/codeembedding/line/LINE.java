@@ -11,22 +11,30 @@ import java.util.*;
 /**
  * Created by laurence on 17-7-15.
  */
-public class LINE {
-    static final int neg_table_size = (int)1e8;
-    static final int sigmoid_table_size = 1000;
-    static final int SIGMOID_BOUND = 6;
-    static final double NEG_SAMPLING_POWER = 0.75;
+class LINE {
+    private static final int neg_table_size = (int)1e8;
+    private static final int sigmoid_table_size = 1000;
+    private static final int SIGMOID_BOUND = 6;
+    private static final double NEG_SAMPLING_POWER = 0.75;
 
-    int num_threads = 1, order = 1, dim = 200, num_negative = 5;
-    double init_rho = 0.025, rho;
-    int  num_vertices = 0, num_edges = 0;
-    int total_samples = 100, current_sample_count = 0;
+    private int num_threads = 1;
+    private int order = 1;
+    private int dim = 200;
+    private int num_negative = 5;
+    private double init_rho = 0.025;
+    private double rho;
+    private int  num_vertices = 0;
+    private int num_edges = 0;
+    private int total_samples = 100;
+    private int current_sample_count = 0;
 
-    List<Edge> edges = new ArrayList<>();
+    private List<Edge> edges = new ArrayList<>();
     Map<Long, Vertex> vertex = new HashMap<>();
-    long[] alias, neg_table;
-    double[] prob, sigmoid_table;
-    Random randomGenerator;
+    private long[] alias;
+    private long[] neg_table;
+    private double[] prob;
+    private double[] sigmoid_table;
+    private Random randomGenerator;
 
     public void readData(GraphDatabaseService db){
         try (Transaction tx = db.beginTx()) {
@@ -66,7 +74,7 @@ public class LINE {
             //System.out.println("num of edges: " + num_edges + '\n');
         }
     }
-    public void initAliasTable() {
+    private void initAliasTable() {
         alias = new long[num_edges];
         prob = new double[num_edges];
         double[] norm_prob = new double[num_edges];
@@ -101,7 +109,7 @@ public class LINE {
         while(num_small_block > 0)
             prob[small_block[--num_small_block]] = 1;
     }
-    public void initVector(){
+    private void initVector(){
         for (long key : vertex.keySet()){
             Vertex v = vertex.get(key);
             v.emb_context = new double[dim];
@@ -110,7 +118,7 @@ public class LINE {
                 v.emb_vertex[i] = (Math.random() - 0.5) / dim;
         }
     }
-    public void initNegTable(){
+    private void initNegTable(){
         double sum = 0, cur_sum = 0, por = 0;
         Iterator iter = vertex.entrySet().iterator();
         long vid = 0;
@@ -131,7 +139,7 @@ public class LINE {
         }
     }
 
-    public void initSigmoidTable(){
+    private void initSigmoidTable(){
         double x;
         sigmoid_table = new double[sigmoid_table_size + 1];
         for (int k = 0; k != sigmoid_table_size; ++k){
@@ -140,19 +148,19 @@ public class LINE {
         }
     }
 
-    public double fastSigmoid(double x){
+    private double fastSigmoid(double x){
         if (x > SIGMOID_BOUND) return 1;
         else if (x < -SIGMOID_BOUND) return 0;
         int k = (int)((x + SIGMOID_BOUND) * sigmoid_table_size / SIGMOID_BOUND / 2);
         return sigmoid_table[k];
     }
 
-    public long sampleAnEdge(double rand_value1, double rand_value2){
+    private long sampleAnEdge(double rand_value1, double rand_value2){
         int k = (int)(num_edges * rand_value1);
         return rand_value2 < prob[k] ? k : alias[k];
     }
 
-    public void update(double[] vec_u, double[] vec_v, double[] vec_error, long label){
+    private void update(double[] vec_u, double[] vec_v, double[] vec_error, long label){
         double x = 0, g;
         for (int c = 0; c != dim; ++c)
             x += vec_u[c] * vec_v[c];
@@ -163,7 +171,7 @@ public class LINE {
             vec_v[c] += g * vec_u[c];
     }
 
-    public void trainLINE(){
+    private void trainLINE(){
         long u, v, target, label;
         long count = 0, last_count = 0;
         int curedge;
@@ -227,14 +235,14 @@ public class LINE {
     class Edge {
         long src, tgt;
         double weight;
-        public Edge(long s, long t, double w){
+        Edge(long s, long t, double w){
             src = s; tgt = t; weight = w;
         }
     }
     class Vertex{
         double degree;
         double[] emb_vertex, emb_context;
-        public Vertex(double w){
+        Vertex(double w){
             degree = w;
             emb_vertex = emb_context = null;
         }

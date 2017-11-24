@@ -11,13 +11,13 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
-public class TransE {
+class TransE {
 
-    public boolean L1_flag = true;
-    public int n = 200;
-    public int method = 0;
-    public double rate = 0.001;
-    public double margin = 1;
+    private boolean L1_flag = true;
+    private int n = 200;
+    private int method = 0;
+    private double rate = 0.001;
+    private double margin = 1;
 
     private int relation_num;
     private int entity_num;
@@ -160,7 +160,7 @@ public class TransE {
         }
     }
 
-    public double calc_sum(int e1, int e2, int rel) {
+    private double calc_sum(int e1, int e2, int rel) {
         double sum = 0;
         if (L1_flag)
             for (int ii = 0; ii < n; ii++)
@@ -171,7 +171,7 @@ public class TransE {
         return sum;
     }
 
-    public void gradient(int e1_a, int e2_a, int rel_a, int e1_b, int e2_b, int rel_b) {
+    private void gradient(int e1_a, int e2_a, int rel_a, int e1_b, int e2_b, int rel_b) {
         for (int ii = 0; ii < n; ii++) {
             double x = 2.0 * (entity_vec[e2_a][ii] - entity_vec[e1_a][ii] - relation_vec[rel_a][ii]);
             if (L1_flag)
@@ -203,15 +203,15 @@ public class TransE {
         }
     }
 
-    public static double rand(double min, double max) {
+    private static double rand(double min, double max) {
         return min + (max - min) * Math.random();
     }
 
-    public static double normal(double x, double miu, double sigma) {
+    private static double normal(double x, double miu, double sigma) {
         return 1.0 / Math.sqrt(2.0 * Math.PI) / sigma * Math.exp(-1.0 * (x - miu) * (x - miu) / (2.0 * sigma * sigma));
     }
 
-    public static double randn(double miu, double sigma, double min, double max) {
+    private static double randn(double miu, double sigma, double min, double max) {
         double x, y, dScope;
         do {
             x = rand(min, max);
@@ -221,25 +221,25 @@ public class TransE {
         return x;
     }
 
-    public static double vec_len(double[] a) {
+    private static double vec_len(double[] a) {
         double res = 0;
         for (double anA : a) res += anA * anA;
         res = Math.sqrt(res);
         return res;
     }
 
-    public static void norm(double[] a) {
+    private static void norm(double[] a) {
         double x = vec_len(a);
         if (x > 1)
             for (int ii = 0; ii < a.length; ii++)
                 a[ii] /= x;
     }
 
-    public static int rand_max(int x) {
+    private static int rand_max(int x) {
         return (int) (Math.random() * x);
     }
 
-    public void add(int e1, int e2, int r) {
+    private void add(int e1, int e2, int r) {
         fb_h.add(e1);
         fb_r.add(r);
         fb_l.add(e2);

@@ -29,12 +29,12 @@ import graphdb.framework.annotations.RelationshipDeclaration;
 public class ReferenceExtractor implements Extractor {
 
     @RelationshipDeclaration
-    public static final String REFERENCE = "reference";
+    private static final String REFERENCE = "reference";
 
-    GraphDatabaseService db = null;
-    CodeIndexes codeIndexes = null;
+    private GraphDatabaseService db = null;
+    private CodeIndexes codeIndexes = null;
 
-    Map<Node, String> nodeToTextMap = new HashMap<>();
+    private Map<Node, String> nodeToTextMap = new HashMap<>();
 
     public void run(GraphDatabaseService db) {
         this.db = db;
@@ -75,7 +75,7 @@ public class ReferenceExtractor implements Extractor {
         }
     }
 
-    void fromHtmlToCodeElement() {
+    private void fromHtmlToCodeElement() {
         try (Transaction tx = db.beginTx()) {
             for (Node srcNode : nodeToTextMap.keySet()) {
                 String content = nodeToTextMap.get(srcNode);
@@ -141,7 +141,7 @@ public class ReferenceExtractor implements Extractor {
         }
     }
     
-    void fromTextToJiraOrCommit(){
+    private void fromTextToJiraOrCommit(){
     	Map<String, Node> jiraMap=new HashMap<>();
     	Map<String, Node> commitMap=new HashMap<>();
     	try (Transaction tx = db.beginTx()) {
@@ -176,7 +176,7 @@ public class ReferenceExtractor implements Extractor {
     	}
     }
 
-    void fromPatchToCodeElement(){
+    private void fromPatchToCodeElement(){
     	
     	HashMap<String, Node> patchMap = new HashMap<>();
     	try (Transaction tx = db.beginTx()) {

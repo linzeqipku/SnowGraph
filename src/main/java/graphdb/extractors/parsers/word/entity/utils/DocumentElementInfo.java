@@ -10,16 +10,16 @@ import java.util.UUID;
  * Created by maxkibble on 2017/5/25.
  */
 public class DocumentElementInfo implements Serializable {
-    protected DocumentInfo				documentInfo;
+    private DocumentInfo				documentInfo;
     protected DocumentElementInfo		parentElement;	// 可能有的element以DocumentInfo为父节点。
     protected List<DocumentElementInfo>	subElements;
-    protected String					uuid;
-    protected String					usageType;
-    protected String                    packageName;
-    protected HashSet<String>           apiList;
-    protected String                    projectName;
+    private String					uuid;
+    private String					usageType;
+    private String                    packageName;
+    private HashSet<String>           apiList;
+    private String                    projectName;
 
-    public DocumentElementInfo() {
+    protected DocumentElementInfo() {
         uuid = UUID.randomUUID().toString();
         subElements = new ArrayList<>();
         apiList = new HashSet<>();
@@ -76,7 +76,7 @@ public class DocumentElementInfo implements Serializable {
         return parentElement;
     }
 
-    public void setParentElement(DocumentElementInfo parentElement) {
+    private void setParentElement(DocumentElementInfo parentElement) {
         this.parentElement = parentElement;
     }
 

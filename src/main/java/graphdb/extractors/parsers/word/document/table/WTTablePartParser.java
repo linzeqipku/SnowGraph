@@ -11,10 +11,10 @@ import java.util.List;
  * Created by maxkibble on 2017/5/25.
  */
 public class WTTablePartParser {
-    public static final int	TABLE_NONE		= 0;
-    public static final int	TABLE_TITLE		= 1;
-    public static final int	TABLE_HEADING	= 2;
-    public static final int	TABLE_CONTENT	= 3;
+    private static final int	TABLE_NONE		= 0;
+    private static final int	TABLE_TITLE		= 1;
+    private static final int	TABLE_HEADING	= 2;
+    private static final int	TABLE_CONTENT	= 3;
 
     public static List<TablePartInfo> parseTableToParts(TableInfo tableInfo) {
         // 要产生的完整表格的分部列表

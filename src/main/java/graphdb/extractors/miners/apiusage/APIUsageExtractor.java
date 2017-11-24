@@ -25,11 +25,11 @@ public class APIUsageExtractor implements Extractor {
 	private static final int EXAMPLE_PER_CLUSTER = 2;
 
 	@EntityDeclaration
-	public static final String API_USAGE_EXAMPLE = "APIUsageExample";
+    private static final String API_USAGE_EXAMPLE = "APIUsageExample";
 	@PropertyDeclaration(parent = API_USAGE_EXAMPLE)
-	public static final String EXAMPLE_BODY = "body";
+    private static final String EXAMPLE_BODY = "body";
 	@RelationshipDeclaration
-	public static final String HAS_EXAMPLE = "hasExample";
+    private static final String HAS_EXAMPLE = "hasExample";
 
 	private String srcPath = "";
 

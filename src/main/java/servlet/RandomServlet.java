@@ -24,8 +24,8 @@ import java.util.Random;
  */
 public class RandomServlet extends HttpServlet {
 
-	Random rand ;
-	Map<Long, Pair<Long,Long>> map = new HashMap<>();
+	private Random rand ;
+	private Map<Long, Pair<Long,Long>> map = new HashMap<>();
 	
 	public void init() throws ServletException{
 

@@ -17,7 +17,7 @@ import org.eclipse.jdt.core.dom.ImportDeclaration;
 /**
  * Evaluates fully qualified name of TypeDeclaration, Type and Name objects.
  */
-public class NameResolver {
+class NameResolver {
 
     private static Set<String> srcPathSet=null;
 
@@ -66,7 +66,7 @@ public class NameResolver {
     /**
      * Evaluates fully qualified name of the Name object.
      */
-    public static String getFullName(Name name) {
+    private static String getFullName(Name name) {
         // check if the root node is a CompilationUnit
         if (name.getRoot().getClass() != CompilationUnit.class) {
             // cannot resolve a full name, CompilationUnit root node is missing
@@ -151,11 +151,11 @@ public class NameResolver {
             return true;
         }
 
-        public boolean getFound() {
+        boolean getFound() {
             return found;
         }
 
-        public String getFullName() {
+        String getFullName() {
             return fullName;
         }
 
@@ -180,11 +180,11 @@ public class NameResolver {
             return true;
         }
 
-        public boolean getFound() {
+        boolean getFound() {
             return found;
         }
 
-        public TypeDeclaration getTypeDecl() {
+        TypeDeclaration getTypeDecl() {
             return typeDecl;
         }
     }

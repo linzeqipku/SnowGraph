@@ -16,8 +16,8 @@ import java.util.concurrent.FutureTask;
 // 似乎当时相结合Callable+FutureTask对时间进行一些监控，超时超内存跳出
 public class StanfordParser implements Callable<Tree> {
 
-	public static LexicalizedParser lexicalizedParser;
-	public static TokenizerFactory<CoreLabel> tokenizerFactory;
+	private static LexicalizedParser lexicalizedParser;
+	private static TokenizerFactory<CoreLabel> tokenizerFactory;
 
 	private String strToParse;
 	private Tree parsedTree;
@@ -28,7 +28,7 @@ public class StanfordParser implements Callable<Tree> {
 	}
 
 
-	public StanfordParser(String strToParse) {
+	private StanfordParser(String strToParse) {
 		super();
 		this.strToParse = strToParse;
 	}

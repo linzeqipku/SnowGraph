@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-public class IRBuiltVisitor extends ASTVisitor {
+class IRBuiltVisitor extends ASTVisitor {
 	private IRRepresentation block;
 	private Stack<IRScope> scopeStack = new Stack<>();
 	private Stack<IRLabel> continueStack = new Stack<>();

@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public abstract class IRStatement implements IRAbstractStatement {
 	private BasicCFGRegularBlock belongBlock;
-	protected IRExpression.IRAbstractVariable target;
+	IRExpression.IRAbstractVariable target;
 
 	public void setBelongBlock(BasicCFGRegularBlock belongBlock) {
 		this.belongBlock = belongBlock;
@@ -19,14 +19,14 @@ public abstract class IRStatement implements IRAbstractStatement {
 		return belongBlock;
 	}
 
-	protected final void addUse(IRExpression expression) {
+	final void addUse(IRExpression expression) {
 		if (expression instanceof IRExpression.IRAbstractVariable) {
 			IRExpression.IRAbstractVariable variable = ((IRExpression.IRAbstractVariable) expression);
 			variable.getVariable().addUse(this);
 		}
 	}
 
-	protected final void addDef(IRExpression.IRAbstractVariable variable) {
+	final void addDef(IRExpression.IRAbstractVariable variable) {
 		variable.getVariable().addDef(this);
 	}
 
@@ -44,7 +44,7 @@ public abstract class IRStatement implements IRAbstractStatement {
 		return getUses(new VariableFilter()).map(x -> ((IRAbstractVariable) x));
 	}
 
-	public abstract Stream<IRExpression> getUses(ExpressionFilter builder);
+	protected abstract Stream<IRExpression> getUses(ExpressionFilter builder);
 
 	public abstract MiningNode toMiningNode();
 }

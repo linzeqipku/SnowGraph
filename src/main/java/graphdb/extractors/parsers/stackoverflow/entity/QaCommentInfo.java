@@ -6,10 +6,10 @@ import org.neo4j.graphdb.Node;
 
 public class QaCommentInfo {
 
-    Node node = null;
-    int commentId = 0;
-    int parentId = 0;
-    int userId = -1;
+    private Node node = null;
+    private int commentId = 0;
+    private int parentId = 0;
+    private int userId = -1;
 
     public QaCommentInfo(Node node, int id, int parentId, int score, String text, String creationDate, int userId) {
         this.node = node;

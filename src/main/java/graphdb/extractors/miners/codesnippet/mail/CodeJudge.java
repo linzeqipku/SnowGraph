@@ -11,7 +11,7 @@ import java.io.StringReader;
  * @date: 2014年3月5日 上午10:30:16
  */
 
-public class CodeJudge {
+class CodeJudge {
 
 	public static boolean isCode(String content) {
 		BufferedReader br = new BufferedReader(new StringReader(content));
@@ -55,19 +55,19 @@ public class CodeJudge {
 
 	}
 
-	public final static String[]	codeEndSymbol		= { "{", "}", ";", "=" };
-	public final static String[]	codeKeywordSymbol	= { "public", "private", "protected",
+	private final static String[]	codeEndSymbol		= { "{", "}", ";", "=" };
+	private final static String[]	codeKeywordSymbol	= { "public", "private", "protected",
 			"return", "package", "import"				};
-	public final static String[]	mustOccurSymbol		= { "(", ")", "=", "{", "}" };
+	private final static String[]	mustOccurSymbol		= { "(", ")", "=", "{", "}" };
 
-	public static boolean hasMustOccurSymbol(String line) {
+	private static boolean hasMustOccurSymbol(String line) {
 		for (String s : mustOccurSymbol)
 			if (line.contains(s))
 				return true;
 		return false;
 	}
 
-	public static boolean isCodeLine(String line) {
+	private static boolean isCodeLine(String line) {
 		for (String s : codeEndSymbol) {
 			if (line.endsWith(s)) {
 				return true;

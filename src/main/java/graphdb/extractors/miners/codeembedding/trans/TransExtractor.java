@@ -19,10 +19,10 @@ import graphdb.framework.annotations.PropertyDeclaration;
 public class TransExtractor implements Extractor {
 
     @PropertyDeclaration
-    public static final String CODE_TRANSE_VEC = "transVec";
+    private static final String CODE_TRANSE_VEC = "transVec";
 
-    GraphDatabaseService db = null;
-    TransE transE = null;
+    private GraphDatabaseService db = null;
+    private TransE transE = null;
 
     public void run(GraphDatabaseService db) {
         this.db = db;

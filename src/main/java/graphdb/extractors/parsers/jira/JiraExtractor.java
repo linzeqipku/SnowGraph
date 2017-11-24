@@ -110,27 +110,27 @@ public class JiraExtractor implements Extractor {
     public static final String ISSUEUSER_ACTIVE = "active";
 
     @RelationshipDeclaration
-    public static final String HAVE_PATCH = "jira_have_patch";
+    private static final String HAVE_PATCH = "jira_have_patch";
     @RelationshipDeclaration
-    public static final String HAVE_ISSUE_COMMENT = "jira_have_issue_comment";
+    private static final String HAVE_ISSUE_COMMENT = "jira_have_issue_comment";
     @RelationshipDeclaration
-    public static final String ISSUE_DUPLICATE = "jira_issue_duplicate";
+    private static final String ISSUE_DUPLICATE = "jira_issue_duplicate";
     @RelationshipDeclaration
-    public static final String IS_ASSIGNEE_OF_ISSUE = "jira_is_assignee_of_issue";
+    private static final String IS_ASSIGNEE_OF_ISSUE = "jira_is_assignee_of_issue";
     @RelationshipDeclaration
-    public static final String IS_CREATOR_OF_ISSUE = "jira_is_creator_of_issue";
+    private static final String IS_CREATOR_OF_ISSUE = "jira_is_creator_of_issue";
     @RelationshipDeclaration
-    public static final String IS_REPORTER_OF_ISSUE = "jira_is_reporter_of_issue";
+    private static final String IS_REPORTER_OF_ISSUE = "jira_is_reporter_of_issue";
     @RelationshipDeclaration
-    public static final String IS_CREATOR_OF_ISSUECOMMENT = "jira_is_creator_of_issueComment";
+    private static final String IS_CREATOR_OF_ISSUECOMMENT = "jira_is_creator_of_issueComment";
     @RelationshipDeclaration
-    public static final String IS_UPDATER_OF_ISSUECOMMENT = "jira_is_updater_of_issueComment";
+    private static final String IS_UPDATER_OF_ISSUECOMMENT = "jira_is_updater_of_issueComment";
     @RelationshipDeclaration
-    public static final String IS_CREATOR_OF_PATCH = "jira_is_creator_of_patch";
+    private static final String IS_CREATOR_OF_PATCH = "jira_is_creator_of_patch";
 
-    GraphDatabaseService db = null;
+    private GraphDatabaseService db = null;
 
-    String issueFolderPath = null;
+    private String issueFolderPath = null;
 
     private Map<String, Node> userNodeMap = new HashMap<>();
     private List<String> duplicateList = new ArrayList<>();// "a b"代表a指向b

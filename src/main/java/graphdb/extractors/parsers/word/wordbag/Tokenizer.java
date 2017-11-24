@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 
 
-public class Tokenizer {
+class Tokenizer {
 	
 	private static Pattern title=Pattern.
 			compile("^[0-9\\.\u3001\u4E00\u4E8C\u4E09\u56DB\u4E94\u516D\u4E03\u516B\u4E5D\u5341\u96F6\u7B2C\u7AE0]+[0-9\\s\\.\u3001]+([^\\s]+)$");

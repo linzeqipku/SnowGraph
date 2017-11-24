@@ -18,15 +18,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
-public class GraphLocater {
-    public static double PHRASE_SIM_THRESHOLD = 0.5;
-    static final boolean WRITE_PHRASE = false;
-    GraphDatabaseService db = null;
-    HashMap<String, Set<String>> nodeDescMap = new HashMap<>();
-    PrintWriter writer = null;
+class GraphLocater {
+    private static double PHRASE_SIM_THRESHOLD = 0.5;
+    private static final boolean WRITE_PHRASE = false;
+    private GraphDatabaseService db = null;
+    private HashMap<String, Set<String>> nodeDescMap = new HashMap<>();
+    private PrintWriter writer = null;
 
 
-    public GraphLocater(GraphDatabaseService graphdb){
+    private GraphLocater(GraphDatabaseService graphdb){
         this.db = graphdb;
         try (Transaction tx = db.beginTx()) {
             ResourceIterable<Node> nodes = db.getAllNodes();
@@ -74,7 +74,7 @@ public class GraphLocater {
         }
     }
 
-    public void query(String qString) {
+    private void query(String qString) {
         List<PhraseInfo> phraseList = WordsUtils.extractPhraseFromQuery(qString);
         if (GraphLocater.WRITE_PHRASE) {
             for (PhraseInfo phrase : phraseList) {
@@ -88,7 +88,7 @@ public class GraphLocater {
         }
     }
 
-    public List<Pair<String, Double>> findCandiate(Set<String> wordSet){
+    private List<Pair<String, Double>> findCandiate(Set<String> wordSet){
         List<Pair<String, Double>> candidate = new ArrayList<>();
         if (wordSet.size() == 0) // word set maybe empty
             return candidate;

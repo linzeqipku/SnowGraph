@@ -20,7 +20,7 @@ public class TestMethodData extends MethodData implements Serializable, Cloneabl
 		return sliceList;
 	}
 
-	public void setSliceList(List<String> sliceList)
+	private void setSliceList(List<String> sliceList)
 	{
 		this.sliceList = sliceList;
 	}

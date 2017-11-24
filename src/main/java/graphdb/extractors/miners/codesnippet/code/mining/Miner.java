@@ -59,7 +59,7 @@ public class Miner {
 		return MiningGraph.resultFilter(de.parsemis.Miner.mine(graphs, setting));
 	}
 
-	public static List<CFG> mineFromDDG(List<DDG> ddgs, Settings<MiningNode, Integer> setting) {
+	private static List<CFG> mineFromDDG(List<DDG> ddgs, Settings<MiningNode, Integer> setting) {
 		return mineGraphFromDDG(ddgs, setting).stream().map(r -> MiningGraph.createCFGFromMiningGraph(ddgs, r)).collect(Collectors.toList());
 	}
 

@@ -6,10 +6,10 @@ import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 
 public class AnswerInfo {
 
-    Node node = null;
-    int answerId = 0;
-    int parentQuestionId = 0;
-    int ownerUserId = -1;
+    private Node node = null;
+    private int answerId = 0;
+    private int parentQuestionId = 0;
+    private int ownerUserId = -1;
 
     public AnswerInfo(Node node, int id, int parentId, String creationDate, int score, String body, int ownerUserId) {
         this.node = node;

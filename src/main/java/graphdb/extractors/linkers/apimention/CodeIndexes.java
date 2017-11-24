@@ -15,11 +15,11 @@ import org.neo4j.graphdb.Transaction;
 public class CodeIndexes {
 
     public Map<String, Long> typeMap = new HashMap<>();
-    public Map<Long, String> idToTypeNameMap = new HashMap<>();
-    public Map<String, Set<Long>> methodMap = new HashMap<>();
-    public Map<Long, String> idToMethodNameMap = new HashMap<>();
+    private Map<Long, String> idToTypeNameMap = new HashMap<>();
+    private Map<String, Set<Long>> methodMap = new HashMap<>();
+    private Map<Long, String> idToMethodNameMap = new HashMap<>();
     public Map<String, Set<Long>> typeShortNameMap = new HashMap<>();
-    public Map<String, Set<Long>> methodMidNameMap = new HashMap<>();
+    private Map<String, Set<Long>> methodMidNameMap = new HashMap<>();
     public Map<String, Set<Long>> methodShortNameMap = new HashMap<>();
 
     public CodeIndexes(GraphDatabaseService db) {

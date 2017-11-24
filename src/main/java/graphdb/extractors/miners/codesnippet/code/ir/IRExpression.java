@@ -15,7 +15,7 @@ public interface IRExpression {
 		private VariableUnit variable;
 		private int version = -1;
 
-		public IRAbstractVariable(VariableUnit variable) {
+		IRAbstractVariable(VariableUnit variable) {
 			this.variable = variable;
 		}
 

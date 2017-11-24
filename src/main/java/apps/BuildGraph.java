@@ -6,13 +6,13 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import graphdb.framework.GraphBuilder;
 
 
-public class BuildGraph {
+class BuildGraph {
 
     public static void main(String[] args) {
         run(args[0]);
     }
 
-    public static void run(String configPath) {
+    private static void run(String configPath) {
         @SuppressWarnings("resource")
         ApplicationContext context = new FileSystemXmlApplicationContext(configPath);
         GraphBuilder graphBuilder = (GraphBuilder) context.getBean("graph");

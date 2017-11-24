@@ -17,9 +17,9 @@ public class DocumentParser {
 
 	public static final String		PARAGRAPH_CODE_PREFIX		= "<CODE>";
 	public static final String		PARAGRAPH_END_MARK			= "\n<EOP>\n";
-	public static final String		SENTENCE_CODE_MASK			= "CODEMASK@";
+	private static final String		SENTENCE_CODE_MASK			= "CODEMASK@";
 	public static final String[]	CODE_LINE_SUFFIXES			= new String[] { ";", "{", "}" };
-	public static final String		CODE_TERM_SEPARATOR			= "<CTS>";
+	private static final String		CODE_TERM_SEPARATOR			= "<CTS>";
 	public static final String		PATH_THREAD_TITLE			= "Thread";
 	public static final String		PATH_POST_BODY				= "Post";
 	public static final String		PATH_COMMENT_TEXT			= "Comment";

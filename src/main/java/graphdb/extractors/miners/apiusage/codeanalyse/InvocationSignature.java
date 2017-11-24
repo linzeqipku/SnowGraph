@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InvocationSignature extends ASTVisitor {
-	public static final String DECLARE_LABEL = "<DECLARE>";
-	public static final String DEFINE_LABEL = "<DEFINE>";
-	public static final String NONE_LABEL = "<NONE>";
+	private static final String DECLARE_LABEL = "<DECLARE>";
+	private static final String DEFINE_LABEL = "<DEFINE>";
+	private static final String NONE_LABEL = "<NONE>";
 	public static final String TEST_LABEL = "<TEST>";
 	public static final String TARGET_LABEL = "<TARGET>";
-	public static final String[] TEST_PREFIXES = {"assert", "check", "confirm", "fail", "test",
+	private static final String[] TEST_PREFIXES = {"assert", "check", "confirm", "fail", "test",
 		"verify"};
 	private ASTNode node;
 	private StringBuilder signature;
@@ -230,7 +230,7 @@ public class InvocationSignature extends ASTVisitor {
 		return false;
 	}
 
-	public String markWords(String originalString, String[] words, String markLabel) {
+	private String markWords(String originalString, String[] words, String markLabel) {
 		String tempString = originalString;
 		for (String wordToMark : words) {
 			if (tempString.startsWith(wordToMark))
@@ -272,7 +272,7 @@ public class InvocationSignature extends ASTVisitor {
 	}
 
 	// 把原始的signature打上test标记，再对targetAPI也打上标记
-	public String getTargetTestSignature(List<String> targets) {
+    private String getTargetTestSignature(List<String> targets) {
 		return markWords(getTestSignature(), targets.toArray(new String[0]), TARGET_LABEL);
 	}
 
@@ -317,11 +317,11 @@ public class InvocationSignature extends ASTVisitor {
 		return targetTestLines;
 	}
 
-	public boolean isEmpty() {
+	private boolean isEmpty() {
 		return signature == null || signature.toString().equals("");
 	}
 
-	public boolean isEmptyLines() {
+	private boolean isEmptyLines() {
 		return lines == null || lines.size() <= 0;
 	}
 
@@ -342,7 +342,7 @@ public class InvocationSignature extends ASTVisitor {
 		return signature.toString();
 	}
 
-	public ArrayList<String> getLines() {
+	private ArrayList<String> getLines() {
 		return lines;
 	}
 

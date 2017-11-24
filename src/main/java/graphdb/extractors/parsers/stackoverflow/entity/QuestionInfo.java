@@ -7,10 +7,10 @@ import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 
 public class QuestionInfo {
 
-    Node node = null;
-    int questionId = 0;
-    int acceptedAnswerId = -1;
-    int ownerUserId = -1;
+    private Node node = null;
+    private int questionId = 0;
+    private int acceptedAnswerId = -1;
+    private int ownerUserId = -1;
 
 
     public QuestionInfo(Node node, int id, String creationDate, int score, int viewCount, String body, int ownerUserId, String title, String tags, int acceptedAnswerId) {

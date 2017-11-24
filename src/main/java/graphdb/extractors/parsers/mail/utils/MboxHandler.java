@@ -180,8 +180,8 @@ public class MboxHandler extends AbstractContentHandler {
     public void raw(InputStream is) throws MimeException {
     }
 
-    public static void createMailNode(Node node, String subject, String id, String senderName, String senderMail,
-                                      String[] receiverNames, String[] receiverMails, String replyTo, String date, String body) {
+    private static void createMailNode(Node node, String subject, String id, String senderName, String senderMail,
+                                       String[] receiverNames, String[] receiverMails, String replyTo, String date, String body) {
         node.addLabel(Label.label(MailListExtractor.MAIL));
         node.setProperty(MailListExtractor.MAIL_SUBJECT, subject);
         node.setProperty(MailListExtractor.MAIL_ID, id);

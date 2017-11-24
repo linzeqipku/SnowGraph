@@ -30,7 +30,7 @@ public class WordDocxParser {
 
     private static final String DEFAULT_STYLE_TYPE = "DEFAULT";
 
-    public static void setUsageType (DocumentElementInfo doc, String usageType) {
+    private static void setUsageType(DocumentElementInfo doc, String usageType) {
         if(doc == null || usageType == null) return;
         DocumentElementInfo tmp = doc;
         while(true) {
@@ -40,7 +40,7 @@ public class WordDocxParser {
         }
     }
 
-    public static void setApiList(DocumentElementInfo doc, String text) {
+    private static void setApiList(DocumentElementInfo doc, String text) {
         if(doc == null || text == null) return;
         String[] words = text.split(" |\\(|\\)");
         for(String word : words) {
@@ -249,7 +249,7 @@ public class WordDocxParser {
          * return the last section which satisfies the condition that
          * section.layer < layer
          */
-        public SectionInfo getParentSection(int layer) {
+        SectionInfo getParentSection(int layer) {
             SectionInfo parentSection = null;
 
             // find the first section in the stack which is the first lower layer
@@ -268,11 +268,11 @@ public class WordDocxParser {
             return parentSection;
         }
 
-        public void addSection(SectionInfo sectionInfo) {
+        void addSection(SectionInfo sectionInfo) {
             sectionStack.push(sectionInfo);
         }
 
-        public void clear() {
+        void clear() {
             sectionStack.clear();
         }
     }
@@ -317,7 +317,7 @@ public class WordDocxParser {
         }
     }
 
-    public static void print(DocumentElementInfo element) {
+    private static void print(DocumentElementInfo element) {
         if (element == null)
             return;
 
@@ -380,7 +380,7 @@ public class WordDocxParser {
         }
     }
 
-    public static void testDirectory(File folder){
+    private static void testDirectory(File folder){
         if(folder == null)
             return;
 
@@ -394,7 +394,7 @@ public class WordDocxParser {
         }
     }
 
-    public static void testFile(File file){
+    private static void testFile(File file){
         if(file == null || !file.getName().toLowerCase().endsWith(".docx"))
             return;
 

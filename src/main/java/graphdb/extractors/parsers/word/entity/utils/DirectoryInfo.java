@@ -21,7 +21,7 @@ public class DirectoryInfo implements Serializable {
     private String				uuid;
 
     private boolean				isParsed	= false;
-    public DirectoryInfo() {
+    private DirectoryInfo() {
         super();
         subDirectories = new ArrayList<>();
         subFiles = new ArrayList<>();
@@ -41,7 +41,7 @@ public class DirectoryInfo implements Serializable {
             return parentDir.getRelativePath() + Config.getFileSeparator() + name;
     }
 
-    public String getAbsolutePath() {
+    private String getAbsolutePath() {
         DirectoryInfo parentDir = parentDirectory;
         if (parentDir == null)
             return path;

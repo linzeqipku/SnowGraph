@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import graphdb.extractors.miners.codesnippet.code.ir.statement.IRStatement;
 
 public abstract class BasicCFGSpecialBlock extends AbstractBasicCFGBlock {
-	public BasicCFGSpecialBlock(BasicCFG cfg, int id) {
+	BasicCFGSpecialBlock(BasicCFG cfg, int id) {
 		super(cfg, id);
 	}
 

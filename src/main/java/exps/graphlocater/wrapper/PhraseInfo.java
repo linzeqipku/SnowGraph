@@ -11,11 +11,11 @@ public class PhraseInfo implements Serializable {
     private static final long serialVersionUID = -8383713376186053397L;
     public static final String TABLE_NAME = "phrases";
 
-    public static final int PHRASE_TYPE_DEFAULT = 0;
+    private static final int PHRASE_TYPE_DEFAULT = 0;
     public static final int PHRASE_TYPE_VP = 1;
     public static final int PHRASE_TYPE_NP = 2;
 
-    public static final int PROOF_SCORE_DEFAULT = -1;
+    private static final int PROOF_SCORE_DEFAULT = -1;
     private int id;
     private int phraseType = PHRASE_TYPE_DEFAULT;
 

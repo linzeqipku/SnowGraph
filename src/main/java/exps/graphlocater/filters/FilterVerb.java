@@ -21,7 +21,7 @@ public class FilterVerb {
 			return false;
 	}
 
-	public static boolean filterHave(PhraseInfo phrase) {
+	private static boolean filterHave(PhraseInfo phrase) {
 		if (phrase == null)
 			return false;
 		Tree phraseTree = Tree.valueOf(phrase.getSyntaxTree());
@@ -47,7 +47,7 @@ public class FilterVerb {
 		return true;
 	}
 
-	public static boolean filterQAVerbs(PhraseInfo phrase) {
+	private static boolean filterQAVerbs(PhraseInfo phrase) {
 		if (phrase == null)
 			return false;
 		Tree phraseTree = Tree.valueOf(phrase.getSyntaxTree());
@@ -71,7 +71,7 @@ public class FilterVerb {
 		return true;
 	}
 
-	public static boolean filterStopVerbs(PhraseInfo phrase) {
+	private static boolean filterStopVerbs(PhraseInfo phrase) {
 		if (phrase == null)
 			return false;
 		Tree phraseTree = Tree.valueOf(phrase.getSyntaxTree());
@@ -95,7 +95,7 @@ public class FilterVerb {
 		return true;
 	}
 
-	public static boolean filterUnlikeVerbs(PhraseInfo phrase) {
+	private static boolean filterUnlikeVerbs(PhraseInfo phrase) {
 		if (phrase == null)
 			return false;
 		Tree phraseTree = Tree.valueOf(phrase.getSyntaxTree());

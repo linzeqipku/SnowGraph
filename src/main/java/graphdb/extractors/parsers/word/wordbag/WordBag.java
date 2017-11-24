@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 
 public class WordBag {
 
-	List<WordBagItem>	wordBag	= new ArrayList<>();
+	private List<WordBagItem>	wordBag	= new ArrayList<>();
 
 	public static void main(String[] args) {
 		WordBag wb = new WordBag(new File("data/label/titles.txt"));
@@ -31,7 +31,7 @@ public class WordBag {
 			System.out.println(file.getAbsolutePath());
 	}
 
-	public void add(String s,int c) {
+	private void add(String s, int c) {
 		List<String> v = Tokenizer.token(s);
 		for (String word : v)
 			if (word.length() < 20 && word.length() > 1 && !word.matches("[\\-\\.0-9\\s]+"))
@@ -42,7 +42,7 @@ public class WordBag {
 		add(s,1);
 	}
 
-	public void load(File file) {
+	private void load(File file) {
 		List<String> lines = null;
 		try {
 			lines = FileUtils.readLines(file,"UTF-8");

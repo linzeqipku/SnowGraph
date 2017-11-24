@@ -11,11 +11,11 @@ import java.util.List;
 /**
  * Created by maxkibble on 2017/7/15.
  */
-public class TokenMatcher {
-    static List<String> corpusCh;
-    static List<String> corpusTrans;
+class TokenMatcher {
+    private static List<String> corpusCh;
+    private static List<String> corpusTrans;
 
-    public static void init() {
+    private static void init() {
         try {
             corpusCh = FileUtils.readLines(new File(Config.getProjectChineseTokenPath()));
             corpusTrans = FileUtils.readLines(new File(Config.getProjectTranslationPath()));
@@ -25,7 +25,7 @@ public class TokenMatcher {
         }
     }
 
-    public static boolean appear(String word) {
+    private static boolean appear(String word) {
         for(String str : corpusCh) if(word.equals(str)) return true;
         return false;
     }

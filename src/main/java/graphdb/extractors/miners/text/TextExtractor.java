@@ -26,7 +26,7 @@ public class TextExtractor implements Extractor {
     @PropertyDeclaration
     public static final String TEXT = "uniformText";
 
-    GraphDatabaseService db = null;
+    private GraphDatabaseService db = null;
 
     @Override
     public void run(GraphDatabaseService db) {
@@ -38,7 +38,7 @@ public class TextExtractor implements Extractor {
         }
     }
     
-    public void visit(Node node){
+    private void visit(Node node){
     	
     	if (node.hasLabel(Label.label(JavaCodeExtractor.CLASS))){
     		node.setProperty(TITLE, node.getProperty(JavaCodeExtractor.CLASS_FULLNAME));

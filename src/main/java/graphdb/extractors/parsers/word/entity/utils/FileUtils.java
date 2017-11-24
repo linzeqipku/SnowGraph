@@ -91,13 +91,13 @@ public class FileUtils {
         return pureName;
     }
 
-    public static String getExtension(String fileName) {
+    private static String getExtension(String fileName) {
         int lastDotIndex = fileName.lastIndexOf(".");
         String extension = lastDotIndex < 0 ? "" : fileName.substring(lastDotIndex + 1);
         return extension.toLowerCase();
     }
 
-    public static FileType getFileType(Object obj) {
+    private static FileType getFileType(Object obj) {
         String extension = FileType.OTHER.getName();
         if (obj instanceof File) {
             File file = (File) obj;
@@ -130,7 +130,7 @@ public class FileUtils {
         return docType;
     }
 
-    public static void delFolder(String folderPath) {
+    private static void delFolder(String folderPath) {
         try {
             delAllFile(folderPath);
             String filePath = folderPath;
@@ -143,7 +143,7 @@ public class FileUtils {
         }
     }
 
-    public static boolean delAllFile(String path) {
+    private static boolean delAllFile(String path) {
         boolean flag = false;
         File file = new File(path);
         if (!file.exists()) {
@@ -339,7 +339,7 @@ public class FileUtils {
      * 		"c:\tmp"(或"c:\tmp")  --> 1
      * 		"c:\tmp\"(或"c:/tmp/") --> 1
      */
-    public static int getDirectoryLayer(String docDirAbsolutePath) {
+    private static int getDirectoryLayer(String docDirAbsolutePath) {
         int layer = 0;
 
         //replace '\' to '/'

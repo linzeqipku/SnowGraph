@@ -10,22 +10,22 @@ public class StatementAST
 {
 	// 改变block中的子statement，如何影响原代码块？
 
-	public final static int NULL_TYPE = 0;// 错误类型
-	public final static int PRIMITIVE_STATEMENT = 1; // 语句语法构成中不包括Statement的语句类型
-	public final static int BLOCK_STATEMENT = 2; // block|synchronized
-	public final static int NESTED_STATEMENT = 3; // do|while|for|foreach|labeled
+	private final static int NULL_TYPE = 0;// 错误类型
+	private final static int PRIMITIVE_STATEMENT = 1; // 语句语法构成中不包括Statement的语句类型
+	private final static int BLOCK_STATEMENT = 2; // block|synchronized
+	private final static int NESTED_STATEMENT = 3; // do|while|for|foreach|labeled
 													// body(Statement)-->block(statements)
-	public final static int IF_STATEMENT = 4; // if-else
-	public final static int SWITCH_STATEMENT = 5; // switch() { statements }
-	public final static int TRY_STATEMENT = 6; // try block {catchclause}
+	private final static int IF_STATEMENT = 4; // if-else
+	private final static int SWITCH_STATEMENT = 5; // switch() { statements }
+	private final static int TRY_STATEMENT = 6; // try block {catchclause}
 												// [finally block]
-	public final static int TYPE_DECLARATION_STATEMENT = 7; // type|enum
+	private final static int TYPE_DECLARATION_STATEMENT = 7; // type|enum
 															// declaration
 
-	public final static int TEST_NULL = 100;
-	public final static int TEST_ASSERTION = 101;
-	public final static int TEST_DECLARATION = 102;
-	public final static int TEST_USAGE = 103;
+	private final static int TEST_NULL = 100;
+	private final static int TEST_ASSERTION = 101;
+	private final static int TEST_DECLARATION = 102;
+	private final static int TEST_USAGE = 103;
 	public final static int TEST_METHODINVOCATION = 104;
 
 	// 2013.05.05
@@ -503,7 +503,7 @@ public class StatementAST
 		return relevantVariables;
 	}
 
-	public HashSet<VariableAST> getUsedVariables()
+	private HashSet<VariableAST> getUsedVariables()
 	{
 		return usedVariables;
 	}

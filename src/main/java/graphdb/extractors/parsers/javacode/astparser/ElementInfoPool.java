@@ -10,7 +10,7 @@ import graphdb.extractors.parsers.javacode.entity.MethodInfo;
 
 public class ElementInfoPool {
 
-    public String srcDir;
+    private String srcDir;
     public Map<String, ClassInfo> classInfoMap;
     public Map<String, InterfaceInfo> interfaceInfoMap;
     public Map<String, MethodInfo> methodInfoMap;

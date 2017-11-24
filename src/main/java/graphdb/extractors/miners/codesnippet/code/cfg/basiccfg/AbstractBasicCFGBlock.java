@@ -12,12 +12,12 @@ import java.util.Set;
  * @author huacy
  */
 public abstract class AbstractBasicCFGBlock implements CFGBlock {
-	protected boolean reachable = false;
-	protected Set<AbstractBasicCFGBlock> prevs = new HashSet<>();
+	boolean reachable = false;
+	Set<AbstractBasicCFGBlock> prevs = new HashSet<>();
 	private BasicCFG cfg;
 	private int id;
 
-	public AbstractBasicCFGBlock(BasicCFG cfg, int id) {
+	AbstractBasicCFGBlock(BasicCFG cfg, int id) {
 		this.cfg = cfg;
 		this.id = id;
 	}
@@ -26,15 +26,15 @@ public abstract class AbstractBasicCFGBlock implements CFGBlock {
 		return cfg;
 	}
 
-	public int getID() {
+	int getID() {
 		return id;
 	}
 
-	public abstract void visit();
+	protected abstract void visit();
 
 	public abstract void insertPhi(CFGVariableImpl exp);
 
-	public void addPrev(AbstractBasicCFGBlock prev) {
+	void addPrev(AbstractBasicCFGBlock prev) {
 		prevs.add(prev);
 	}
 

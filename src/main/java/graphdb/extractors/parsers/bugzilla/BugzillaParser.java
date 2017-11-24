@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * Created by xiaohan on 2017/4/4.
  */
-public class BugzillaParser {
+class BugzillaParser {
     public static BugInfo getBugInfo(String fileName) {
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         BugInfo bug = new BugInfo();

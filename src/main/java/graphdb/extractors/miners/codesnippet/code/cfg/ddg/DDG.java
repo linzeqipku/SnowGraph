@@ -48,7 +48,7 @@ public class DDG implements CFG {
 		}
 	}
 
-	public static DDG createCFG(PlainCFG cfg) {
+	private static DDG createCFG(PlainCFG cfg) {
 		if (cfg == null) return null;
 		return new DDG(cfg);
 	}

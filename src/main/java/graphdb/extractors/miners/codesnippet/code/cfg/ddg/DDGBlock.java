@@ -12,7 +12,7 @@ import java.util.HashSet;
 public class DDGBlock implements CFGBlock {
 	private int id;
 	private PlainCFGBlock plainCFGBlock;
-	protected HashSet<DDGBlock> prevs = new HashSet<>();
+	private HashSet<DDGBlock> prevs = new HashSet<>();
 	private HashSet<DDGBlock> nexts = new HashSet<>();
 
 	public DDGBlock(DDG ddg, PlainCFGBlock plainCFGBlock) {

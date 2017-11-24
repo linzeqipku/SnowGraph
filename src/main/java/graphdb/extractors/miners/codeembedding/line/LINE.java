@@ -1,12 +1,11 @@
 package graphdb.extractors.miners.codeembedding.line;
 
-import org.neo4j.graphdb.*;
-
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -31,25 +30,31 @@ public class LINE {
 
     public void readData(GraphDatabaseService db){
         try (Transaction tx = db.beginTx()) {
-            ResourceIterator<Relationship> relIter = db.getAllRelationships().iterator();
-            while (relIter.hasNext()) {
-                Relationship relation = relIter.next();
+            for (Relationship relation : db.getAllRelationships()) {
                 if (!JavaCodeExtractor.isJavaCodeRelationship(relation))
                     continue;
                 Node start = relation.getStartNode();
                 Node end = relation.getEndNode();
+                if (start.getProperty(JavaCodeExtractor.SIGNATURE).toString().toLowerCase().contains("test"))
+                    continue;
+                if (end.getProperty(JavaCodeExtractor.SIGNATURE).toString().toLowerCase().contains("test"))
+                    continue;
+                if (start.getProperty(JavaCodeExtractor.SIGNATURE).toString().toLowerCase().contains("util"))
+                    continue;
+                if (end.getProperty(JavaCodeExtractor.SIGNATURE).toString().toLowerCase().contains("util"))
+                    continue;
                 long src = start.getId();
                 long tgt = end.getId();
                 edges.add(new Edge(src, tgt, 1));
                 edges.add(new Edge(tgt, src, 1));
                 Vertex cur = new Vertex(2.0);
                 Vertex oldv = vertex.put(src, cur);
-                if (oldv != null){
+                if (oldv != null) {
                     cur.degree += oldv.degree;
                 }
                 cur = new Vertex(1.0);
                 oldv = vertex.put(tgt, cur);
-                if (oldv != null){
+                if (oldv != null) {
                     cur.degree += oldv.degree;
                 }
 
@@ -57,8 +62,8 @@ public class LINE {
             tx.success();
             num_edges = edges.size();
             num_vertices = vertex.size();
-            System.out.println("num of veticies: " + num_vertices + '\n');
-            System.out.println("num of edges: " + num_edges + '\n');
+            //System.out.println("num of veticies: " + num_vertices + '\n');
+            //System.out.println("num of edges: " + num_edges + '\n');
         }
     }
     public void initAliasTable() {
@@ -204,24 +209,6 @@ public class LINE {
         }
     }
 
-    public void writeToTxt() {
-        try {
-            PrintWriter writer = new PrintWriter(new FileOutputStream("/home/laurence/Desktop/graph_embedding"));
-            writer.write(vertex.size() + " " + 200 + "\n");
-            for (long key : vertex.keySet()) {
-                double[] embedding = vertex.get(key).emb_vertex;
-                String line = key + " ";
-                for (double x : embedding)
-                    line += x + " ";
-                line = line.trim();
-                writer.write(line);
-                writer.write("\n");
-            }
-            writer.close();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-    }
     public void run(){
         rho = init_rho;
         total_samples *= 1000000;
@@ -233,7 +220,7 @@ public class LINE {
         long startTime = System.currentTimeMillis();
         trainLINE();
         long endTime = System.currentTimeMillis();
-        System.out.println("Total time: " + (endTime-startTime)/1000 + "s.\n");
+        //System.out.println("Total time: " + (endTime-startTime)/1000 + "s.\n");
         //writeToTxt();
     }
 

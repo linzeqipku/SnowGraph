@@ -68,6 +68,18 @@
         <servlet-name>Random</servlet-name>
         <url-pattern>/Random</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <description></description>
+        <display-name>Nav</display-name>
+        <servlet-name>Nav</servlet-name>
+        <servlet-class>servlet.NavServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Nav</servlet-name>
+        <url-pattern>/Nav</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>cross-origin</filter-name>
         <filter-class>org.eclipse.jetty.servlets.CrossOriginFilter</filter-class>

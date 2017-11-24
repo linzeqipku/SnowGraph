@@ -88,34 +88,7 @@ public class Graph {
 				v2.incomingEdges.remove(type);
 		}
 	}
-	
-	public Vertex merge(Vertex v1, Vertex v2){
-		Vertex vo=v1,vNew=v2;
-		if (vo.name.length()>vNew.name.length()){
-			vo=v2;
-			vNew=v1;
-		}
-		for (String type:vNew.outgoingEdges.keySet())
-			for (Vertex v3:vNew.outgoingEdges.get(type))
-				if (!vo.equals(v3)&&!v3.equals(vNew))
-					addEdge(vo, v3, type);
-		for (String type:vNew.incomingEdges.keySet())
-			for (Vertex v3:vNew.incomingEdges.get(type))
-				if (!vo.equals(v3)&&!v3.equals(vNew))
-					addEdge(v3, vo, type);
-		remove(vNew);
-		return vo;
-	}
-	
-	public void merge(Set<Vertex> set){
-		if (set.size()<=1)
-			return;
-		Iterator<Vertex> iter=set.iterator();
-		Vertex v0=iter.next();
-		while (iter.hasNext())
-			v0=merge(v0, iter.next());
-	}
-	
+
 	public void writeToNeo4j(String dbPath){
 		GraphDatabaseService db=new GraphDatabaseFactory().newEmbeddedDatabase(new File(dbPath));
 		Map<Vertex, Node> map=new HashMap<>();
@@ -135,7 +108,7 @@ public class Graph {
 		}
 		db.shutdown();
 	}
-	
+
 	public boolean check(){
 		for (Vertex vertex:vertexes.values()){
 			for (String key:vertex.outgoingEdges.keySet())

@@ -15,6 +15,13 @@ public class LINEExtractor implements Extractor{
 
     public void run(GraphDatabaseService db) {
         this.db = db;
+        try (Transaction tx=db.beginTx()) {
+            for (Node node : db.getAllNodes()) {
+                if (node.hasProperty(LINE_VEC))
+                    node.removeProperty(LINE_VEC);
+            }
+            tx.success();
+        }
         line = new LINE();
         line.readData(db);
         line.run();

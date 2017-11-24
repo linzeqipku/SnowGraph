@@ -1,11 +1,9 @@
 package exps.extractmodel;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
@@ -19,7 +17,7 @@ import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 public class ExtractModel {
 	
 	GraphDatabaseService db=null;
-	
+
 	public static void main(String[] args){
 		ExtractModel extractModel=new ExtractModel("E://SnowGraphData//lucene//graphdb-copy");
 		Graph graph=extractModel.pipeline();
@@ -37,7 +35,6 @@ public class ExtractModel {
 		graph=longNameFilter(graph);
 		graph=omitMethodsAndFields(graph);
 		graph=dealWithInheritance(graph);
-		graph=mergeConcepts(graph);
 		return graph;
 	}
 	
@@ -153,52 +150,27 @@ public class ExtractModel {
 	}
 	
 	Graph dealWithInheritance(Graph graph){
-		//TODO
-		return graph;
-	}
-	
-	Graph mergeConcepts(Graph graph){
-		Map<String, Set<Vertex>> map=new HashMap<>();
+		Map<Vertex, Set<Vertex>> parentMap=new HashMap<>();
+		for (Vertex vertex:graph.getAllVertexes())
+			setParents(vertex,parentMap);
 		for (Vertex vertex:graph.getAllVertexes()){
-			String name=vertex.name;
-			name=name.replaceAll("^\\w+\\.", "");
-			name=name.replaceAll("\\d+", "");
-			name=name.replaceAll("Iterat[a-z0-9]*", "");
-			name=name.replaceAll("Factory((?=[A-Z])|$)", "");
-			name=name.replaceAll("All((?=[A-Z])|$)", "");
-			name=name.replaceAll("Buffered((?=[A-Z])|$)", "");
-			name=name.replaceAll("Config[a-z0-9]*", "");
-			name=name.replaceAll("Wrapper((?=[A-Z])|$)", "");
-			name=name.replaceAll("Impl((?=[A-Z])|$)", "");
-			name=name.replaceAll("Base((?=[A-Z])|$)", "");
-			name=name.replaceAll("Set((?=[A-Z])|$)", "");
-			name=name.replaceAll("Map((?=[A-Z])|$)", "");
-			name=name.replaceAll("Array((?=[A-Z])|$)", "");
-			name=name.replaceAll("InputStream((?=[A-Z])|$)", "");
-			name=name.replaceAll("OutputStream((?=[A-Z])|$)", "");
-			name=name.replaceAll("Simple((?=[A-Z])|$)", "");
-			name=name.replaceAll("Default((?=[A-Z])|$)", "");
-			name=name.replaceAll("Mock((?=[A-Z])|$)", "");
-			name=name.replaceAll("Standard((?=[A-Z])|$)", "");
-			name=name.replaceAll("Common((?=[A-Z])|$)", "");
-			name=name.replaceAll("Context((?=[A-Z])|$)", "");
-			name=name.replaceAll("IO((?=[A-Z])|$)", "");
-			name=name.replaceAll("Holder((?=[A-Z])|$)", "");
-			EnglishStemmer stemmer=new EnglishStemmer();
-			stemmer.setCurrent(name);
-			name=stemmer.getCurrent();
-			if (name.trim().length()>0){
-				if (!map.containsKey(name))
-					map.put(name, new HashSet<>());
-				map.get(name).add(vertex);
+			for (Vertex parent:parentMap.get(vertex)){
+
 			}
-			else
-				graph.remove(vertex);
-		}
-		for (String name:map.keySet()){
-			graph.merge(map.get(name));
 		}
 		return graph;
 	}
+
+	void setParents(Vertex vertex, Map<Vertex, Set<Vertex>> parentMap){
+		if (parentMap.containsKey(vertex))
+			return;
+		Set<Vertex> directParents=vertex.outgoingEdges.get("isA");
+		for (Vertex directParent:directParents)
+			setParents(directParent,parentMap);
+		parentMap.put(vertex,new HashSet<>());
+		for (Vertex directParent:directParents)
+			parentMap.get(vertex).addAll(parentMap.get(directParent));
+	}
+
 
 }

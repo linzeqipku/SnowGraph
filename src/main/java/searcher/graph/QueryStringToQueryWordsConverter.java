@@ -1,5 +1,11 @@
 package searcher.graph;
 
+import apps.Config;
+import graphdb.extractors.parsers.word.corpus.WordSegmenter;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.tartarus.snowball.ext.EnglishStemmer;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,22 +13,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
-import org.tartarus.snowball.ext.EnglishStemmer;
-
-import graphdb.extractors.parsers.word.corpus.WordSegmenter;
-import apps.Config;
-
 public class QueryStringToQueryWordsConverter {
 	
 	static EnglishStemmer stemmer=new EnglishStemmer();
 	static Set<String> englishStopWords=new HashSet<>();
-	static Set<String> chineseStopWords=new HashSet<>();
 	
 	public QueryStringToQueryWordsConverter(){
 		List<String> lines=new ArrayList<>();
 		try {
-			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"stopwords_en.txt"));
+			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"stopwords.txt"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -37,13 +36,6 @@ public class QueryStringToQueryWordsConverter {
 			stemmer.stem();
 			englishStopWords.add(stemmer.getCurrent());
 		}
-		try {
-			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"stopwords_cn.txt"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		lines.forEach(n->{chineseStopWords.add(n);});
 	}
 	
 	public Set<String> convert(String queryString){
@@ -69,48 +61,24 @@ public class QueryStringToQueryWordsConverter {
 	}
 	
 	Set<String> chineseConvert(String queryString){
-		Set<String> r=new HashSet<>();
-		WordSegmenter.demo(queryString);
-		for (String queryWord:WordSegmenter.demo(queryString)) {
-			if (isChinese(queryWord) && !chineseStopWords.contains(queryWord))
-				r.add(queryWord);
-			else {
-				if (queryWord.length() <= 2)
-					continue;
-				stemmer.setCurrent(queryWord);
-				stemmer.stem();
-				queryWord = stemmer.getCurrent();
-				if (!englishStopWords.contains(queryWord))
-					r.add(queryWord);
-			}
-		}
-		return r;
-	}
-	
-	public static void main(String[] args){
-		new QueryStringToQueryWordsConverter().convert("获取所有人的Email信息")
-			.forEach(n->{System.out.println(n);});
+		return englishConvert(StringUtils.join(WordSegmenter.demo(queryString)," "));
 	}
 	
     private static boolean isChinese(char c) {
         Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
-        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
-                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
-                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS
-                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION) {
-            return true;
-        }
-        return false;
-    }
+		return ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+				|| ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
+				|| ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS
+				|| ub == Character.UnicodeBlock.GENERAL_PUNCTUATION;
+	}
 
     public static boolean isChinese(String strName) {
         char[] ch = strName.toCharArray();
-        for (int i = 0; i < ch.length; i++) {
-            char c = ch[i];
-            if (isChinese(c)) {
-                return true;
-            }
-        }
+		for (char c : ch) {
+			if (isChinese(c)) {
+				return true;
+			}
+		}
         return false;
     }
     

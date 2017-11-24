@@ -74,6 +74,7 @@
         <display-name>Nav</display-name>
         <servlet-name>Nav</servlet-name>
         <servlet-class>servlet.NavServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>Nav</servlet-name>

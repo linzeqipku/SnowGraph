@@ -18,7 +18,7 @@ import java.util.List;
  * Created by Administrator on 2017/5/26.
  */
 public class RankServlet extends HttpServlet {
-	
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request, response);
@@ -26,7 +26,7 @@ public class RankServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	
+
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
@@ -34,22 +34,24 @@ public class RankServlet extends HttpServlet {
         List<DocSearchResult> resultList = Config.getDocSearcher().search(query);
         JSONObject searchResult = new JSONObject();
         JSONArray results = new JSONArray();
-        for (DocSearchResult doc : resultList){
-        	JSONObject obj = new JSONObject();
-        	obj.put("answerId", doc.getId());
-        	Pair<String, String> pair = Config.getDocSearcher().getContent(doc.getId());
-        	if (pair.getLeft().length() > 110) obj.put("title", pair.getLeft().substring(0, 100) + "......"); else
-        		obj.put("title", pair.getLeft());
-        	obj.put("body", pair.getRight());
-        	obj.put("finalRank", doc.getNewRank());
-        	obj.put("solrRank", doc.getIrRank());
-        	obj.put("relevance", 0);
-        	results.put(obj);
+        for (DocSearchResult doc : resultList) {
+            JSONObject obj = new JSONObject();
+            obj.put("answerId", doc.getId());
+            Pair<String, String> pair = Config.getDocSearcher().getContent(doc.getId());
+            if (pair.getLeft().length() > 110)
+                obj.put("title", pair.getLeft().substring(0, 100) + "......");
+            else
+                obj.put("title", pair.getLeft());
+            obj.put("body", pair.getRight());
+            obj.put("finalRank", doc.getNewRank());
+            obj.put("solrRank", doc.getIrRank());
+            obj.put("relevance", 0);
+            results.put(obj);
         }
         searchResult.put("query", query);
         searchResult.put("rankedResults", results);
         searchResult.put("solrResults", new JSONArray());
-        
+
         response.getWriter().print(searchResult.toString());
     }
 

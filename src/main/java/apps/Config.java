@@ -23,7 +23,8 @@ public class Config {
 	static private boolean flag = false;
 
 	public static void init() {
-		flag = true;
+		if (flag)
+			return;
 		List<String> lines = new ArrayList<>();
 		try {
 			lines = FileUtils.readLines(new File(Config.class.getResource("/").getPath() + "conf"));
@@ -47,35 +48,26 @@ public class Config {
 		neo4jBoltConnection= GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
 		graphSearcher = new GraphSearcher();
 		docSearcher = new DocSearcher(graphSearcher);
+		flag = true;
 	}
 
 	static public String getExampleFilePath() {
-		if (!flag)
-			init();
 		return exampleFilePath;
 	}
 
 	static public String getLucenePath() {
-		if (!flag)
-			init();
 		return lucenePath;
 	}
 
 	static public GraphSearcher getGraphSearcher() {
-		if (!flag)
-			init();
 		return graphSearcher;
 	}
 
 	static public DocSearcher getDocSearcher() {
-		if (!flag)
-			init();
 		return docSearcher;
 	}
 
 	public static Driver getNeo4jBoltDriver() {
-		if (!flag)
-			init();
 		return neo4jBoltConnection;
 	}
 

@@ -131,12 +131,36 @@ public class GraphSearcher {
     }
 
     public SearchResult query(String queryString) {
+
+        if (queryString.matches("^[\\d\\s]+$")){
+            List<Long> idList=new ArrayList<>();
+            String[] eles=queryString.trim().split("\\s+");
+            for (String e:eles)
+                if (e.length()>0) {
+                    Session session = Config.getNeo4jBoltDriver().session();
+                    long id=Long.parseLong(e);
+                    String stat="match (n) where id(n)="+id+" return id(n)";
+                    StatementResult rs = session.run(stat);
+                    if (rs.hasNext()) {
+                        idList.add(id);
+                    }
+                    session.close();
+                }
+            return idTest(idList);
+        }
+
         /*
          * seedMap: - key: 定位到的代码元素结点的集合 - value: 这个集合的离散度，离散度越低，说明这个图的质量越好
 		 */
         List<SearchResult> graphs = findSubGraphs(queryString);
         graphs.sort(Comparator.comparingDouble(r -> r.cost));
         return graphs.get(0);
+    }
+
+    private SearchResult idTest(List<Long> idList){
+        SearchResult r=new SearchResult();
+        r.nodes.addAll(idList);
+        return r;
     }
 
     public List<SearchResult> findSubGraphs(String queryString) {

@@ -45,6 +45,7 @@ public class RankServlet extends HttpServlet {
             obj.put("body", pair.getRight());
             obj.put("finalRank", doc.getNewRank());
             obj.put("solrRank", doc.getIrRank());
+            obj.put("query", query);
             obj.put("relevance", 0);
             results.put(obj);
         }

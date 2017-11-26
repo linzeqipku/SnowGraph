@@ -1,22 +1,22 @@
 package apps;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 import searcher.DocSearcher;
 import searcher.graph.GraphSearcher;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class Config {
 
 	static private String neo4jBoltUrl = null;
 	static private Driver neo4jBoltConnection = null;
 	static private String exampleFilePath = null;
+	static private Set<Long> exampleQuestions = null;
 	static private String lucenePath = null;
 	static private GraphSearcher graphSearcher = null;
 	static private DocSearcher docSearcher = null;
@@ -40,7 +40,8 @@ public class Config {
 				if (pre.equals("neo4jBoltUrl"))
 					neo4jBoltUrl = suf;
 				if (pre.equals("dataPath")) {
-					exampleFilePath = suf+"/qaexamples";
+					String exampleFilePath = suf+"/qaexamples";
+					exampleQuestions=getSampleQuestionIds(exampleFilePath);
 					lucenePath = suf+"/index";
 				}
 			}
@@ -52,9 +53,30 @@ public class Config {
 		flag = true;
 	}
 
-	static public String getExampleFilePath() {
+	private static Set<Long> getSampleQuestionIds(String exampleFilePath){
+		Set<Long> r=new HashSet<>();
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(exampleFilePath)),
+					"UTF-8"));
+			String lineTxt;
+			while ((lineTxt = br.readLine()) != null) {
+				if (lineTxt.length()==0)
+					continue;
+				String[] names = lineTxt.split(" ");
+				r.add(Long.parseLong(names[1]));
+			}
+			br.close();
+		} catch (Exception e) {
+			System.err.println("read errors :" + e);
+		}
+		return r;
+	}
+
+	static public String getRandomExampleQuery(){
 		init();
-		return exampleFilePath;
+		long id = new ArrayList<>(exampleQuestions).get(new Random().nextInt(exampleQuestions.size()));
+		String query = docSearcher.getQuery(id);
+		return query;
 	}
 
 	static public String getLucenePath() {

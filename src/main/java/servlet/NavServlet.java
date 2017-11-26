@@ -42,6 +42,9 @@ public class NavServlet extends HttpServlet {
     }
 
     private JSONObject doNav() {
+
+        String mainStat="match (a)-[r]->(b) where labels(a)[0]<>labels(b)[0] return labels(a)[0]+\" \"+labels(b)[0] as x, count(*)";
+
         JSONObject obj = new JSONObject();
         Session session = Config.getNeo4jBoltDriver().session();
         String stat = "CALL db.labels() YIELD label";
@@ -72,7 +75,7 @@ public class NavServlet extends HttpServlet {
 
         c = 0;
         JSONArray relArray = new JSONArray();
-        stat = "match (a)-[r]->(b) return labels(a)[0]+\" \"+type(r)+\" \"+labels(b)[0] as x, count(*)";
+        stat = mainStat;
         rs = session.run(stat);
         while (rs.hasNext()) {
             Record item = rs.next();
@@ -80,11 +83,14 @@ public class NavServlet extends HttpServlet {
             int count = item.get("count(*)").asInt();
             String[] eles = x.split("\\s+");
             int src = labels.indexOf(eles[0]);
-            String rel = eles[1];
-            int dst = labels.indexOf(eles[2]);
+            int dst = labels.indexOf(eles[1]);
             JSONObject relObj = new JSONObject();
+            relObj.put("id", "" + c);
+            relObj.put("type", "" + count);
+            relObj.put("startNode", "" + src);
+            relObj.put("endNode", "" + dst);
             relObj.put("id", Long.parseLong("" + c));
-            relObj.put("type", rel + "(" + count + ")");
+            relObj.put("type", "" + count);
             relObj.put("startNode", Long.parseLong("" + src));
             relObj.put("endNode", Long.parseLong("" + dst));
             relArray.put(relObj);

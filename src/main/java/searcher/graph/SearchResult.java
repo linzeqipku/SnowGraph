@@ -6,6 +6,7 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import apps.Config;
+import servlet.OutGoingRelationServlet;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -47,14 +48,7 @@ public class SearchResult {
             StatementResult rs = session.run(stat);
             while (rs.hasNext()) {
                 Record item=rs.next();
-                JSONObject obj = new JSONObject();
-                obj.put("type", item.get("type(r)").asString());
-                obj.put("id", item.get("id(r)").asLong());
-                obj.put("startNode", item.get("id(startNode(r))").asLong());
-                obj.put("endNode", item.get("id(endNode(r))").asLong());
-                obj.put("properties", new JSONArray());
-                //System.out.println(obj);
-                relationshipsArray.put(obj);
+                relationshipsArray.put(OutGoingRelationServlet.recordToRel(item));
             }
             session.close();
         }

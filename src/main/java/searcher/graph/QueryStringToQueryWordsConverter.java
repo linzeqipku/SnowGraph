@@ -52,7 +52,12 @@ class QueryStringToQueryWordsConverter {
 			if (token.length()<=2)
 				continue;
 			stemmer.setCurrent(token);
-			stemmer.stem();
+			try {
+				stemmer.stem();
+			} catch (IllegalArgumentException e){
+				System.out.println(token);
+				e.printStackTrace();
+			}
 			token=stemmer.getCurrent();
 			if (!englishStopWords.contains(token))
 				r.add(token);

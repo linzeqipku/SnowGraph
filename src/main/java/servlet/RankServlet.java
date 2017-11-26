@@ -36,7 +36,6 @@ public class RankServlet extends HttpServlet {
         JSONArray results = new JSONArray();
         for (DocSearchResult doc : resultList) {
             JSONObject obj = new JSONObject();
-            obj.put("answerId", doc.getId());
             Pair<String, String> pair = Config.getDocSearcher().getContent(doc.getId());
             if (pair.getLeft().length() > 110)
                 obj.put("title", pair.getLeft().substring(0, 100) + "......");
@@ -45,7 +44,7 @@ public class RankServlet extends HttpServlet {
             obj.put("body", pair.getRight());
             obj.put("finalRank", doc.getNewRank());
             obj.put("solrRank", doc.getIrRank());
-            obj.put("relevance", 0);
+            obj.put("highlight", Config.getDocSearcher().getAnswerId(query)==doc.getId());
             results.put(obj);
         }
         searchResult.put("query", query);

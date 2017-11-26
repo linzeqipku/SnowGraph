@@ -35,6 +35,7 @@ public class DocSearcher {
         this.keeper = new LuceneSearcher();
         this.docDistScorer = new DocDistScorer(graphSearcher);
         connection = graphSearcher.connection;
+        extractQaMap();
     }
 
     public void setQaExamplePath(String path){
@@ -72,6 +73,14 @@ public class DocSearcher {
         return title;
     }
 
+    public long getAnswerId(String query){
+        for (long qId:queryMap.keySet()){
+            if (queryMap.get(qId).trim().equals(query.trim()))
+                return qaMap.get(qId);
+        }
+        return -1;
+    }
+
     public List<DocSearchResult> search(String query) {
         List<DocSearchResult> r = new ArrayList<>();
 
@@ -105,7 +114,6 @@ public class DocSearcher {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        extractQaMap();
         int count = 0, irCount = 0;
         int qCnt = 0;
         for (long queryId : queryMap.keySet()) {

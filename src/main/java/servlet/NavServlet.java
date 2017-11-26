@@ -61,7 +61,7 @@ public class NavServlet extends HttpServlet {
             while (rs.hasNext())
                 count = rs.next().get("count(n)").asInt();
             JSONObject nodeObj = new JSONObject();
-            nodeObj.put("_id", "" + c);
+            nodeObj.put("_id", Long.parseLong("" + c));
             JSONArray labelArray = new JSONArray();
             labelArray.put(label + "(" + count + ")");
             nodeObj.put("_labels", labelArray);
@@ -83,10 +83,10 @@ public class NavServlet extends HttpServlet {
             String rel = eles[1];
             int dst = labels.indexOf(eles[2]);
             JSONObject relObj = new JSONObject();
-            relObj.put("id", "" + c);
+            relObj.put("id", Long.parseLong("" + c));
             relObj.put("type", rel + "(" + count + ")");
-            relObj.put("startNode", "" + src);
-            relObj.put("endNode", "" + dst);
+            relObj.put("startNode", Long.parseLong("" + src));
+            relObj.put("endNode", Long.parseLong("" + dst));
             relArray.put(relObj);
             c++;
         }

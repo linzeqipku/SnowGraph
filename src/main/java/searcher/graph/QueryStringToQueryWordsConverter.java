@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Set;
 
 class QueryStringToQueryWordsConverter {
-	
-	private static EnglishStemmer stemmer=new EnglishStemmer();
+
 	private static Set<String> englishStopWords=new HashSet<>();
 	
 	public QueryStringToQueryWordsConverter(){
+		EnglishStemmer stemmer=new EnglishStemmer();
 		List<String> lines=new ArrayList<>();
 		try {
 			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"stopwords.txt"));
@@ -45,6 +45,7 @@ class QueryStringToQueryWordsConverter {
 	}
 	
 	private Set<String> englishConvert(String queryString){
+		EnglishStemmer stemmer=new EnglishStemmer();
 		Set<String> r=new HashSet<>();
 		
 		for (String token:queryString.toLowerCase().split("[^a-z]+")){

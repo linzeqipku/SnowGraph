@@ -24,7 +24,6 @@ public class GraphSearcher {
             + JavaCodeExtractor.HAVE_FIELD + "|" + JavaCodeExtractor.CALL_METHOD + "|" + JavaCodeExtractor.CALL_FIELD
             + "|" + JavaCodeExtractor.TYPE + "|" + JavaCodeExtractor.VARIABLE;
 
-    private static EnglishStemmer stemmer = new EnglishStemmer();
     private static QueryStringToQueryWordsConverter converter = new QueryStringToQueryWordsConverter();
 
     public Map<Long, List<Double>> id2Vec = new HashMap<>();
@@ -34,8 +33,6 @@ public class GraphSearcher {
     private Set<Long> typeSet = new HashSet<>();
 
     private Map<String, Set<Long>> word2Ids = new HashMap<>();
-
-    private Set<String> queryWordSet = new HashSet<>();
 
     public GraphSearcher(Driver driver) {
         try {
@@ -166,8 +163,7 @@ public class GraphSearcher {
 
         List<SearchResult> r = new ArrayList<>();
 
-        queryWordSet = new HashSet<>();
-        queryWordSet = converter.convert(queryString);
+        Set<String> queryWordSet = converter.convert(queryString);
 
         Set<String> tmpSet = new HashSet<>();
         for (String word : queryWordSet) {
@@ -177,7 +173,7 @@ public class GraphSearcher {
         queryWordSet.clear();
         queryWordSet.addAll(tmpSet);
 
-        Set<Long> anchors = findAnchors();
+        Set<Long> anchors = findAnchors(queryWordSet);
 
         if (anchors.size() > 0) {
             Set<Long> subGraph = new HashSet<>();
@@ -212,7 +208,7 @@ public class GraphSearcher {
             r.add(searchResult);
         } else {
 
-            Set<Long> candidateNodes = candidate();
+            Set<Long> candidateNodes = candidate(queryWordSet);
 
 			/*
              * 对于每一个候选的起点， 从每个查询单词对应的代码元素集合中选取一个离它最近的代码元素
@@ -252,7 +248,7 @@ public class GraphSearcher {
 
     }
 
-    private Set<Long> candidate() {
+    private Set<Long> candidate(Set<String> queryWordSet) {
 
         Set<Long> candidateNodes = new HashSet<>();
 
@@ -299,7 +295,7 @@ public class GraphSearcher {
         return candidateNodes;
     }
 
-    private Set<Long> findAnchors() {
+    private Set<Long> findAnchors(Set<String> queryWordSet) {
 
         Set<Long> anchors = new HashSet<>();
 
@@ -340,6 +336,7 @@ public class GraphSearcher {
     }
 
     private String stem(String word) {
+        EnglishStemmer stemmer = new EnglishStemmer();
         if (word.matches("\\w+")) {
             stemmer.setCurrent(word.toLowerCase());
             stemmer.stem();

@@ -17,6 +17,8 @@ import java.util.List;
 
 public class NavServlet extends HttpServlet {
 
+    static JSONObject navObj=null;
+
     @Override
     public void init() throws ServletException{
         Config.init();
@@ -43,7 +45,10 @@ public class NavServlet extends HttpServlet {
 
     private JSONObject doNav() {
 
-        String mainStat="match (a)-[r]->(b) where labels(a)[0]<>labels(b)[0] return labels(a)[0]+\" \"+labels(b)[0] as x, count(*)";
+        if (navObj!=null)
+            return navObj;
+
+        String mainStat="match (a)-[r]->(b) return labels(a)[0]+\" \"+type(r)+\" \"+labels(b)[0] as x, count(*)";
 
         JSONObject obj = new JSONObject();
         Session session = Config.getNeo4jBoltDriver().session();
@@ -64,10 +69,9 @@ public class NavServlet extends HttpServlet {
             while (rs.hasNext())
                 count = rs.next().get("count(n)").asInt();
             JSONObject nodeObj = new JSONObject();
-            nodeObj.put("_id", Long.parseLong("" + c));
-            JSONArray labelArray = new JSONArray();
-            labelArray.put(label + "(" + count + ")");
-            nodeObj.put("_labels", labelArray);
+            nodeObj.put("id", c);
+            nodeObj.put("label", label);
+            nodeObj.put("count", count);
             nodeArray.put(nodeObj);
             c++;
         }
@@ -83,27 +87,20 @@ public class NavServlet extends HttpServlet {
             int count = item.get("count(*)").asInt();
             String[] eles = x.split("\\s+");
             int src = labels.indexOf(eles[0]);
-            int dst = labels.indexOf(eles[1]);
+            String type = eles[1];
+            int dst = labels.indexOf(eles[2]);
             JSONObject relObj = new JSONObject();
-            relObj.put("id", "" + c);
-            relObj.put("type", "" + count);
-            relObj.put("startNode", "" + src);
-            relObj.put("endNode", "" + dst);
-            relObj.put("id", Long.parseLong("" + c));
-            relObj.put("type", "" + count);
-            relObj.put("startNode", Long.parseLong("" + src));
-            relObj.put("endNode", Long.parseLong("" + dst));
+            relObj.put("id", c);
+            relObj.put("type", type);
+            relObj.put("startNode", src);
+            relObj.put("endNode", dst);
+            relObj.put("count", count);
             relArray.put(relObj);
             c++;
         }
-
         obj.put("relationships", relArray);
-        JSONArray dataArray = new JSONArray();
-        JSONArray resultsArray = new JSONArray();
-        JSONObject returnResult = new JSONObject();
-        dataArray.put(new JSONObject().put("graph", obj));
-        resultsArray.put(new JSONObject().put("data", dataArray));
-        returnResult.put("results", resultsArray);
+
+        navObj=obj;
         return obj;
     }
 

@@ -48,7 +48,7 @@ public class MailListExtractor implements Extractor {
     @EntityDeclaration
     public static final String MAILUSER = "MailUser";
     @PropertyDeclaration(parent = MAILUSER)
-    private static final String MAILUSER_NAMES = "names";
+    public static final String MAILUSER_NAMES = "names";
     @PropertyDeclaration(parent = MAILUSER)
     public static final String MAILUSER_MAIL = "mail";
 

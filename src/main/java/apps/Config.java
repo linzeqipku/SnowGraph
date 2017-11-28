@@ -15,7 +15,6 @@ public class Config {
 
 	static private String neo4jBoltUrl = null;
 	static private Driver neo4jBoltConnection = null;
-	static private String exampleFilePath = null;
 	static private Set<Long> exampleQuestions = null;
 	static private String lucenePath = null;
 	static private GraphSearcher graphSearcher = null;
@@ -25,6 +24,7 @@ public class Config {
 	public static void init() {
 		if (flag)
 			return;
+		String exampleFilePath ="";
 		List<String> lines = new ArrayList<>();
 		try {
 			lines = FileUtils.readLines(new File(Config.class.getResource("/").getPath() + "conf"));
@@ -40,7 +40,7 @@ public class Config {
 				if (pre.equals("neo4jBoltUrl"))
 					neo4jBoltUrl = suf;
 				if (pre.equals("dataPath")) {
-					String exampleFilePath = suf+"/qaexamples";
+					exampleFilePath = suf+"/qaexamples";
 					exampleQuestions=getSampleQuestionIds(exampleFilePath);
 					lucenePath = suf+"/index";
 				}
@@ -48,8 +48,7 @@ public class Config {
 		}
 		neo4jBoltConnection= GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
 		graphSearcher = new GraphSearcher(neo4jBoltConnection);
-		docSearcher = new DocSearcher(graphSearcher);
-		docSearcher.setQaExamplePath(exampleFilePath);
+		docSearcher = new DocSearcher(graphSearcher, exampleFilePath);
 		flag = true;
 	}
 

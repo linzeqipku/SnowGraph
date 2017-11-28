@@ -33,8 +33,8 @@ public class ApiMentionExtractor implements Extractor {
         codeIndexes = new CodeIndexes(db);
         try (Transaction tx=db.beginTx()){
         	for (Node node:db.getAllNodes()){
-        		if (!node.hasProperty(TextExtractor.TEXT))
-        			continue;
+                if (!node.hasProperty(TextExtractor.IS_TEXT)||!(boolean)node.getProperty(TextExtractor.IS_TEXT))
+                    continue;
         		if (node.hasLabel(Label.label(JavaCodeExtractor.CLASS)))
         			continue;
         		if (node.hasLabel(Label.label(JavaCodeExtractor.METHOD)))

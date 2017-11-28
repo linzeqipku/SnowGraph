@@ -52,7 +52,7 @@ public class LuceneSearcher {
         IndexWriter writer = new IndexWriter(dir, iwc);
 
         Session session = Config.getNeo4jBoltDriver().session();
-        String stat = "match (n) where exists(n." + TextExtractor.TEXT + ") return n." + TextExtractor.TITLE + " n." + TextExtractor.TEXT;
+        String stat = "match (n) where exists(n." + TextExtractor.IS_TEXT + ") and n."+TextExtractor.IS_TEXT+"=true return n." + TextExtractor.TITLE + " n." + TextExtractor.TEXT;
         if (test)
             stat = "match (n:" + StackOverflowExtractor.ANSWER + ") where exists(n." + TextExtractor.TEXT + ") and n." + StackOverflowExtractor.ANSWER_ACCEPTED + "=TRUE "
                     + "return n." + TextExtractor.TITLE + ", n." + TextExtractor.TEXT + ", id(n), labels(n)[0]";

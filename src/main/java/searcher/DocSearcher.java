@@ -30,16 +30,13 @@ public class DocSearcher {
     private Map<Long, Long> qaMap = null;
     private Map<Long, String> queryMap = null;
 
-    public DocSearcher(GraphSearcher graphSearcher) {
+    public DocSearcher(GraphSearcher graphSearcher, String path) {
+        this.qaExamplePath=path;
         this.graphSearcher = graphSearcher;
         this.keeper = new LuceneSearcher();
         this.docDistScorer = new DocDistScorer(graphSearcher);
         connection = graphSearcher.connection;
         extractQaMap();
-    }
-
-    public void setQaExamplePath(String path){
-        qaExamplePath=path;
     }
 
     public Pair<String, String> getContent(long nodeId) {

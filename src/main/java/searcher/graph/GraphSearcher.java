@@ -30,7 +30,7 @@ public class GraphSearcher {
     private Map<Long, String> id2Sig = new HashMap<>();
     private Map<Long, String> id2Name = new HashMap<>();
     private Map<Long, Set<String>> id2Words = new HashMap<>();
-    private Set<Long> typeSet = new HashSet<>();
+    private Set<Long> typeSet = new HashSet<>(); // 类或接口类型的结点集合
 
     private Map<String, Set<Long>> word2Ids = new HashMap<>();
 
@@ -46,6 +46,7 @@ public class GraphSearcher {
     private void init(Driver driver) throws SQLException {
         connection = driver;
         Session session = connection.session();
+        // 获取所有Method Class Interface 的结点
         String stat = "match (n) where not n:" + JavaCodeExtractor.FIELD + " and exists(n." + LINEExtractor.LINE_VEC
                 + ") return " + "id(n), n." + LINEExtractor.LINE_VEC + ", n." + JavaCodeExtractor.SIGNATURE;
         StatementResult rs = session.run(stat);
@@ -57,17 +58,17 @@ public class GraphSearcher {
                 vec.add(Double.parseDouble(e));
             long id = item.get("id(n)").asLong();
             String sig = item.get("n." + JavaCodeExtractor.SIGNATURE).asString();
-            if (sig.toLowerCase().contains("test"))
+            if (sig.toLowerCase().contains("test")) // 规则： 去掉含有test的结点
                 continue;
             String name = sig;
-            boolean m = false;
+            boolean m = false; // 是否是一个方法结点
             if (name.contains("(")) {
                 name = name.substring(0, name.indexOf("("));
                 m = true;
             }
-            if (name.contains("."))
+            if (name.contains(".")) // 获取最低一级的名字作为他的全名，对于方法名是否合适？
                 name = name.substring(name.lastIndexOf(".") + 1);
-            if (m && name.matches("[A-Z]\\w+"))
+            if (m && name.matches("[A-Z]\\w+")) // 忽略大写字母开头的方法？
                 continue;
             Set<String> words = new HashSet<>();
             for (String e : name.split("[^A-Za-z]+"))
@@ -81,9 +82,9 @@ public class GraphSearcher {
             id2Words.put(id, words);
             id2Vec.put(id, vec);
             id2Sig.put(id, sig);
-            if (!m)
+            if (!m) // 如果是一个类或接口结点，加入typeset中
                 typeSet.add(id);
-            id2Name.put(id, stem(name.toLowerCase()));
+            id2Name.put(id, stem(name.toLowerCase())); // 未切词前的方法名，是否要stem? 因为query中的词都被stem了
             if (!word2Ids.containsKey(id2Name.get(id)))
                 word2Ids.put(id2Name.get(id), new HashSet<>());
             word2Ids.get(id2Name.get(id)).add(id);
@@ -128,7 +129,7 @@ public class GraphSearcher {
 
     public SearchResult query(String queryString) {
 
-        if (queryString.matches("^[\\d\\s]+$")){
+        if (queryString.matches("^[\\d\\s]+$")){ // 只有结点id构成的query
             List<Long> idList=new ArrayList<>();
             String[] eles=queryString.trim().split("\\s+");
             for (String e:eles)
@@ -166,27 +167,35 @@ public class GraphSearcher {
         Set<String> queryWordSet = converter.convert(queryString);
 
         Set<String> tmpSet = new HashSet<>();
-        for (String word : queryWordSet) {
+        for (String word : queryWordSet) { // 除去不在代码中出现过的词，可能会去掉同义词！
             if (word2Ids.containsKey(word) && word2Ids.get(word).size() > 0)
                 tmpSet.add(word);
         }
         queryWordSet.clear();
         queryWordSet.addAll(tmpSet);
 
+        Map<Long, Double> scoreMap = ScoreUtils.getAPISimScore(queryWordSet, id2Words);
+
         Set<Long> anchors = findAnchors(queryWordSet);
 
         if (anchors.size() > 0) {
             Set<Long> subGraph = new HashSet<>();
-            subGraph.addAll(anchors);
+            subGraph.addAll(anchors); // anchor作为必须包含在子图中的初始结点
             for (String queryWord : queryWordSet) {
 
                 boolean hit = false;
                 for (long id : subGraph)
-                    if (id2Words.get(id).contains(queryWord))
+                    if (id2Words.get(id).contains(queryWord)) {
                         hit = true;
-                if (hit)
+                        break;
+                    }
+                if (hit) // 如果这个词已经被包含在子图中，则跳过，可能有问题
                     continue;
 
+                /*
+                 * 准确包含了这个词的结点作为候选集，找一个距离当前子图最近的加入进来
+                 * 过于贪心的方法，没有使得最终子图的总的距离最小，且加入结点的顺序是重要的
+                 */
                 double minDist = Double.MAX_VALUE;
                 long minDistNode = -1;
                 for (long node : word2Ids.get(queryWord)) {
@@ -217,11 +226,11 @@ public class GraphSearcher {
                 Set<Long> minDistNodeSet = new HashSet<>();
                 minDistNodeSet.add(cNode);
                 for (String queryWord : queryWordSet) {
-                    if (word2Ids.get(queryWord).contains(cNode))
+                    if (word2Ids.get(queryWord).contains(cNode)) // 如果这个词包含在起始结点中，则跳过
                         continue;
                     double minDist = Double.MAX_VALUE;
                     long minDistNode = -1;
-                    for (long node : word2Ids.get(queryWord)) {
+                    for (long node : word2Ids.get(queryWord)) { // 找到距离起始节点最近的加入进来
                         double dist = dist(cNode, node);
                         if (dist < minDist) {
                             minDist = dist;
@@ -232,7 +241,7 @@ public class GraphSearcher {
                         continue;
                     minDistNodeSet.add(minDistNode);
                 }
-                double cost = sumDist(cNode, minDistNodeSet);
+                double cost = sumDist(cNode, minDistNodeSet); // 整个子图的代价为到起始结点的距离之和
                 SearchResult searchResult = new SearchResult();
                 searchResult.nodes.addAll(minDistNodeSet);
                 searchResult.cost = cost;
@@ -252,10 +261,14 @@ public class GraphSearcher {
 
         Set<Long> candidateNodes = new HashSet<>();
 
-        for (long node : typeSet)
+        for (long node : typeSet) // 如果类名(不是全名)中含有query中的词，优先加入进候选集
             if (queryWordSet.contains(id2Name.get(node)))
                 candidateNodes.add(node);
 
+        /*
+         * 统计每个结点中的词在query中出现的次数，如果超过2个，则加入countSet
+         * 将出现次数最多的结点加入候选集
+         */
         Set<Pair<Long, Integer>> countSet = new HashSet<>();
         int maxCount = 0;
         for (long node : id2Name.keySet()) {
@@ -279,6 +292,9 @@ public class GraphSearcher {
         if (candidateNodes.size() > 0)
             return candidateNodes;
 
+        /*
+         * 如果没有超过2次的，优先找类结点作为候选，否则才找方法结点
+         */
         for (String queryWord : queryWordSet)
             for (long node : word2Ids.get(queryWord)) {
                 if (!typeSet.contains(node))
@@ -300,30 +316,42 @@ public class GraphSearcher {
         Set<Long> anchors = new HashSet<>();
 
         Map<String, Set<Long>> fullNameMatchMap = new HashMap<>();
-        for (long node : typeSet)
-            if (queryWordSet.contains(id2Name.get(node))) {
-                if (!fullNameMatchMap.containsKey(id2Name.get(node)))
-                    fullNameMatchMap.put(id2Name.get(node), new HashSet<>());
-                fullNameMatchMap.get(id2Name.get(node)).add(node);
+        for (long node : typeSet) {
+            String fullName = id2Name.get(node);
+            if (queryWordSet.contains(fullName)) {
+                if (!fullNameMatchMap.containsKey(fullName))
+                    fullNameMatchMap.put(fullName, new HashSet<>());
+                fullNameMatchMap.get(fullName).add(node); // 一个全名可能对应多个同名的结点
             }
-        for (String name : fullNameMatchMap.keySet())
-            if (fullNameMatchMap.get(name).size() == 1)
-                anchors.addAll(fullNameMatchMap.get(name));
+        }
 
-        for (String queryWord : queryWordSet) {
+        for (String name : fullNameMatchMap.keySet()) {
+            Set<Long> nodes = fullNameMatchMap.get(name);
+            if (nodes.size() == 1) { // 如果全名匹配的只有一个结点，那么加入anchor中
+                anchors.addAll(nodes);
+            } else { // 否则，如果只有一个类名结点与之匹配，加入anchor中
+                Set<Long> types = new HashSet<>();
+                for (long node : nodes){
+                    if (typeSet.contains(node))
+                        types.add(node);
+                }
+                if (types.size() == 1)
+                    anchors.addAll(types);
+            }
+        }
+
+        /*for (String queryWord : queryWordSet) {
             Set<Long> nodes = word2Ids.get(queryWord);
             Set<Long> types = new HashSet<>();
             for (long node : nodes)
                 if (typeSet.contains(node))
                     types.add(node);
-            if (types.size() == 1)
+            if (types.size() == 1)  // 如果只有一个类名含有这个词，那么加入anchor中，该类名还可以含有其他词，可能有问题！
                 anchors.addAll(types);
-        }
+        }*/
 
         // System.out.println(anchors);
-
         return anchors;
-
     }
 
     private double sumDist(long cNode, Set<Long> minDistNodeSet) {

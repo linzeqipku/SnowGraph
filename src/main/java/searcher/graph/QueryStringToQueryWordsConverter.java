@@ -49,7 +49,7 @@ class QueryStringToQueryWordsConverter {
 		Set<String> r=new HashSet<>();
 		
 		for (String token:queryString.toLowerCase().split("[^a-z]+")){
-			if (token.length()<=2)
+			if (token.length()<=2) // 去掉长度小于2的token
 				continue;
 			stemmer.setCurrent(token);
 			try {
@@ -59,7 +59,7 @@ class QueryStringToQueryWordsConverter {
 				e.printStackTrace();
 			}
 			token=stemmer.getCurrent();
-			if (!englishStopWords.contains(token))
+			if (!englishStopWords.contains(token)) // 去掉停用词
 				r.add(token);
 		}
 		

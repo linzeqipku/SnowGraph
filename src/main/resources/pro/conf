@@ -1,2 +1,2 @@
 neo4jBoltUrl bolt://127.0.0.1:7687/
-dataPath E:/SnowGraphData/lucene/
+dataPath D:\graphdb-lucene-embedding

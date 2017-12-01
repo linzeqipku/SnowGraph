@@ -3,6 +3,7 @@ package searcher.graph;
 import java.sql.SQLException;
 import java.util.*;
 
+import apps.Config;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.neo4j.driver.v1.Driver;
@@ -19,6 +20,8 @@ public class GraphSearcher {
 
     public Driver connection = null;
 
+    public static final double RHO = 0.25;
+
     private static String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
             + JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD + "|"
             + JavaCodeExtractor.HAVE_FIELD + "|" + JavaCodeExtractor.CALL_METHOD + "|" + JavaCodeExtractor.CALL_FIELD
@@ -34,11 +37,12 @@ public class GraphSearcher {
 
     private Map<String, Set<Long>> word2Ids = new HashMap<>();
 
+    private Map<Long, Double> scoreMap = null;
+
     public GraphSearcher(Driver driver) {
         try {
             init(driver);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -174,7 +178,7 @@ public class GraphSearcher {
         queryWordSet.clear();
         queryWordSet.addAll(tmpSet);
 
-        Map<Long, Double> scoreMap = ScoreUtils.getAPISimScore(queryWordSet, id2Words);
+        scoreMap = ScoreUtils.getAPISimScore(queryWordSet, id2Words);
 
         Set<Long> anchors = findAnchors(queryWordSet);
 
@@ -250,11 +254,101 @@ public class GraphSearcher {
 
             if (r.size() == 0)
                 r.add(new SearchResult());
+        }
+        return r;
+    }
 
+    private List<SearchResult> myFindSubGraphs(String queryString){
+        List<SearchResult> r = new ArrayList<>();
+
+        Set<String> queryWordSet = converter.convert(queryString);
+        scoreMap = ScoreUtils.getAPISimScore(queryWordSet, id2Words);
+        Set<Long> anchors = findAnchors(queryWordSet);
+        if (anchors.size() > 0){
+            SearchResult initialGraph = new SearchResult();
+            initialGraph.nodes = anchors;
+            r.add(initialGraph);
+            r = beamSearch(queryWordSet, r);
+        }
+        else {
+            Set<Long> seedSet = findSeed(scoreMap);
+            for (long seed: seedSet){ // for every seed, beam search to get top k result
+                SearchResult initialGraph = new SearchResult();
+                Set<Long> initNodes = new HashSet<>();
+                initNodes.add(seed);
+                initialGraph.nodes = initNodes;
+                initialGraph.gain = scoreMap.get(seed);
+
+                List<SearchResult> curRes = new ArrayList<>();
+                curRes.add(initialGraph);
+                curRes = beamSearch(queryWordSet, curRes);
+                r.addAll(curRes);
+            }
+            // sort all results, usually the size will > 10
+            Comparator<SearchResult> comparator = Comparator.comparingDouble(s->s.gain);
+            r.sort(comparator.reversed());
         }
 
         return r;
+    }
 
+    private List<SearchResult> beamSearch(Set<String> querWordSet, List<SearchResult> initialGraph){
+        List<SearchResult> results = initialGraph;
+
+        for (String word: querWordSet){
+            List<SearchResult> agenda = new ArrayList<>();
+
+            for (SearchResult curGraph: results){
+                Set<Long> current = curGraph.nodes;
+
+                List<Pair<Long, Double>> gainList = new ArrayList<>();
+                for (long node: word2Ids.get(word)){
+                    double gain = scoreMap.get(node);
+                    if (!current.contains(node)) // 如果包含在之前的graph中，距离为 0
+                        gain -= RHO * minDist(node, current);
+                    gainList.add(Pair.of(node, gain));
+                }
+                Comparator<Pair<Long, Double>> comparator = Comparator.comparingDouble(p->p.getRight());
+                gainList.sort(comparator.reversed());
+
+                for (int i = 0; i < gainList.size() && i < 10; ++i){
+                    Set<Long> next = new HashSet<>();
+                    next.addAll(current);
+                    next.add(gainList.get(i).getLeft());
+                    SearchResult nextGraph = new SearchResult();
+                    nextGraph.nodes = next;
+                    nextGraph.gain = curGraph.gain + gainList.get(i).getRight();
+                    agenda.add(nextGraph);
+                }
+            }
+            Comparator<SearchResult> comparator = Comparator.comparingDouble(r->r.gain);
+            agenda.sort(comparator.reversed());
+
+            // clear and add new top 10 to results
+            results.clear();
+            int size = agenda.size();
+            results.addAll(agenda.subList(0, size > 10 ? 10 : size));
+        }
+        return results;
+    }
+
+    private Set<Long> findSeed(Map<Long, Double>scoreMap){
+        Set<Long> seedSet = new HashSet<>();
+
+        double maxScore = 0;
+        for (long id: scoreMap.keySet())
+            if (scoreMap.get(id) > maxScore)
+                maxScore = scoreMap.get(id);
+
+        for (long id: scoreMap.keySet()) {
+            double curScore = scoreMap.get(id);
+            if (curScore == maxScore) // 分数最高的结点
+                seedSet.add(id);
+            // 分数最高的结点可能只有几个，为增加更多seed提高容错性，把分数高于一定值的类结点也作为seed
+            else if (typeSet.contains(id) && curScore >= 0.8 * maxScore)
+                seedSet.add(id);
+        }
+        return seedSet;
     }
 
     private Set<Long> candidate(Set<String> queryWordSet) {
@@ -386,4 +480,17 @@ public class GraphSearcher {
         return r;
     }
 
+    public double minDist(long node, Set<Long>nodeSet){
+        double mindist = Double.MAX_VALUE;
+        for (long another: nodeSet){
+            double cur = dist(node, another);
+            if (cur < mindist)
+                mindist = cur;
+        }
+        return mindist;
+    }
+
+    public static void main(){
+        Config.getGraphSearcher().query("how to get document length in lucene");
+    }
 }

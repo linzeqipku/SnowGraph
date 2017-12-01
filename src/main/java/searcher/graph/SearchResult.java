@@ -16,6 +16,7 @@ public class SearchResult {
     public Set<Long> nodes = new HashSet<>();
     public Set<Long> edges = new HashSet<>();
     public double cost = 0;
+    public double gain = 0;
 
     public JSONObject toJSON() {
         if (nodes.size() == 0)

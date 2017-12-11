@@ -34,10 +34,12 @@ public class GraphSearcher {
     private Map<Long, String> id2Name = new HashMap<>();
     private Map<Long, Set<String>> id2Words = new HashMap<>();
     private Set<Long> typeSet = new HashSet<>(); // 类或接口类型的结点集合
+    private Map<Long, Set<String>> id2OriginalWords = new HashMap<>();
 
     private Map<String, Set<Long>> word2Ids = new HashMap<>();
 
     private Map<Long, Double> scoreMap = null;
+    private Map<String, Set<Long>> candidateMap = new HashMap<>();
 
     public GraphSearcher(Driver driver) {
         try {
@@ -75,20 +77,24 @@ public class GraphSearcher {
             if (m && name.matches("[A-Z]\\w+")) // 忽略大写字母开头的方法？
                 continue;
             Set<String> words = new HashSet<>();
-            for (String e : name.split("[^A-Za-z]+"))
+            Set<String> originalWords = new HashSet<>();
+            for (String e : name.split("[^A-Za-z]+")) {
                 for (String word : TokenizationUtils.camelSplit(e)) {
+                    originalWords.add(word);
                     word = stem(word);
                     if (!word2Ids.containsKey(word))
                         word2Ids.put(word, new HashSet<>());
                     word2Ids.get(word).add(id);
                     words.add(word);
                 }
+            }
+            id2OriginalWords.put(id, originalWords);
             id2Words.put(id, words);
             id2Vec.put(id, vec);
             id2Sig.put(id, sig);
             if (!m) // 如果是一个类或接口结点，加入typeset中
                 typeSet.add(id);
-            id2Name.put(id, stem(name.toLowerCase())); // 未切词前的方法名，是否要stem? 因为query中的词都被stem了
+            id2Name.put(id, name.toLowerCase()); // 未切词前的方法名，是否要stem? 因为query中的词都被stem了
             if (!word2Ids.containsKey(id2Name.get(id)))
                 word2Ids.put(id2Name.get(id), new HashSet<>());
             word2Ids.get(id2Name.get(id)).add(id);
@@ -153,8 +159,9 @@ public class GraphSearcher {
         /*
          * seedMap: - key: 定位到的代码元素结点的集合 - value: 这个集合的离散度，离散度越低，说明这个图的质量越好
 		 */
-        List<SearchResult> graphs = findSubGraphs(queryString);
-        graphs.sort(Comparator.comparingDouble(r -> r.cost));
+        candidateMap.clear(); // 清空candidateMap, 对于每个query即时生成
+        List<SearchResult> graphs = myFindSubGraphs(queryString);
+        //graphs.sort(Comparator.comparingDouble(r -> r.cost));
         return graphs.get(0);
     }
 
@@ -261,9 +268,16 @@ public class GraphSearcher {
     private List<SearchResult> myFindSubGraphs(String queryString){
         List<SearchResult> r = new ArrayList<>();
 
-        Set<String> queryWordSet = converter.convert(queryString);
-        scoreMap = ScoreUtils.getAPISimScore(queryWordSet, id2Words);
+        Set<String> queryWordSet = converter.convertWithoutStem(queryString);
+        // 计算 API score 和定位 anchor 时不stem 更加准确
+        scoreMap = ScoreUtils.getAPISimScore(queryWordSet, id2OriginalWords);
         Set<Long> anchors = findAnchors(queryWordSet);
+
+        // 做 beamsearch 时寻找候选时可以stem，扩大匹配的范围
+        //queryWordSet = converter.convert(queryString);
+        System.out.println(queryWordSet);
+        ScoreUtils.generateCandidateMap(candidateMap, queryWordSet, word2Ids);
+
         if (anchors.size() > 0){
             SearchResult initialGraph = new SearchResult();
             initialGraph.nodes = anchors;
@@ -295,14 +309,13 @@ public class GraphSearcher {
     private List<SearchResult> beamSearch(Set<String> querWordSet, List<SearchResult> initialGraph){
         List<SearchResult> results = initialGraph;
 
+        List<SearchResult> agenda = new ArrayList<>();
         for (String word: querWordSet){
-            List<SearchResult> agenda = new ArrayList<>();
-
             for (SearchResult curGraph: results){
                 Set<Long> current = curGraph.nodes;
 
                 List<Pair<Long, Double>> gainList = new ArrayList<>();
-                for (long node: word2Ids.get(word)){
+                for (long node: candidateMap.get(word)){
                     double gain = scoreMap.get(node);
                     if (!current.contains(node)) // 如果包含在之前的graph中，距离为 0
                         gain -= RHO * minDist(node, current);
@@ -328,6 +341,7 @@ public class GraphSearcher {
             results.clear();
             int size = agenda.size();
             results.addAll(agenda.subList(0, size > 10 ? 10 : size));
+            agenda.clear();
         }
         return results;
     }
@@ -410,7 +424,7 @@ public class GraphSearcher {
         Set<Long> anchors = new HashSet<>();
 
         Map<String, Set<Long>> fullNameMatchMap = new HashMap<>();
-        for (long node : typeSet) {
+        for (long node : id2Name.keySet()) {
             String fullName = id2Name.get(node);
             if (queryWordSet.contains(fullName)) {
                 if (!fullNameMatchMap.containsKey(fullName))
@@ -421,6 +435,8 @@ public class GraphSearcher {
 
         for (String name : fullNameMatchMap.keySet()) {
             Set<Long> nodes = fullNameMatchMap.get(name);
+            System.out.println(name + " " + nodes);
+
             if (nodes.size() == 1) { // 如果全名匹配的只有一个结点，那么加入anchor中
                 anchors.addAll(nodes);
             } else { // 否则，如果只有一个类名结点与之匹配，加入anchor中
@@ -431,6 +447,8 @@ public class GraphSearcher {
                 }
                 if (types.size() == 1)
                     anchors.addAll(types);
+                else
+                    candidateMap.putAll(fullNameMatchMap); // 如果全名对应则加入candidate, 如queryparser会对应两个结点
             }
         }
 
@@ -444,7 +462,7 @@ public class GraphSearcher {
                 anchors.addAll(types);
         }*/
 
-        // System.out.println(anchors);
+        System.out.println("anchor" + anchors);
         return anchors;
     }
 
@@ -490,7 +508,7 @@ public class GraphSearcher {
         return mindist;
     }
 
-    public static void main(){
+    public static void main(String[] args){
         Config.getGraphSearcher().query("how to get document length in lucene");
     }
 }

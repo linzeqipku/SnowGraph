@@ -32,6 +32,7 @@ class QueryStringToQueryWordsConverter {
 			englishStopWords.add(stemmer.getCurrent());
 		});
 		for (String n:SMART_STOP_WORDS){
+			englishStopWords.add(n);
 			stemmer.setCurrent(n);
 			stemmer.stem();
 			englishStopWords.add(stemmer.getCurrent());
@@ -43,7 +44,19 @@ class QueryStringToQueryWordsConverter {
 			return englishConvert(queryString);
 		return chineseConvert(queryString);
 	}
-	
+
+	public Set<String> convertWithoutStem(String queryString){
+		Set<String> r=new HashSet<>();
+
+		for (String token:queryString.toLowerCase().split("[^a-z]+")){
+			if (token.length()<=2) // 去掉长度小于2的token
+				continue;
+			if (!englishStopWords.contains(token)) // 去掉停用词
+				r.add(token);
+		}
+		return r;
+	}
+
 	private Set<String> englishConvert(String queryString){
 		EnglishStemmer stemmer=new EnglishStemmer();
 		Set<String> r=new HashSet<>();

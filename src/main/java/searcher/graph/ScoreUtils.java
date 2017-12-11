@@ -1,14 +1,40 @@
 package searcher.graph;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
 
 public class ScoreUtils {
-    public static final double WORDVEC_SIM_THRESHOLD = 0.5;
+    public static final double COUNT_SIM_THRESHOLD = 0.6;
+    public static final double CANDIDATE_SIM_THRESHOLD = 0.75;
     private static Map<String, double[]> word2VecMap = new HashMap<>();
 
+    static{
+        loadWordVec();
+    }
+    private static void loadWordVec(){
+        try{
+            Scanner scanner = new Scanner(new FileInputStream("C:\\Users\\dell\\Documents\\glove\\glove-100d.txt"));
+            while(scanner.hasNext()) {
+                String[] line = scanner.nextLine().trim().split(" ");
+                String word = line[0];
+                if (word.length() <= 2) {
+                    continue;
+                }
+
+                double[] vec = new double[100];
+                for (int i = 1; i < line.length; ++i){
+                    vec[i-1] = Double.parseDouble(line[i]);
+                }
+                word2VecMap.put(word, vec);
+            }
+            System.out.println("word2vec map size: " + word2VecMap.size());
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    // query word set is not stemmed, but id2wrods is stemmed!
     public static Map<Long, Double> getAPISimScore(Set<String>queryWordSet, Map<Long, Set<String> > id2Wrods){
 
         Map<Long, Double> scoreMap = new HashMap<>();
@@ -45,7 +71,7 @@ public class ScoreUtils {
                         matchedWord = word;
                     }
                 }
-                if (maxSim < ScoreUtils.WORDVEC_SIM_THRESHOLD) // filter small word sim below threshold
+                if (maxSim < ScoreUtils.COUNT_SIM_THRESHOLD) // filter small word sim below threshold
                     continue;
                 TP += maxSim;
                 Double preVal = recallMap.get(matchedWord);
@@ -71,6 +97,30 @@ public class ScoreUtils {
         return scoreMap;
     }
 
+    public static void generateCandidateMap(Map<String, Set<Long>> candidateMap, Set<String>queryWordSet, Map<String, Set<Long> > word2Ids) {
+
+        Set<String> dummyWord = new HashSet<>();
+
+        for (String word: queryWordSet){
+            Set<Long> nodes = new HashSet<>();
+            Set<Long> tmp = word2Ids.get(word);
+            if (tmp != null)
+                nodes.addAll(tmp);
+            for (String key: word2Ids.keySet())
+                if (getSingleWordSimWord2Vec(word, key) > ScoreUtils.CANDIDATE_SIM_THRESHOLD)
+                    nodes.addAll(word2Ids.get(key));
+            if (nodes.size() > 0) {
+                if(!candidateMap.containsKey(word))
+                    candidateMap.put(word, nodes);
+                else
+                    candidateMap.get(word).addAll(nodes);
+            }
+            else // 如果这个词没有任何可以对应的结点，则去掉它，但他可能之前已经对应到一个类的全名
+                dummyWord.add(word);
+        }
+        queryWordSet.removeAll(dummyWord);
+    }
+
     private static double getSingleWordSimWord2Vec(String w1, String w2) {
         double[] v1 = word2VecMap.get(w1);
         double[] v2 = word2VecMap.get(w2);
@@ -83,5 +133,9 @@ public class ScoreUtils {
             normB += v2[i] * v2[i];
         }
         return product / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
+    public static void main(String[] args){
+        System.out.println(getSingleWordSimWord2Vec("get", "find"));
     }
 }

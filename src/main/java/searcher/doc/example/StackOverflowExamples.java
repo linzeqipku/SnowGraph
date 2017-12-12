@@ -59,7 +59,6 @@ public class StackOverflowExamples {
     static public String getRandomExampleQuery(){
         if (instance==null)
             instance=new StackOverflowExamples();
-        System.out.println(instance.exampleQuestions.size());
         long id = new ArrayList<>(instance.exampleQuestions).get(new Random().nextInt(instance.exampleQuestions.size()));
         String query = SnowGraphContext.getDocSearcherContext().getQuery(id);
         return query;
@@ -68,6 +67,7 @@ public class StackOverflowExamples {
     private StackOverflowExamples(){
 
         String exampleFilePath=SnowGraphContext.getDataPath()+"/qaexamples";
+        exampleQuestions=new HashSet<>();
 
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(exampleFilePath)),

@@ -12,14 +12,9 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
-import graphdb.extractors.miners.codeembedding.line.LINEExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
-import utils.parse.TokenizationUtils;
 
 public class GraphSearcher {
-
-    public Driver connection = null;
-
     public static final double RHO = 0.25;
 
     private static String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
@@ -27,79 +22,15 @@ public class GraphSearcher {
             + JavaCodeExtractor.HAVE_FIELD + "|" + JavaCodeExtractor.CALL_METHOD + "|" + JavaCodeExtractor.CALL_FIELD
             + "|" + JavaCodeExtractor.TYPE + "|" + JavaCodeExtractor.VARIABLE;
 
-    private static QueryStringToQueryWordsConverter converter = new QueryStringToQueryWordsConverter();
-
-    public Map<Long, List<Double>> id2Vec = new HashMap<>();
-    private Map<Long, String> id2Sig = new HashMap<>();
-    private Map<Long, String> id2Name = new HashMap<>();
-    private Map<Long, Set<String>> id2Words = new HashMap<>();
-    private Set<Long> typeSet = new HashSet<>(); // 类或接口类型的结点集合
-    private Map<Long, Set<String>> id2OriginalWords = new HashMap<>();
-
-    private Map<String, Set<Long>> word2Ids = new HashMap<>();
+    private Driver connection = null;
+    private GraphSearchData graphData = null;
 
     private Map<Long, Double> scoreMap = null;
     private Map<String, Set<Long>> candidateMap = new HashMap<>();
 
-    public GraphSearcher(Driver driver) {
-        try {
-            init(driver);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void init(Driver driver) throws SQLException {
-        connection = driver;
-        Session session = connection.session();
-        // 获取所有Method Class Interface 的结点
-        String stat = "match (n) where not n:" + JavaCodeExtractor.FIELD + " and exists(n." + LINEExtractor.LINE_VEC
-                + ") return " + "id(n), n." + LINEExtractor.LINE_VEC + ", n." + JavaCodeExtractor.SIGNATURE;
-        StatementResult rs = session.run(stat);
-        while (rs.hasNext()) {
-            Record item = rs.next();
-            String[] eles = item.get("n." + LINEExtractor.LINE_VEC).asString().trim().split("\\s+");
-            List<Double> vec = new ArrayList<>();
-            for (String e : eles)
-                vec.add(Double.parseDouble(e));
-            long id = item.get("id(n)").asLong();
-            String sig = item.get("n." + JavaCodeExtractor.SIGNATURE).asString();
-            if (sig.toLowerCase().contains("test")) // 规则： 去掉含有test的结点
-                continue;
-            String name = sig;
-            boolean m = false; // 是否是一个方法结点
-            if (name.contains("(")) {
-                name = name.substring(0, name.indexOf("("));
-                m = true;
-            }
-            if (name.contains(".")) // 获取最低一级的名字作为他的全名，对于方法名是否合适？
-                name = name.substring(name.lastIndexOf(".") + 1);
-            if (m && name.matches("[A-Z]\\w+")) // 忽略大写字母开头的方法？
-                continue;
-            Set<String> words = new HashSet<>();
-            Set<String> originalWords = new HashSet<>();
-            for (String e : name.split("[^A-Za-z]+")) {
-                for (String word : TokenizationUtils.camelSplit(e)) {
-                    originalWords.add(word);
-                    word = stem(word);
-                    if (!word2Ids.containsKey(word))
-                        word2Ids.put(word, new HashSet<>());
-                    word2Ids.get(word).add(id);
-                    words.add(word);
-                }
-            }
-            id2OriginalWords.put(id, originalWords);
-            id2Words.put(id, words);
-            id2Vec.put(id, vec);
-            id2Sig.put(id, sig);
-            if (!m) // 如果是一个类或接口结点，加入typeset中
-                typeSet.add(id);
-            id2Name.put(id, name.toLowerCase()); // 未切词前的方法名，是否要stem? 因为query中的词都被stem了
-            if (!word2Ids.containsKey(id2Name.get(id)))
-                word2Ids.put(id2Name.get(id), new HashSet<>());
-            word2Ids.get(id2Name.get(id)).add(id);
-        }
-        session.close();
+    public GraphSearcher(GraphSearchData graphData, Driver driver) {
+        this.graphData = graphData;
+        this.connection = driver;
     }
 
     public SearchResult queryExpand(String queryString) {
@@ -175,17 +106,17 @@ public class GraphSearcher {
 
         List<SearchResult> r = new ArrayList<>();
 
-        Set<String> queryWordSet = converter.convert(queryString);
+        Set<String> queryWordSet = WordsConverter.convert(queryString);
 
         Set<String> tmpSet = new HashSet<>();
         for (String word : queryWordSet) { // 除去不在代码中出现过的词，可能会去掉同义词！
-            if (word2Ids.containsKey(word) && word2Ids.get(word).size() > 0)
+            if (graphData.stemWord2Ids.containsKey(word) && graphData.stemWord2Ids.get(word).size() > 0)
                 tmpSet.add(word);
         }
         queryWordSet.clear();
         queryWordSet.addAll(tmpSet);
 
-        scoreMap = ScoreUtils.getAPISimScore(queryWordSet, id2Words);
+        scoreMap = ScoreUtils.getAPISimScore(queryWordSet, graphData.id2StemWords);
 
         Set<Long> anchors = findAnchors(queryWordSet);
 
@@ -196,7 +127,7 @@ public class GraphSearcher {
 
                 boolean hit = false;
                 for (long id : subGraph)
-                    if (id2Words.get(id).contains(queryWord)) {
+                    if (graphData.id2StemWords.get(id).contains(queryWord)) {
                         hit = true;
                         break;
                     }
@@ -209,7 +140,7 @@ public class GraphSearcher {
                  */
                 double minDist = Double.MAX_VALUE;
                 long minDistNode = -1;
-                for (long node : word2Ids.get(queryWord)) {
+                for (long node : graphData.stemWord2Ids.get(queryWord)) {
                     for (long anchor : anchors) {
                         double dist = dist(anchor, node);
                         if (dist < minDist) {
@@ -237,11 +168,11 @@ public class GraphSearcher {
                 Set<Long> minDistNodeSet = new HashSet<>();
                 minDistNodeSet.add(cNode);
                 for (String queryWord : queryWordSet) {
-                    if (word2Ids.get(queryWord).contains(cNode)) // 如果这个词包含在起始结点中，则跳过
+                    if (graphData.stemWord2Ids.get(queryWord).contains(cNode)) // 如果这个词包含在起始结点中，则跳过
                         continue;
                     double minDist = Double.MAX_VALUE;
                     long minDistNode = -1;
-                    for (long node : word2Ids.get(queryWord)) { // 找到距离起始节点最近的加入进来
+                    for (long node : graphData.stemWord2Ids.get(queryWord)) { // 找到距离起始节点最近的加入进来
                         double dist = dist(cNode, node);
                         if (dist < minDist) {
                             minDist = dist;
@@ -268,15 +199,14 @@ public class GraphSearcher {
     private List<SearchResult> myFindSubGraphs(String queryString){
         List<SearchResult> r = new ArrayList<>();
 
-        Set<String> queryWordSet = converter.convertWithoutStem(queryString);
-        // 计算 API score 和定位 anchor 时不stem 更加准确
-        scoreMap = ScoreUtils.getAPISimScore(queryWordSet, id2OriginalWords);
-        Set<Long> anchors = findAnchors(queryWordSet);
-
+        Set<String> queryWordSet = WordsConverter.convertWithoutStem(queryString);
+        Set<Long> anchors = findAnchors(queryWordSet); // 可能会往candidateMap加入数据
         // 做 beamsearch 时寻找候选时可以stem，扩大匹配的范围
-        //queryWordSet = converter.convert(queryString);
         System.out.println(queryWordSet);
-        ScoreUtils.generateCandidateMap(candidateMap, queryWordSet, word2Ids);
+        ScoreUtils.generateCandidateMap(candidateMap, queryWordSet, graphData.originalWord2Ids, graphData.stemWord2Ids);
+
+        // 计算 API score
+        ScoreUtils.getAPISimScore(queryWordSet, graphData.id2OriginalWords);
 
         if (anchors.size() > 0){
             SearchResult initialGraph = new SearchResult();
@@ -359,7 +289,7 @@ public class GraphSearcher {
             if (curScore == maxScore) // 分数最高的结点
                 seedSet.add(id);
             // 分数最高的结点可能只有几个，为增加更多seed提高容错性，把分数高于一定值的类结点也作为seed
-            else if (typeSet.contains(id) && curScore >= 0.8 * maxScore)
+            else if (graphData.typeSet.contains(id) && curScore >= 0.8 * maxScore)
                 seedSet.add(id);
         }
         return seedSet;
@@ -369,8 +299,8 @@ public class GraphSearcher {
 
         Set<Long> candidateNodes = new HashSet<>();
 
-        for (long node : typeSet) // 如果类名(不是全名)中含有query中的词，优先加入进候选集
-            if (queryWordSet.contains(id2Name.get(node)))
+        for (long node : graphData.typeSet) // 如果类名(不是全名)中含有query中的词，优先加入进候选集
+            if (queryWordSet.contains(graphData.id2Name.get(node)))
                 candidateNodes.add(node);
 
         /*
@@ -379,9 +309,9 @@ public class GraphSearcher {
          */
         Set<Pair<Long, Integer>> countSet = new HashSet<>();
         int maxCount = 0;
-        for (long node : id2Name.keySet()) {
+        for (long node : graphData.id2Name.keySet()) {
             int count = 0;
-            for (String word : id2Words.get(node))
+            for (String word : graphData.id2StemWords.get(node))
                 if (queryWordSet.contains(word))
                     count++;
 
@@ -404,8 +334,8 @@ public class GraphSearcher {
          * 如果没有超过2次的，优先找类结点作为候选，否则才找方法结点
          */
         for (String queryWord : queryWordSet)
-            for (long node : word2Ids.get(queryWord)) {
-                if (!typeSet.contains(node))
+            for (long node : graphData.stemWord2Ids.get(queryWord)) {
+                if (!graphData.typeSet.contains(node))
                     continue;
                 candidateNodes.add(node);
             }
@@ -414,7 +344,7 @@ public class GraphSearcher {
             return candidateNodes;
 
         for (String queryWord : queryWordSet)
-            candidateNodes.addAll(word2Ids.get(queryWord));
+            candidateNodes.addAll(graphData.stemWord2Ids.get(queryWord));
 
         return candidateNodes;
     }
@@ -424,8 +354,8 @@ public class GraphSearcher {
         Set<Long> anchors = new HashSet<>();
 
         Map<String, Set<Long>> fullNameMatchMap = new HashMap<>();
-        for (long node : id2Name.keySet()) {
-            String fullName = id2Name.get(node);
+        for (long node : graphData.id2Name.keySet()) {
+            String fullName = graphData.id2Name.get(node);
             if (queryWordSet.contains(fullName)) {
                 if (!fullNameMatchMap.containsKey(fullName))
                     fullNameMatchMap.put(fullName, new HashSet<>());
@@ -435,6 +365,9 @@ public class GraphSearcher {
 
         for (String name : fullNameMatchMap.keySet()) {
             Set<Long> nodes = fullNameMatchMap.get(name);
+            for (long id: nodes){ // 全名匹配的结点 score = 1
+                scoreMap.put(id, 1.0);
+            }
             System.out.println(name + " " + nodes);
 
             if (nodes.size() == 1) { // 如果全名匹配的只有一个结点，那么加入anchor中
@@ -442,26 +375,15 @@ public class GraphSearcher {
             } else { // 否则，如果只有一个类名结点与之匹配，加入anchor中
                 Set<Long> types = new HashSet<>();
                 for (long node : nodes){
-                    if (typeSet.contains(node))
+                    if (graphData.typeSet.contains(node))
                         types.add(node);
                 }
                 if (types.size() == 1)
                     anchors.addAll(types);
-                else
-                    candidateMap.putAll(fullNameMatchMap); // 如果全名对应则加入candidate, 如queryparser会对应两个结点
+                else // 如果不只一个，则加入candidate, 如queryparser会对应两个结点
+                    candidateMap.putAll(fullNameMatchMap);
             }
         }
-
-        /*for (String queryWord : queryWordSet) {
-            Set<Long> nodes = word2Ids.get(queryWord);
-            Set<Long> types = new HashSet<>();
-            for (long node : nodes)
-                if (typeSet.contains(node))
-                    types.add(node);
-            if (types.size() == 1)  // 如果只有一个类名含有这个词，那么加入anchor中，该类名还可以含有其他词，可能有问题！
-                anchors.addAll(types);
-        }*/
-
         System.out.println("anchor" + anchors);
         return anchors;
     }
@@ -475,25 +397,15 @@ public class GraphSearcher {
         return r;
     }
 
-    private String stem(String word) {
-        EnglishStemmer stemmer = new EnglishStemmer();
-        if (word.matches("\\w+")) {
-            stemmer.setCurrent(word.toLowerCase());
-            stemmer.stem();
-            word = stemmer.getCurrent();
-        }
-        return word;
-    }
-
     public double dist(long node1, long node2) {
-        if (!id2Vec.containsKey(node1))
+        if (!graphData.id2Vec.containsKey(node1))
             return Double.MAX_VALUE;
-        if (!id2Vec.containsKey(node2))
+        if (!graphData.id2Vec.containsKey(node2))
             return Double.MAX_VALUE;
         double r = 0;
-        for (int i = 0; i < id2Vec.get(node1).size(); i++)
-            r += (id2Vec.get(node1).get(i) - id2Vec.get(node2).get(i))
-                    * (id2Vec.get(node1).get(i) - id2Vec.get(node2).get(i));
+        for (int i = 0; i < graphData.id2Vec.get(node1).size(); i++)
+            r += (graphData.id2Vec.get(node1).get(i) - graphData.id2Vec.get(node2).get(i))
+                    * (graphData.id2Vec.get(node1).get(i) - graphData.id2Vec.get(node2).get(i));
         r = Math.sqrt(r);
         return r;
     }

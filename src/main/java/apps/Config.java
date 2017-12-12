@@ -6,6 +6,7 @@ import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 import searcher.DocSearcher;
+import searcher.graph.GraphSearchData;
 import searcher.graph.GraphSearcher;
 
 import java.io.*;
@@ -17,11 +18,11 @@ public class Config {
 	static private Driver neo4jBoltConnection = null;
 	static private Set<Long> exampleQuestions = null;
 	static private String lucenePath = null;
-	static private GraphSearcher graphSearcher = null;
+	static private GraphSearchData graphSearchData = null;
 	static private DocSearcher docSearcher = null;
 	static private boolean flag = false;
 
-	public static void init() {
+	public static synchronized void init() {
 		if (flag)
 			return;
 		String exampleFilePath ="";
@@ -47,8 +48,8 @@ public class Config {
 			}
 		}
 		neo4jBoltConnection= GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
-		graphSearcher = new GraphSearcher(neo4jBoltConnection);
-		docSearcher = new DocSearcher(graphSearcher, exampleFilePath);
+		graphSearchData = new GraphSearchData(neo4jBoltConnection);
+		docSearcher = new DocSearcher(new GraphSearcher(graphSearchData, neo4jBoltConnection), exampleFilePath);
 		flag = true;
 	}
 
@@ -85,7 +86,7 @@ public class Config {
 
 	static public GraphSearcher getGraphSearcher() {
 		init();
-		return graphSearcher;
+		return new GraphSearcher(graphSearchData, neo4jBoltConnection);
 	}
 
 	static public DocSearcher getDocSearcher() {

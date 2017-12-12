@@ -97,18 +97,31 @@ public class ScoreUtils {
         return scoreMap;
     }
 
-    public static void generateCandidateMap(Map<String, Set<Long>> candidateMap, Set<String>queryWordSet, Map<String, Set<Long> > word2Ids) {
+    public static void generateCandidateMap(Map<String, Set<Long>> candidateMap,
+                                            Set<String>queryWordSet,
+                                            Map<String, Set<Long>> originalWord2Ids,
+                                            Map<String, Set<Long>> stemWord2Ids) {
 
         Set<String> dummyWord = new HashSet<>();
 
         for (String word: queryWordSet){
             Set<Long> nodes = new HashSet<>();
-            Set<Long> tmp = word2Ids.get(word);
+
+            // add original matched word
+            Set<Long> tmp = originalWord2Ids.get(word);
             if (tmp != null)
                 nodes.addAll(tmp);
-            for (String key: word2Ids.keySet())
+
+            // add stemmed matched word
+            tmp = stemWord2Ids.get(WordsConverter.convert(word));
+            if (tmp != null)
+                nodes.addAll(tmp);
+
+            // add original similar word
+            for (String key: originalWord2Ids.keySet())
                 if (getSingleWordSimWord2Vec(word, key) > ScoreUtils.CANDIDATE_SIM_THRESHOLD)
-                    nodes.addAll(word2Ids.get(key));
+                    nodes.addAll(originalWord2Ids.get(key));
+
             if (nodes.size() > 0) {
                 if(!candidateMap.containsKey(word))
                     candidateMap.put(word, nodes);

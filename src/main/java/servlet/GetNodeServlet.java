@@ -1,6 +1,6 @@
 package servlet;
 
-import apps.Config;
+import searcher.SnowGraphContext;
 import org.json.JSONObject;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
@@ -28,7 +28,7 @@ public class GetNodeServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         String id = request.getParameter("id");
-        Session session = Config.getNeo4jBoltDriver().session();
+        Session session = SnowGraphContext.getNeo4jBoltDriver().session();
         String stat = "match (n) where id(n)=" + id + " return n, id(n), labels(n)";
         StatementResult rs = session.run(stat);
         while (rs.hasNext()) {

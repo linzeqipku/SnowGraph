@@ -1,6 +1,6 @@
 package servlet;
 
-import apps.Config;
+import searcher.SnowGraphContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.neo4j.driver.v1.Record;
@@ -21,7 +21,7 @@ public class NavServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException{
-        Config.init();
+        SnowGraphContext.init();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class NavServlet extends HttpServlet {
         String mainStat="match (a)-[r]->(b) return labels(a)[0]+\" \"+type(r)+\" \"+labels(b)[0] as x, count(*)";
 
         JSONObject obj = new JSONObject();
-        Session session = Config.getNeo4jBoltDriver().session();
+        Session session = SnowGraphContext.getNeo4jBoltDriver().session();
         String stat = "CALL db.labels() YIELD label";
         StatementResult rs = session.run(stat);
         List<String> labels = new ArrayList<>();

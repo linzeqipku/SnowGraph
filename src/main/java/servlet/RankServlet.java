@@ -1,11 +1,12 @@
 package servlet;
 
-import apps.Config;
+import searcher.SnowGraphContext;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import searcher.DocSearchResult;
+import searcher.doc.DocSearchResult;
+import searcher.doc.DocSearcher;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,12 +32,12 @@ public class RankServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         String query = request.getParameter("query");
-        List<DocSearchResult> resultList = Config.getDocSearcher().search(query);
+        List<DocSearchResult> resultList = DocSearcher.search(query,SnowGraphContext.getDocSearcherContext());
         JSONObject searchResult = new JSONObject();
         JSONArray results = new JSONArray();
         for (DocSearchResult doc : resultList) {
             JSONObject obj = new JSONObject();
-            Pair<String, String> pair = Config.getDocSearcher().getContent(doc.getId());
+            Pair<String, String> pair = SnowGraphContext.getDocSearcherContext().getContent(doc.getId());
             if (pair.getLeft().length() > 110)
                 obj.put("title", pair.getLeft().substring(0, 100) + "......");
             else
@@ -44,7 +45,7 @@ public class RankServlet extends HttpServlet {
             obj.put("body", pair.getRight());
             obj.put("finalRank", doc.getNewRank());
             obj.put("solrRank", doc.getIrRank());
-            obj.put("highlight", Config.getDocSearcher().getAnswerId(query)==doc.getId());
+            obj.put("highlight", SnowGraphContext.getDocSearcherContext().getAnswerId(query)==doc.getId());
             results.put(obj);
         }
         searchResult.put("query", query);

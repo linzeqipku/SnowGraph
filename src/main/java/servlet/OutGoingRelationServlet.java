@@ -1,6 +1,6 @@
 package servlet;
 
-import apps.Config;
+import searcher.SnowGraphContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.neo4j.driver.v1.Record;
@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by Administrator on 2017/5/26.
@@ -31,7 +30,7 @@ public class OutGoingRelationServlet extends HttpServlet {
 
         JSONArray rels=new JSONArray();
 
-        Session session = Config.getNeo4jBoltDriver().session();
+        Session session = SnowGraphContext.getNeo4jBoltDriver().session();
         String stat = "match p=(n)-[r]-(x) where id(n)=" + id + " return id(r), id(startNode(r)), id(endNode(r)), type(r)";
         StatementResult rs = session.run(stat);
         while (rs.hasNext()) {

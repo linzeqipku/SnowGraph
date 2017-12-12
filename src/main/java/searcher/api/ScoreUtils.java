@@ -1,4 +1,4 @@
-package searcher.graph;
+package searcher.api;
 
 import java.io.FileInputStream;
 import java.io.IOException;

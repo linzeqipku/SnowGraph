@@ -1,12 +1,14 @@
 package apps;
 
-import searcher.DocSearcher;
+import searcher.SnowGraphContext;
+import searcher.doc.DocSearcher;
+import searcher.doc.example.StackOverflowExamples;
 
 class FindQaExamples {
 
     public static void main(String[] args) {
-        DocSearcher docSearcher = Config.getDocSearcher();
-        docSearcher.findExamples();
+        SnowGraphContext.init();
+        StackOverflowExamples.find();
     }
 
 }

@@ -1,23 +1,19 @@
 package servlet;
 
-import apps.Config;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import searcher.SnowGraphContext;
 import org.json.JSONObject;
+import searcher.doc.example.StackOverflowExamples;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by Administrator on 2017/5/26.
@@ -35,7 +31,7 @@ public class RandomServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        String query = Config.getRandomExampleQuery();
+        String query = StackOverflowExamples.getRandomExampleQuery();
         JSONObject searchResult = new JSONObject();
         searchResult.put("query", query);
 

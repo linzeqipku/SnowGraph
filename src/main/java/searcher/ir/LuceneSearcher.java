@@ -1,5 +1,6 @@
 package searcher.ir;
 
+import searcher.SnowGraphContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
@@ -27,9 +28,8 @@ import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
-import searcher.graph.GraphSearcher;
-import searcher.graph.SearchResult;
-import apps.Config;
+import searcher.api.ApiLocator;
+import searcher.api.SubGraph;
 import utils.parse.TokenizationUtils;
 
 import java.io.IOException;
@@ -40,18 +40,17 @@ public class LuceneSearcher {
 
     private QueryParser qp = new QueryParser("content", new EnglishAnalyzer());
     private IndexSearcher indexSearcher = null;
+    private String path=SnowGraphContext.getDataPath()+"/"+"index";
 
     public void index(boolean test) throws IOException {
 
-        GraphSearcher graphSearcher = Config.getGraphSearcher();
-
-        Directory dir = FSDirectory.open(Paths.get(Config.getLucenePath()));
+        Directory dir = FSDirectory.open(Paths.get(path));
         Analyzer analyzer = new EnglishAnalyzer();
         IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
         iwc.setOpenMode(OpenMode.CREATE);
         IndexWriter writer = new IndexWriter(dir, iwc);
 
-        Session session = Config.getNeo4jBoltDriver().session();
+        Session session = SnowGraphContext.getNeo4jBoltDriver().session();
         String stat = "match (n) where exists(n." + TextExtractor.IS_TEXT + ") and n."+TextExtractor.IS_TEXT+"=true return n." + TextExtractor.TITLE + " n." + TextExtractor.TEXT;
         if (test)
             stat = "match (n:" + StackOverflowExtractor.ANSWER + ") where exists(n." + TextExtractor.TEXT + ") and n." + StackOverflowExtractor.ANSWER_ACCEPTED + "=TRUE "
@@ -70,7 +69,7 @@ public class LuceneSearcher {
                 document.add(new TextField("content", content, Field.Store.YES));
                 document.add(new TextField("org_content", org_content, Field.Store.YES));
                 if (test) {
-                    SearchResult subGraph = graphSearcher.query(content);
+                    SubGraph subGraph = ApiLocator.query(content,SnowGraphContext.getApiLocatorContext(),false);
                     String nodeSet = StringUtils.join(subGraph.nodes, " ").trim();
                     System.out.println(subGraph.nodes.size());
                     document.add(new StringField("node_set", nodeSet, Field.Store.YES));
@@ -91,7 +90,7 @@ public class LuceneSearcher {
         if (indexSearcher == null) {
             IndexReader reader = null;
             try {
-                reader = DirectoryReader.open(FSDirectory.open(Paths.get(Config.getLucenePath())));
+                reader = DirectoryReader.open(FSDirectory.open(Paths.get(path)));
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

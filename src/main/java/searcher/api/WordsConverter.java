@@ -17,9 +17,6 @@ class WordsConverter {
 
 	private static Set<String> englishStopWords=new HashSet<>();
 	public static EnglishStemmer stemmer=new EnglishStemmer();
-	static{
-		loadStopWords();
-	}
 
 	public static String stem(String token){
 		stemmer.setCurrent(token);
@@ -620,6 +617,9 @@ class WordsConverter {
     	   "zero"
     	};
 
+	static{
+		loadStopWords();
+	}
 	private static void loadStopWords(){
 		List<String> lines=new ArrayList<>();
 		try {

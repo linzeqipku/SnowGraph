@@ -41,8 +41,8 @@ public class SnowGraphContext {
 					githubAccessToken=suf;
 			}
 		}
-		neo4jBoltConnection= GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
-		apiLocatorContext=new ApiLocatorContext(neo4jBoltConnection);
+		neo4jBoltConnection = GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
+		apiLocatorContext = new ApiLocatorContext(neo4jBoltConnection);
 		docSearcherContext = new DocSearcherContext(apiLocatorContext);
 		System.out.println("SnowGraph context inited.");
 	}

@@ -19,7 +19,7 @@ public class StackOverflowExamples {
      */
     public static void find() {
 
-        String qaExamplePath=SnowGraphContext.getDataPath()+"/qaxamples";
+        String qaExamplePath=SnowGraphContext.getDataPath()+"/qaexamples";
 
         try {
             FileUtils.write(new File(qaExamplePath), "");
@@ -66,7 +66,7 @@ public class StackOverflowExamples {
 
     private StackOverflowExamples(){
 
-        String exampleFilePath=SnowGraphContext.getDataPath()+"/qaxamples";
+        String exampleFilePath=SnowGraphContext.getDataPath()+"/qaexamples";
 
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(exampleFilePath)),

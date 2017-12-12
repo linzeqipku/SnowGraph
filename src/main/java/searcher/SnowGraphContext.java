@@ -37,8 +37,8 @@ public class SnowGraphContext {
 					dataPath = suf;
 			}
 		}
-		neo4jBoltConnection= GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
-		apiLocatorContext=new ApiLocatorContext(neo4jBoltConnection);
+		neo4jBoltConnection = GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
+		apiLocatorContext = new ApiLocatorContext(neo4jBoltConnection);
 		docSearcherContext = new DocSearcherContext(apiLocatorContext);
 	}
 

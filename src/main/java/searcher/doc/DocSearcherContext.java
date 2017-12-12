@@ -12,6 +12,7 @@ import org.neo4j.driver.v1.StatementResult;
 import org.tartarus.snowball.ext.EnglishStemmer;
 import searcher.api.ApiLocatorContext;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,8 +21,8 @@ public class DocSearcherContext {
 
     public final Driver connection;
     final Map<Long, List<Double>> id2Vec;
-    final Map<Long, Long> qaMap = null;
-    final Map<Long, String> queryMap = null;
+    final Map<Long, Long> qaMap = new HashMap<>();
+    final Map<Long, String> queryMap = new HashMap<>();
 
     public DocSearcherContext(ApiLocatorContext apiLocatorContext) {
         this.connection = apiLocatorContext.connection;

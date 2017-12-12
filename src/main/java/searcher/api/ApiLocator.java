@@ -246,13 +246,12 @@ public class ApiLocator {
 
                 List<Pair<Long, Double>> gainList = new ArrayList<>();
                 for (long node: candidateMap.get(word)){
-                    double gain = scoreMap.get(node);
+                    double cost = 0;
                     if (!current.contains(node)) // 如果包含在之前的graph中，距离为 0
-                        gain -= RHO * minDist(node, current);
-                    gainList.add(Pair.of(node, gain));
+                        cost = sumDist(node, current);
+                    gainList.add(Pair.of(node, cost));
                 }
-                Comparator<Pair<Long, Double>> comparator = Comparator.comparingDouble(p->p.getRight());
-                gainList.sort(comparator.reversed());
+                gainList.sort(Comparator.comparingDouble(p->p.getRight()));
 
                 for (int i = 0; i < gainList.size() && i < 10; ++i){
                     Set<Long> next = new HashSet<>();
@@ -260,12 +259,11 @@ public class ApiLocator {
                     next.add(gainList.get(i).getLeft());
                     SubGraph nextGraph = new SubGraph();
                     nextGraph.nodes = next;
-                    nextGraph.gain = curGraph.gain + gainList.get(i).getRight();
+                    nextGraph.cost = curGraph.cost + gainList.get(i).getRight();
                     agenda.add(nextGraph);
                 }
             }
-            Comparator<SubGraph> comparator = Comparator.comparingDouble(r->r.gain);
-            agenda.sort(comparator.reversed());
+            agenda.sort(Comparator.comparingDouble(r->r.gain));
 
             // clear and add new top 10 to results
             results.clear();
@@ -408,7 +406,8 @@ public class ApiLocator {
     }
 
     private double dist(long node1, long node2){
-        return VectorUtils.dist(node1,node2,context.id2Vec);
+        // dist(i, j) / (w(i) * w(j))
+        return VectorUtils.dist(node1,node2,context.id2Vec)/(scoreMap.get(node1) * scoreMap.get(node2));
     }
 
 }

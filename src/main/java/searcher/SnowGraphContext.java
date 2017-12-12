@@ -4,12 +4,13 @@ import org.apache.commons.io.FileUtils;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
-import searcher.doc.DocSearcher;
 import searcher.api.ApiLocatorContext;
 import searcher.doc.DocSearcherContext;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SnowGraphContext {
 
@@ -17,6 +18,7 @@ public class SnowGraphContext {
 	static private Driver neo4jBoltConnection = null;
 	static private ApiLocatorContext apiLocatorContext=null;
 	static private DocSearcherContext docSearcherContext = null;
+	static private String githubAccessToken = null;
 
 	public static void init() {
 		String neo4jBoltUrl ="";
@@ -35,11 +37,14 @@ public class SnowGraphContext {
 					neo4jBoltUrl = suf;
 				if (pre.equals("dataPath"))
 					dataPath = suf;
+				if (pre.equals("github_access_token"))
+					githubAccessToken=suf;
 			}
 		}
 		neo4jBoltConnection= GraphDatabase.driver(neo4jBoltUrl, AuthTokens.basic("neo4j", "123"));
 		apiLocatorContext=new ApiLocatorContext(neo4jBoltConnection);
 		docSearcherContext = new DocSearcherContext(apiLocatorContext);
+		System.out.println("SnowGraph context inited.");
 	}
 
 	public static DocSearcherContext getDocSearcherContext() {
@@ -56,6 +61,10 @@ public class SnowGraphContext {
 
 	public static String getDataPath(){
 		return dataPath;
+	}
+
+	public static String getGithubAccessToken(){
+		return githubAccessToken;
 	}
 
 }

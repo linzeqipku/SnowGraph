@@ -9,7 +9,6 @@ import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
-import org.tartarus.snowball.ext.EnglishStemmer;
 import searcher.api.ApiLocatorContext;
 
 import java.util.List;

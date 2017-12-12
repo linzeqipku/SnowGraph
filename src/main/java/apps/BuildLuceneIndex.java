@@ -1,6 +1,6 @@
 package apps;
 
-import searcher.ir.LuceneSearcher;
+import searcher.doc.ir.LuceneSearcher;
 
 import java.io.IOException;
 

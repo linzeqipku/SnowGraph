@@ -59,6 +59,7 @@ public class StackOverflowExamples {
     static public String getRandomExampleQuery(){
         if (instance==null)
             instance=new StackOverflowExamples();
+        System.out.println(instance.exampleQuestions.size());
         long id = new ArrayList<>(instance.exampleQuestions).get(new Random().nextInt(instance.exampleQuestions.size()));
         String query = SnowGraphContext.getDocSearcherContext().getQuery(id);
         return query;

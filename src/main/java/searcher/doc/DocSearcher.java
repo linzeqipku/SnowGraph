@@ -1,21 +1,11 @@
 package searcher.doc;
 
 import searcher.SnowGraphContext;
-import graphdb.extractors.miners.text.TextExtractor;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jsoup.Jsoup;
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
 import searcher.api.ApiLocator;
-import searcher.ir.LuceneSearchResult;
-import searcher.ir.LuceneSearcher;
+import searcher.doc.ir.LuceneSearchResult;
+import searcher.doc.ir.LuceneSearcher;
 import utils.parse.VectorUtils;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

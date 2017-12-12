@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import searcher.ir.LuceneSearchResult;
-import searcher.ir.LuceneSearcher;
+import searcher.doc.ir.LuceneSearchResult;
+import searcher.doc.ir.LuceneSearcher;
 
 public class StandardIRServlet extends HttpServlet {
 	

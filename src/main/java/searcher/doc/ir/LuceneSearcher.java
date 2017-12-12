@@ -1,4 +1,4 @@
-package searcher.ir;
+package searcher.doc.ir;
 
 import searcher.SnowGraphContext;
 import org.apache.commons.lang3.StringUtils;

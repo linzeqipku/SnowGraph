@@ -4,7 +4,7 @@ import com.google.common.base.Joiner;
 import graphdb.extractors.miners.codesnippet.code.cfg.basiccfg.BasicCFGRegularBlock;
 import graphdb.extractors.miners.codesnippet.code.ir.IRExpression;
 import graphdb.extractors.miners.codesnippet.code.ir.IRScope;
-import utils.parse.TokenizationUtils;
+import utils.TokenizationUtils;
 
 import java.util.ArrayList;
 import java.util.List;

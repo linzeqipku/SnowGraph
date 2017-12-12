@@ -7,7 +7,6 @@ import graphdb.extractors.parsers.mail.MailListExtractor;
 import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.neo4j.graphdb.*;

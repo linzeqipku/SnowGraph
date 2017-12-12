@@ -1,6 +1,5 @@
 package servlet;
 
-import searcher.SnowGraphContext;
 import org.json.JSONObject;
 import searcher.doc.example.StackOverflowExamples;
 
@@ -10,10 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
 
 /**
  * Created by Administrator on 2017/5/26.

@@ -30,7 +30,7 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import searcher.api.ApiLocator;
 import searcher.api.SubGraph;
-import utils.parse.TokenizationUtils;
+import utils.TokenizationUtils;
 
 import java.io.IOException;
 import java.nio.file.Paths;

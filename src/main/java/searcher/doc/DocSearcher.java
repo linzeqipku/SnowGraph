@@ -4,7 +4,7 @@ import searcher.SnowGraphContext;
 import searcher.api.ApiLocator;
 import searcher.doc.ir.LuceneSearchResult;
 import searcher.doc.ir.LuceneSearcher;
-import utils.parse.VectorUtils;
+import utils.VectorUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;

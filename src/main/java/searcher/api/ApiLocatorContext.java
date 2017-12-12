@@ -6,7 +6,7 @@ import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
-import utils.parse.TokenizationUtils;
+import utils.TokenizationUtils;
 
 import java.util.*;
 

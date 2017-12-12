@@ -8,7 +8,7 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
-import utils.parse.VectorUtils;
+import utils.VectorUtils;
 
 public class ApiLocator {
 

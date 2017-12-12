@@ -1,7 +1,6 @@
 package apps;
 
 import searcher.SnowGraphContext;
-import searcher.doc.DocSearcher;
 import searcher.doc.example.StackOverflowExamples;
 
 class FindQaExamples {

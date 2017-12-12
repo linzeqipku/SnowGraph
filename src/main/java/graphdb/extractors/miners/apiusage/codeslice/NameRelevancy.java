@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import utils.parse.Stemmer;
+import org.tartarus.snowball.ext.EnglishStemmer;
 
 public class NameRelevancy implements Comparable<NameRelevancy>
 {
@@ -44,7 +44,7 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 	// Trim digits in word and stem the word
 	private void stemWords()
 	{
-		Stemmer stemmer = new Stemmer();
+		EnglishStemmer stemmer = new EnglishStemmer();
 
 		stemmedAPIWords = new ArrayList<>();
 		for (int i = 0; i < apiMethodWords.size(); i++)
@@ -61,9 +61,9 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 			{
 				// stem
 				word = digitTrimedWord;
-				stemmer.add(word.toCharArray(), word.length());
+				stemmer.setCurrent(word);
 				stemmer.stem();
-				stemmedAPIWords.add(stemmer.toString());
+				stemmedAPIWords.add(stemmer.getCurrent());
 			}
 		}
 
@@ -82,9 +82,9 @@ public class NameRelevancy implements Comparable<NameRelevancy>
 			{
 				// stem
 				word = digitTrimedWord;
-				stemmer.add(word.toCharArray(), word.length());
+				stemmer.setCurrent(word);
 				stemmer.stem();
-				stemmedTestWords.add(stemmer.toString());
+				stemmedTestWords.add(stemmer.getCurrent());
 			}
 		}
 	}

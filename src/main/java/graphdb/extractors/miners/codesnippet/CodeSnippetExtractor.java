@@ -15,7 +15,7 @@ import graphdb.framework.Extractor;
 import graphdb.framework.annotations.EntityDeclaration;
 import graphdb.framework.annotations.PropertyDeclaration;
 import graphdb.framework.annotations.RelationshipDeclaration;
-import utils.parse.ParseUtil;
+import utils.ParseUtil;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.ASTNode;

@@ -1,4 +1,4 @@
-package searcher.graph;
+package searcher.api;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,22 +34,35 @@ public class ScoreUtils {
         }
     }
 
-    // query word set is not stemmed, but id2wrods is stemmed!
-    public static Map<Long, Double> getAPISimScore(Set<String>queryWordSet, Map<Long, Set<String> > id2Wrods){
+    public static void getAPISimScore(Map<Long, Double> scoreMap,
+                                                   Set<String>queryWordSet,
+                                                   Set<Long> candidates,
+                                                   Map<Long, Set<String>> id2OriginalWrods,
+                                                   Map<Long, Set<String>> id2StemWords) {
 
-        Map<Long, Double> scoreMap = new HashMap<>();
+        Set<String> stemQueryWords = new HashSet<>();
+        for (String word: queryWordSet)
+            stemQueryWords.add(WordsConverter.stem(word));
 
-        for (long id: id2Wrods.keySet()) {
-            Set<String> orgDescSet = id2Wrods.get(id);
+        for (long id: candidates) {
+            if (scoreMap.containsKey(candidates)) // 如果已经计算过了，可能是anchor, sim=1
+                continue;
+
+            Set<String> orgDescSet = id2OriginalWrods.get(id);
             double TP = 0;
             int R = queryWordSet.size(), P = orgDescSet.size();
 
-            // intersection of the two set
             Set<String> matchedSet = new HashSet<>();
-            matchedSet.addAll(queryWordSet);
-            matchedSet.retainAll(orgDescSet);
-
-            TP += matchedSet.size();
+            for (String desc: orgDescSet){
+                if (queryWordSet.contains(desc)) {
+                    matchedSet.add(desc);
+                    TP++;
+                }
+                else if(stemQueryWords.contains(WordsConverter.stem(desc))) {
+                    TP += 0.95;
+                    matchedSet.add(desc);
+                }
+            }
 
             // remove intersection, do not change the original set
             Set<String> tgtSet = new HashSet<>();
@@ -94,7 +107,6 @@ public class ScoreUtils {
 
             scoreMap.put(id, score);
         }
-        return scoreMap;
     }
 
     public static void generateCandidateMap(Map<String, Set<Long>> candidateMap,
@@ -131,7 +143,6 @@ public class ScoreUtils {
             else // 如果这个词没有任何可以对应的结点，则去掉它，但他可能之前已经对应到一个类的全名
                 dummyWord.add(word);
         }
-        queryWordSet.removeAll(dummyWord);
     }
 
     private static double getSingleWordSimWord2Vec(String w1, String w2) {

@@ -94,8 +94,8 @@ public class Translator {
 
     public static void main(String[] args) throws IOException {
 /*        List<String> lines=
-                //FileUtils.readLines(new File(Config.getApiTokensPath()));
-                FileUtils.readLines(new File(Config.getProjectApiTokenPath()));
+                //FileUtils.readLines(new File(SnowGraphContext.getApiTokensPath()));
+                FileUtils.readLines(new File(SnowGraphContext.getProjectApiTokenPath()));
         int tot = 0, errCnt = 0;
         StringBuilder toPrint = new StringBuilder();
         for (String line : lines) {
@@ -116,7 +116,7 @@ public class Translator {
             toPrint.append("\n");
         }
 
-        FileOutputStream fout = new FileOutputStream(Config.getProjectTranslationPath());
+        FileOutputStream fout = new FileOutputStream(SnowGraphContext.getProjectTranslationPath());
         fout.write(toPrint.toString().getBytes());
         System.out.println("TOTAL TOKENS: " + tot);
         System.out.println("TOKENS FAILED TO TRANSLATE: " + errCnt);*/

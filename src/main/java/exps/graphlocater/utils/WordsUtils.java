@@ -1,5 +1,6 @@
 package exps.graphlocater.utils;
 
+import searcher.SnowGraphContext;
 import edu.cmu.lti.lexical_db.ILexicalDatabase;
 import edu.cmu.lti.lexical_db.NictWordNet;
 import edu.cmu.lti.ws4j.RelatednessCalculator;
@@ -11,7 +12,6 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import exps.graphlocater.VPExtractor;
 import exps.graphlocater.wrapper.PhraseInfo;
-import apps.Config;
 
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
@@ -72,7 +72,7 @@ public class WordsUtils {
     private static void loadStopWors(){
         List<String> lines=new ArrayList<>();
 		try {
-			lines= FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"stopwords_lcy.txt"));
+			lines= FileUtils.readLines(new File(SnowGraphContext.class.getResource("/").getPath()+"stopwords_lcy.txt"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

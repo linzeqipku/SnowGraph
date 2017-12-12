@@ -1,10 +1,10 @@
-package searcher.graph;
+package searcher.api;
 
-import apps.Config;
 import graphdb.extractors.parsers.word.corpus.WordSegmenter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tartarus.snowball.ext.EnglishStemmer;
+import searcher.SnowGraphContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +51,7 @@ class WordsConverter {
 
 	public static Set<String> englishConvert(String queryString){
 		Set<String> r=new HashSet<>();
-		
+
 		for (String token:queryString.toLowerCase().split("[^a-z]+")){
 			if (token.length()<=2) // 去掉长度小于2的token
 				continue;
@@ -66,14 +66,14 @@ class WordsConverter {
 			if (!englishStopWords.contains(token)) // 去掉停用词
 				r.add(token);
 		}
-		
+
 		return r;
 	}
-	
+
 	private static Set<String> chineseConvert(String queryString){
 		return englishConvert(StringUtils.join(WordSegmenter.demo(queryString)," "));
 	}
-	
+
     private static boolean isChinese(char c) {
         Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
 		return ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
@@ -91,7 +91,7 @@ class WordsConverter {
 		}
         return false;
     }
-    
+
     private static final String SMART_STOP_WORDS[] =
     	{
     	   "a",
@@ -623,7 +623,7 @@ class WordsConverter {
 	private static void loadStopWords(){
 		List<String> lines=new ArrayList<>();
 		try {
-			lines=FileUtils.readLines(new File(Config.class.getResource("/").getPath()+"stopwords.txt"));
+			lines=FileUtils.readLines(new File(SnowGraphContext.class.getResource("/").getPath()+"stopwords.txt"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

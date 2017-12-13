@@ -1,5 +1,7 @@
 package searcher.doc;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.jsoup.Jsoup;
 import searcher.SnowGraphContext;
 import searcher.api.ApiLocator;
 import searcher.doc.ir.LuceneSearchResult;
@@ -12,6 +14,38 @@ import java.util.List;
 import java.util.Set;
 
 public class DocSearcher {
+
+    public class DocSearchResult {
+
+        long id;
+        int irRank,newRank;
+        String title,content;
+        double dist;
+        boolean highlight;
+
+        public long getId() {
+            return id;
+        }
+        public int getIrRank() {
+            return irRank;
+        }
+        public int getNewRank() {
+            return newRank;
+        }
+        public double getDist() {
+            return dist;
+        }
+        public String getTitle() {
+            return title;
+        }
+        public String getContent() {
+            return content;
+        }
+        public boolean getHighlight() {
+            return highlight;
+        }
+
+    }
 
     private LuceneSearcher luceneSearcher = null;
     private DocSearcherContext context;
@@ -28,22 +62,34 @@ public class DocSearcher {
     private List<DocSearchResult> search(String query) {
         List<DocSearchResult> r = new ArrayList<>();
 
-        Set<Long> graph0 = ApiLocator.query(query, SnowGraphContext.getApiLocatorContext(), false).nodes;
+        Set<Long> graph0 = ApiLocator.query(query, SnowGraphContext.getApiLocatorContext(), false).getNodes();
 
         List<LuceneSearchResult> irResultList = luceneSearcher.query(query);
 
         for (int i = 0; i < irResultList.size(); i++) {
             DocSearchResult doc = new DocSearchResult();
-            doc.setId(irResultList.get(i).id);
-            doc.setIrRank(i + 1);
-            doc.setDist(score(irResultList.get(i).nodeSet, graph0));
+            doc.id=irResultList.get(i).id;
+            doc.irRank=i + 1;
+            doc.dist=score(irResultList.get(i).nodeSet, graph0);
             r.add(doc);
         }
 
         r.sort(Comparator.comparingDouble(DocSearchResult::getDist));
 
-        for (int i = 0; i < r.size(); i++)
-            r.get(i).setNewRank(i + 1);
+        for (int i = 0; i < r.size(); i++) {
+            r.get(i).newRank = i + 1;
+            Pair<String, String> content=context.getContent(r.get(i).id);
+            r.get(i).content=content.getRight();
+            r.get(i).title= content.getLeft();
+            if (r.get(i).title.length()>30)
+                r.get(i).title=r.get(i).title.substring(0,30)+" ...";
+            r.get(i).highlight=false;
+            if (context.qaMap.containsValue(r.get(i).id)){
+                for (long qId:context.qaMap.keySet())
+                    if (context.qaMap.get(qId).equals(r.get(i).id)&&context.queryMap.get(qId).trim().equals(query.trim()))
+                        r.get(i).highlight=true;
+            }
+        }
 
         return r;
     }

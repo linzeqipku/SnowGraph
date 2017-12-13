@@ -17,6 +17,10 @@ public class GraphBuilder {
     private String graphPath = null;
     private String baseGraphPath = null;
 
+    public void addExtractor(Extractor extractor){
+        extractors.add(extractor);
+    }
+
     public void setExtractors(List<Extractor> extractors) {
         this.extractors = new ArrayList<>(extractors);
     }
@@ -30,21 +34,7 @@ public class GraphBuilder {
     }
 
     public void buildGraph() {
-        File f = new File(graphPath);
-        try {
-            FileUtils.deleteDirectory(f);
-            if (baseGraphPath != null)
-                FileUtils.copyDirectory(new File(baseGraphPath), f);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(f);
-        for (Extractor extractor : extractors) {
-            extractor.run(db);
-            System.out.println(extractor.getClass().getName() + " finished. [" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "]");
-        }
-        db.shutdown();
+
     }
 
 }

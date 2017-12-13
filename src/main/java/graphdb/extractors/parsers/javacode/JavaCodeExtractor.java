@@ -165,7 +165,7 @@ public class JavaCodeExtractor implements Extractor {
     	p.run(db);
     }
 
-    private void setSrcPath(String srcPath) {
+    public void setSrcPath(String srcPath) {
         this.srcPath = srcPath;
     }
 

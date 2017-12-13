@@ -29,7 +29,7 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import searcher.api.ApiLocator;
-import searcher.api.SubGraph;
+import rest.resource.Neo4jSubGraph;
 import utils.TokenizationUtils;
 
 import java.io.IOException;
@@ -69,9 +69,9 @@ public class LuceneSearcher {
                 document.add(new TextField("content", content, Field.Store.YES));
                 document.add(new TextField("org_content", org_content, Field.Store.YES));
                 if (test) {
-                    SubGraph subGraph = ApiLocator.query(content,SnowGraphContext.getApiLocatorContext(),false);
-                    String nodeSet = StringUtils.join(subGraph.nodes, " ").trim();
-                    System.out.println(subGraph.nodes.size());
+                    ApiLocator.SubGraph subGraph = ApiLocator.query(content,SnowGraphContext.getApiLocatorContext(),false);
+                    String nodeSet = StringUtils.join(subGraph.getNodes(), " ").trim();
+                    System.out.println(subGraph.getNodes().size());
                     document.add(new StringField("node_set", nodeSet, Field.Store.YES));
                 } else
                     document.add(new StringField("node_set", "", Field.Store.YES));

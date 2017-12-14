@@ -16,16 +16,16 @@ import java.util.Set;
 class WordsConverter {
 
 	private static Set<String> englishStopWords=new HashSet<>();
-	public static EnglishStemmer stemmer=new EnglishStemmer();
 
 	public static String stem(String token){
+		EnglishStemmer stemmer=new EnglishStemmer();
 		stemmer.setCurrent(token);
 		try {
 			stemmer.stem();
+			token=stemmer.getCurrent();
 		} catch (IllegalArgumentException e){
-			e.printStackTrace();
 		}
-		return stemmer.getCurrent();
+		return token;
 	}
 
 	public static Set<String> convert(String queryString){
@@ -47,6 +47,7 @@ class WordsConverter {
 	}
 
 	public static Set<String> englishConvert(String queryString){
+		EnglishStemmer stemmer=new EnglishStemmer();
 		Set<String> r=new HashSet<>();
 
 		for (String token:queryString.toLowerCase().split("[^a-z]+")){
@@ -55,11 +56,10 @@ class WordsConverter {
 			stemmer.setCurrent(token);
 			try {
 				stemmer.stem();
+				token=stemmer.getCurrent();
 			} catch (IllegalArgumentException e){
-				//System.out.println(token);
-				e.printStackTrace();
+
 			}
-			token=stemmer.getCurrent();
 			if (!englishStopWords.contains(token)) // 去掉停用词
 				r.add(token);
 		}
@@ -621,6 +621,7 @@ class WordsConverter {
 		loadStopWords();
 	}
 	private static void loadStopWords(){
+		EnglishStemmer stemmer=new EnglishStemmer();
 		List<String> lines=new ArrayList<>();
 		try {
 			lines=FileUtils.readLines(new File(SnowGraphContext.class.getResource("/").getPath()+"stopwords.txt"));

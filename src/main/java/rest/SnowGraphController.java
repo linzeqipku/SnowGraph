@@ -1,9 +1,6 @@
 package rest;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import rest.resource.*;
 import searcher.SnowGraphContext;
 import searcher.api.ApiLocator;
@@ -11,6 +8,7 @@ import searcher.doc.DocSearcher;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 public class SnowGraphController {
 
@@ -44,8 +42,8 @@ public class SnowGraphController {
     }
 
     @RequestMapping(value = "/nav", method = {RequestMethod.GET,RequestMethod.POST})
-    public String nav(){
-        return SnowGraphContext.getNav().toString();
+    public NavResult nav(){
+        return SnowGraphContext.getNav();
     }
 
 

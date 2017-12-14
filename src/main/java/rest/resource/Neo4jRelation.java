@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Neo4jRelation {
 
-    private final long start,end,id;
+    private final long startNode,endNode,id;
     private final String type;
 
     public static List<Neo4jRelation> getNeo4jRelationList(long nodeId){
@@ -39,19 +39,19 @@ public class Neo4jRelation {
         return r;
     }
 
-    private Neo4jRelation(long start, long end, long id, String type) {
-        this.start = start;
-        this.end = end;
+    private Neo4jRelation(long startNode, long endNode, long id, String type) {
+        this.startNode = startNode;
+        this.endNode = endNode;
         this.id = id;
         this.type = type;
     }
 
-    public long getStart() {
-        return start;
+    public long getStartNode() {
+        return startNode;
     }
 
-    public long getEnd() {
-        return end;
+    public long getEndNode() {
+        return endNode;
     }
 
     public long getId() {

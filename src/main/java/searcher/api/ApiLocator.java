@@ -32,7 +32,7 @@ public class ApiLocator {
 
     private ApiLocatorContext context;
 
-    private Map<Long, Double> scoreMap = null;
+    private Map<Long, Double> scoreMap = new HashMap<>();
     private Map<String, Set<Long>> candidateMap = new HashMap<>();
 
     private ApiLocator(ApiLocatorContext context) {
@@ -40,7 +40,7 @@ public class ApiLocator {
     }
 
     public static SubGraph query(String queryString, ApiLocatorContext context, boolean expand){
-        return expand?new ApiLocator(context).query(queryString):new ApiLocator(context).queryExpand(queryString);
+        return expand?new ApiLocator(context).queryExpand(queryString):new ApiLocator(context).query(queryString);
     }
 
     public SubGraph queryExpand(String queryString) {

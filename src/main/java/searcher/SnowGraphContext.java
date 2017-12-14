@@ -1,9 +1,8 @@
 package searcher;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.neo4j.driver.v1.*;
+import rest.resource.NavResult;
 import searcher.api.ApiLocatorContext;
 import searcher.doc.DocSearcherContext;
 import searcher.doc.example.StackOverflowExamples;
@@ -21,7 +20,7 @@ public class SnowGraphContext {
 	static private DocSearcherContext docSearcherContext = null;
 	static private String githubAccessToken = null;
 	static private StackOverflowExamples stackOverflowExamples = null;
-	static private JSONObject nav = null;
+	static private NavResult nav = null;
 
 	public static void init() {
 		String neo4jBoltUrl ="";
@@ -76,10 +75,9 @@ public class SnowGraphContext {
 		return stackOverflowExamples;
 	}
 
-	private static JSONObject nav(){
+	private static NavResult nav(){
 		String mainStat="match (a)-[r]->(b) return labels(a)[0]+\" \"+type(r)+\" \"+labels(b)[0] as x, count(*)";
 
-		JSONObject obj = new JSONObject();
 		Session session = SnowGraphContext.getNeo4jBoltDriver().session();
 		String stat = "CALL db.labels() YIELD label";
 		StatementResult rs = session.run(stat);
@@ -89,25 +87,19 @@ public class SnowGraphContext {
 			labels.add(item.get("label").asString());
 		}
 
-		JSONArray nodeArray = new JSONArray();
+		NavResult r=new NavResult();
 		int c = 0;
 		for (String label : labels) {
 			stat = "match (n:" + label + ") return count(n)";
 			int count = 0;
 			rs = session.run(stat);
 			while (rs.hasNext())
-				count = rs.next().get("count(n)").asInt();
-			JSONObject nodeObj = new JSONObject();
-			nodeObj.put("id", c);
-			nodeObj.put("label", label);
-			nodeObj.put("count", count);
-			nodeArray.put(nodeObj);
+				count = rs.next().get("count(n)").asInt();;
+			r.addNode(c,label,count);
 			c++;
 		}
-		obj.put("nodes", nodeArray);
 
 		c = 0;
-		JSONArray relArray = new JSONArray();
 		stat = mainStat;
 		rs = session.run(stat);
 		while (rs.hasNext()) {
@@ -118,20 +110,13 @@ public class SnowGraphContext {
 			int src = labels.indexOf(eles[0]);
 			String type = eles[1];
 			int dst = labels.indexOf(eles[2]);
-			JSONObject relObj = new JSONObject();
-			relObj.put("id", c);
-			relObj.put("type", type);
-			relObj.put("startNode", src);
-			relObj.put("endNode", dst);
-			relObj.put("count", count);
-			relArray.put(relObj);
+			r.addRelation(c,src,dst,count,type);
 			c++;
 		}
-		obj.put("relationships", relArray);
-		return obj;
+		return r;
 	}
 
-	public static JSONObject getNav(){
+	public static NavResult getNav(){
 		return nav;
 	}
 

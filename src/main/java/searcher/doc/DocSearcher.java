@@ -19,7 +19,7 @@ public class DocSearcher {
 
         long id;
         int irRank,newRank;
-        String title,content;
+        String title,body;
         double dist;
         boolean highlight;
 
@@ -38,8 +38,8 @@ public class DocSearcher {
         public String getTitle() {
             return title;
         }
-        public String getContent() {
-            return content;
+        public String getBody() {
+            return body;
         }
         public boolean getHighlight() {
             return highlight;
@@ -79,10 +79,10 @@ public class DocSearcher {
         for (int i = 0; i < r.size(); i++) {
             r.get(i).newRank = i + 1;
             Pair<String, String> content=context.getContent(r.get(i).id);
-            r.get(i).content=content.getRight();
+            r.get(i).body=content.getRight();
             r.get(i).title= content.getLeft();
-            if (r.get(i).title.length()>30)
-                r.get(i).title=r.get(i).title.substring(0,30)+" ...";
+            if (r.get(i).title.length()>100)
+                r.get(i).title=r.get(i).title.substring(0,100)+" ...";
             r.get(i).highlight=false;
             if (context.qaMap.containsValue(r.get(i).id)){
                 for (long qId:context.qaMap.keySet())

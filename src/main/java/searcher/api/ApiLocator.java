@@ -1,6 +1,7 @@
 package searcher.api;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -10,12 +11,13 @@ import org.neo4j.driver.v1.StatementResult;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import utils.VectorUtils;
 
+
 public class ApiLocator {
 
     public class SubGraph {
         private Set<Long> nodes=new HashSet<>();
         private Set<Long> edges=new HashSet<>();
-        double cost=Double.MAX_VALUE,gain=0;
+        double cost = 0, gain = 0;
         public Set<Long> getNodes(){
             return nodes;
         }
@@ -82,7 +84,7 @@ public class ApiLocator {
 
         if (queryString.matches("^[\\d\\s]+$")){ // 只有结点id构成的query
             List<Long> idList=new ArrayList<>();
-            String[] eles=queryString.trim().split("\\s+");
+            String[] eles = queryString.trim().split("\\s+");
             for (String e:eles)
                 if (e.length()>0) {
                     Session session = context.connection.session();
@@ -102,8 +104,8 @@ public class ApiLocator {
 		 */
         candidateMap.clear(); // 清空candidateMap, 对于每个query即时生成
         List<SubGraph> graphs = myFindSubGraphs(queryString);
-        //graphs.sort(Comparator.comparingDouble(r -> r.cost));
-        return graphs.size()>0?graphs.get(0):new SubGraph();
+        System.out.println(graphs.get(0).getNodes());
+        return graphs.get(0);
     }
 
     private SubGraph idTest(List<Long> idList){
@@ -241,8 +243,7 @@ public class ApiLocator {
                 r.addAll(curRes);
             }
             // sort all results, usually the size will > 10
-            Comparator<SubGraph> comparator = Comparator.comparingDouble(s->s.gain);
-            r.sort(comparator.reversed());
+            r.sort(Comparator.comparingDouble(s->s.cost));
         }
 
         return r;
@@ -275,7 +276,7 @@ public class ApiLocator {
                     agenda.add(nextGraph);
                 }
             }
-            agenda.sort(Comparator.comparingDouble(r->r.gain));
+            agenda.sort(Comparator.comparingDouble(r->r.cost));
 
             // clear and add new top 10 to results
             results.clear();
@@ -287,22 +288,24 @@ public class ApiLocator {
     }
 
     private Set<Long> findSeed(Map<Long, Double>scoreMap){
-        Set<Long> seedSet = new HashSet<>();
+        List<Pair<Long, Double>> seedSet = new ArrayList<>();
 
         double maxScore = 0;
-        for (long id: scoreMap.keySet())
-            if (scoreMap.get(id) > maxScore)
-                maxScore = scoreMap.get(id);
+        for (double val: scoreMap.values())
+            if (val > maxScore)
+                maxScore = val;
 
         for (long id: scoreMap.keySet()) {
             double curScore = scoreMap.get(id);
             if (curScore == maxScore) // 分数最高的结点
-                seedSet.add(id);
-            // 分数最高的结点可能只有几个，为增加更多seed提高容错性，把分数高于一定值的类结点也作为seed
+                seedSet.add(Pair.of(id, curScore));
+            // 分数最高的结点可能只有1-2个，为增加更多seed提高容错性，把分数高于一定值的类结点也作为seed
             else if (context.typeSet.contains(id) && curScore >= 0.8 * maxScore)
-                seedSet.add(id);
+                seedSet.add(Pair.of(id, curScore));
         }
-        return seedSet;
+        seedSet.sort(Comparator.comparingDouble((p)->p.getRight()));
+        int size = seedSet.size() >  5 ? 5 : seedSet.size(); // seed结点太多会影响效率
+        return seedSet.subList(0, size).stream().map(p->p.getLeft()).collect(Collectors.toSet());
     }
 
     private Set<Long> candidate(Set<String> queryWordSet) {

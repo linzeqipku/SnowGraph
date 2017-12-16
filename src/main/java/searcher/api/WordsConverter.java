@@ -629,6 +629,7 @@ class WordsConverter {
 			e.printStackTrace();
 		}
 		lines.forEach(n->{
+			englishStopWords.add(n);
 			stemmer.setCurrent(n);
 			stemmer.stem();
 			englishStopWords.add(stemmer.getCurrent());

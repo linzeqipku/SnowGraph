@@ -1,9 +1,8 @@
 # Software Knowledge Graph
 
-![status](https://img.shields.io/badge/status-InDev-bronze.svg)
 ![licence](https://img.shields.io/badge/license-Apache2.0-blue.svg)
 
-buildgraph.SnowGraph is a tool for data analytics, knowledge mining and question answering in software development, maintenance and reuse activities.
+SnowGraph is a data analysis and knowledge mining toolkit for software engineering researchers.
 
 ## Features
 

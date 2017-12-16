@@ -17,7 +17,7 @@ public class ApiLocator {
     public class SubGraph {
         private Set<Long> nodes=new HashSet<>();
         private Set<Long> edges=new HashSet<>();
-        double cost,gain;
+        double cost = 0, gain = 0;
         public Set<Long> getNodes(){
             return nodes;
         }
@@ -84,7 +84,7 @@ public class ApiLocator {
 
         if (queryString.matches("^[\\d\\s]+$")){ // 只有结点id构成的query
             List<Long> idList=new ArrayList<>();
-            String[] eles=queryString.trim().split("\\s+");
+            String[] eles = queryString.trim().split("\\s+");
             for (String e:eles)
                 if (e.length()>0) {
                     Session session = context.connection.session();
@@ -299,12 +299,12 @@ public class ApiLocator {
             double curScore = scoreMap.get(id);
             if (curScore == maxScore) // 分数最高的结点
                 seedSet.add(Pair.of(id, curScore));
-            // 分数最高的结点可能只有几个，为增加更多seed提高容错性，把分数高于一定值的类结点也作为seed
+            // 分数最高的结点可能只有1-2个，为增加更多seed提高容错性，把分数高于一定值的类结点也作为seed
             else if (context.typeSet.contains(id) && curScore >= 0.8 * maxScore)
                 seedSet.add(Pair.of(id, curScore));
         }
         seedSet.sort(Comparator.comparingDouble((p)->p.getRight()));
-        int size = seedSet.size() >  10 ? 10 : seedSet.size();
+        int size = seedSet.size() >  5 ? 5 : seedSet.size(); // seed结点太多会影响效率
         return seedSet.subList(0, size).stream().map(p->p.getLeft()).collect(Collectors.toSet());
     }
 

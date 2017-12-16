@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.fluent.Request;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import searcher.api.ApiLocator;
+import webapp.SnowGraphContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,22 +14,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GithubCodeSearcher {
 
-    private final String accessToken;
+    private final SnowGraphContext context;
 
     public enum RETURN_MODE {
             CONTENT, URL
     }
 
-    public GithubCodeSearcher(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public static void main(String[] args){
-        GithubCodeSearcher githubCodeSearcher=new GithubCodeSearcher("b0603b617a6cb24a447a308ad71f95a4e5c87783");
-        githubCodeSearcher.searchAndSave("IndexReader IndexWriter", "E:/test/githubapi");
+    public GithubCodeSearcher(SnowGraphContext context) {
+        this.context=context;
     }
 
     public void searchAndSave(String query, String dirPath){
@@ -57,14 +56,20 @@ public class GithubCodeSearcher {
 
     private List<String> convertStringToKeywords(String query){
         List<String> r=new ArrayList<>();
-        for (String word:query.split("\\W+"))
-            r.add(word);
+        for (Long node:ApiLocator.query(query,context.getApiLocatorContext(),false).getNodes()){
+            String sig=context.getApiLocatorContext().getId2Sig().get(node);
+            if (sig.contains("("))
+                sig=sig.substring(0,sig.indexOf("("));
+            Matcher matcher= Pattern.compile("\\w+").matcher(sig);
+            while (matcher.find())
+                r.add(matcher.group());
+        }
         return r;
     }
 
     public List<String> search(List<String> keywords, int pageNum, RETURN_MODE mode) throws IOException {
         String url = "https://api.github.com/search/code?page=" + pageNum +
-                "&per_page=100&access_token=" + accessToken + "&q=language:Java+" + StringUtils.join(keywords, "+");
+                "&per_page=100&access_token=" + context.getGithubAccessToken() + "&q=language:Java+" + StringUtils.join(keywords, "+");
         return searchByUrl(url,mode);
     }
 

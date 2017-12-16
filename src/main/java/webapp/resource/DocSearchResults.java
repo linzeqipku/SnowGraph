@@ -1,8 +1,7 @@
-package rest.resource;
+package webapp.resource;
 
 import searcher.doc.DocSearcher;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DocSearchResults {

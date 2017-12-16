@@ -1,6 +1,6 @@
 package searcher.doc.ir;
 
-import searcher.SnowGraphContext;
+import webapp.SnowGraphContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
@@ -29,20 +29,29 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import searcher.api.ApiLocator;
-import rest.resource.Neo4jSubGraph;
 import utils.TokenizationUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 
 public class LuceneSearcher {
 
+    private final SnowGraphContext context;
     private QueryParser qp = new QueryParser("content", new EnglishAnalyzer());
     private IndexSearcher indexSearcher = null;
-    private String path=SnowGraphContext.getDataPath()+"/"+"index";
+    private String path;
 
-    public void index(boolean test) throws IOException {
+    public LuceneSearcher(SnowGraphContext context){
+        this.context=context;
+        path=context.getDataDir()+"/"+"index";
+    }
+
+    public void index(boolean onlyStackOverflowAnswers, boolean overWrite) throws IOException {
+
+        if (!overWrite && new File(path).exists())
+            return;
 
         Directory dir = FSDirectory.open(Paths.get(path));
         Analyzer analyzer = new EnglishAnalyzer();
@@ -50,9 +59,9 @@ public class LuceneSearcher {
         iwc.setOpenMode(OpenMode.CREATE);
         IndexWriter writer = new IndexWriter(dir, iwc);
 
-        Session session = SnowGraphContext.getNeo4jBoltDriver().session();
+        Session session = context.getNeo4jBoltDriver().session();
         String stat = "match (n) where exists(n." + TextExtractor.IS_TEXT + ") and n."+TextExtractor.IS_TEXT+"=true return n." + TextExtractor.TITLE + " n." + TextExtractor.TEXT;
-        if (test)
+        if (onlyStackOverflowAnswers)
             stat = "match (n:" + StackOverflowExtractor.ANSWER + ") where exists(n." + TextExtractor.TEXT + ") and n." + StackOverflowExtractor.ANSWER_ACCEPTED + "=TRUE "
                     + "return n." + TextExtractor.TITLE + ", n." + TextExtractor.TEXT + ", id(n), labels(n)[0]";
         StatementResult rs = session.run(stat);
@@ -68,8 +77,8 @@ public class LuceneSearcher {
                 document.add(new StringField("title", title, Field.Store.YES));
                 document.add(new TextField("content", content, Field.Store.YES));
                 document.add(new TextField("org_content", org_content, Field.Store.YES));
-                if (test) {
-                    ApiLocator.SubGraph subGraph = ApiLocator.query(content,SnowGraphContext.getApiLocatorContext(),false);
+                if (onlyStackOverflowAnswers) {
+                    ApiLocator.SubGraph subGraph = ApiLocator.query(content,context.getApiLocatorContext(),false);
                     String nodeSet = StringUtils.join(subGraph.getNodes(), " ").trim();
                     System.out.println(subGraph.getNodes().size());
                     document.add(new StringField("node_set", nodeSet, Field.Store.YES));

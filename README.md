@@ -3,7 +3,7 @@
 ![status](https://img.shields.io/badge/status-InDev-bronze.svg)
 ![licence](https://img.shields.io/badge/license-Apache2.0-blue.svg)
 
-SnowGraph is a tool for data analytics, knowledge mining and question answering in software development, maintenance and reuse activities.
+buildgraph.SnowGraph is a tool for data analytics, knowledge mining and question answering in software development, maintenance and reuse activities.
 
 ## Features
 
@@ -105,7 +105,7 @@ Write a spring bean property xml file, like this:
 </beans>
 ```
 
-Run ```apps.BuildGraph {property_xml_file_path}``` (need a large memory allocation pool for JVM, for example, set VM arguments to ```-Xms5000m -Xmx5000m```).
+Run ```apps.buildgraph.BuildGraph {property_xml_file_path}``` (need a large memory allocation pool for JVM, for example, set VM arguments to ```-Xms5000m -Xmx5000m```).
 This process may take a long time.
 
 With the above property file, the graph database is generated in ```E:/SnowGraphData/lucene/graphdb-base```.

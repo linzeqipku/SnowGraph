@@ -4,7 +4,7 @@ import graphdb.extractors.parsers.word.corpus.WordSegmenter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tartarus.snowball.ext.EnglishStemmer;
-import searcher.SnowGraphContext;
+import webapp.SnowGraphContext;
 
 import java.io.File;
 import java.io.IOException;

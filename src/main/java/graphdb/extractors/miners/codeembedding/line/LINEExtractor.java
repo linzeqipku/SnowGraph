@@ -13,6 +13,11 @@ public class LINEExtractor implements Extractor{
     private LINE line = null;
     private GraphDatabaseService db = null;
 
+    @Override
+    public void config(String[] args) {
+
+    }
+
     public void run(GraphDatabaseService db) {
         this.db = db;
         try (Transaction tx=db.beginTx()) {

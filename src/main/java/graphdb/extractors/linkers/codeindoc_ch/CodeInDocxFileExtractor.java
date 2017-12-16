@@ -21,6 +21,11 @@ public class CodeInDocxFileExtractor implements Extractor {
 
     private GraphDatabaseService db = null;
 
+    @Override
+    public void config(String[] args) {
+
+    }
+
     public void run(GraphDatabaseService db) {
         this.db = db;
         CodeIndexes codeIndexes = new CodeIndexes(db);

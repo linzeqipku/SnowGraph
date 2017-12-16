@@ -1,4 +1,4 @@
-package rest.resource;
+package webapp.resource;
 
 import java.util.ArrayList;
 import java.util.List;

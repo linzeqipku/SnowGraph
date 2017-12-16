@@ -33,8 +33,9 @@ public class APIUsageExtractor implements Extractor {
 
 	private String srcPath = "";
 
-	public void setSrcPath(String srcPath) {
-		this.srcPath = srcPath;
+	@Override
+	public void config(String[] args) {
+		srcPath=args[0];
 	}
 
 	@Override

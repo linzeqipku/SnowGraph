@@ -151,22 +151,10 @@ public class JavaCodeExtractor implements Extractor {
 
     private String srcPath = "";
     private GraphDatabaseService db = null;
-    
-    public static void main(String[] args){
-    	try {
-			FileUtils.deleteDirectory(new File("E:\\test\\graph"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(new File("E:\\test\\graph"));
-    	JavaCodeExtractor p=new JavaCodeExtractor();
-        p.setSrcPath("E:\\SnowGraphData\\lucene\\sourcecode");
-    	p.run(db);
-    }
 
-    public void setSrcPath(String srcPath) {
-        this.srcPath = srcPath;
+    @Override
+    public void config(String[] args) {
+        srcPath=args[0];
     }
 
     public void run(GraphDatabaseService db) {

@@ -26,7 +26,12 @@ public class ApiMentionExtractor implements Extractor {
     private GraphDatabaseService db = null;
     private CodeIndexes codeIndexes = null;
 
-    private Map<Node, String> nodeToTextMap = new HashMap<>();
+    private Set<Node> textNodes = new HashSet<>();
+
+    @Override
+    public void config(String[] args) {
+
+    }
 
     public void run(GraphDatabaseService db) {
         this.db = db;
@@ -43,9 +48,7 @@ public class ApiMentionExtractor implements Extractor {
         			continue;
         		if (node.hasLabel(Label.label(JavaCodeExtractor.FIELD)))
         			continue;
-        		String text=(String) node.getProperty(TextExtractor.TITLE);
-        		text+=" "+node.getProperty(TextExtractor.TEXT);
-        		nodeToTextMap.put(node, text);
+        		textNodes.add(node);
         	}
         	tx.success();
         }
@@ -55,8 +58,10 @@ public class ApiMentionExtractor implements Extractor {
     private void find() {
         try (Transaction tx = db.beginTx()) {
 
-            for (Node srcNode : nodeToTextMap.keySet()) {
-                String content = Jsoup.parse(nodeToTextMap.get(srcNode)).text();
+            for (Node srcNode : textNodes) {
+                String text=(String) srcNode.getProperty(TextExtractor.TITLE);
+                text+=" "+srcNode.getProperty(TextExtractor.TEXT);
+                String content = Jsoup.parse(text).text();
                 Set<String> lexes = new HashSet<>();
                 Collections.addAll(lexes, content.split("\\W+"));
                 Set<Node> resultNodes = new HashSet<>();

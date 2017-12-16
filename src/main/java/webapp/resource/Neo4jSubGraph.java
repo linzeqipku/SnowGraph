@@ -1,7 +1,6 @@
-package rest.resource;
+package webapp.resource;
 
-import rest.resource.Neo4jNode;
-import rest.resource.Neo4jRelation;
+import webapp.SnowGraphContext;
 import searcher.api.ApiLocator;
 
 import java.util.ArrayList;
@@ -13,11 +12,11 @@ public class Neo4jSubGraph {
 
     private final List<Neo4jRelation> relationships = new ArrayList<>();
 
-    public Neo4jSubGraph(ApiLocator.SubGraph subgraph){
+    public Neo4jSubGraph(ApiLocator.SubGraph subgraph, SnowGraphContext context){
         for (long node:subgraph.getNodes())
-            nodes.add(Neo4jNode.get(node));
+            nodes.add(Neo4jNode.get(node, context));
         for (long edge:subgraph.getEdges())
-            relationships.add(Neo4jRelation.get(edge));
+            relationships.add(Neo4jRelation.get(edge, context));
     }
 
     public List<Neo4jNode> getNodes() {

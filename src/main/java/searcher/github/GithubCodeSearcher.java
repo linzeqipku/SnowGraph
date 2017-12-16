@@ -16,37 +16,42 @@ import java.util.concurrent.*;
 public class GithubCodeSearcher {
 
     private final String accessToken;
-    private final String apiPrefix;
+
+    public enum RETURN_MODE {
+            CONTENT, URL
+    }
 
     public GithubCodeSearcher(String accessToken) {
         this.accessToken = accessToken;
-        apiPrefix = "https://api.github.com/search/code?access_token=" + accessToken
-                + "&q=language:Java+";
     }
 
     public static void main(String[] args){
         GithubCodeSearcher githubCodeSearcher=new GithubCodeSearcher("b0603b617a6cb24a447a308ad71f95a4e5c87783");
-        try {
-            githubCodeSearcher.searchAndSave("IndexReader IndexWriter", "E:/test/githubapi");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        githubCodeSearcher.searchAndSave("IndexReader IndexWriter", "E:/test/githubapi");
     }
 
-    public void searchAndSave(String query, String dirPath) throws IOException {
-        List<String> resultList=search(query);
+    public void searchAndSave(String query, String dirPath){
+        List<String> resultList=search(query, RETURN_MODE.CONTENT);
         for (int i=0;i<resultList.size();i++) {
             File file=new File(dirPath + "/" + i + ".java");
-            FileUtils.write(file, resultList.get(i));
+            try {
+                FileUtils.write(file, resultList.get(i));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public List<String> search (String query) throws IOException {
+    public List<String> search (String query, RETURN_MODE mode){
         List<String> keywords=convertStringToKeywords(query);
         int K=1;
         List<String> r=new ArrayList<>();
         for (int i=1;i<=K;i++)
-            r.addAll(search(keywords,i));
+            try {
+                r.addAll(search(keywords,i,mode));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         return r;
     }
 
@@ -57,13 +62,13 @@ public class GithubCodeSearcher {
         return r;
     }
 
-    public List<String> search(List<String> keywords, int pageNum) throws IOException {
+    public List<String> search(List<String> keywords, int pageNum, RETURN_MODE mode) throws IOException {
         String url = "https://api.github.com/search/code?page=" + pageNum +
                 "&per_page=100&access_token=" + accessToken + "&q=language:Java+" + StringUtils.join(keywords, "+");
-        return searchByUrl(url);
+        return searchByUrl(url,mode);
     }
 
-    public List<String> searchByUrl(String url) throws IOException {
+    public List<String> searchByUrl(String url, RETURN_MODE mode) throws IOException {
         List<String> r=new ArrayList<>();
         String str=Request.Get(url).connectTimeout(10000).socketTimeout(10000).execute().returnContent().asString();
         if (str==null)
@@ -83,8 +88,12 @@ public class GithubCodeSearcher {
             String itemUrlStr=item.getString("html_url");
             itemUrlStr=itemUrlStr.replace("https://github.com/","https://raw.githubusercontent.com/");
             itemUrlStr=itemUrlStr.replace("/blob/","/");
-            Future f=pool.submit(new HtmlCrawler(itemUrlStr));
-            futureList.add(f);
+            if (mode==RETURN_MODE.URL)
+                r.add(itemUrlStr);
+            else {
+                Future f = pool.submit(new HtmlCrawler(itemUrlStr));
+                futureList.add(f);
+            }
         }
         pool.shutdown();
         for (Future f:futureList)

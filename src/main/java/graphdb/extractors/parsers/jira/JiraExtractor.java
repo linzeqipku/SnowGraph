@@ -137,8 +137,9 @@ public class JiraExtractor implements Extractor {
     private Map<String, Node> issueNodeMap = new HashMap<>();
     private Map<String, Node> patchNodeMap = new HashMap<>();
 
-    public void setIssueFolderPath(String path) {
-        this.issueFolderPath = path;
+    @Override
+    public void config(String[] args) {
+        issueFolderPath=args[0];
     }
 
     @Override

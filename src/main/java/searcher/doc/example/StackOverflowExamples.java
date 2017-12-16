@@ -1,23 +1,27 @@
 package searcher.doc.example;
 
 import org.apache.commons.io.FileUtils;
-import rest.resource.SampleQuestion;
-import searcher.SnowGraphContext;
+import webapp.resource.SampleQuestion;
+import webapp.SnowGraphContext;
 import searcher.doc.DocSearcher;
+import searcher.doc.DocSearcherContext;
 
 import java.io.*;
 import java.util.*;
 
 public class StackOverflowExamples {
 
-    private List<SampleQuestion> list=new ArrayList<>();
+    private List<Long> list=new ArrayList<>();
 
     /**
      * 寻找重排序后效果好的StackOverflow问答对作为例子
      */
-    public static void find() {
+    public static void find(SnowGraphContext context, boolean overWrite) {
 
-        String qaExamplePath=SnowGraphContext.getDataPath()+"/qaexamples";
+        String qaExamplePath=context.getDataDir()+"/qaexamples";
+
+        if (!overWrite&&new File(qaExamplePath).exists())
+            return;
 
         try {
             FileUtils.write(new File(qaExamplePath), "");
@@ -26,14 +30,14 @@ public class StackOverflowExamples {
         }
         int count = 0, irCount = 0;
         int qCnt = 0;
-        for (long queryId : SnowGraphContext.getDocSearcherContext().getStackOverflowQuestionIds()) {
+        for (long queryId : context.getDocSearcherContext().getStackOverflowQuestionIds()) {
             qCnt++;
-            List<DocSearcher.DocSearchResult> list = DocSearcher.search(SnowGraphContext.getDocSearcherContext().getQuery(queryId),SnowGraphContext.getDocSearcherContext());
+            List<DocSearcher.DocSearchResult> list = DocSearcher.search(context.getDocSearcherContext().getQuery(queryId),context);
             if (list.size() < 20)
                 continue;
             for (int i = 0; i < 20; i++) {
                 DocSearcher.DocSearchResult current = list.get(i);
-                if (current.getId() == SnowGraphContext.getDocSearcherContext().getAnswerId(queryId)) {
+                if (current.getId() == context.getDocSearcherContext().getAnswerId(queryId)) {
                     irCount++;
                     //System.out.println(current.newRank+" "+current.irRank);
                     if (current.getNewRank() < current.getIrRank()) {
@@ -54,15 +58,13 @@ public class StackOverflowExamples {
         System.out.println("irCount: " + irCount);
     }
 
-    public SampleQuestion getRandomExampleQuery(){
+    public SampleQuestion getRandomExampleQuery(DocSearcherContext docSearcherContext){
         if (list.size()==0)
             return new SampleQuestion("");
-        return list.get(new Random().nextInt(list.size()));
+        return new SampleQuestion(docSearcherContext.getQuery(list.get(new Random().nextInt(list.size()))));
     }
 
-    public StackOverflowExamples(){
-
-        String exampleFilePath=SnowGraphContext.getDataPath()+"/qaexamples";
+    public StackOverflowExamples(String exampleFilePath){
 
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(exampleFilePath)),
@@ -73,7 +75,7 @@ public class StackOverflowExamples {
                     continue;
                 String[] names = lineTxt.split(" ");
                 long id=Long.parseLong(names[1]);
-                list.add(new SampleQuestion(SnowGraphContext.getDocSearcherContext().getQuery(id)));
+                list.add(id);
             }
             br.close();
         } catch (Exception e) {

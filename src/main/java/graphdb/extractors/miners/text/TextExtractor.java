@@ -23,7 +23,12 @@ public class TextExtractor implements Extractor {
 	@PropertyDeclaration
 	public static final String IS_TEXT = "isText";
 
-    @Override
+	@Override
+	public void config(String[] args) {
+
+	}
+
+	@Override
     public void run(GraphDatabaseService db) {
 		List<List<Node>> nodeSegs = new ArrayList<>();
 
@@ -92,16 +97,6 @@ public class TextExtractor implements Extractor {
 		if (node.hasLabel(Label.label(GitExtractor.COMMITAUTHOR))){
 			node.setProperty(TITLE, node.getProperty(GitExtractor.COMMITAUTHOR_NAME));
 			node.setProperty(TEXT, "");
-			node.setProperty(IS_TEXT, false);
-		}
-		if (node.hasLabel(Label.label(GitExtractor.MUTATEDFILE))){
-			node.setProperty(TITLE, node.getProperty(GitExtractor.MUTATEDFILE_API_NAME));
-			node.setProperty(TEXT, "");
-			node.setProperty(IS_TEXT, false);
-		}
-		if (node.hasLabel(Label.label(GitExtractor.MUTATEDCONTENT))){
-			node.setProperty(TITLE, "");
-			node.setProperty(TEXT, node.getProperty(GitExtractor.MUTATEDCONTENT_CONTENT));
 			node.setProperty(IS_TEXT, false);
 		}
 

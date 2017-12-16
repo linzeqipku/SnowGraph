@@ -24,6 +24,11 @@ public class TransExtractor implements Extractor {
     private GraphDatabaseService db = null;
     private TransE transE = null;
 
+    @Override
+    public void config(String[] args) {
+
+    }
+
     public void run(GraphDatabaseService db) {
         this.db = db;
         transE = new TransE();

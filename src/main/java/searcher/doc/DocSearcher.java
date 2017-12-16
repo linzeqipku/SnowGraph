@@ -1,8 +1,7 @@
 package searcher.doc;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.jsoup.Jsoup;
-import searcher.SnowGraphContext;
+import webapp.SnowGraphContext;
 import searcher.api.ApiLocator;
 import searcher.doc.ir.LuceneSearchResult;
 import searcher.doc.ir.LuceneSearcher;
@@ -48,21 +47,21 @@ public class DocSearcher {
     }
 
     private LuceneSearcher luceneSearcher = null;
-    private DocSearcherContext context;
+    private SnowGraphContext context;
 
-    private DocSearcher(DocSearcherContext context) {
+    private DocSearcher(SnowGraphContext context) {
         this.context=context;
-        this.luceneSearcher = new LuceneSearcher();
+        this.luceneSearcher = new LuceneSearcher(context);
     }
 
-    public static List<DocSearchResult> search(String query, DocSearcherContext context){
+    public static List<DocSearchResult> search(String query, SnowGraphContext context){
         return new DocSearcher(context).search(query);
     }
 
     private List<DocSearchResult> search(String query) {
         List<DocSearchResult> r = new ArrayList<>();
 
-        Set<Long> graph0 = ApiLocator.query(query, SnowGraphContext.getApiLocatorContext(), false).getNodes();
+        Set<Long> graph0 = ApiLocator.query(query, context.getApiLocatorContext(), false).getNodes();
 
         List<LuceneSearchResult> irResultList = luceneSearcher.query(query);
 
@@ -78,15 +77,15 @@ public class DocSearcher {
 
         for (int i = 0; i < r.size(); i++) {
             r.get(i).newRank = i + 1;
-            Pair<String, String> content=context.getContent(r.get(i).id);
+            Pair<String, String> content=context.getDocSearcherContext().getContent(r.get(i).id);
             r.get(i).body=content.getRight();
             r.get(i).title= content.getLeft();
             if (r.get(i).title.length()>100)
                 r.get(i).title=r.get(i).title.substring(0,100)+" ...";
             r.get(i).highlight=false;
-            if (context.qaMap.containsValue(r.get(i).id)){
-                for (long qId:context.qaMap.keySet())
-                    if (context.qaMap.get(qId).equals(r.get(i).id)&&context.queryMap.get(qId).trim().equals(query.trim()))
+            if (context.getDocSearcherContext().qaMap.containsValue(r.get(i).id)){
+                for (long qId:context.getDocSearcherContext().qaMap.keySet())
+                    if (context.getDocSearcherContext().qaMap.get(qId).equals(r.get(i).id)&&context.getDocSearcherContext().queryMap.get(qId).trim().equals(query.trim()))
                         r.get(i).highlight=true;
             }
         }
@@ -98,12 +97,12 @@ public class DocSearcher {
         double r=0;
         double c=0;
         for (long id1:nodeSet1){
-            if (!context.id2Vec.containsKey(id1))
+            if (!context.getApiLocatorContext().id2Vec.containsKey(id1))
                 continue;
             c++;
             double minDist=Double.MAX_VALUE;
             for (long id2:nodeSet2){
-                if (!context.id2Vec.containsKey(id2))
+                if (!context.getApiLocatorContext().id2Vec.containsKey(id2))
                     continue;
                 double dist=dist(id1, id2);
                 if (dist<minDist)
@@ -120,7 +119,7 @@ public class DocSearcher {
     }
 
     private double dist(long node1, long node2){
-        return VectorUtils.dist(node1,node2,context.id2Vec);
+        return VectorUtils.dist(node1,node2,context.getApiLocatorContext().id2Vec);
     }
 
 }

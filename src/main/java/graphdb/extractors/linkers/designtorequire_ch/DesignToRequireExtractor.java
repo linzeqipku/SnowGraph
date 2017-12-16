@@ -150,6 +150,11 @@ public class DesignToRequireExtractor implements Extractor {
         }
     }
 
+    @Override
+    public void config(String[] args) {
+
+    }
+
     public void run(GraphDatabaseService db) {
         this.db = db;
         initSectionMap();

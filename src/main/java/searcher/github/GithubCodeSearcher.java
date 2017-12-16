@@ -16,12 +16,9 @@ import java.util.concurrent.*;
 public class GithubCodeSearcher {
 
     private final String accessToken;
-    private final String apiPrefix;
 
     public GithubCodeSearcher(String accessToken) {
         this.accessToken = accessToken;
-        apiPrefix = "https://api.github.com/search/code?access_token=" + accessToken
-                + "&q=language:Java+";
     }
 
     public static void main(String[] args){

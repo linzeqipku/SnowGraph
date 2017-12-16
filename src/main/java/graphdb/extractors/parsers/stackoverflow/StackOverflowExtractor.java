@@ -129,8 +129,9 @@ public class StackOverflowExtractor implements Extractor {
     private String userXmlPath = null;
     private String postLinkXmlPath = null;
 
-    public void setFolderPath(String path) {
-        this.folderPath = path;
+    @Override
+    public void config(String[] args) {
+        folderPath=args[0];
         this.questionXmlPath = folderPath + "/Questions.xml";
         this.answerXmlPath = folderPath + "/Answers.xml";
         this.commentXmlPath = folderPath + "/Comments.xml";

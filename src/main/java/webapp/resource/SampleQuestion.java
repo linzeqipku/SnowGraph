@@ -1,4 +1,4 @@
-package rest.resource;
+package webapp.resource;
 
 public class SampleQuestion {
 

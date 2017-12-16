@@ -18,14 +18,12 @@ import java.util.Set;
 
 public class DocSearcherContext {
 
-    public final Driver connection;
-    final Map<Long, List<Double>> id2Vec;
+    private final Driver connection;
     final Map<Long, Long> qaMap = new HashMap<>();
     final Map<Long, String> queryMap = new HashMap<>();
 
     public DocSearcherContext(ApiLocatorContext apiLocatorContext) {
         this.connection = apiLocatorContext.connection;
-        id2Vec=apiLocatorContext.id2Vec;
         Session session = connection.session();
         String stat = "match (q:" + StackOverflowExtractor.QUESTION + ")-[:" + StackOverflowExtractor.HAVE_ANSWER + "]->(a:"
                 + StackOverflowExtractor.ANSWER + ") where a." + StackOverflowExtractor.ANSWER_ACCEPTED + "=TRUE return id(q),id(a),q."

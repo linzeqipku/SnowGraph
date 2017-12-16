@@ -15,7 +15,7 @@ public class ApiLocator {
     public class SubGraph {
         private Set<Long> nodes=new HashSet<>();
         private Set<Long> edges=new HashSet<>();
-        double cost,gain;
+        double cost=Double.MAX_VALUE,gain=0;
         public Set<Long> getNodes(){
             return nodes;
         }
@@ -103,7 +103,7 @@ public class ApiLocator {
         candidateMap.clear(); // 清空candidateMap, 对于每个query即时生成
         List<SubGraph> graphs = myFindSubGraphs(queryString);
         //graphs.sort(Comparator.comparingDouble(r -> r.cost));
-        return graphs.get(0);
+        return graphs.size()>0?graphs.get(0):new SubGraph();
     }
 
     private SubGraph idTest(List<Long> idList){

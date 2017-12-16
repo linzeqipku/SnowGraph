@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public enum FileType {
-    APK("apk"), APP("app"), ASP("asp"), ASPX("aspx"), BAK("bak"), BAT("bat"), BIN("bin"), BMP("bmp"), C(
+    APK("apk"), APP("apps"), ASP("asp"), ASPX("aspx"), BAK("bak"), BAT("bat"), BIN("bin"), BMP("bmp"), C(
             "c"), CAB("cab"), CLASS("class"), CLASSPATH("classpath"), CS("cs"), CSS("css"), DAT(
             "dat"), DB("db"), DLL("dll"), DOC("doc"), DOCX("docx"), DTD("dtd"), EOT("eot"), EXE(
             "exe"), FTL("ftl"), GIF("gif"), H("h"), HTM("htm"), HTML("html"), ICO("ico"), JAR("jar"), JAVA(

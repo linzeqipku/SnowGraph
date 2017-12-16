@@ -81,10 +81,6 @@ public class WordKnowledgeExtractor implements Extractor {
     private String docxDirPath = "";
     private GraphDatabaseService db = null;
 
-    public void setDocxFilePath(String docxFilePath) {
-        this.docxDirPath = docxFilePath;
-    }
-
     private void dfs(WordDocumentInfo doc) {
         Node node = db.createNode();
         GraphNodeUtil.createDocumentNode(doc, node);
@@ -177,6 +173,11 @@ public class WordKnowledgeExtractor implements Extractor {
             else
                 parseDocxFile(file2.getAbsolutePath());
         }
+    }
+
+    @Override
+    public void config(String[] args) {
+        docxDirPath=args[0];
     }
 
     public void run(GraphDatabaseService db) {

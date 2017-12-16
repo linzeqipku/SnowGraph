@@ -1,10 +1,10 @@
-package rest.resource;
+package webapp.resource;
 
 import graphdb.extractors.miners.text.TextExtractor;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
-import searcher.SnowGraphContext;
+import webapp.SnowGraphContext;
 
 public class Neo4jNode {
 
@@ -13,9 +13,9 @@ public class Neo4jNode {
     private final String uniformTitle;
     private final String uniformText;
 
-    public static Neo4jNode get(long id){
+    public static Neo4jNode get(long id, SnowGraphContext context){
         Neo4jNode node=null;
-        Session session = SnowGraphContext.getNeo4jBoltDriver().session();
+        Session session = context.getNeo4jBoltDriver().session();
         String stat = "match (n) where id(n)=" + id + " return id(n), labels(n)[0], n."+ TextExtractor.TITLE+", n."+TextExtractor.TEXT;
         StatementResult rs = session.run(stat);
         while (rs.hasNext()) {

@@ -99,10 +99,10 @@ public class BugzillaExtractor implements Extractor {
     // 用户名 - 图节点
     private Map<String, Node> userNodeMap = new HashMap<>();
 
-    public void setFolderPath(String path) {
-        this.folderPath = path;
+    @Override
+    public void config(String[] args) {
+        folderPath=args[0];
     }
-
 
     @Override
     public void run(GraphDatabaseService db) {

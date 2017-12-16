@@ -26,16 +26,10 @@ public class GraphUtil {
 		return hasRelationShip(nodeA, nodeB, RelationshipType.withName(relationshipName));
 	}
 
-	public static void buildGraph(String baseGraphPath, String graphPath, List<Extractor> extractors){
-		File f = new File(graphPath);
-		try {
-			FileUtils.deleteDirectory(f);
-			if (baseGraphPath != null)
-				FileUtils.copyDirectory(new File(baseGraphPath), f);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public static void buildGraph(String path, List<Extractor> extractors, boolean append){
+		File f = new File(path);
+		if (f.exists()&&f.isDirectory()&&!append)
+			System.out.println(path+" exists.");
 		GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(f);
 		for (Extractor extractor : extractors) {
 			extractor.run(db);

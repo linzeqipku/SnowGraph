@@ -65,8 +65,9 @@ public class MailListExtractor implements Extractor {
     private static Charset charset = Charset.forName("UTF-8");
     private final static CharsetDecoder DECODER = charset.newDecoder();
 
-    public void setMboxPath(String path) {
-        this.mboxPath = path;
+    @Override
+    public void config(String[] args) {
+        mboxPath=args[0];
     }
 
     public void run(GraphDatabaseService db) {

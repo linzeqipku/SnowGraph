@@ -1,9 +1,9 @@
-package rest.resource;
+package webapp.resource;
 
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
-import searcher.SnowGraphContext;
+import webapp.SnowGraphContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +13,9 @@ public class Neo4jRelation {
     private final long startNode,endNode,id;
     private final String type;
 
-    public static List<Neo4jRelation> getNeo4jRelationList(long nodeId){
+    public static List<Neo4jRelation> getNeo4jRelationList(long nodeId, SnowGraphContext context){
         List<Neo4jRelation> list=new ArrayList<>();
-        Session session = SnowGraphContext.getNeo4jBoltDriver().session();
+        Session session = context.getNeo4jBoltDriver().session();
         String stat = "match p=(n)-[r]-(x) where id(n)=" + nodeId + " return id(r), id(startNode(r)), id(endNode(r)), type(r)";
         StatementResult rs = session.run(stat);
         while (rs.hasNext()) {
@@ -26,9 +26,9 @@ public class Neo4jRelation {
         return list;
     }
 
-    public static Neo4jRelation get(long rId){
+    public static Neo4jRelation get(long rId, SnowGraphContext context){
         Neo4jRelation r=null;
-        Session session = SnowGraphContext.getNeo4jBoltDriver().session();
+        Session session = context.getNeo4jBoltDriver().session();
         String stat = "match p=(n)-[r]-(x) where id(r)=" + rId + " return id(r), id(startNode(r)), id(endNode(r)), type(r)";
         StatementResult rs = session.run(stat);
         while (rs.hasNext()) {

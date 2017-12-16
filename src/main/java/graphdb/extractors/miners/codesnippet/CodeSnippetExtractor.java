@@ -99,6 +99,11 @@ public class CodeSnippetExtractor implements Extractor {
 	}
 
 	@Override
+	public void config(String[] args) {
+
+	}
+
+	@Override
 	public void run(GraphDatabaseService db) {
 		if (parseMail) extractFromMail(db);
 		if (parseStackoverflow) extractFromStackoverflow(db);

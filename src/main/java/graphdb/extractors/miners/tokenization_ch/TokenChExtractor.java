@@ -32,6 +32,11 @@ public class TokenChExtractor implements Extractor {
     }
 
     @Override
+    public void config(String[] args) {
+
+    }
+
+    @Override
     public void run(GraphDatabaseService db) {
         this.db = db;
         try(Transaction tx = db.beginTx()) {

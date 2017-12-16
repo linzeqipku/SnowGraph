@@ -34,7 +34,12 @@ public class ReferenceExtractor implements Extractor {
     private GraphDatabaseService db = null;
     private CodeIndexes codeIndexes = null;
 
-    private Map<Node, String> nodeToTextMap = new HashMap<>();
+    private Set<Node> textNodes = new HashSet<>();
+
+    @Override
+    public void config(String[] args) {
+
+    }
 
     public void run(GraphDatabaseService db) {
         this.db = db;
@@ -51,34 +56,36 @@ public class ReferenceExtractor implements Extractor {
         			continue;
         		if (node.hasLabel(Label.label(JavaCodeExtractor.FIELD)))
         			continue;
-        		
-        		String text="";
-        		if (node.hasLabel(Label.label(StackOverflowExtractor.QUESTION))){
-        			text="<h2>"+node.getProperty(StackOverflowExtractor.QUESTION_TITLE)+"</h2>";
-        			text+=(String) node.getProperty(StackOverflowExtractor.QUESTION_BODY);
-        		}
-        		else if (node.hasLabel(Label.label(StackOverflowExtractor.ANSWER)))
-        			text=(String) node.getProperty(StackOverflowExtractor.ANSWER_BODY);
-        		else if (node.hasLabel(Label.label(StackOverflowExtractor.COMMENT)))
-        			text=(String) node.getProperty(StackOverflowExtractor.COMMENT_TEXT);
-        		else {
-        			text=(String) node.getProperty(TextExtractor.TITLE);
-            		text+=" "+node.getProperty(TextExtractor.TEXT);
-        		}
-        		
-        		nodeToTextMap.put(node, text);
+        		textNodes.add(node);
         	}
         	fromHtmlToCodeElement();
-        	fromTextToJiraOrCommit();
-        	fromPatchToCodeElement();
+        	fromTextToJira();
+        	fromDiffToCodeElement();
         	tx.success();
         }
     }
 
+    private String text(Node node){
+        String text="";
+        if (node.hasLabel(Label.label(StackOverflowExtractor.QUESTION))){
+            text="<h2>"+node.getProperty(StackOverflowExtractor.QUESTION_TITLE)+"</h2>";
+            text+=(String) node.getProperty(StackOverflowExtractor.QUESTION_BODY);
+        }
+        else if (node.hasLabel(Label.label(StackOverflowExtractor.ANSWER)))
+            text=(String) node.getProperty(StackOverflowExtractor.ANSWER_BODY);
+        else if (node.hasLabel(Label.label(StackOverflowExtractor.COMMENT)))
+            text=(String) node.getProperty(StackOverflowExtractor.COMMENT_TEXT);
+        else {
+            text=(String) node.getProperty(TextExtractor.TITLE);
+            text+=" "+node.getProperty(TextExtractor.TEXT);
+        }
+        return text;
+    }
+
     private void fromHtmlToCodeElement() {
         try (Transaction tx = db.beginTx()) {
-            for (Node srcNode : nodeToTextMap.keySet()) {
-                String content = nodeToTextMap.get(srcNode);
+            for (Node srcNode : textNodes) {
+                String content = text(srcNode);
                 Set<String> tokens = new HashSet<>();
                 for (String token : content.split("\\W+"))
                     if (token.length() > 0)
@@ -141,25 +148,20 @@ public class ReferenceExtractor implements Extractor {
         }
     }
     
-    private void fromTextToJiraOrCommit(){
+    private void fromTextToJira(){
     	Map<String, Node> jiraMap=new HashMap<>();
-    	Map<String, Node> commitMap=new HashMap<>();
     	try (Transaction tx = db.beginTx()) {
     		for (Node node:db.getAllNodes()){
     			if (node.hasLabel(Label.label(JiraExtractor.ISSUE))){
     				String name=(String) node.getProperty(JiraExtractor.ISSUE_NAME);
     				jiraMap.put(name, node);
     			}
-    			else if (node.hasLabel(Label.label(GitExtractor.COMMIT))){
-    				String name=(String) node.getProperty(GitExtractor.COMMIT_VERSION);
-    				commitMap.put(name, node);
-    			}
     		}
     		tx.success();
     	}
     	try (Transaction tx = db.beginTx()) {
-            for (Node srcNode : nodeToTextMap.keySet()) {
-                String content = nodeToTextMap.get(srcNode);
+            for (Node srcNode : textNodes) {
+                String content = text(srcNode);
                 Set<String> tokenSet=new HashSet<>();
                 for (String e:content.split("[^A-Za-z0-9\\-_]+"))
                 	tokenSet.add(e);
@@ -167,31 +169,37 @@ public class ReferenceExtractor implements Extractor {
                 	if (tokenSet.contains(jiraName))
                 		srcNode.createRelationshipTo(jiraMap.get(jiraName), RelationshipType.withName(REFERENCE));
                 }
-                for (String version:commitMap.keySet()){
-                	if (tokenSet.contains(version)||tokenSet.contains("r"+version))
-                		srcNode.createRelationshipTo(commitMap.get(version), RelationshipType.withName(REFERENCE));
-                }
             }
             tx.success();
     	}
     }
 
-    private void fromPatchToCodeElement(){
+    private void fromDiffToCodeElement(){
     	
-    	HashMap<String, Node> patchMap = new HashMap<>();
+    	HashMap<String, Node> diffMap = new HashMap<>();
     	try (Transaction tx = db.beginTx()) {
     		for (Node node:db.getAllNodes()){
     			if (node.hasLabel(Label.label(JiraExtractor.PATCH))){
     				String name=(String) node.getProperty(JiraExtractor.PATCH_NAME);
-    				patchMap.put(name, node);
+                    diffMap.put(name, node);
     			}
+                if (node.hasLabel(Label.label(GitExtractor.COMMIT))){
+                    String name=(String) node.getProperty(GitExtractor.COMMIT_ID);
+                    diffMap.put(name, node);
+                }
     		}
-    		for (Node patchNode:patchMap.values()){
-    			String content=(String) patchNode.getProperty(JiraExtractor.PATCH_CONTENT);
+    		for (Node diffNode:diffMap.values()){
+    		    String content="";
+    		    if (diffNode.hasLabel(Label.label(JiraExtractor.PATCH))) {
+                    content = (String) diffNode.getProperty(JiraExtractor.PATCH_CONTENT);
+                }
+                if (diffNode.hasLabel(Label.label(GitExtractor.COMMIT))) {
+                    content = (String) diffNode.getProperty(GitExtractor.COMMIT_CONTENT);
+                }
     			for (String typeName:codeIndexes.typeMap.keySet()){
     				String str=typeName.replace(".", "/")+".java";
     				if (content.contains(str))
-    					patchNode.createRelationshipTo(db.getNodeById(codeIndexes.typeMap.get(typeName)), RelationshipType.withName(REFERENCE));
+    					diffNode.createRelationshipTo(db.getNodeById(codeIndexes.typeMap.get(typeName)), RelationshipType.withName(REFERENCE));
     			}
     		}
     		tx.success();

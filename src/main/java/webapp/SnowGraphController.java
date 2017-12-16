@@ -2,6 +2,7 @@ package webapp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import searcher.github.GithubCodeSearcher;
 import webapp.resource.*;
 import searcher.api.ApiLocator;
 import searcher.doc.DocSearcher;
@@ -43,6 +44,11 @@ public class SnowGraphController {
     @RequestMapping(value = "/nav", method = {RequestMethod.GET,RequestMethod.POST})
     public NavResult nav(){
         return context.getNav();
+    }
+
+    @RequestMapping(value = "/searchGithub", method = {RequestMethod.GET,RequestMethod.POST})
+    public List<String> searchGithub(@RequestParam(value="query", defaultValue="") String query){
+        return new GithubCodeSearcher(context.getGithubAccessToken()).search(query, GithubCodeSearcher.RETURN_MODE.URL);
     }
 
 }

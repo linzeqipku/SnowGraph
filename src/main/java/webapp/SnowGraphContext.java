@@ -19,6 +19,7 @@ public class SnowGraphContext {
 	@Autowired
 	public SnowGraphContext(SnowGraphConfig config){
 		this.dataDir=config.getDataDir();
+		this.githubAccessToken=config.getGithubAccessToken();
 		this.neo4jBoltConnection = GraphDatabase.driver(config.getBoltUrl(), AuthTokens.basic("neo4j", "123"));
 		this.apiLocatorContext = new ApiLocatorContext(neo4jBoltConnection);
 		this.docSearcherContext = new DocSearcherContext(apiLocatorContext);
@@ -28,6 +29,7 @@ public class SnowGraphContext {
 	}
 
 	private String dataDir = null;
+	private String githubAccessToken = null;
 	private Driver neo4jBoltConnection = null;
 	private ApiLocatorContext apiLocatorContext=null;
 	private DocSearcherContext docSearcherContext = null;
@@ -51,6 +53,9 @@ public class SnowGraphContext {
 	}
 	public String getDataDir(){
 		return dataDir;
+	}
+	public String getGithubAccessToken() {
+		return githubAccessToken;
 	}
 
 	public void preprocess(){

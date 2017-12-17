@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix="snowGraph")
 class SnowGraphConfig {
+    private String projectPackageName;
     private String boltUrl;
     private String dataDir;
     private String githubAccessToken;
@@ -27,5 +28,11 @@ class SnowGraphConfig {
     }
     public void setGithubAccessToken(String githubAccessToken) {
         this.githubAccessToken = githubAccessToken;
+    }
+    public String getProjectPackageName() {
+        return projectPackageName;
+    }
+    public void setProjectPackageName(String projectPackageName) {
+        this.projectPackageName = projectPackageName;
     }
 }

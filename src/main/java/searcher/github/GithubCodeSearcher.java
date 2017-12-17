@@ -10,9 +10,7 @@ import webapp.SnowGraphContext;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,14 +54,17 @@ public class GithubCodeSearcher {
 
     private List<String> convertStringToKeywords(String query){
         List<String> r=new ArrayList<>();
+        Set<String> wordSet=new HashSet<>();
         for (Long node:ApiLocator.query(query,context.getApiLocatorContext(),false).getNodes()){
-            String sig=context.getApiLocatorContext().getId2Sig().get(node);
-            if (sig.contains("("))
-                sig=sig.substring(0,sig.indexOf("("));
-            Matcher matcher= Pattern.compile("\\w+").matcher(sig);
+            String name=context.getApiLocatorContext().getId2Name().get(node);
+            if (name.contains("("))
+                name=name.substring(0,name.indexOf("("));
+            Matcher matcher= Pattern.compile("\\w+").matcher(name);
             while (matcher.find())
-                r.add(matcher.group());
+                wordSet.add(matcher.group());
         }
+        r.addAll(wordSet);
+        r.add(context.getProjectPackageName());
         return r;
     }
 
@@ -75,6 +76,7 @@ public class GithubCodeSearcher {
 
     public List<String> searchByUrl(String url, RETURN_MODE mode) throws IOException {
         List<String> r=new ArrayList<>();
+        System.out.println(url);
         String str=Request.Get(url).connectTimeout(10000).socketTimeout(10000).execute().returnContent().asString();
         if (str==null)
             return new ArrayList<>();

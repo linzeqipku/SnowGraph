@@ -80,4 +80,12 @@ public class ApiLocatorContext {
         }
         session.close();
     }
+
+    public Map<Long, String> getId2Sig() {
+        return id2Sig;
+    }
+
+    public Map<Long, String> getId2Name() {
+        return id2Name;
+    }
 }

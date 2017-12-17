@@ -1,57 +1,40 @@
 # Software Knowledge Graph
 
-![status](https://img.shields.io/badge/status-InDev-bronze.svg)
 ![licence](https://img.shields.io/badge/license-Apache2.0-blue.svg)
 
-buildgraph.SnowGraph is a tool for data analytics, knowledge mining and question answering in software development, maintenance and reuse activities.
+SnowGraph is a software data analytics platform.
 
 ## Features
 
+* Data format support
+
+  * Source code, version control, issue tracking, mailing lists, documentation, online discussions.
+
+* Trace recovery
+
+  * Entities extracted from different data sources are linked automatically through multiple traceability recovery techniques.
+  
 * Data analytics
-
-  * From multi-source and heterogeneous software engineering data (e.g., source code, version control, documentation, mailing list, issue tracker and online forum) to a uniform graph
-    
-    * Entities: classes, methods, commits, document sections, users, emails, issue reports, forum posts, ...
-    
-    * Traces (relations): inheritance, method_invocation, have_document_section, code_element_mentioned_in, ...
-    
-  * Graph query language and graphical browsing interface
   
-  * High extendability for various data types
-
-* Knowledge mining
-
-  * Extract knowledge from the graph
+  * Software data are stored in a neo4j graph database.
+  * We can use Neo4j's graph query language, Cypher, to query software data.
+  * Different data analytics methods can be implemented as a reusable component using a uniform interface.
   
-    * API usage examples, API semantic representations, business topics, domain ontologies, ...
+* In-dev Applications
+  * Natural language interface for querying the graph database
+  * API-aware text understanding
+  * QAbot based on text analysis
+  * QAbot based on program analysis
     
-  * High extendability for various knowledge mining algorithms
+## Development Environment
 
-* Question answering
+* ![java](https://img.shields.io/badge/java->=1.8.0-blue.svg)
 
-  * Graph-based question answering
+* ![maven](https://img.shields.io/badge/maven->=3.2.0-blue.svg)
 
-    * Question example: "Which developer answered the most emails about class RAMDirectory?"
-  
-  * Text-based question answering
+* ![IntelliJ IDEA](https://img.shields.io/badge/IntelliJ->=2017.3-blue.svg)
 
-    * Find passages from the graph to answer questions
-    
-    * Question example: "How to get all field names in an IndexReader?"
-    
-## Dependencies
-
-* Programming language
- 
-  ![java](https://img.shields.io/badge/java->=1.8.0-blue.svg)
-  
-* Project management
- 
-  ![maven](https://img.shields.io/badge/maven->=3.2.0-blue.svg)
-  
-* Graph database engine
- 
-  ![neo4j](https://img.shields.io/badge/neo4j->=3.2.0-blue.svg)
+* ![neo4j](https://img.shields.io/badge/neo4j->=3.2.0-blue.svg)
     
 ## Building a Graph
 
@@ -59,53 +42,24 @@ Example input data:
 
 * [Lucene-data.zip](http://pan.baidu.com/s/1gfF4PZt)
 
-Write a spring bean property xml file, like this:
+edit snowgraph-builder.yml, like:
 
 ```
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean id="graph" class="graphdb.framework.GraphBuilder">
-    	<property name="graphPath" value="E:/SnowGraphData/lucene/graphdb-base"/>
-        <property name="extractors">
-            <list>
-                <ref bean="codegraph" />
-                <ref bean="sograph" />
-                <ref bean="mailgraph" />
-                <ref bean="issuegraph" />
-                <ref bean="gitgraph" />
-                <ref bean="line" />
-                <ref bean="text" />
-                <ref bean="apimention" />
-                <ref bean="reference" />
-            </list>
-        </property>
-    </bean>
-    <bean id="codegraph" class="graphdb.extractors.parsers.javacode.JavaCodeExtractor">
-        <property name="srcPath" value="E:/SnowGraphData/lucene/sourcecode" />
-    </bean>
-    <bean id="gitgraph" class="graphdb.extractors.parsers.git.GitExtractor">
-        <property name="gitFolderPath" value="E:/SnowGraphData/lucene/git" />
-    </bean>
-    <bean id="sograph" class="graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor">
-        <property name="folderPath" value="E:/SnowGraphData/lucene/stackoverflow" />
-    </bean>
-    <bean id="issuegraph" class="graphdb.extractors.parsers.jira.JiraExtractor">
-        <property name="issueFolderPath" value="E:/SnowGraphData/lucene/jira" />
-    </bean>
-    <bean id="mailgraph" class="graphdb.extractors.parsers.mail.MailListExtractor">
-        <property name="mboxPath" value="E:/SnowGraphData/lucene/mbox" />
-    </bean>
-    <bean id="line" class="graphdb.extractors.miners.codeembedding.line.LINEExtractor" />
-    <bean id="text" class="graphdb.extractors.miners.text.TextExtractor" />
-    <bean id="apimention" class="graphdb.extractors.linkers.apimention.ApiMentionExtractor" />
-    <bean id="reference" class="graphdb.extractors.linkers.ref.ReferenceExtractor" />
-</beans>
+graphPath: E:/SnowGraphData/lucene/graphdb-tmp
+
+extractors:
+    - graphdb.extractors.parsers.javacode.JavaCodeExtractor E:/SnowGraphData/lucene/sourcecode
+    - graphdb.extractors.parsers.git.GitExtractor E:/SnowGraphData/lucene/git
+    - graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor E:/SnowGraphData/lucene/stackoverflow
+    - graphdb.extractors.parsers.jira.JiraExtractor E:/SnowGraphData/lucene/jira
+    - graphdb.extractors.parsers.mail.MailListExtractor E:/SnowGraphData/lucene/mbox
+    - graphdb.extractors.miners.text.TextExtractor
+    - graphdb.extractors.miners.codeembedding.line.LINEExtractor
+    - graphdb.extractors.linkers.apimention.ApiMentionExtractor
+    - graphdb.extractors.linkers.ref.ReferenceExtractor
 ```
 
-Run ```apps.buildgraph.BuildGraph {property_xml_file_path}``` (need a large memory allocation pool for JVM, for example, set VM arguments to ```-Xms5000m -Xmx5000m```).
+Run ```graphdb.framework.SnowGraphBuilder``` (VM arguments: ```-Xms2000m -Xmx2000m```).
 This process may take a long time.
 
 With the above property file, the graph database is generated in ```E:/SnowGraphData/lucene/graphdb-base```.

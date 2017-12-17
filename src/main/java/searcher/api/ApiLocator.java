@@ -107,9 +107,12 @@ public class ApiLocator {
 		 */
         candidateMap.clear(); // 清空candidateMap, 对于每个query即时生成
         List<SubGraph> graphs = myFindSubGraphs(queryString);
-        if (debug)
-            System.out.println(graphs.get(0).getNodes());
-        return graphs.get(0);
+        if (graphs.size() > 0) {
+            if (debug)
+                System.out.println(graphs.get(0).getNodes());
+            return graphs.get(0);
+        }
+        return new SubGraph();
     }
 
     private SubGraph idTest(List<Long> idList){

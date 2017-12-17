@@ -48,7 +48,7 @@ public class SnowGraphController {
 
     @RequestMapping(value = "/searchGithub", method = {RequestMethod.GET,RequestMethod.POST})
     public List<String> searchGithub(@RequestParam(value="query", defaultValue="") String query){
-        return new GithubCodeSearcher(context.getGithubAccessToken()).search(query, GithubCodeSearcher.RETURN_MODE.URL);
+        return new GithubCodeSearcher(context).search(query, GithubCodeSearcher.RETURN_MODE.URL);
     }
 
 }

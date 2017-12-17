@@ -26,6 +26,7 @@ public class ApiLocator {
         }
     }
 
+    private static final boolean debug = false;
     private static final double RHO = 0.25;
     private static final String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
             + JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD + "|"
@@ -42,6 +43,8 @@ public class ApiLocator {
     }
 
     public static SubGraph query(String queryString, ApiLocatorContext context, boolean expand){
+        if (debug)
+            return new ApiLocator(context).query(queryString);
         return expand?new ApiLocator(context).queryExpand(queryString):new ApiLocator(context).query(queryString);
     }
 
@@ -104,7 +107,8 @@ public class ApiLocator {
 		 */
         candidateMap.clear(); // 清空candidateMap, 对于每个query即时生成
         List<SubGraph> graphs = myFindSubGraphs(queryString);
-        System.out.println(graphs.get(0).getNodes());
+        if (debug)
+            System.out.println(graphs.get(0).getNodes());
         return graphs.get(0);
     }
 
@@ -378,10 +382,12 @@ public class ApiLocator {
 
         for (String name : fullNameMatchMap.keySet()) {
             Set<Long> nodes = fullNameMatchMap.get(name);
-            for (long id: nodes){ // 全名匹配的结点 score = 1
+
+            for (long id: nodes) // 全名匹配的结点 score = 1
                 scoreMap.put(id, 1.0);
-            }
-            System.out.println(name + " " + nodes);
+
+            if (debug)
+                System.out.println(name + " " + nodes);
 
             if (nodes.size() == 1) { // 如果全名匹配的只有一个结点，那么加入anchor中
                 anchors.addAll(nodes);
@@ -397,7 +403,8 @@ public class ApiLocator {
                     candidateMap.putAll(fullNameMatchMap);
             }
         }
-        System.out.println("anchor" + anchors);
+        if (debug)
+            System.out.println("anchor" + anchors);
         return anchors;
     }
 

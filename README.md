@@ -8,7 +8,7 @@ SnowGraph is a software data analytics platform.
 
 * Data format support
 
-  * Source code, version control, issue tracking, mailing lists, documentation, online discussions.
+  * Source code, version control, issue tracking, mailing lists, documentation, online discussions.
 
 * Trace recovery
 
@@ -62,4 +62,4 @@ extractors:
 Run ```graphdb.framework.SnowGraphBuilder``` (VM arguments: ```-Xms2000m -Xmx2000m```).
 This process may take a long time.
 
-With the above property file, the graph database is generated in ```E:/SnowGraphData/lucene/graphdb-base```.
+With the above property file, the graph database is generated in ```E:/SnowGraphData/lucene/graphdb-tmp```.

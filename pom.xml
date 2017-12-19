@@ -267,5 +267,11 @@
             <artifactId>snakeyaml</artifactId>
             <version>1.19</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-core</artifactId>
+            <version>3.5.7</version>
+        </dependency>
+
     </dependencies>
 </project>

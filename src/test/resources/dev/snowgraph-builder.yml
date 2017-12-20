@@ -1,0 +1,12 @@
+graphPath: E:/SnowGraphData/lucene/graphdb-tmp
+
+extractors:
+    - graphdb.extractors.parsers.javacode.JavaCodeExtractor E:/SnowGraphData/lucene/sourcecode
+    - graphdb.extractors.parsers.git.GitExtractor E:/SnowGraphData/lucene/git
+    - graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor E:/SnowGraphData/lucene/stackoverflow
+    - graphdb.extractors.parsers.jira.JiraExtractor E:/SnowGraphData/lucene/jira
+    - graphdb.extractors.parsers.mail.MailListExtractor E:/SnowGraphData/lucene/mbox
+    - graphdb.extractors.miners.text.TextExtractor
+    - graphdb.extractors.miners.codeembedding.line.LINEExtractor
+    - graphdb.extractors.linkers.apimention.ApiMentionExtractor
+    - graphdb.extractors.linkers.ref.ReferenceExtractor

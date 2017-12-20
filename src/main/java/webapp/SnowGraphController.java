@@ -2,7 +2,7 @@ package webapp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import searcher.github.GithubCodeSearcher;
+import searcher.codepattern.GithubCodeSearcher;
 import webapp.resource.*;
 import searcher.api.ApiLocator;
 import searcher.doc.DocSearcher;

@@ -1,12 +1,14 @@
 package searcher.codepattern.code.cfg.basiccfg;
 
 import com.google.common.collect.ImmutableSet;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import searcher.codepattern.adt.graph.Node;
 import searcher.codepattern.code.cfg.CFG;
 import searcher.codepattern.code.cfg.SSACFGConverter;
 import searcher.codepattern.code.cfg.ddg.DDG;
 import searcher.codepattern.code.ir.IRRepresentation;
+import searcher.codepattern.code.ir.UnsupportedSyntaxException;
 import searcher.codepattern.code.ir.VariableUnit;
 import searcher.codepattern.code.ir.statement.IRAssignment;
 import searcher.codepattern.code.ir.statement.IRLabel;
@@ -20,7 +22,7 @@ import java.util.*;
  * @author huacy
  */
 public class BasicCFG implements CFG {
-	public static final Logger logger = Logger.getLogger(BasicCFG.class);
+	private static Logger logger = LoggerFactory.getLogger(BasicCFG.class);
 
 	private int maxBlockNum = 0;
 	private boolean isSSAForm = false;
@@ -228,7 +230,10 @@ public class BasicCFG implements CFG {
 		try {
 			IRRepresentation body = IRRepresentation.create(methodBody);
 			return createCFG(body, isSSAForm);
-		} catch (UnsupportedOperationException e) {
+		} catch (UnsupportedSyntaxException e) {
+			logger.warn("Unsupported syntax!");
+			logger.warn("\n" + methodBody);
+			logger.warn("{}", e.getStackTrace()[0]);
 			return null;
 		} catch (NullPointerException e) {
 			logger.error("Null Pointer Exception!");

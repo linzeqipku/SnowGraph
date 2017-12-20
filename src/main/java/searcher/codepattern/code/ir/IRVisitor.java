@@ -29,7 +29,7 @@ public class IRVisitor extends GenericVisitorAdapter<VisitorResult, VisitorConte
     // - Body ----------------------------------------------
     @Override
     public VisitorResult visit(ReceiverParameter n, VisitorContext arg) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedSyntaxException();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class IRVisitor extends GenericVisitorAdapter<VisitorResult, VisitorConte
 
     @Override
     public VisitorResult visit(LabeledStmt n, VisitorContext arg) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedSyntaxException();
     }
 
     @Override
@@ -136,7 +136,7 @@ public class IRVisitor extends GenericVisitorAdapter<VisitorResult, VisitorConte
 
     @Override
     public VisitorResult visit(ContinueStmt n, VisitorContext arg) {
-        if (n.getLabel().isPresent()) throw new UnsupportedOperationException();
+        if (n.getLabel().isPresent()) throw new UnsupportedSyntaxException();
         arg.addStatement(new IRGoto(arg.getContinueLabel()));
         return arg;
     }
@@ -467,17 +467,17 @@ public class IRVisitor extends GenericVisitorAdapter<VisitorResult, VisitorConte
     // - Special ----------------------------------------
     @Override
     public VisitorResult visit(LambdaExpr n, VisitorContext arg) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedSyntaxException();
     }
 
     @Override
     public VisitorResult visit(MethodReferenceExpr n, VisitorContext arg) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedSyntaxException();
     }
 
     @Override
     public VisitorResult visit(TypeExpr n, VisitorContext arg) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedSyntaxException();
     }
 
     @Override

@@ -1,6 +1,0 @@
-lucene
-solr
-net
-java
-elasticsearch
-mongodb

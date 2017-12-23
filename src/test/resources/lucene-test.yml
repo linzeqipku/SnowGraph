@@ -1,8 +1,15 @@
 items:
-    - query: analyzer
+
+    - query: get string representation of Terms using HighFreqTerms
       apis:
-          - org.apache.lucene.analysis.Analyzer
-    - query: stream token query parser
+          - org.apache.lucene.misc.HighFreqTerms.getHighFreqTerms(IndexReader reader, int numTerms, String field, Comparator<TermStats> comparator)
+          - org.apache.lucene.misc.TermStats
+          - org.apache.lucene.util.BytesRef.toString()
+
+    - query: merge several taxonomy indexes for faceted search
       apis:
-          - org.apache.lucene.analysis.TokenStream
-          - org.apache.lucene.queryparser.classic.QueryParser
+          - org.apache.lucene.facet.taxonomy.TaxonomyMergeUtils
+
+    - query: create a query using wildcards and projections
+      apis:
+          - org.apache.lucene.search.WildcardQuery

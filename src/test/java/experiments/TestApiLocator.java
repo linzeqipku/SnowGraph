@@ -5,6 +5,7 @@ import experiments.entity.ApiLocatorResult;
 import experiments.entity.TestDataItem;
 import experiments.entity.TestDataSet;
 import org.apache.commons.io.FileUtils;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,11 @@ public class TestApiLocator {
     private String optDir="E:/test/snow/";
 
     @Test
-    public void test() throws IOException {
+    public void test() throws IOException, ParseException {
 
         TestDataSet testDataSet=new Yaml().loadAs(new FileInputStream(new File(SnowGraphContext.class.getResource("/").getPath()+"lucene-test.yml")),TestDataSet.class);
+
+        FileUtils.deleteDirectory(new File(optDir));
 
         for (TestDataItem testDataItem:testDataSet.getItems()){
             ApiLocatorResult apiLocatorResult=new ApiLocatorResult();
@@ -49,6 +52,7 @@ public class TestApiLocator {
             String itemDir=optDir+"/"+testDataItem.getQuery().replace(" ","_")+"/";
             DumperOptions options=new DumperOptions();
             options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+            options.setSplitLines(false);
             FileUtils.write(new File(itemDir+"/apiLocation.txt"),new Yaml(options).dump(apiLocatorResult));
             List<Graph<MiningNode, Integer>> graphs= CodePatternSearcher.run(testDataItem.getQuery(),context);
             for (int i=0;i<graphs.size();i++){

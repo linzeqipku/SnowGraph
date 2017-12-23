@@ -217,7 +217,7 @@ public class ApiLocator {
         List<SubGraph> r = new ArrayList<>();
 
         Set<String> queryWordSet = WordsConverter.convertWithoutStem(queryString);
-        System.out.println(queryWordSet);
+        //System.out.println(queryWordSet);
         Set<Long> anchors = findAnchors(queryWordSet); // 可能修改candidateMap, scoreMap
 
         // 做 beamsearch 时寻找候选时可以stem，扩大匹配的范围

@@ -1,0 +1,8 @@
+items:
+    - query: analyzer
+      apis:
+          - org.apache.lucene.analysis.Analyzer
+    - query: stream token query parser
+      apis:
+          - org.apache.lucene.analysis.TokenStream
+          - org.apache.lucene.queryparser.classic.QueryParser

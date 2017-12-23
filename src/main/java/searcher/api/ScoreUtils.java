@@ -30,7 +30,6 @@ public class ScoreUtils {
             }
             System.out.println("word2vec map size: " + word2VecMap.size());
         }catch (IOException e){
-            e.printStackTrace();
         }
     }
 

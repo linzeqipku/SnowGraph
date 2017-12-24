@@ -16,13 +16,16 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import searcher.api.ApiLocator;
 import searcher.codepattern.CodePatternSearcher;
+import searcher.codepattern.code.cfg.CFG;
 import searcher.codepattern.code.mining.MiningNode;
+import searcher.codepattern.utils.CFGUtil;
 import webapp.SnowGraphContext;
 import webapp.SnowView;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -57,7 +60,9 @@ public class TestApiLocator {
             List<Graph<MiningNode, Integer>> graphs= CodePatternSearcher.run(testDataItem.getQuery(),context);
             for (int i=0;i<graphs.size();i++){
                 Graph<MiningNode, Integer> graph=graphs.get(i);
-                FileUtils.write(new File(itemDir+"/"+(i+1)+".txt"), graph.toString());
+                File file=new File(itemDir+"/"+(i+1)+".txt");
+                FileUtils.write(file,"");
+                CFGUtil.printGraph(graph,new PrintStream(file));
             }
         }
 

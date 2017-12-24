@@ -36,17 +36,17 @@ public class CodePatternSearcher {
             .flatMap(List::stream)
             .collect(Collectors.toList());
 
-        methods=rankMethods(methods,query);
+        List<String> snippets=search(methods,query,50);
 
-        return Miner.mine(methods, Miner.createSetting(4, 3));
+        return Miner.mine(snippets, Miner.createSetting(4, 3));
 
     }
 
-    private static List<String> rankMethods(List<String> methods, String query) throws IOException, ParseException {
+    private static List<String> search(List<String> contents, String query, int n) throws IOException, ParseException {
         List<String> r=new ArrayList<>();
         Directory dir=new RAMDirectory();
         IndexWriter indexWriter=new IndexWriter(dir, new IndexWriterConfig(new EnglishAnalyzer()));
-        for (String method:methods){
+        for (String method:contents){
             Document document=new Document();
             document.add(new TextField("content",method, Field.Store.YES));
             indexWriter.addDocument(document);
@@ -54,7 +54,7 @@ public class CodePatternSearcher {
         indexWriter.close();
         QueryParser qp = new QueryParser("content", new EnglishAnalyzer());
         IndexSearcher indexSearcher = new IndexSearcher(DirectoryReader.open(dir));
-        TopDocs topDocs = indexSearcher.search(qp.parse(query), 50);
+        TopDocs topDocs = indexSearcher.search(qp.parse(query), n);
         for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
             r.add(indexSearcher.doc(scoreDoc.doc).get("content"));
         }

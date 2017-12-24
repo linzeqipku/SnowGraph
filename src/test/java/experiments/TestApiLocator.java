@@ -36,10 +36,10 @@ public class TestApiLocator {
     @Autowired
     private SnowGraphContext context;
 
-    private String optDir="E:/test/snow/";
-
     @Test
     public void test() throws IOException, ParseException {
+
+        String optDir=context.getDataDir()+"/test_api_locator";
 
         TestDataSet testDataSet=new Yaml().loadAs(new FileInputStream(new File(SnowGraphContext.class.getResource("/").getPath()+"lucene-test.yml")),TestDataSet.class);
 
@@ -57,6 +57,7 @@ public class TestApiLocator {
             options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
             options.setSplitLines(false);
             FileUtils.write(new File(itemDir+"/apiLocation.txt"),new Yaml(options).dump(apiLocatorResult));
+            /*
             List<Graph<MiningNode, Integer>> graphs= CodePatternSearcher.run(testDataItem.getQuery(),context);
             for (int i=0;i<graphs.size();i++){
                 Graph<MiningNode, Integer> graph=graphs.get(i);
@@ -64,6 +65,7 @@ public class TestApiLocator {
                 FileUtils.write(file,"");
                 CFGUtil.printGraph(graph,new PrintStream(file));
             }
+            */
         }
 
     }

@@ -26,6 +26,20 @@ public class CodeInDocxFileExtractor implements Extractor {
 
     }
 
+    public int countCommonWords(String s, String t) {
+        String[] tokenS = s.split(".");
+        String[] tokenT = t.split(".");
+        int ret = 0;
+        for(String t1: tokenS) {
+            for(String t2: tokenT) {
+                if(t1.equals(t2)) {
+                    ret++;
+                }
+            }
+        }
+        return ret;
+    }
+
     public void run(GraphDatabaseService db) {
         this.db = db;
         CodeIndexes codeIndexes = new CodeIndexes(db);
@@ -46,13 +60,21 @@ public class CodeInDocxFileExtractor implements Extractor {
                     // check whether the package name is identical as well
                     if(!methodShortNameMap.containsKey(api)) continue;
                     Set<Long> nodeIdList = methodShortNameMap.get(api);
+                    int maxTokenNum = 0;
+                    Node matchedMethodNode = null;
                     for(Long id : nodeIdList) {
                         Node methodNode = db.getNodeById(id);
                         String codePackageName = (String) methodNode.getProperty(JavaCodeExtractor.METHOD_BELONGTO);
                         //System.out.println("Find the same-name method");
-                        if(!codePackageName.equals(sectionPackageName)) continue;
-                        //System.out.println("Create link between code and section");
-                        methodNode.createRelationshipTo(node, RelationshipType.withName(API_EXPLAINED_BY));
+                        int tokenNum = countCommonWords(codePackageName, sectionPackageName);
+                        if(tokenNum <= maxTokenNum) continue;
+                        maxTokenNum = tokenNum;
+                        matchedMethodNode = methodNode;
+                    }
+
+                    //System.out.println("Create link between code and section");
+                    if(matchedMethodNode != null) {
+                        matchedMethodNode.createRelationshipTo(node, RelationshipType.withName(API_EXPLAINED_BY));
                     }
                     // TO-DO: create relationship by the class/interface name
                     // TO-DO: define relationship accuracy by take method type and parameter into consideration

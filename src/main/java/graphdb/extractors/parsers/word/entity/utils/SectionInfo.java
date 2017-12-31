@@ -11,19 +11,21 @@ import java.util.List;
 public class SectionInfo extends DocumentElementInfo {
 
     private String	title;
-    private String  englishTitle;
+    //private String  englishTitle;
     private int		layer;
     private String	sectionNumber;
+
 
     public String getTitle() {
         return title;
     }
 
-    public String getEnglishTitle() { return englishTitle; }
-
     public void setTitle(String title) {
         this.title = title;
     }
+
+    /*
+    public String getEnglishTitle() { return englishTitle; }
 
     public void setEnglishTitle(String title) {
         englishTitle = "";
@@ -34,6 +36,7 @@ public class SectionInfo extends DocumentElementInfo {
             System.out.println(title + " IOException in section title translation");
         }
     }
+    */
 
     public int getLayer() {
         return layer;
@@ -55,6 +58,7 @@ public class SectionInfo extends DocumentElementInfo {
         return this.getClass().getSimpleName() + " - { title: " + this.title + " }";
     }
 
+    /*
     public String toEnglish() {
         /*StringBuilder ret = new StringBuilder();
         ret.append(getEnglishTitle());
@@ -62,9 +66,10 @@ public class SectionInfo extends DocumentElementInfo {
         for(DocumentElementInfo subEle : subElements) {
             ret.append(subEle.toEnglish());
         }
-        return ret.toString();*/
+        return ret.toString();
     	return "";
     }
+    */
 
     public String toHtml(boolean en) {
     	if(en) return "";

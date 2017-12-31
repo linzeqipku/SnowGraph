@@ -118,9 +118,10 @@ public class TableInfo extends DocumentElementInfo {
                 if (cell instanceof TableCellInfo) {
                     TableCellInfo cellInfo = (TableCellInfo) cell;
                     PlainTextInfo textCell = (PlainTextInfo) cellInfo.getSubElements().get(0);
+                    /*
                     if(en)
                         html.append("  <th>" + textCell.getEnglishText() + "</th>\n");
-                    else
+                    else*/
                         html.append("  <th>" + textCell.getText() + "</th>\n");
                 }
             }

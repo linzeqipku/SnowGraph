@@ -120,6 +120,6 @@ public class Translator {
         fout.write(toPrint.toString().getBytes());
         System.out.println("TOTAL TOKENS: " + tot);
         System.out.println("TOKENS FAILED TO TRANSLATE: " + errCnt);*/
-        System.out.println(ch2en("你好"));
+        System.out.println(ch2en("你好，世界"));
     }
 }

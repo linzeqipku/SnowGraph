@@ -160,8 +160,7 @@ public class JavaCodeExtractor implements Extractor {
     public void run(GraphDatabaseService db) {
         this.db = db;
         elementInfoPool = JavaParser.parse(srcPath);
-        //System.out.println("源代码解析完毕...");
-        //System.out.println("开始构建图数据库中的结点...");
+        System.out.println("开始构建图数据库中的结点...");
         try (Transaction tx = db.beginTx()) {
             for (ClassInfo classInfo : elementInfoPool.classInfoMap.values()) {
                 Node node = db.createNode();
@@ -196,8 +195,7 @@ public class JavaCodeExtractor implements Extractor {
             }
             tx.success();
         }
-        //System.out.println("结点构建完毕...");
-        //System.out.println("开始构建图数据库中的边...");
+        System.out.println("开始构建图数据库中的边...");
         buildRelationships();
         //System.out.println("边构建完毕.");
 

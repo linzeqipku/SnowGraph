@@ -72,6 +72,7 @@ public class TableCellInfo extends DocumentElementInfo {
         return getText();
     }
 
+    /*
     public String getEnglishText() {
         if (subElements == null || subElements.get(0) == null
                 || !(subElements.get(0) instanceof PlainTextInfo))
@@ -79,4 +80,5 @@ public class TableCellInfo extends DocumentElementInfo {
         PlainTextInfo plainTextInfo = (PlainTextInfo) (subElements.get(0));
         return plainTextInfo.getEnglishText();
     }
+    */
 }

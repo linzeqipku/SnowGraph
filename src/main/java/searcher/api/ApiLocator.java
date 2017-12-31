@@ -26,7 +26,6 @@ public class ApiLocator {
         }
     }
 
-    private static final boolean debug = false;
     private static final double RHO = 0.25;
     private static final String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
             + JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD + "|"
@@ -43,8 +42,6 @@ public class ApiLocator {
     }
 
     public static SubGraph query(String queryString, ApiLocatorContext context, boolean expand){
-        if (debug)
-            return new ApiLocator(context).query(queryString);
         return expand?new ApiLocator(context).queryExpand(queryString):new ApiLocator(context).query(queryString);
     }
 
@@ -108,8 +105,6 @@ public class ApiLocator {
         candidateMap.clear(); // 清空candidateMap, 对于每个query即时生成
         List<SubGraph> graphs = myFindSubGraphs(queryString);
         if (graphs.size() > 0) {
-            if (debug)
-                System.out.println(graphs.get(0).getNodes());
             return graphs.get(0);
         }
         return new SubGraph();
@@ -217,7 +212,7 @@ public class ApiLocator {
         List<SubGraph> r = new ArrayList<>();
 
         Set<String> queryWordSet = WordsConverter.convertWithoutStem(queryString);
-        //System.out.println(queryWordSet);
+        System.out.println(queryWordSet);
         Set<Long> anchors = findAnchors(queryWordSet); // 可能修改candidateMap, scoreMap
 
         // 做 beamsearch 时寻找候选时可以stem，扩大匹配的范围
@@ -389,9 +384,6 @@ public class ApiLocator {
             for (long id: nodes) // 全名匹配的结点 score = 1
                 scoreMap.put(id, 1.0);
 
-            if (debug)
-                System.out.println(name + " " + nodes);
-
             if (nodes.size() == 1) { // 如果全名匹配的只有一个结点，那么加入anchor中
                 anchors.addAll(nodes);
             } else { // 否则，如果只有一个类名结点与之匹配，加入anchor中
@@ -406,8 +398,6 @@ public class ApiLocator {
                     candidateMap.putAll(fullNameMatchMap);
             }
         }
-        if (debug)
-            System.out.println("anchor" + anchors);
         return anchors;
     }
 

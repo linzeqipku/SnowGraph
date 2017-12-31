@@ -28,8 +28,10 @@ public class GraphNodeUtil {
         node.addLabel(Label.label(WordKnowledgeExtractor.DOCX_PLAIN_TEXT));
         if(plainText.getText() != null)
             node.setProperty(WordKnowledgeExtractor.PLAIN_TEXT_CONTENT, plainText.toHtml(false));
+        /*
         if(plainText.getEnglishText() != null)
             node.setProperty(WordKnowledgeExtractor.PLAIN_TEXT_ENGLISH_CONTENT, plainText.toHtml(true));
+            */
         else node.setProperty(WordKnowledgeExtractor.PLAIN_TEXT_CONTENT, "");
     }
 

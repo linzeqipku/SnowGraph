@@ -6,33 +6,34 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import webapp.SnowGraphContext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Neo4jNode {
 
     private final long id;
     private final String label;
-    private final String uniformTitle;
-    private final String uniformText;
+    private final Map properties=new HashMap<>();
 
     public static Neo4jNode get(long id, SnowGraphContext context){
         Neo4jNode node=null;
         Session session = context.getNeo4jBoltDriver().session();
-        String stat = "match (n) where id(n)=" + id + " return id(n), labels(n)[0], n."+ TextExtractor.TITLE+", n."+TextExtractor.TEXT;
+        String stat = "match (n) where id(n)=" + id + " return id(n), labels(n)[0], n";
         StatementResult rs = session.run(stat);
         while (rs.hasNext()) {
             Record item=rs.next();
-            String title=item.get("n."+TextExtractor.TITLE).asString();
-            String text=item.get("n."+TextExtractor.TEXT).asString();
-            node=new Neo4jNode(item.get("id(n)").asLong(),item.get("labels(n)[0]").asString(),title!=null?title:"",text!=null?text:"");
+            node=new Neo4jNode(item.get("id(n)").asLong(),item.get("labels(n)[0]").asString());
+            node.properties.putAll(item.get("n").asMap());
+            node.properties.put("id",node.id);
+            node.properties.put("label",node.label);
         }
         session.close();
         return node;
     }
 
-    private Neo4jNode(long id, String label, String uniformTitle, String uniformText) {
+    private Neo4jNode(long id, String label) {
         this.id = id;
         this.label = label;
-        this.uniformTitle = uniformTitle;
-        this.uniformText = uniformText;
     }
 
     public long getId() {
@@ -43,11 +44,7 @@ public class Neo4jNode {
         return label;
     }
 
-    public String getUniformTitle() {
-        return uniformTitle;
-    }
-
-    public String getUniformText() {
-        return uniformText;
+    public Map getProperties() {
+        return properties;
     }
 }

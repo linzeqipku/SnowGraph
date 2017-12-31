@@ -43,9 +43,9 @@ public class WordKnowledgeExtractor implements Extractor {
     @PropertyDeclaration(parent = DOCX_SECTION)
     public static final String SECTION_USAGE_TYPE = "sectionUsageType";
     @PropertyDeclaration(parent = DOCX_SECTION)
-    private static final String SECTION_CONTENT = "sectionContent";
-    @PropertyDeclaration(parent = DOCX_SECTION)
-    private static final String SECTION_ENGLISH_CONTENT = "sectionEnglishContent";
+    public static final String SECTION_CONTENT = "sectionContent";
+    //@PropertyDeclaration(parent = DOCX_SECTION)
+    //private static final String SECTION_ENGLISH_CONTENT = "sectionEnglishContent";
     @PropertyDeclaration(parent = DOCX_SECTION)
     public static final String SECTION_PACKAGE = "sectionPackage";
     @PropertyDeclaration(parent = DOCX_SECTION)
@@ -64,16 +64,16 @@ public class WordKnowledgeExtractor implements Extractor {
     @PropertyDeclaration(parent = DOCX_TABLE)
     public static final String TABLE_ROW_NUM = "tableRowNum";
     @PropertyDeclaration(parent = DOCX_TABLE)
-    private static final String TABLE_CONTENT = "tableContent";
-    @PropertyDeclaration(parent = DOCX_TABLE)
-    private static final String TABLE_ENGLISH_CONTENT = "tableEnglishContent";
+    public static final String TABLE_CONTENT = "tableContent";
+    //@PropertyDeclaration(parent = DOCX_TABLE)
+    //private static final String TABLE_ENGLISH_CONTENT = "tableEnglishContent";
 
-    @PropertyDeclaration
+    @EntityDeclaration
     public static final String DOCX_PLAIN_TEXT = "DocxPlainText";
     @PropertyDeclaration(parent = DOCX_PLAIN_TEXT)
     public static final String PLAIN_TEXT_CONTENT = "plainTextContent";
-    @PropertyDeclaration(parent = DOCX_PLAIN_TEXT)
-    public static final String PLAIN_TEXT_ENGLISH_CONTENT = "plainTextEnglishContent";
+    //@PropertyDeclaration(parent = DOCX_PLAIN_TEXT)
+    //public static final String PLAIN_TEXT_ENGLISH_CONTENT = "plainTextEnglishContent";
 
     @RelationshipDeclaration
     public static final String HAVE_SUB_ELEMENT = "have_sub_element";
@@ -107,7 +107,7 @@ public class WordKnowledgeExtractor implements Extractor {
             List<DocumentElementInfo> subElements = ele.getSubElements();
             String currentSectionContent =
                     "<section>\n<h" + sectionEle.getLayer() + ">" + sectionEle.getTitle() + "</h" + sectionEle.getLayer() + ">";
-            String currentEnglishSectionContent = sectionEle.getEnglishTitle();
+            //String currentEnglishSectionContent = sectionEle.getEnglishTitle();
             for(DocumentElementInfo subEle : subElements) {
                 Node subNode = dfs_ele(subEle);
                 if(subEle instanceof SectionInfo) {
@@ -125,12 +125,12 @@ public class WordKnowledgeExtractor implements Extractor {
                 node.createRelationshipTo(subNode, RelationshipType.withName(HAVE_SUB_ELEMENT));
             }
             node.setProperty(SECTION_CONTENT, currentSectionContent + "</section>\n");
-            node.setProperty(SECTION_ENGLISH_CONTENT, currentEnglishSectionContent);
+            //node.setProperty(SECTION_ENGLISH_CONTENT, currentEnglishSectionContent);
         }
         else if(ele instanceof TableInfo) {
             GraphNodeUtil.createTableNode((TableInfo) ele, node);
             node.setProperty(TABLE_CONTENT,  ele.toHtml(false));
-            node.setProperty(TABLE_ENGLISH_CONTENT, ele.toHtml(true));
+            //node.setProperty(TABLE_ENGLISH_CONTENT, ele.toHtml(true));
         }
         return node;
     }

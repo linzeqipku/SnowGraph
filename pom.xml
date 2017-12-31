@@ -26,6 +26,12 @@
                 <profiles.active>dev</profiles.active>
             </properties>
         </profile>
+        <profile>
+            <id>dc</id>
+            <properties>
+                <profiles.active>dc</profiles.active>
+            </properties>
+        </profile>
         <!--生产环境-->
         <profile>
             <id>pro</id>
@@ -263,11 +269,6 @@
             <groupId>edu.cmu.lti</groupId>
             <artifactId>ws4j</artifactId>
             <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jgrapht</groupId>
-            <artifactId>jgrapht-core</artifactId>
-            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

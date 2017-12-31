@@ -1,6 +1,6 @@
 package searcher.api;
 
-import graphdb.extractors.parsers.word.corpus.WordSegmenter;
+import graphdb.extractors.parsers.word.corpus.Translator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.tartarus.snowball.ext.EnglishStemmer;
@@ -35,6 +35,15 @@ class WordsConverter {
 	}
 
 	public static Set<String> convertWithoutStem(String queryString){
+
+		if (isChinese(queryString))
+			try {
+				queryString=Translator.ch2en(queryString);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		System.out.println(queryString);
+
 		Set<String> r=new HashSet<>();
 
 		for (String token:queryString.toLowerCase().split("[^a-z]+")){
@@ -68,7 +77,13 @@ class WordsConverter {
 	}
 
 	private static Set<String> chineseConvert(String queryString){
-		return englishConvert(StringUtils.join(WordSegmenter.demo(queryString)," "));
+		Set<String> r=null;
+		try {
+			r=englishConvert(Translator.ch2en(queryString));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return r;
 	}
 
     private static boolean isChinese(char c) {

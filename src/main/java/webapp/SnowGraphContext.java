@@ -3,6 +3,7 @@ package webapp;
 import org.neo4j.driver.v1.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import searcher.api.ScoreUtils;
 import searcher.doc.ir.LuceneSearcher;
 import webapp.resource.NavResult;
 import searcher.api.ApiLocatorContext;
@@ -64,6 +65,7 @@ public class SnowGraphContext {
 	}
 
 	public void preprocess(){
+		ScoreUtils.loadWordVec(this.getDataDir());
 		try {
 			new LuceneSearcher(this).index(true,false);
 		} catch (IOException e) {

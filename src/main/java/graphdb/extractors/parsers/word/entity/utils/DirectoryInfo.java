@@ -116,11 +116,4 @@ public class DirectoryInfo implements Serializable {
         this.isParsed = isParsed;
     }
 
-    public static void main(String[] args) {
-        File file = new File("D:\\workspaces\\zhuzx\\KnowledgeBaseDC\\testdocs\\testdir");
-        System.out.println(file.getAbsolutePath());
-        System.out.println(file.getPath());
-
-
-    }
 }

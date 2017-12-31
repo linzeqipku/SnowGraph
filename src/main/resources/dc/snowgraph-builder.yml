@@ -1,0 +1,10 @@
+graphPath: E:/SnowGraphData/dc/graphdb
+
+extractors:
+    #- graphdb.extractors.parsers.javacode.JavaCodeExtractor E:/SnowGraphData/dc/sourcecode
+    #- graphdb.extractors.parsers.word.WordKnowledgeExtractor E:/SnowGraphData/dc/docx
+    #- graphdb.extractors.miners.text.TextExtractor
+    #- graphdb.extractors.miners.codeembedding.line.LINEExtractor
+    #- graphdb.extractors.linkers.codeindoc_ch.CodeInDocxFileExtractor
+    #- graphdb.extractors.linkers.designtorequire_ch.DesignToRequireExtractor
+    - graphdb.extractors.miners.text.TextExtractor

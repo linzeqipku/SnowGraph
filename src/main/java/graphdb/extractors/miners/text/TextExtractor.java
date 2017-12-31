@@ -9,6 +9,7 @@ import graphdb.extractors.parsers.stackoverflow.StackOverflowExtractor;
 import java.util.ArrayList;
 import java.util.List;
 
+import graphdb.extractors.parsers.word.WordKnowledgeExtractor;
 import org.neo4j.graphdb.*;
 
 import graphdb.framework.Extractor;
@@ -151,6 +152,28 @@ public class TextExtractor implements Extractor {
 			node.setProperty(TITLE, node.getProperty(StackOverflowExtractor.USER_DISPLAY_NAME));
 			node.setProperty(TEXT, "");
 			node.setProperty(IS_TEXT, false);
+		}
+
+		if (node.hasLabel(Label.label(WordKnowledgeExtractor.DOCX_FILE))){
+			node.setProperty(TITLE, node.getProperty(WordKnowledgeExtractor.DOCX_NAME));
+			node.setProperty(TEXT, "");
+			node.setProperty(IS_TEXT, true);
+		}
+		if (node.hasLabel(Label.label(WordKnowledgeExtractor.DOCX_SECTION))){
+			node.setProperty(TITLE, node.getProperty(WordKnowledgeExtractor.SECTION_TITLE));
+			node.setProperty(TEXT, WordKnowledgeExtractor.SECTION_CONTENT);
+			node.setProperty(IS_TEXT, true);
+		}
+		if (node.hasLabel(Label.label(WordKnowledgeExtractor.DOCX_TABLE))){
+			node.setProperty(TITLE, node.getProperty(WordKnowledgeExtractor.TABLE_CAPTION));
+			node.setProperty(TEXT, WordKnowledgeExtractor.TABLE_CONTENT);
+			node.setProperty(IS_TEXT, true);
+		}
+
+		if (node.hasLabel(Label.label(WordKnowledgeExtractor.DOCX_PLAIN_TEXT))){
+			node.setProperty(TITLE, "");
+			node.setProperty(TEXT, WordKnowledgeExtractor.PLAIN_TEXT_CONTENT);
+			node.setProperty(IS_TEXT, true);
 		}
 
     	

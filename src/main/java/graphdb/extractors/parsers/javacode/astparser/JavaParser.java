@@ -45,6 +45,7 @@ public class JavaParser {
         options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
         parser.setCompilerOptions(options);
         parser.setBindingsRecovery(true);
+        System.out.println(javaFiles.size());
         parser.createASTs(srcPaths, null, new String[]{}, new FileASTRequestor() {
             @Override
             public void acceptAST(String sourceFilePath, CompilationUnit javaUnit) {

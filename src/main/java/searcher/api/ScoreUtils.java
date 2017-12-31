@@ -1,5 +1,7 @@
 package searcher.api;
 
+import webapp.SnowGraphContext;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -9,12 +11,9 @@ public class ScoreUtils {
     public static final double CANDIDATE_SIM_THRESHOLD = 0.75;
     private static Map<String, double[]> word2VecMap = new HashMap<>();
 
-    static{
-        loadWordVec();
-    }
-    private static void loadWordVec(){
+    public static void loadWordVec(String dirPath){
         try{
-            Scanner scanner = new Scanner(new FileInputStream("C:\\Users\\dell\\Documents\\glove\\glove-100d.txt"));
+            Scanner scanner = new Scanner(new FileInputStream(dirPath+"/glove.6B.100d.txt"));
             while(scanner.hasNext()) {
                 String[] line = scanner.nextLine().trim().split(" ");
                 String word = line[0];

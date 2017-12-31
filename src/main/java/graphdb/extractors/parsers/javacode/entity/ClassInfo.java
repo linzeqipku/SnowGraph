@@ -7,7 +7,7 @@ public class ClassInfo {
 
     public String name;
     public String fullName;
-    public String visibility = "packge";
+    public String visibility = "package";
     public boolean isAbstract = false;
     public boolean isFinal = false;
     public String superClassType;

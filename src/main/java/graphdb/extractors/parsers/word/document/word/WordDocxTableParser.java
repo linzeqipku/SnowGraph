@@ -65,7 +65,7 @@ class WordDocxTableParser {
                     cellInfo.setStartColNum(startColNum);
                     cellInfo.setEndColNum(colNum);
                     PlainTextInfo plainTextInfo = new PlainTextInfo(cell.getText().trim());
-                    plainTextInfo.setEnglishText();
+                    //plainTextInfo.setEnglishText();
                     cellInfo.addSubDocumentElement(plainTextInfo);
                 }
 

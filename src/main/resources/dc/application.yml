@@ -1,0 +1,5 @@
+snowGraph:
+    projectPackageName: lucene
+    boltUrl: bolt://127.0.0.1:7688/
+    dataDir: E:/SnowGraphData/dc/snow
+    githubAccessToken: b0603b617a6cb24a447a308ad71f95a4e5c87783

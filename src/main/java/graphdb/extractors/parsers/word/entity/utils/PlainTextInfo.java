@@ -10,7 +10,7 @@ import java.io.IOException;
 public class PlainTextInfo extends DocumentElementInfo {
 
     private String	text;
-    private String  englishText;
+    //private String  englishText;
 
     public PlainTextInfo() {
         super();
@@ -25,18 +25,23 @@ public class PlainTextInfo extends DocumentElementInfo {
         return text;
     }
 
+    /*
     public String getEnglishText() { return englishText; }
+    */
 
     public void setText(String text) {
         this.text = text;
     }
 
+    /*
     public void setEnglishText() { this.englishText = toEnglish(); }
+    */
 
     public String toString() {
         return this.getClass().getSimpleName() + " - { text: " + this.text + " }";
     }
 
+    /*
     public String toEnglish() {
         //System.out.println("=== Translation ===");
         if(text == null) return "";
@@ -51,13 +56,15 @@ public class PlainTextInfo extends DocumentElementInfo {
             //e.getMessage();
             System.out.println(e.getMessage());
         }
-
         return ret;
     }
+    */
 
     public String toHtml(boolean en) {
         //if(en) return "<p>" + englishText + "</p>\n";
+        /*
         if(en) return englishText;
-    	else return "<p>" + text + "</p>";
+    	else*/
+        return "<p>" + text + "</p>";
     }
 }

@@ -84,7 +84,7 @@ public class WordDocxParser {
         // doc root section
         SectionInfo rootSection = new SectionInfo();
         rootSection.setTitle(doc.getName());
-        rootSection.setEnglishTitle(doc.getName());
+        //rootSection.setEnglishTitle(doc.getName());
         setApiList(rootSection, doc.getName());
         rootSection.setLayer(0);
         rootSection.setProjectName(projectName);
@@ -170,7 +170,7 @@ public class WordDocxParser {
                     SectionInfo newSection = new SectionInfo();
                     newSection.setLayer(currentLayer);
                     newSection.setTitle(paragraphAsText);
-                    newSection.setEnglishTitle(paragraphAsText);
+                    //newSection.setEnglishTitle(paragraphAsText);
                     newSection.setProjectName(projectName);
 
                     SectionInfo parentSection = sectionContainer.getParentSection(currentLayer);
@@ -284,7 +284,7 @@ public class WordDocxParser {
 
         PlainTextInfo plainTextInfo = new PlainTextInfo();
         plainTextInfo.setText(txt);
-        plainTextInfo.setEnglishText();
+        //plainTextInfo.setEnglishText();
 
         return plainTextInfo;
     }
@@ -326,7 +326,7 @@ public class WordDocxParser {
             SectionInfo sectionInfo = (SectionInfo) element;
 
             System.out.println(sectionInfo.getTitle());
-            System.out.println(sectionInfo.getEnglishTitle());
+            //System.out.println(sectionInfo.getEnglishTitle());
 
             List<DocumentElementInfo> subElements = sectionInfo.getSubElements();
             for (DocumentElementInfo subElement : subElements) {
@@ -358,7 +358,7 @@ public class WordDocxParser {
                         TableCellInfo cellInfo = (TableCellInfo) cell;
                         PlainTextInfo textCell = (PlainTextInfo) cellInfo.getSubElements().get(0);
                         System.out.print(textCell.getText() + "\t");
-                        System.out.println(textCell.getEnglishText() + "\t");
+                        //System.out.println(textCell.getEnglishText() + "\t");
                     }
                 }
                 System.out.println();
@@ -367,7 +367,7 @@ public class WordDocxParser {
         else if (element instanceof PlainTextInfo) {
             PlainTextInfo textElement = (PlainTextInfo) element;
             System.out.println(textElement.getText());
-            System.out.println(textElement.getEnglishText());
+            //System.out.println(textElement.getEnglishText());
         }
     }
 

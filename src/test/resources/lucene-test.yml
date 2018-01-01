@@ -10,6 +10,6 @@ items:
       apis:
           - org.apache.lucene.facet.taxonomy.TaxonomyMergeUtils
 
-    - query: create a query using wildcards and projections
+    - query: create a query using wildcards in lucene
       apis:
           - org.apache.lucene.search.WildcardQuery

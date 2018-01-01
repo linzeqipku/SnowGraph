@@ -26,6 +26,8 @@ public class ApiLocator {
         }
     }
 
+    private static final boolean debug = true;
+
     private static final double RHO = 0.25;
     private static final String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
             + JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD + "|"
@@ -102,9 +104,18 @@ public class ApiLocator {
         /*
          * seedMap: - key: 定位到的代码元素结点的集合 - value: 这个集合的离散度，离散度越低，说明这个图的质量越好
 		 */
-        candidateMap.clear(); // 清空candidateMap, 对于每个query即时生成
+        candidateMap.clear();// 清空candidateMap, 对于每个query即时生成
+        scoreMap.clear();
         List<SubGraph> graphs = myFindSubGraphs(queryString);
         if (graphs.size() > 0) {
+            if (debug) {
+                for (SubGraph graph: graphs) {
+                    System.out.println("nodes: " + graph.getNodes() + " cost: " + graph.cost);
+                    for (long id: graph.getNodes())
+                        System.out.println(context.id2Name.get(id) + " score: " + scoreMap.get(id));
+                    System.out.println("------------------");
+                }
+            }
             return graphs.get(0);
         }
         return new SubGraph();
@@ -212,7 +223,9 @@ public class ApiLocator {
         List<SubGraph> r = new ArrayList<>();
 
         Set<String> queryWordSet = WordsConverter.convertWithoutStem(queryString);
-        System.out.println(queryWordSet);
+        if (debug)
+            System.out.println(queryWordSet);
+
         Set<Long> anchors = findAnchors(queryWordSet); // 可能修改candidateMap, scoreMap
 
         // 做 beamsearch 时寻找候选时可以stem，扩大匹配的范围
@@ -299,6 +312,8 @@ public class ApiLocator {
 
         for (long id: scoreMap.keySet()) {
             double curScore = scoreMap.get(id);
+            if (id == 4422)
+                System.out.println("4422: " + curScore);
             if (curScore == maxScore) // 分数最高的结点
                 seedSet.add(Pair.of(id, curScore));
             // 分数最高的结点可能只有1-2个，为增加更多seed提高容错性，把分数高于一定值的类结点也作为seed
@@ -365,7 +380,7 @@ public class ApiLocator {
     }
 
    private Set<Long> findAnchors(Set<String> queryWordSet) {
-
+        Set<String> anchorIgnore = new HashSet<String>(){{add("query");}};
         Set<Long> anchors = new HashSet<>();
 
         Map<String, Set<Long>> fullNameMatchMap = new HashMap<>();
@@ -377,14 +392,16 @@ public class ApiLocator {
                 fullNameMatchMap.get(fullName).add(node); // 一个全名可能对应多个同名的结点
             }
         }
+        candidateMap.putAll(fullNameMatchMap); //加入candidate, 如queryparser会对应两个结点
 
         for (String name : fullNameMatchMap.keySet()) {
             Set<Long> nodes = fullNameMatchMap.get(name);
 
             for (long id: nodes) // 全名匹配的结点 score = 1
-                scoreMap.put(id, 1.0);
+                scoreMap.put(id, 2.0 / (queryWordSet.size() + 1));
 
-            if (nodes.size() == 1) { // 如果全名匹配的只有一个结点，那么加入anchor中
+
+            if (nodes.size() == 1 && !anchorIgnore.contains(name)) { // 如果全名匹配的只有一个结点，那么加入anchor中
                 anchors.addAll(nodes);
             } else { // 否则，如果只有一个类名结点与之匹配，加入anchor中
                 Set<Long> types = new HashSet<>();
@@ -392,12 +409,12 @@ public class ApiLocator {
                     if (context.typeSet.contains(node))
                         types.add(node);
                 }
-                if (types.size() == 1)
+                if (types.size() == 1 && !anchorIgnore.contains(name))
                     anchors.addAll(types);
-                else // 如果不只一个，则加入candidate, 如queryparser会对应两个结点
-                    candidateMap.putAll(fullNameMatchMap);
             }
         }
+        if (debug)
+            System.out.println("anchor" + anchors);
         return anchors;
     }
 

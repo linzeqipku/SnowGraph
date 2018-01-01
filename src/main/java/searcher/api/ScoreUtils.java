@@ -9,6 +9,7 @@ import java.util.*;
 public class ScoreUtils {
     public static final double COUNT_SIM_THRESHOLD = 0.6;
     public static final double CANDIDATE_SIM_THRESHOLD = 0.75;
+    public static final double COUNT_SIM_SCALE = 0.8;
     private static Map<String, double[]> word2VecMap = new HashMap<>();
 
     public static void loadWordVec(String dirPath){
@@ -43,7 +44,7 @@ public class ScoreUtils {
             stemQueryWords.add(WordsConverter.stem(word));
 
         for (long id: candidates) {
-            if (scoreMap.containsKey(candidates)) // 如果已经计算过了，可能是anchor, sim=1
+            if (scoreMap.containsKey(id)) // 如果已经计算过了，可能是anchor, sim=1
                 continue;
 
             Set<String> orgDescSet = id2OriginalWrods.get(id);
@@ -94,7 +95,7 @@ public class ScoreUtils {
                 }
 
             }
-            // calculate F1 score
+            // calculate F2 score, recall weighs higher
             double precision = TP / P;
             double recall = 0;
             for(String key: recallMap.keySet()){
@@ -119,9 +120,12 @@ public class ScoreUtils {
 
             // add original matched word
             Set<Long> tmp = originalWord2Ids.get(word);
-            if (tmp != null)
+            if (tmp != null) {
                 nodes.addAll(tmp);
-
+                if (tmp.contains(1914)) {
+                    System.out.println("1914: " + word);
+                }
+            }
             // add stemmed matched word
             tmp = stemWord2Ids.get(WordsConverter.convert(word));
             if (tmp != null)

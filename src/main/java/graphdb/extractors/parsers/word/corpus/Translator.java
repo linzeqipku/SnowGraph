@@ -1,5 +1,9 @@
 package graphdb.extractors.parsers.word.corpus;
 
+import graphdb.extractors.parsers.word.translation.trans.LANG;
+import graphdb.extractors.parsers.word.translation.trans.exception.DupIdException;
+import graphdb.extractors.parsers.word.translation.trans.factory.TFactory;
+import graphdb.extractors.parsers.word.translation.trans.factory.TranslatorFactory;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -15,6 +19,7 @@ import org.jsoup.select.Elements;
  */
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,28 +73,21 @@ public class Translator {
                 return content;
         content = content.substring(i);
 
-
-        String url = "http://dict.youdao.com/search?q=" + URLEncoder.encode( content, "UTF-8")  + "&keyfrom=dict.index";
-        Document doc = Jsoup.connect(url).timeout(10000).get();
-        //System.out.println(url);
-        //System.out.println(doc.body());
-        Elements links = doc.getElementsByClass("trans-container");
-        StringBuilder ret = new StringBuilder();
-
-        //System.out.println(links.size());
-
-        for (Element link : links) {
-            String linkText = link.text();
-            linkText = linkText.replaceAll( "&#39;", "'" );
-            //System.out.println(linkText);
-            Pattern searchMeanPattern = Pattern.compile("(?s)[A-Za-z|0-9|\\s|.|,|'|!|:]+");
-            Matcher m1 = searchMeanPattern.matcher(linkText);
-            while(m1.find())
-                ret.append(m1.group(0));
-            break;
+        TFactory factory = null;
+        try {
+            factory = new TranslatorFactory();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        if(ret.length() == 0) return "No translation found\n";
-        return ret.toString();
+        System.out.println();
+        try {
+            return factory.get("google").trans(LANG.ZH, LANG.EN, content);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     public static void main(String[] args) throws IOException {

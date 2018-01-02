@@ -27,8 +27,8 @@ public class CodeInDocxFileExtractor implements Extractor {
     }
 
     public int countCommonWords(String s, String t) {
-        String[] tokenS = s.split(".");
-        String[] tokenT = t.split(".");
+        String[] tokenS = s.split("\\.");
+        String[] tokenT = t.split("\\.");
         int ret = 0;
         for(String t1: tokenS) {
             for(String t2: tokenT) {
@@ -42,6 +42,13 @@ public class CodeInDocxFileExtractor implements Extractor {
 
     public void run(GraphDatabaseService db) {
         this.db = db;
+        try (Transaction tx=db.beginTx()){
+            db.getAllRelationships().forEach(rel->{
+                if (rel.getType().equals(RelationshipType.withName(API_EXPLAINED_BY)))
+                    rel.delete();
+            });
+            tx.success();
+        }
         CodeIndexes codeIndexes = new CodeIndexes(db);
         Map<String, Set<Long>> methodShortNameMap = codeIndexes.methodShortNameMap;
         try(Transaction tx = db.beginTx()) {
@@ -70,10 +77,12 @@ public class CodeInDocxFileExtractor implements Extractor {
                         if(tokenNum <= maxTokenNum) continue;
                         maxTokenNum = tokenNum;
                         matchedMethodNode = methodNode;
+                        if (!api.equals(api.toLowerCase()))
+                            methodNode.createRelationshipTo(node, RelationshipType.withName(API_EXPLAINED_BY));
                     }
 
                     //System.out.println("Create link between code and section");
-                    if(matchedMethodNode != null) {
+                    if(api.equals(api.toLowerCase())&&matchedMethodNode != null) {
                         matchedMethodNode.createRelationshipTo(node, RelationshipType.withName(API_EXPLAINED_BY));
                     }
                     // TO-DO: create relationship by the class/interface name

@@ -1,6 +1,5 @@
 package webapp.resource;
 
-import graphdb.extractors.miners.text.TextExtractor;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;

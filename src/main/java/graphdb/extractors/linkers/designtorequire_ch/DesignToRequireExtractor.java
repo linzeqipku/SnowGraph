@@ -20,7 +20,7 @@ import java.util.List;
 public class DesignToRequireExtractor implements Extractor {
 
     @RelationshipDeclaration
-    private static final String DESIGNED_BY = "function_designed_by";
+    public static final String DESIGNED_BY = "function_designed_by";
 
     private GraphDatabaseService db;
     private HashMap<String, ArrayList<Node>> designSectionMap = new HashMap<>();

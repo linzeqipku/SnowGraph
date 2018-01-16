@@ -1,27 +1,20 @@
 package graphdb.extractors.linkers.apimention;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import graphdb.extractors.miners.text.TextExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
 import org.jsoup.Jsoup;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.*;
 
 import graphdb.framework.Extractor;
 import graphdb.framework.annotations.RelationshipDeclaration;
 
 public class ApiMentionExtractor implements Extractor {
     @RelationshipDeclaration
-    private static final String API_NAME_MENTION = "apiNameMention";
+    public static final String API_NAME_MENTION = "apiNameMention";
 
     private GraphDatabaseService db = null;
     private CodeIndexes codeIndexes = null;
@@ -37,6 +30,10 @@ public class ApiMentionExtractor implements Extractor {
         this.db = db;
         codeIndexes = new CodeIndexes(db);
         try (Transaction tx=db.beginTx()){
+            for (Relationship rel:db.getAllRelationships()){
+                if (rel.getType().equals(RelationshipType.withName(API_NAME_MENTION)))
+                    rel.delete();
+            }
         	for (Node node:db.getAllNodes()){
                 if (!node.hasProperty(TextExtractor.IS_TEXT)||!(boolean)node.getProperty(TextExtractor.IS_TEXT))
                     continue;
@@ -63,18 +60,18 @@ public class ApiMentionExtractor implements Extractor {
                 text+=" "+srcNode.getProperty(TextExtractor.TEXT);
                 String content = Jsoup.parse(text).text();
                 Set<String> lexes = new HashSet<>();
-                Collections.addAll(lexes, content.split("\\W+"));
+                Collections.addAll(lexes, content.toLowerCase().split("\\W+"));
                 Set<Node> resultNodes = new HashSet<>();
 
                 //类/接口
                 for (String typeShortName : codeIndexes.typeShortNameMap.keySet())
-                    if (lexes.contains(typeShortName))
+                    if (lexes.contains(typeShortName.toLowerCase()))
                         for (long id : codeIndexes.typeShortNameMap.get(typeShortName))
                             resultNodes.add(db.getNodeById(id));
 
                 for (String methodShortName : codeIndexes.methodShortNameMap.keySet()) {
                     //后接小括号，不要构造函数
-                    if (methodShortName.charAt(0) < 'a' || methodShortName.charAt(0) > 'z' || !(lexes.contains(methodShortName) && content.contains(methodShortName + "(")))
+                    if (methodShortName.charAt(0) < 'a' || methodShortName.charAt(0) > 'z' || !(lexes.contains(methodShortName.toLowerCase()) && content.contains(methodShortName + "(")))
                         continue;
                     boolean flag = false;
                     //无歧义

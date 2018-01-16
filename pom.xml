@@ -11,13 +11,6 @@
         <version>1.5.9.RELEASE</version>
     </parent>
 
-
-    <repositories>
-        <repository>
-            <id>cogcomp</id>
-            <url>http://cogcomp.org/m2repo/</url>
-        </repository>
-    </repositories>
     <profiles>
         <!--本地开发环境-->
         <profile>
@@ -48,6 +41,7 @@
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
                 <excludes>
+                    <exclude>dc/*</exclude>
                     <exclude>dev/*</exclude>
                     <exclude>pro/*</exclude>
                 </excludes>
@@ -64,11 +58,26 @@
             <testResource>
                 <directory>${project.basedir}/src/main/resources</directory>
             </testResource>
+            <testResource>
+                <directory>${project.basedir}/src/main/resources/${profiles.active}</directory>
+                <filtering>true</filtering>
+            </testResource>
         </testResources>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.5.9.RELEASE</version>
+                <configuration>
+                    <mainClass>webapp.SnowView</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -264,11 +273,6 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queryparser</artifactId>
             <version>5.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.cmu.lti</groupId>
-            <artifactId>ws4j</artifactId>
-            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

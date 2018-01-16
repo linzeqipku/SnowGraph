@@ -16,9 +16,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.neo4j.graphdb.*;
-import searcher.codepattern.code.cfg.ddg.DDG;
-import searcher.codepattern.code.mining.Miner;
-import searcher.codepattern.code.mining.MiningNode;
+import exps.codepattern.code.cfg.ddg.DDG;
+import exps.codepattern.code.mining.Miner;
+import exps.codepattern.code.mining.MiningNode;
 import utils.ParseUtil;
 
 import java.io.File;

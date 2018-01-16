@@ -49,6 +49,7 @@ public class Graph {
     }
 
     public class Vertex{
+
         private String id;
         private Set<Edge> outgoingEdges=new HashSet<>();
         private Set<Edge> incomingEdges=new HashSet<>();

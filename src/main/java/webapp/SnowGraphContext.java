@@ -4,11 +4,9 @@ import org.neo4j.driver.v1.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import searcher.api.ScoreUtils;
-import searcher.doc.ir.LuceneSearcher;
+import searcher.index.LuceneSearcher;
 import webapp.resource.NavResult;
 import searcher.api.ApiLocatorContext;
-import searcher.doc.DocSearcherContext;
-import searcher.doc.example.StackOverflowExamples;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,11 +21,9 @@ public class SnowGraphContext {
 		this.dataDir=config.getDataDir();
 		this.githubAccessToken=config.getGithubAccessToken();
 		this.neo4jBoltConnection = GraphDatabase.driver(config.getBoltUrl(), AuthTokens.basic("neo4j", "123"));
-		this.apiLocatorContext = new ApiLocatorContext(neo4jBoltConnection);
-		this.docSearcherContext = new DocSearcherContext(apiLocatorContext);
+		this.apiLocatorContext = new ApiLocatorContext(neo4jBoltConnection,dataDir);
 		this.preprocess();
 		this.nav = nav();
-		this.stackOverflowExamples = new StackOverflowExamples(config.getDataDir() + "/qaexamples");
 	}
 
 	private String projectPackageName = null;
@@ -35,21 +31,13 @@ public class SnowGraphContext {
 	private String githubAccessToken = null;
 	private Driver neo4jBoltConnection = null;
 	private ApiLocatorContext apiLocatorContext=null;
-	private DocSearcherContext docSearcherContext = null;
-	private StackOverflowExamples stackOverflowExamples = null;
 	private NavResult nav = null;
 
-	public DocSearcherContext getDocSearcherContext() {
-		return docSearcherContext;
-	}
 	public ApiLocatorContext getApiLocatorContext(){
 		return apiLocatorContext;
 	}
 	public Driver getNeo4jBoltDriver() {
 		return neo4jBoltConnection;
-	}
-	public StackOverflowExamples getStackOverflowExamples(){
-		return stackOverflowExamples;
 	}
 	public NavResult getNav(){
 		return nav;
@@ -67,11 +55,10 @@ public class SnowGraphContext {
 	public void preprocess(){
 		ScoreUtils.loadWordVec(this.getDataDir());
 		try {
-			new LuceneSearcher(this).index(true,false);
+			new LuceneSearcher(apiLocatorContext,dataDir).index(false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		StackOverflowExamples.find(this,false);
 	}
 
 	private NavResult nav(){
@@ -86,7 +73,15 @@ public class SnowGraphContext {
 			labels.add(item.get("label").asString());
 		}
 
-		NavResult r=new NavResult();
+		Session session1 = neo4jBoltConnection.session();
+		StatementResult rs1=session1.run("match (n) unwind keys(n) as k return count(distinct k)");
+		int propertyTypeCount=rs1.next().get("count(distinct k)").asInt();
+
+		Session session2 = neo4jBoltConnection.session();
+		StatementResult rs2=session2.run("match (n) unwind keys(n) as k return count(k)");
+		int propertyCount=rs2.next().get("count(k)").asInt();
+
+		NavResult r=new NavResult(propertyTypeCount, propertyCount);
 		int c = 0;
 		for (String label : labels) {
 			stat = "match (n:" + label + ") return count(n)";

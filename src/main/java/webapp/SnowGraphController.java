@@ -2,10 +2,8 @@ package webapp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import searcher.codepattern.GithubCodeSearcher;
 import webapp.resource.*;
 import searcher.api.ApiLocator;
-import searcher.doc.DocSearcher;
 
 import java.util.List;
 
@@ -15,16 +13,6 @@ public class SnowGraphController {
 
     @Autowired
     private SnowGraphContext context;
-
-    @RequestMapping(value = "/sampleQuestion", method = {RequestMethod.GET,RequestMethod.POST})
-    public SampleQuestion sampleQuestion(){
-        return context.getStackOverflowExamples().getRandomExampleQuery(context.getDocSearcherContext());
-    }
-
-    @RequestMapping(value = "/docSearch", method = {RequestMethod.GET,RequestMethod.POST})
-    public DocSearchResults docSearch(@RequestParam(value="query", defaultValue="") String query){
-        return new DocSearchResults(query, DocSearcher.search(query, context));
-    }
 
     @RequestMapping(value = "/apiLocation", method = {RequestMethod.GET,RequestMethod.POST})
     public Neo4jSubGraph apiLocation(@RequestParam(value="query", defaultValue="") String query){
@@ -44,11 +32,6 @@ public class SnowGraphController {
     @RequestMapping(value = "/nav", method = {RequestMethod.GET,RequestMethod.POST})
     public NavResult nav(){
         return context.getNav();
-    }
-
-    @RequestMapping(value = "/searchGithub", method = {RequestMethod.GET,RequestMethod.POST})
-    public List<String> searchGithub(@RequestParam(value="query", defaultValue="") String query){
-        return new GithubCodeSearcher(context).search(query, GithubCodeSearcher.RETURN_MODE.URL);
     }
 
 }

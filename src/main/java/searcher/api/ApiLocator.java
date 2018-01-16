@@ -5,32 +5,15 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
-import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
+import searcher.api.expand.ConnectCodeElements;
+import searcher.api.expand.ExpandDocxNodes;
+import searcher.api.expand.ExpandFlossNodes;
 import utils.VectorUtils;
 
 
 public class ApiLocator {
-
-    public class SubGraph {
-        private Set<Long> nodes=new HashSet<>();
-        private Set<Long> edges=new HashSet<>();
-        double cost = 0, gain = 0;
-        public Set<Long> getNodes(){
-            return nodes;
-        }
-        public Set<Long> getEdges(){
-            return edges;
-        }
-    }
-
-    private static final double RHO = 0.25;
-    private static final String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
-            + JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD + "|"
-            + JavaCodeExtractor.HAVE_FIELD + "|" + JavaCodeExtractor.CALL_METHOD + "|" + JavaCodeExtractor.CALL_FIELD
-            + "|" + JavaCodeExtractor.TYPE + "|" + JavaCodeExtractor.VARIABLE;
 
     private ApiLocatorContext context;
 
@@ -42,40 +25,17 @@ public class ApiLocator {
     }
 
     public static SubGraph query(String queryString, ApiLocatorContext context, boolean expand){
-        return expand?new ApiLocator(context).queryExpand(queryString):new ApiLocator(context).query(queryString);
-    }
-
-    public SubGraph queryExpand(String queryString) {
-        SubGraph r = new SubGraph();
-        SubGraph searchResult1 = query(queryString);
-        r.nodes.addAll(searchResult1.nodes);
-        r.cost = searchResult1.cost;
-        Set<Long> flags = new HashSet<>();
-        for (long seed1 : searchResult1.nodes) {
-            if (flags.contains(seed1))
-                continue;
-            for (long seed2 : searchResult1.nodes) {
-                if (seed1 == seed2)
-                    continue;
-                if (flags.contains(seed2))
-                    continue;
-                Session session = context.connection.session();
-                String stat = "match p=shortestPath((n1)-[:" + codeRels + "*..10]-(n2)) where id(n1)=" + seed1 + " and id(n2)=" + seed2
-                        + " unwind relationships(p) as r return id(startNode(r)), id(endNode(r)), id(r)";
-                StatementResult rs = session.run(stat);
-                while (rs.hasNext()) {
-                    Record item=rs.next();
-                    long node1 = item.get("id(startNode(r))").asLong();
-                    long node2 = item.get("id(endNode(r))").asLong();
-                    long rel = item.get("id(r)").asLong();
-                    r.nodes.add(node1);
-                    r.nodes.add(node2);
-                    r.edges.add(rel);
-                    flags.add(seed2);
-                }
-                session.close();
-            }
-            flags.add(seed1);
+        SubGraph r=new ApiLocator(context).query(queryString);
+        if (expand) {
+            SubGraph r1 = ConnectCodeElements.run(r, context);
+            SubGraph r2 = ExpandDocxNodes.run(r, context);
+            SubGraph r3 = ExpandFlossNodes.run(queryString, r, r1, context);
+            r.nodes.addAll(r1.nodes);
+            r.edges.addAll(r1.edges);
+            r.nodes.addAll(r2.nodes);
+            r.nodes.addAll(r3.nodes);
+            r.edges.addAll(r2.edges);
+            r.edges.addAll(r3.edges);
         }
         return r;
     }
@@ -129,6 +89,8 @@ public class ApiLocator {
         }
         queryWordSet.clear();
         queryWordSet.addAll(tmpSet);
+
+        System.out.println(queryWordSet);
 
         Set<Long> anchors = findAnchors(queryWordSet);
 
@@ -212,7 +174,7 @@ public class ApiLocator {
         List<SubGraph> r = new ArrayList<>();
 
         Set<String> queryWordSet = WordsConverter.convertWithoutStem(queryString);
-        System.out.println(queryWordSet);
+        //System.out.println(queryWordSet);
         Set<Long> anchors = findAnchors(queryWordSet); // 可能修改candidateMap, scoreMap
 
         // 做 beamsearch 时寻找候选时可以stem，扩大匹配的范围
@@ -252,11 +214,10 @@ public class ApiLocator {
     }
 
     private List<SubGraph> beamSearch(List<SubGraph> initialGraph){
-        List<SubGraph> results = initialGraph;
 
         List<SubGraph> agenda = new ArrayList<>();
         for (String word: candidateMap.keySet()){
-            for (SubGraph curGraph: results){
+            for (SubGraph curGraph: initialGraph){
                 Set<Long> current = curGraph.nodes;
 
                 List<Pair<Long, Double>> gainList = new ArrayList<>();
@@ -266,7 +227,7 @@ public class ApiLocator {
                         cost = sumDist(node, current);
                     gainList.add(Pair.of(node, cost));
                 }
-                gainList.sort(Comparator.comparingDouble(p->p.getRight()));
+                gainList.sort(Comparator.comparingDouble(Pair::getRight));
 
                 for (int i = 0; i < gainList.size() && i < 10; ++i){
                     Set<Long> next = new HashSet<>();
@@ -281,12 +242,12 @@ public class ApiLocator {
             agenda.sort(Comparator.comparingDouble(r->r.cost));
 
             // clear and add new top 10 to results
-            results.clear();
+            initialGraph.clear();
             int size = agenda.size();
-            results.addAll(agenda.subList(0, size > 10 ? 10 : size));
+            initialGraph.addAll(agenda.subList(0, size > 10 ? 10 : size));
             agenda.clear();
         }
-        return results;
+        return initialGraph;
     }
 
     private Set<Long> findSeed(Map<Long, Double>scoreMap){
@@ -305,9 +266,9 @@ public class ApiLocator {
             else if (context.typeSet.contains(id) && curScore >= 0.8 * maxScore)
                 seedSet.add(Pair.of(id, curScore));
         }
-        seedSet.sort(Comparator.comparingDouble((p)->p.getRight()));
+        seedSet.sort(Comparator.comparingDouble(Pair::getRight));
         int size = seedSet.size() >  5 ? 5 : seedSet.size(); // seed结点太多会影响效率
-        return seedSet.subList(0, size).stream().map(p->p.getLeft()).collect(Collectors.toSet());
+        return seedSet.subList(0, size).stream().map(Pair::getLeft).collect(Collectors.toSet());
     }
 
     private Set<Long> candidate(Set<String> queryWordSet) {
@@ -365,7 +326,6 @@ public class ApiLocator {
     }
 
    private Set<Long> findAnchors(Set<String> queryWordSet) {
-
         Set<Long> anchors = new HashSet<>();
 
         Map<String, Set<Long>> fullNameMatchMap = new HashMap<>();
@@ -422,7 +382,7 @@ public class ApiLocator {
 
     private double dist(long node1, long node2){
         // dist(i, j) / (w(i) * w(j))
-        return VectorUtils.dist(node1,node2,context.id2Vec)/(scoreMap.get(node1) * scoreMap.get(node2));
+        return VectorUtils.dist(node1,node2,context.id2Vec);
     }
 
 }

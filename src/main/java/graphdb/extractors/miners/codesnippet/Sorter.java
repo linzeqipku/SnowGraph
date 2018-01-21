@@ -2,9 +2,9 @@ package graphdb.extractors.miners.codesnippet;
 
 import de.parsemis.graph.Graph;
 import org.apache.commons.lang3.tuple.Pair;
-import searcher.codepattern.code.cfg.ddg.DDG;
-import searcher.codepattern.code.mining.MiningGraph;
-import searcher.codepattern.code.mining.MiningNode;
+import exps.codepattern.code.cfg.ddg.DDG;
+import exps.codepattern.code.mining.MiningGraph;
+import exps.codepattern.code.mining.MiningNode;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -29,7 +29,7 @@ import graphdb.framework.annotations.RelationshipDeclaration;
 public class ReferenceExtractor implements Extractor {
 
     @RelationshipDeclaration
-    private static final String REFERENCE = "reference";
+    public static final String REFERENCE = "reference";
 
     private GraphDatabaseService db = null;
     private CodeIndexes codeIndexes = null;

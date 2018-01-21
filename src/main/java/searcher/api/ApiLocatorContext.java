@@ -6,12 +6,15 @@ import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
+import searcher.index.LuceneSearcher;
 import utils.TokenizationUtils;
 
 import java.util.*;
 
 public class ApiLocatorContext {
     public final Driver connection;
+
+    final LuceneSearcher luceneSearcher;
 
     final Set<Long> typeSet = new HashSet<>(); // 类或接口类型的结点集合
 
@@ -24,8 +27,9 @@ public class ApiLocatorContext {
     final Map<String, Set<Long>> stemWord2Ids = new HashMap<>();
     final Map<String, Set<Long>> originalWord2Ids = new HashMap<>();
 
-    public ApiLocatorContext(Driver connection) {
+    public ApiLocatorContext(Driver connection, String dataDir) {
         this.connection = connection;
+        this.luceneSearcher=new LuceneSearcher(this, dataDir);
         Session session = connection.session();
         // 获取所有Method Class Interface 的结点
         String stat = "match (n) where not n:" + JavaCodeExtractor.FIELD + " and exists(n." + LINEExtractor.LINE_VEC
@@ -74,11 +78,18 @@ public class ApiLocatorContext {
             if (!m) // 如果是一个类或接口结点，加入typeset中
                 typeSet.add(id);
             id2Name.put(id, name.toLowerCase()); // 未切词前的方法名，是否要stem? 因为query中的词都被stem了
-            if (!stemWord2Ids.containsKey(id2Name.get(id)))
-                stemWord2Ids.put(id2Name.get(id), new HashSet<>());
-            stemWord2Ids.get(id2Name.get(id)).add(id);
+            if (!stemWord2Ids.containsKey(WordsConverter.stem(name.toLowerCase())))
+            stemWord2Ids.put(WordsConverter.stem(name.toLowerCase()), new HashSet<>());
+            stemWord2Ids.get(WordsConverter.stem(name.toLowerCase())).add(id);
+            if (!originalWord2Ids.containsKey(name.toLowerCase()))
+                originalWord2Ids.put(name.toLowerCase(), new HashSet<>());
+            originalWord2Ids.get(name.toLowerCase()).add(id);
         }
         session.close();
+    }
+
+    public LuceneSearcher getLuceneSearcher() {
+        return luceneSearcher;
     }
 
     public Map<Long, String> getId2Sig() {

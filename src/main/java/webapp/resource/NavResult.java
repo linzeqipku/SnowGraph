@@ -5,6 +5,11 @@ import java.util.List;
 
 public class NavResult {
 
+    public NavResult(int propertyTypeCount, int propertyCount) {
+        this.propertyTypeCount = propertyTypeCount;
+        this.propertyCount = propertyCount;
+    }
+
     public class NavNode{
         private final long id;
         private final String label;
@@ -57,8 +62,17 @@ public class NavResult {
 
     private final List<NavNode> nodes=new ArrayList<>();
     private final List<NavRelation> relationships=new ArrayList<>();
+    private final int propertyTypeCount,propertyCount;
 
-    public void addNode(long id,String label,int count){
+    public int getPropertyTypeCount() {
+        return propertyTypeCount;
+    }
+
+    public int getPropertyCount() {
+        return propertyCount;
+    }
+
+    public void addNode(long id, String label, int count){
         nodes.add(new NavNode(id,label,count));
     }
 

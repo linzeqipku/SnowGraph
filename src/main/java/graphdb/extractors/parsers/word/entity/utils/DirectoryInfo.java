@@ -2,7 +2,6 @@ package graphdb.extractors.parsers.word.entity.utils;
 
 import graphdb.extractors.parsers.word.utils.Config;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

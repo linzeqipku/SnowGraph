@@ -17,7 +17,7 @@ import java.util.Set;
 public class CodeInDocxFileExtractor implements Extractor {
 
     @RelationshipDeclaration
-    private static final String API_EXPLAINED_BY = "api_explained_by";
+    public static final String API_EXPLAINED_BY = "api_explained_by";
 
     private GraphDatabaseService db = null;
 
@@ -74,9 +74,10 @@ public class CodeInDocxFileExtractor implements Extractor {
                         String codePackageName = (String) methodNode.getProperty(JavaCodeExtractor.METHOD_BELONGTO);
                         //System.out.println("Find the same-name method");
                         int tokenNum = countCommonWords(codePackageName, sectionPackageName);
-                        if(tokenNum <= maxTokenNum) continue;
-                        maxTokenNum = tokenNum;
-                        matchedMethodNode = methodNode;
+                        if(tokenNum > maxTokenNum) {
+                            maxTokenNum = tokenNum;
+                            matchedMethodNode = methodNode;
+                        }
                         if (!api.equals(api.toLowerCase()))
                             methodNode.createRelationshipTo(node, RelationshipType.withName(API_EXPLAINED_BY));
                     }

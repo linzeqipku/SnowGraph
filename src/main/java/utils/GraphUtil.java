@@ -1,18 +1,8 @@
 package utils;
 
-import graphdb.framework.Extractor;
-import org.apache.commons.io.FileUtils;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 public class GraphUtil {
 	private static boolean hasRelationShip(Node nodeA, Node nodeB, RelationshipType t) {

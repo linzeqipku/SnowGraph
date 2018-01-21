@@ -1,8 +1,5 @@
 package graphdb.extractors.parsers.word.entity.utils;
 
-import graphdb.extractors.parsers.word.corpus.Translator;
-
-import java.io.IOException;
 import java.util.List;
 
 /**

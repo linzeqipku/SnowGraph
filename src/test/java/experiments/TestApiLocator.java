@@ -1,6 +1,5 @@
 package experiments;
 
-import de.parsemis.graph.Graph;
 import experiments.entity.ApiLocatorResult;
 import experiments.entity.TestDataItem;
 import experiments.entity.TestDataSet;
@@ -15,18 +14,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import searcher.api.ApiLocator;
-import searcher.codepattern.CodePatternSearcher;
-import searcher.codepattern.code.cfg.CFG;
-import searcher.codepattern.code.mining.MiningNode;
-import searcher.codepattern.utils.CFGUtil;
 import webapp.SnowGraphContext;
 import webapp.SnowView;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.List;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration

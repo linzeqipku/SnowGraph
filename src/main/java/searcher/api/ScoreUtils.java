@@ -1,5 +1,7 @@
 package searcher.api;
 
+import edu.stanford.nlp.ling.Word;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -36,9 +38,16 @@ public class ScoreUtils {
                                                    Map<Long, Set<String>> id2OriginalWrods,
                                                    Map<Long, Set<String>> id2StemWords) {
 
-        Set<String> stemQueryWords = new HashSet<>();
+        Set<String> stemQueryWords = new HashSet<>(); // stemmed words
         for (String word: queryWordSet)
             stemQueryWords.add(WordsConverter.stem(word));
+
+        Set<String> abbrQueryWords = new HashSet<>(); // abbr words
+        for (String word: queryWordSet) {
+            List<String> tmp = WordsConverter.getAbbrWords(word);
+            if (tmp != null)
+                abbrQueryWords.addAll(tmp);
+        }
 
         for (long id: candidates) {
             if (scoreMap.containsKey(candidates)) // 如果已经计算过了，可能是anchor, sim=1
@@ -54,7 +63,8 @@ public class ScoreUtils {
                     matchedSet.add(desc);
                     TP++;
                 }
-                else if(stemQueryWords.contains(WordsConverter.stem(desc))) {
+                else if(stemQueryWords.contains(WordsConverter.stem(desc)) ||
+                        abbrQueryWords.contains(desc)) {
                     TP += 0.95;
                     matchedSet.add(desc);
                 }
@@ -124,6 +134,16 @@ public class ScoreUtils {
             tmp = stemWord2Ids.get(WordsConverter.convert(word));
             if (tmp != null)
                 nodes.addAll(tmp);
+
+            // add abbr word
+            List<String> abbrs = WordsConverter.getAbbrWords(word);
+            if (abbrs != null){
+                for(String abbr: abbrs){
+                    tmp = originalWord2Ids.get(abbr);
+                    if (tmp != null)
+                        nodes.addAll(tmp);
+                }
+            }
 
             // add original similar word
             for (String key: originalWord2Ids.keySet())

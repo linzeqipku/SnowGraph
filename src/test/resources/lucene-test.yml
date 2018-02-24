@@ -1,15 +1,71 @@
 items:
 
-    - query: get string representation of Terms using HighFreqTerms
+    - query: 3 How to boost fresh document with Lucene
+      apis:
+          - Document
+          - Document.setBoost
+
+    - query: 1 get string representation of Terms using HighFreqTerms
       apis:
           - org.apache.lucene.misc.HighFreqTerms.getHighFreqTerms(IndexReader reader, int numTerms, String field, Comparator<TermStats> comparator)
           - org.apache.lucene.misc.TermStats
           - org.apache.lucene.util.BytesRef.toString()
 
-    - query: merge several taxonomy indexes for faceted search
+    - query: 2 how to create a query using wildcards
+      apis:
+          - org.apache.lucene.search.Query
+          - org.apache.lucene.search.WildcardQuery
+
+
+    - query: 4 how to escape a group of special characters in query?
+      apis:
+          - QueryParser
+          - QueryParser.escape
+
+    - query: 5 merge several taxonomy indexes for faceted search
       apis:
           - org.apache.lucene.facet.taxonomy.TaxonomyMergeUtils
 
-    - query: create a query using wildcards and projections
+    - query: 6 How to get the full name of a directory path?
       apis:
-          - org.apache.lucene.search.WildcardQuery
+          - Lucene.Net.Store.SimpleFSDirectory.Directory.FullName
+
+    - query: 7 Sorting search result in Lucene based on a numeric field
+      apis:
+        - SortField
+
+    - query: 8 how to get the score of a document in lucene
+      apis:
+        - ScoreDoc
+        - ScoreDoc.score
+        - TopDocs.scoreDocs
+
+    - query: 9 How does regex query work on lucene?
+      apis:
+          - RegexpQuery
+
+    - query: 10 How to implement a fuzzy search query in lucene
+      apis:
+          - FuzzyQuery
+
+    - query: 11 How to extract document Term Vector in Lucene
+      apis:
+          - IndexReader.getTermFreqVector
+
+    - query: 12 How to combine multiple Lucene indexes for search
+      apis:
+          - MultiReader
+          - IndexReader
+          - IndexSearcher
+
+    - query: 13 How to query documents containing any term in a set?
+      apis:
+          - TermSetQuery
+
+    - query: 14 highlight exact terms that satisfy a Lucene query
+      apis:
+          - Highlighter
+
+    - query: 15 Finding out the number of documents in an lucene index
+      apis:
+          - IndexReader.numDocs

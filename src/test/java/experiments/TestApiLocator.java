@@ -45,7 +45,7 @@ public class TestApiLocator {
                 String sig=context.getApiLocatorContext().getId2Sig().get(id);
                 apiLocatorResult.add(sig);
             }
-            String itemDir=optDir+"/"+testDataItem.getQuery().replace(" ","_")+"/";
+            String itemDir=optDir+"/"+testDataItem.getQuery().split(" ")[0]+"/";
             DumperOptions options=new DumperOptions();
             options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
             options.setSplitLines(false);

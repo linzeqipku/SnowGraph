@@ -16,6 +16,8 @@ class WordsConverter {
 		return abbrWords.get(key);
 	}
 
+	public static boolean isStopWords(String word){ return englishStopWords.contains(word); }
+
 	public static String stem(String token){
 		EnglishStemmer stemmer=new EnglishStemmer();
 		stemmer.setCurrent(token);

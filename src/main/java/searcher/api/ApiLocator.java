@@ -20,6 +20,8 @@ public class ApiLocator {
     private Map<Long, Double> scoreMap = new HashMap<>();
     private Map<String, Set<Long>> candidateMap = new HashMap<>();
 
+    private boolean debug = true;
+
     private ApiLocator(ApiLocatorContext context) {
         this.context=context;
     }
@@ -65,9 +67,20 @@ public class ApiLocator {
         candidateMap.clear(); // 清空candidateMap, 对于每个query即时生成
         List<SubGraph> graphs = myFindSubGraphs(queryString);
         if (graphs.size() > 0) {
+            if (debug)
+                printGraphList(graphs);
             return graphs.get(0);
         }
         return new SubGraph();
+    }
+
+    private void printGraphList(List<SubGraph> graphs){
+        for (SubGraph graph: graphs){
+                System.out.println("\n***---------- " + graph.cost + " ---------***");
+                for (long node: graph.nodes){
+                    System.out.println(node + " " + context.id2Name.get(node) + " " + scoreMap.get(node));
+                }
+            }
     }
 
     private SubGraph idTest(List<Long> idList){
@@ -174,8 +187,12 @@ public class ApiLocator {
         List<SubGraph> r = new ArrayList<>();
 
         Set<String> queryWordSet = WordsConverter.convertWithoutStem(queryString);
-        //System.out.println(queryWordSet);
+        if (debug)
+            System.out.println(queryWordSet);
+
         Set<Long> anchors = findAnchors(queryWordSet); // 可能修改candidateMap, scoreMap
+        if (debug)
+            System.out.println("anchor: " + anchors);
 
         // 做 beamsearch 时寻找候选时可以stem，扩大匹配的范围
         ScoreUtils.generateCandidateMap(candidateMap, queryWordSet, context.originalWord2Ids, context.stemWord2Ids);
@@ -184,7 +201,8 @@ public class ApiLocator {
             allCandidates.addAll(candidateMap.get(key));
         }
         // 计算 API score, queryWordSet可能含有candidateMap中没有的词
-       ScoreUtils.getAPISimScore(scoreMap, queryWordSet, allCandidates, context.id2OriginalWords, context.id2StemWords);
+        ScoreUtils.getAPISimScore(scoreMap, queryWordSet, allCandidates, context.id2OriginalWords, context.id2StemWords);
+        System.out.println(scoreMap.get(new Long(3481)));
 
         if (anchors.size() > 0){
             SubGraph initialGraph = new SubGraph();

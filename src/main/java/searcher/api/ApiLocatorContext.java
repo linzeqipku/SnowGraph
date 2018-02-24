@@ -59,11 +59,10 @@ public class ApiLocatorContext {
             Set<String> originalWords = new HashSet<>();
             for (String e : name.split("[^A-Za-z]+")) {
                 for (String word : TokenizationUtils.camelSplit(e)) {
-                    originalWords.add(word);
-                        if (!originalWord2Ids.containsKey(word))
-                            originalWord2Ids.put(word, new HashSet<>());
-                        originalWord2Ids.get(word).add(id);
-
+                    originalWords.add(word); // contains stop words like is with...
+                    if (!originalWord2Ids.containsKey(word))
+                        originalWord2Ids.put(word, new HashSet<>());
+                    originalWord2Ids.get(word).add(id);
                     word = WordsConverter.stem(word);
                     if (!stemWord2Ids.containsKey(word))
                         stemWord2Ids.put(word, new HashSet<>());
@@ -79,7 +78,7 @@ public class ApiLocatorContext {
                 typeSet.add(id);
             id2Name.put(id, name.toLowerCase()); // 未切词前的方法名，是否要stem? 因为query中的词都被stem了
             if (!stemWord2Ids.containsKey(WordsConverter.stem(name.toLowerCase())))
-            stemWord2Ids.put(WordsConverter.stem(name.toLowerCase()), new HashSet<>());
+                stemWord2Ids.put(WordsConverter.stem(name.toLowerCase()), new HashSet<>());
             stemWord2Ids.get(WordsConverter.stem(name.toLowerCase())).add(id);
             if (!originalWord2Ids.containsKey(name.toLowerCase()))
                 originalWord2Ids.put(name.toLowerCase(), new HashSet<>());

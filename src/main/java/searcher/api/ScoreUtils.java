@@ -7,13 +7,14 @@ import java.io.IOException;
 import java.util.*;
 
 public class ScoreUtils {
-    public static final double COUNT_SIM_THRESHOLD = 0.6;
+    public static final double COUNT_SIM_THRESHOLD = 0.75;
     public static final double CANDIDATE_SIM_THRESHOLD = 0.75;
+    private static final int WORD_DIMENSION = 200;
     private static Map<String, double[]> word2VecMap = new HashMap<>();
 
     public static void loadWordVec(String dirPath){
         try{
-            Scanner scanner = new Scanner(new FileInputStream(dirPath+"/glove.6B.100d.txt"));
+            Scanner scanner = new Scanner(new FileInputStream(dirPath+"/glove.6B.200d.txt"));
             while(scanner.hasNext()) {
                 String[] line = scanner.nextLine().trim().split(" ");
                 String word = line[0];
@@ -21,7 +22,7 @@ public class ScoreUtils {
                     continue;
                 }
 
-                double[] vec = new double[100];
+                double[] vec = new double[WORD_DIMENSION];
                 for (int i = 1; i < line.length; ++i){
                     vec[i-1] = Double.parseDouble(line[i]);
                 }
@@ -92,7 +93,7 @@ public class ScoreUtils {
                 }
                 if (maxSim < ScoreUtils.COUNT_SIM_THRESHOLD) // filter small word sim below threshold
                     continue;
-                TP += maxSim;
+                TP += maxSim * 0.6; // similar word discount
                 Double preVal = recallMap.get(matchedWord);
                 if (preVal != null){
                     double curVal = Math.min(preVal + maxSim, 1.0);
@@ -119,7 +120,6 @@ public class ScoreUtils {
                                             Set<String>queryWordSet,
                                             Map<String, Set<Long>> originalWord2Ids,
                                             Map<String, Set<Long>> stemWord2Ids) {
-
         Set<String> dummyWord = new HashSet<>();
 
         for (String word: queryWordSet){
@@ -131,7 +131,7 @@ public class ScoreUtils {
                 nodes.addAll(tmp);
 
             // add stemmed matched word
-            tmp = stemWord2Ids.get(WordsConverter.convert(word));
+            tmp = stemWord2Ids.get(WordsConverter.stem(word));
             if (tmp != null)
                 nodes.addAll(tmp);
 
@@ -146,9 +146,12 @@ public class ScoreUtils {
             }
 
             // add original similar word
-            for (String key: originalWord2Ids.keySet())
+            for (String key: originalWord2Ids.keySet()) {
+                if (WordsConverter.isStopWords(key)) // skip stop words
+                    continue;
                 if (getSingleWordSimWord2Vec(word, key) > ScoreUtils.CANDIDATE_SIM_THRESHOLD)
                     nodes.addAll(originalWord2Ids.get(key));
+            }
 
             if (nodes.size() > 0) {
                 if(!candidateMap.containsKey(word))

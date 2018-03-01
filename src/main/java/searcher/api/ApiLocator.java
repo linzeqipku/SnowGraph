@@ -14,18 +14,6 @@ import utils.VectorUtils;
 
 public class ApiLocator {
 
-    public class SubGraph {
-        private Set<Long> nodes=new HashSet<>();
-        private Set<Long> edges=new HashSet<>();
-        double cost = 0, gain = 0;
-        public Set<Long> getNodes(){
-            return nodes;
-        }
-        public Set<Long> getEdges(){
-            return edges;
-        }
-    }
-
     private static final double RHO = 0.25;
     private static final String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
             + JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD + "|"

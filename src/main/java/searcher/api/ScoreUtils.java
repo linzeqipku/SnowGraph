@@ -1,18 +1,22 @@
 package searcher.api;
 
+import edu.stanford.nlp.ling.Word;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
 public class ScoreUtils {
-    public static final double COUNT_SIM_THRESHOLD = 0.6;
+    public static final double COUNT_SIM_THRESHOLD = 0.75;
     public static final double CANDIDATE_SIM_THRESHOLD = 0.75;
-    public static final double COUNT_SIM_SCALE = 0.8;
+    public static final double COUNT_SIM_SCALE = 0.6;
+    private static final int WORD_DIMENSION = 200;
+
     private static Map<String, double[]> word2VecMap = new HashMap<>();
 
     public static void loadWordVec(String dirPath){
         try{
-            Scanner scanner = new Scanner(new FileInputStream(dirPath+"/glove.6B.100d.txt"));
+            Scanner scanner = new Scanner(new FileInputStream(dirPath+"/glove.6B.200d.txt"));
             while(scanner.hasNext()) {
                 String[] line = scanner.nextLine().trim().split(" ");
                 String word = line[0];
@@ -20,7 +24,7 @@ public class ScoreUtils {
                     continue;
                 }
 
-                double[] vec = new double[100];
+                double[] vec = new double[WORD_DIMENSION];
                 for (int i = 1; i < line.length; ++i){
                     vec[i-1] = Double.parseDouble(line[i]);
                 }
@@ -37,9 +41,16 @@ public class ScoreUtils {
                                                    Map<Long, Set<String>> id2OriginalWrods,
                                                    Map<Long, Set<String>> id2StemWords) {
 
-        Set<String> stemQueryWords = new HashSet<>();
+        Set<String> stemQueryWords = new HashSet<>(); // stemmed words
         for (String word: queryWordSet)
             stemQueryWords.add(WordsConverter.stem(word));
+
+        Set<String> abbrQueryWords = new HashSet<>(); // abbr words
+        for (String word: queryWordSet) {
+            List<String> tmp = WordsConverter.getAbbrWords(word);
+            if (tmp != null)
+                abbrQueryWords.addAll(tmp);
+        }
 
         for (long id: candidates) {
             if (scoreMap.containsKey(id)) // 如果已经计算过了，可能是anchor, sim=1
@@ -55,7 +66,8 @@ public class ScoreUtils {
                     matchedSet.add(desc);
                     TP++;
                 }
-                else if(stemQueryWords.contains(WordsConverter.stem(desc))) {
+                else if(stemQueryWords.contains(WordsConverter.stem(desc)) ||
+                        abbrQueryWords.contains(desc)) {
                     TP += 0.95;
                     matchedSet.add(desc);
                 }
@@ -83,7 +95,7 @@ public class ScoreUtils {
                 }
                 if (maxSim < ScoreUtils.COUNT_SIM_THRESHOLD) // filter small word sim below threshold
                     continue;
-                TP += maxSim;
+                TP += maxSim * COUNT_SIM_SCALE; // similar word discount
                 Double preVal = recallMap.get(matchedWord);
                 if (preVal != null){
                     double curVal = Math.min(preVal + maxSim, 1.0);
@@ -110,7 +122,6 @@ public class ScoreUtils {
                                             Set<String>queryWordSet,
                                             Map<String, Set<Long>> originalWord2Ids,
                                             Map<String, Set<Long>> stemWord2Ids) {
-
         Set<String> dummyWord = new HashSet<>();
 
         for (String word: queryWordSet){
@@ -125,14 +136,27 @@ public class ScoreUtils {
                 }
             }
             // add stemmed matched word
-            tmp = stemWord2Ids.get(WordsConverter.convert(word));
+            tmp = stemWord2Ids.get(WordsConverter.stem(word));
             if (tmp != null)
                 nodes.addAll(tmp);
 
+            // add abbr word
+            List<String> abbrs = WordsConverter.getAbbrWords(word);
+            if (abbrs != null){
+                for(String abbr: abbrs){
+                    tmp = originalWord2Ids.get(abbr);
+                    if (tmp != null)
+                        nodes.addAll(tmp);
+                }
+            }
+
             // add original similar word
-            for (String key: originalWord2Ids.keySet())
+            for (String key: originalWord2Ids.keySet()) {
+                if (WordsConverter.isStopWords(key)) // skip stop words
+                    continue;
                 if (getSingleWordSimWord2Vec(word, key) > ScoreUtils.CANDIDATE_SIM_THRESHOLD)
                     nodes.addAll(originalWord2Ids.get(key));
+            }
 
             if (nodes.size() > 0) {
                 if(!candidateMap.containsKey(word))

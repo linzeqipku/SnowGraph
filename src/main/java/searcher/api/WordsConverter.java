@@ -1,21 +1,22 @@
 package searcher.api;
 
 import graphdb.extractors.parsers.word.corpus.Translator;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.tartarus.snowball.ext.EnglishStemmer;
 import webapp.SnowGraphContext;
-
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 class WordsConverter {
 
 	private static Set<String> englishStopWords=new HashSet<>();
+	private static Map<String, List<String>> abbrWords=new HashMap<>();
+
+	public static List<String> getAbbrWords(String key){
+		return abbrWords.get(key);
+	}
+
+	public static boolean isStopWords(String word){ return englishStopWords.contains(word); }
 
 	public static String stem(String token){
 		EnglishStemmer stemmer=new EnglishStemmer();
@@ -106,6 +107,7 @@ class WordsConverter {
 
 	static{
 		loadStopWords();
+		loadAbbrWords();
 	}
 	private static void loadStopWords(){
 		EnglishStemmer stemmer=new EnglishStemmer();
@@ -121,6 +123,17 @@ class WordsConverter {
 			stemmer.stem();
 			englishStopWords.add(stemmer.getCurrent());
 		});
-
+	}
+	private static void loadAbbrWords(){
+		List<String> lines=new ArrayList<>();
+		try {
+			lines=IOUtils.readLines(SnowGraphContext.class.getResource("/stopwords.txt").openStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		lines.forEach(n->{
+			List<String> s = Arrays.asList(n.trim().split("\\s+"));
+			abbrWords.put(s.get(0), s.subList(1, s.size()));
+		});
 	}
 }

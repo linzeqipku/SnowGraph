@@ -1,2 +1,4 @@
 document doc docs
 number num
+integer int
+frequency freq

@@ -1,9 +1,11 @@
 items:
 
-    - query: 3 How to boost fresh document with Lucene
+    - query: 3 How to set document boost with Lucene
       apis:
-          - Document
-          - Document.setBoost
+          - org.apache.lucene.document.Document
+          - org.apache.lucene.search.BoostAttribute
+          - org.apache.lucene.search.BoostAttributeImp.setBoost(float boost)
+          - org.apache.lucene.index.Terms
 
     - query: 1 get string representation of Terms using HighFreqTerms
       apis:
@@ -48,7 +50,7 @@ items:
       apis:
           - FuzzyQuery
 
-    - query: 11 How to extract document Term Vector in Lucene
+    - query: 11 How to get document Term Vector in Lucene
       apis:
           - IndexReader.getTermFreqVector
 
@@ -69,3 +71,25 @@ items:
     - query: 15 Finding out the number of documents in an lucene index
       apis:
           - IndexReader.numDocs
+
+    - query: 16 How is lucene boosting affected by lengthNorm similarity
+      apis:
+          - Similarity
+          - lengthNorm
+          - boostingQuery
+
+    - query: 17 how to index an integer filed in lucene
+      apis:
+          - IntField
+          - NumericFieldType
+          - IndexFieldTypes
+
+    - query: 18 how to get document length in Lucene
+      apis:
+          - Document
+          - getLength
+
+    - query: 19 select all docs query in Lucene
+      apis:
+          - Query, MatchAllDocsQuery
+

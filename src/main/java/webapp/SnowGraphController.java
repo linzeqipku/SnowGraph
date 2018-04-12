@@ -14,7 +14,7 @@ public class SnowGraphController {
     @Autowired
     private SnowGraphContext context;
 
-    @RequestMapping(value = "/apiLocation", method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = "/codeSearch", method = {RequestMethod.GET,RequestMethod.POST})
     public Neo4jSubGraph apiLocation(@RequestParam(value="query", defaultValue="") String query){
         return new Neo4jSubGraph(ApiLocator.query(query,context.getApiLocatorContext(),true),context);
     }

@@ -41,7 +41,8 @@ public class TestApiLocator {
         for (TestDataItem testDataItem:testDataSet.getItems()){
             ApiLocatorResult apiLocatorResult=new ApiLocatorResult();
             apiLocatorResult.setItem(testDataItem);
-            for (long id: ApiLocator.query(testDataItem.getQuery(),context.getApiLocatorContext(),false).getNodes()){
+            String query = "merge several taxonomy indexes for faceted search";
+            for (long id: ApiLocator.query(query, context.getApiLocatorContext(),true).getNodes()){
                 String sig=context.getApiLocatorContext().getId2Sig().get(id);
                 apiLocatorResult.add(sig);
             }

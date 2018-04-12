@@ -15,10 +15,10 @@ import utils.VectorUtils;
 public class ApiLocator {
 
     private static final double RHO = 0.25;
-    private static final String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT + "|" + JavaCodeExtractor.THROW + "|"
-            + JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD + "|"
-            + JavaCodeExtractor.HAVE_FIELD + "|" + JavaCodeExtractor.CALL_METHOD + "|" + JavaCodeExtractor.CALL_FIELD
-            + "|" + JavaCodeExtractor.TYPE + "|" + JavaCodeExtractor.VARIABLE;
+    private static final String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT
+            + "|" + JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD
+            + "|" + JavaCodeExtractor.CALL_METHOD + "|" + JavaCodeExtractor.HAVE_FIELD; /*+ "|" + JavaCodeExtractor.CALL_FIELD
+            + "|" + JavaCodeExtractor.THROW + "|" + JavaCodeExtractor.TYPE + "|" + JavaCodeExtractor.VARIABLE;*/
 
     private ApiLocatorContext context;
 
@@ -40,33 +40,50 @@ public class ApiLocator {
         SubGraph searchResult1 = query(queryString);
         r.nodes.addAll(searchResult1.nodes);
         r.cost = searchResult1.cost;
-        Set<Long> flags = new HashSet<>();
-        for (long seed1 : searchResult1.nodes) {
-            if (flags.contains(seed1))
-                continue;
-            for (long seed2 : searchResult1.nodes) {
-                if (seed1 == seed2)
-                    continue;
-                if (flags.contains(seed2))
-                    continue;
-                Session session = context.connection.session();
-                String stat = "match p=shortestPath((n1)-[:" + codeRels + "*..10]-(n2)) where id(n1)=" + seed1 + " and id(n2)=" + seed2
-                        + " unwind relationships(p) as r return id(startNode(r)), id(endNode(r)), id(r)";
-                StatementResult rs = session.run(stat);
-                while (rs.hasNext()) {
-                    Record item=rs.next();
-                    long node1 = item.get("id(startNode(r))").asLong();
-                    long node2 = item.get("id(endNode(r))").asLong();
-                    long rel = item.get("id(r)").asLong();
-                    r.nodes.add(node1);
-                    r.nodes.add(node2);
-                    r.edges.add(rel);
-                    flags.add(seed2);
+
+        Set<Long> selected = new HashSet<>();
+        selected.add(r.nodes.iterator().next());
+        int rootCount = searchResult1.nodes.size() - 1;
+
+        while(rootCount-- > 0){
+            int minStep = Integer.MAX_VALUE;
+            long candidate = 0;
+            SubGraph path = null;
+            for (long seed1 : selected){
+                for (long seed2: searchResult1.nodes){
+                    if (selected.contains(seed2))
+                        continue;
+                    SubGraph currentPath = new SubGraph();
+                    Session session = context.connection.session();
+                    String stat = "match p=shortestPath((n1)-[:" + codeRels + "*..10]-(n2)) where id(n1)=" + seed1 + " and id(n2)=" + seed2
+                            + " unwind relationships(p) as r return id(startNode(r)), id(endNode(r)), id(r)";
+                    StatementResult rs = session.run(stat);
+                    while (rs.hasNext()) {
+                        Record item=rs.next();
+                        long node1 = item.get("id(startNode(r))").asLong();
+                        long node2 = item.get("id(endNode(r))").asLong();
+                        long rel = item.get("id(r)").asLong();
+                        currentPath.nodes.add(node1);
+                        currentPath.nodes.add(node2);
+                        currentPath.edges.add(rel);
+                    }
+                    session.close(); // may have no path
+                    if (currentPath.edges.size() > 0 && currentPath.edges.size() < minStep){
+                        minStep = currentPath.edges.size();
+                        path = currentPath;
+                        candidate = seed2;
+                    }
                 }
-                session.close();
+
             }
-            flags.add(seed1);
+            if (path == null) // cannot expand to other nodes
+                break;
+            selected.add(candidate);
+            r.nodes.addAll(path.nodes);
+            r.edges.addAll(path.edges);
         }
+        if(debug)
+            System.out.println("expanded graph size: " + r.nodes.size()+"\n");
         return r;
     }
 
@@ -225,11 +242,13 @@ public class ApiLocator {
         ScoreUtils.generateCandidateMap(candidateMap, queryWordSet, context.originalWord2Ids, context.stemWord2Ids);
         Set<Long> allCandidates = new HashSet<>();
         for (String key: candidateMap.keySet()){
+            if(debug)
+                System.out.println("key- " + key + "- candidate size: " + candidateMap.get(key).size());
             allCandidates.addAll(candidateMap.get(key));
         }
         // 计算 API score, queryWordSet可能含有candidateMap中没有的词
         ScoreUtils.getAPISimScore(scoreMap, queryWordSet, allCandidates, context.id2OriginalWords, context.id2StemWords);
-        System.out.println(scoreMap.get(new Long(3481)));
+        //System.out.println(scoreMap.get(new Long(3481)));
 
         if (anchors.size() > 0){
             SubGraph initialGraph = new SubGraph();
@@ -239,6 +258,8 @@ public class ApiLocator {
         }
         else {
             Set<Long> seedSet = findSeed(scoreMap);
+            if (debug)
+                System.out.println("seed set size: " + seedSet.size());
             for (long seed: seedSet){ // for every seed, beam search to get top k result
                 SubGraph initialGraph = new SubGraph();
                 Set<Long> initNodes = new HashSet<>();
@@ -407,8 +428,6 @@ public class ApiLocator {
                     anchors.addAll(types);
             }
         }
-        if (debug)
-            System.out.println("anchor" + anchors);
         return anchors;
     }
 

@@ -1,95 +1,141 @@
 items:
 
-    - query: 3 How to set document boost with Lucene
+    - query: 1 How to set document boost attribute in Lucene
       apis:
           - org.apache.lucene.document.Document
+          - org.apache.lucene.util.Attribute
           - org.apache.lucene.search.BoostAttribute
+          - org.apache.lucene.util.AttributeImpl
           - org.apache.lucene.search.BoostAttributeImp.setBoost(float boost)
           - org.apache.lucene.index.Terms
 
-    - query: 1 get string representation of Terms using HighFreqTerms
+    - query: 2 get string representation of Terms using HighFreqTerms
       apis:
+          - org.apache.lucene.misc.HighFreqTerms
           - org.apache.lucene.misc.HighFreqTerms.getHighFreqTerms(IndexReader reader, int numTerms, String field, Comparator<TermStats> comparator)
-          - org.apache.lucene.misc.TermStats
+          - org.apache.lucene.index.Terms
+          - org.apache.lucene.index.Terms.iterator()
           - org.apache.lucene.util.BytesRef.toString()
 
-    - query: 2 how to create a query using wildcards
+    - query: 3 how to create a query using wildcards
       apis:
           - org.apache.lucene.search.Query
+          - org.apache.lucene.search.MultiTermQuery
+          - org.apache.lucene.search.AutomatonQuery
           - org.apache.lucene.search.WildcardQuery
 
-
-    - query: 4 how to escape a group of special characters in query?
+    - query: 4 how to escape some characters utilizing QueryParser?
       apis:
-          - QueryParser
-          - QueryParser.escape
+          - org.apache.lucene.queryparser.classic.QueryParser
+          - org.apache.lucene.queryparser.classic.QueryParserBase
+          - org.apache.lucene.queryparser.classic.QueryParserBase.escape
 
-    - query: 5 merge several taxonomy indexes for faceted search
+    - query: 5 how to merge several taxonomy indexes
       apis:
           - org.apache.lucene.facet.taxonomy.TaxonomyMergeUtils
+          - org.apache.lucene.facet.taxonomy.TaxonomyMergeUtils.merge
+          - org.apache.lucene.index.IndexWriter
 
-    - query: 6 How to get the full name of a directory path?
+    - query: 6 How to get the full path of a directory?
       apis:
-          - Lucene.Net.Store.SimpleFSDirectory.Directory.FullName
+          - org.apache.lucene.store.Directory
+          - org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyReader.getPath
+          - org.apache.lucene.search.suggest.analyzing.FSTUtil.Path
+          - org.apache.lucene.search.suggest.analyzing.AnalyzingSuggester.getFullPrefixPaths
 
-    - query: 7 Sorting search result in Lucene based on a numeric field
+    - query: 7 Sorting on a numeric field in Lucene
       apis:
-        - SortField
+        - org.apache.lucene.document.Field
+        - org.apache.lucene.search.SortField
+        - org.apache.lucene.search.SortedNumericSortField
 
-    - query: 8 how to get the score of a document in lucene
+    - query: 8 how to get the score of top document in lucene
       apis:
-        - ScoreDoc
-        - ScoreDoc.score
-        - TopDocs.scoreDocs
+        - org.apache.lucene.search.ScoreDoc
+        - org.apache.lucene.search.TopDocs
+        - org.apache.lucene.search.TopDocs.getMaxScore()
+        - org.apache.lucene.document.Document
 
-    - query: 9 How does regex query work on lucene?
+    - query: 9 How does regexp query work on lucene?
       apis:
-          - RegexpQuery
+          - org.apache.lucene.search.RegexpQuery
+          - org.apache.lucene.util.automaton.RegExp
+          - org.apache.lucene.util.automaton.AutomatonProvider
 
     - query: 10 How to implement a fuzzy search query in lucene
       apis:
-          - FuzzyQuery
+          - org.apache.lucene.search.FuzzyQuery
+          - org.apache.lucene.search.MultiTermQuery
+          - org.apache.lucene.search.Query
 
-    - query: 11 How to get document Term Vector in Lucene
+    - query: 11 How to get field Term Vectors in Lucene
       apis:
-          - IndexReader.getTermFreqVector
+          - org.apache.lucene.document.Field
+          - org.apache.lucene.index.IndexReader
+          - org.apache.lucene.index.IndexReader.getTermVectors
 
-    - query: 12 How to combine multiple Lucene indexes for search
+    - query: 12 How can a reader read multiple Lucene indexes
       apis:
-          - MultiReader
-          - IndexReader
+          - org.apache.lucene.index.MultiReader
+          - org.apache.lucene.index.IndexReader
           - IndexSearcher
 
-    - query: 13 How to query documents containing any term in a set?
+    - query: 13 how to highlight common terms in the Lucene query
       apis:
-          - TermSetQuery
+          - org.apache.lucene.search.highlight.Highlighter
+          - org.apache.lucene.queries.CommonTermsQuery
+          - org.apache.lucene.search.Query
+          - org.apache.lucene.index.Terms
+          - org.apache.lucene.index.Fields.terms
+          - org.apache.lucene.search.highlight.SimpleHTMLFormatter.highlightTerm
+          - org.apache.lucene.search.highlight.Formatter
 
-    - query: 14 highlight exact terms that satisfy a Lucene query
+    - query: 14 How to query document have any term in a set?
       apis:
-          - Highlighter
+          - org.apache.lucene.search.join.TermsQuery
+          - org.apache.lucene.search.MultiTermQuery
+          - org.apache.lucene.search.Query
+          - org.apache.lucene.document.Document
 
-    - query: 15 Finding out the number of documents in an lucene index
+    - query: 15 count the number of documents in an lucene index
       apis:
-          - IndexReader.numDocs
+          - org.apache.lucene.index.IndexReader
+          - org.apache.lucene.index.IndexReader.numDocs
+          - org.apache.lucene.index.IndexReader.getDocCount
 
-    - query: 16 How is lucene boosting affected by lengthNorm similarity
+    - query: 16 How is lucene query boost affected by lengthNorm similarity
       apis:
-          - Similarity
-          - lengthNorm
-          - boostingQuery
+          - org.apache.lucene.search.similarities.Similarity
+          - org.apache.lucene.search.similarities.TFIDFSimilarity
+          - org.apache.lucene.search.similarities.TFIDFSimilarity.lengthNorm
+          - org.apache.lucene.search.BoostQuery
+          - org.apache.lucene.search.Query
 
-    - query: 17 how to index an integer filed in lucene
+    - query: 17 how to index an integer field in lucene
       apis:
           - IntField
           - NumericFieldType
           - IndexFieldTypes
+          - org.apache.lucene.index.IndexableField
+          - org.apache.lucene.document.Field
+          - org.apache.lucene.document.LegacyIntField
 
-    - query: 18 how to get document length in Lucene
+    - query: 18 how to compute document length in Lucene
       apis:
-          - Document
-          - getLength
+          - org.apache.lucene.document.Document
+          - org.apache.lucene.search.similarities.Similarity
+          - org.apache.lucene.search.similarities.Similarity.computeNorm
 
-    - query: 19 select all docs query in Lucene
+    - query: 19 match all document query in Lucene
       apis:
-          - Query, MatchAllDocsQuery
+          - org.apache.lucene.search.MatchAllDocsQuery
+          - org.apache.lucene.search.Query
+          - org.apache.lucene.document.Document
+
+    - query: 20 How to query document having terms with a prefix
+      apis:
+          - org.apache.lucene.search.PrefixQuery
+          - org.apache.lucene.search.Query
+          - org.apache.lucene.document.Document
+          - org.apache.lucene.index.Terms
 

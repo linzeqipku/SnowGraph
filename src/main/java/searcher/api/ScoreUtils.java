@@ -105,14 +105,14 @@ public class ScoreUtils {
                 }
 
             }
-            // calculate F2 score, recall weighs higher
+            // calculate F0.5 score, precision weighs higher
             double precision = TP / P;
             double recall = 0;
             for(String key: recallMap.keySet()){
                 recall += recallMap.get(key);
             }
             recall = (recall + matchedSet.size()) / R;
-            double score = 2 * precision * recall / (precision + recall);
+            double score = 1.25 * precision * recall / (0.25 * precision + recall);
 
             scoreMap.put(id, score);
         }

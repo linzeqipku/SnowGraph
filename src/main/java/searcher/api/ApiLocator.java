@@ -17,9 +17,12 @@ public class ApiLocator {
     private static final double RHO = 0.25;
     private static final String codeRels = JavaCodeExtractor.EXTEND + "|" + JavaCodeExtractor.IMPLEMENT
             + "|" + JavaCodeExtractor.PARAM + "|" + JavaCodeExtractor.RT + "|" + JavaCodeExtractor.HAVE_METHOD
-            + "|" + JavaCodeExtractor.CALL_METHOD + "|" + JavaCodeExtractor.HAVE_FIELD; /*+ "|" + JavaCodeExtractor.CALL_FIELD
-            + "|" + JavaCodeExtractor.THROW + "|" + JavaCodeExtractor.TYPE + "|" + JavaCodeExtractor.VARIABLE;*/
+            + "|" + JavaCodeExtractor.CALL_METHOD + "|" + JavaCodeExtractor.HAVE_FIELD;
+            //+ "|" + JavaCodeExtractor.VARIABLE;
+            /*+ "|" + JavaCodeExtractor.CALL_FIELD
+            + "|" + JavaCodeExtractor.THROW + "|" + JavaCodeExtractor.TYPE*/
 
+    private static final int BEAM_SIZE = 10;
     private ApiLocatorContext context;
 
     private Map<Long, Double> scoreMap = new HashMap<>();
@@ -253,6 +256,8 @@ public class ApiLocator {
         if (anchors.size() > 0){
             SubGraph initialGraph = new SubGraph();
             initialGraph.nodes = anchors;
+            for(long node: anchors)
+                initialGraph.gain += scoreMap.get(node);
             r.add(initialGraph);
             r = beamSearch(r);
         }
@@ -274,6 +279,7 @@ public class ApiLocator {
             }
             // sort all results, usually the size will > 10
             r.sort(Comparator.comparingDouble(s->s.cost));
+            r = r.subList(0, r.size() > 10? 10: r.size());
         }
 
         return r;
@@ -296,22 +302,35 @@ public class ApiLocator {
                 }
                 gainList.sort(Comparator.comparingDouble(p->p.getRight()));
 
-                for (int i = 0; i < gainList.size() && i < 10; ++i){
+                for (int i = 0; i < gainList.size() && i < BEAM_SIZE; ++i){
                     Set<Long> next = new HashSet<>();
                     next.addAll(current);
                     next.add(gainList.get(i).getLeft());
                     SubGraph nextGraph = new SubGraph();
                     nextGraph.nodes = next;
                     nextGraph.cost = curGraph.cost + gainList.get(i).getRight();
-                    agenda.add(nextGraph);
+                    nextGraph.gain = curGraph.gain + scoreMap.get(gainList.get(i).getLeft());
+                    /*boolean flag = true;
+                    for (SubGraph graph: agenda){
+                        if (graph.containSameNodes(next)){
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag)*/
+                        agenda.add(nextGraph);
                 }
             }
-            agenda.sort(Comparator.comparingDouble(r->r.cost));
+            if (candidateMap.size() == 1) {
+                Comparator<SubGraph> comparator = Comparator.comparingDouble(r -> r.gain);
+                agenda.sort(comparator.reversed()); // sort by gain first, Java sorts are all stable
+            }
+            agenda.sort(Comparator.comparingDouble(r->r.cost)); // sort by cost, note: must sort cost after gain
 
             // clear and add new top 10 to results
             results.clear();
             int size = agenda.size();
-            results.addAll(agenda.subList(0, size > 10 ? 10 : size));
+            results.addAll(agenda.subList(0, size > BEAM_SIZE ? BEAM_SIZE : size));
             agenda.clear();
         }
         return results;
@@ -395,7 +414,7 @@ public class ApiLocator {
     }
 
    private Set<Long> findAnchors(Set<String> queryWordSet) {
-        Set<String> anchorIgnore = new HashSet<String>(){{add("query");}};
+        Set<String> anchorIgnore = new HashSet<String>(){{add("query"); add("term"); add("match");}};
         Set<Long> anchors = new HashSet<>();
 
         Map<String, Set<Long>> fullNameMatchMap = new HashMap<>();
@@ -454,5 +473,4 @@ public class ApiLocator {
         // dist(i, j) / (w(i) * w(j))
         return VectorUtils.dist(node1,node2,context.id2Vec)/(scoreMap.get(node1) * scoreMap.get(node2));
     }
-
 }

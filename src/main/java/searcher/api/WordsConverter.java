@@ -127,7 +127,7 @@ class WordsConverter {
 	private static void loadAbbrWords(){
 		List<String> lines=new ArrayList<>();
 		try {
-			lines=IOUtils.readLines(SnowGraphContext.class.getResource("/stopwords.txt").openStream());
+			lines=IOUtils.readLines(SnowGraphContext.class.getResource("/abbr.txt").openStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -15,4 +15,13 @@ public class SubGraph {
     public Set<Long> getEdges() {
         return edges;
     }
+
+    public boolean containSameNodes(Set<Long> s){
+        if (nodes.size() != s.size())
+            return false;
+        if (nodes.containsAll(s))
+            return true;
+        else
+            return false;
+    }
 }

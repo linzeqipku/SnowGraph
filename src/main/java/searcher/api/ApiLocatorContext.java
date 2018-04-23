@@ -2,6 +2,7 @@ package searcher.api;
 
 import graphdb.extractors.miners.codeembedding.line.LINEExtractor;
 import graphdb.extractors.parsers.javacode.JavaCodeExtractor;
+import jdk.nashorn.internal.parser.Token;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
@@ -51,13 +52,19 @@ public class ApiLocatorContext {
                 name = name.substring(0, name.indexOf("("));
                 m = true;
             }
+            String shortName = name;
+            String className = "";
             if (name.contains(".")) // 获取最低一级的名字作为他的全名，对于方法名是否合适？
-                name = name.substring(name.lastIndexOf(".") + 1);
-            if (m && name.matches("[A-Z]\\w+")) // 忽略大写字母开头的方法？
-                continue;
+                shortName = name.substring(name.lastIndexOf(".") + 1);
+            if (m){
+                if (shortName.matches("[A-Z]\\w+")) // 忽略大写字母开头的方法 - 构造方法
+                    continue;
+                String[] nameList = name.split("\\.");
+                className = nameList[nameList.length - 2];
+            }
             Set<String> words = new HashSet<>();
             Set<String> originalWords = new HashSet<>();
-            for (String e : name.split("[^A-Za-z]+")) {
+            for (String e : shortName.split("[^A-Za-z]+")) {
                 for (String word : TokenizationUtils.camelSplit(e)) {
                     originalWords.add(word); // contains stop words like is with...
                     if (!originalWord2Ids.containsKey(word))
@@ -70,19 +77,22 @@ public class ApiLocatorContext {
                     words.add(word);
                 }
             }
+            if (m){ // 加入方法的类名作为结点的描述词，在计算权重时用到，而索引时不需要
+                originalWords.addAll(TokenizationUtils.camelSplit(className));
+            }
             id2OriginalWords.put(id, originalWords);
             id2StemWords.put(id, words);
             id2Vec.put(id, vec);
             id2Sig.put(id, sig);
             if (!m) // 如果是一个类或接口结点，加入typeset中
                 typeSet.add(id);
-            id2Name.put(id, name.toLowerCase()); // 未切词前的方法名，是否要stem? 因为query中的词都被stem了
-            if (!stemWord2Ids.containsKey(WordsConverter.stem(name.toLowerCase())))
-                stemWord2Ids.put(WordsConverter.stem(name.toLowerCase()), new HashSet<>());
-            stemWord2Ids.get(WordsConverter.stem(name.toLowerCase())).add(id);
-            if (!originalWord2Ids.containsKey(name.toLowerCase()))
-                originalWord2Ids.put(name.toLowerCase(), new HashSet<>());
-            originalWord2Ids.get(name.toLowerCase()).add(id);
+            id2Name.put(id, shortName.toLowerCase()); // 未切词前的方法名，是否要stem? 因为query中的词都被stem了
+            if (!stemWord2Ids.containsKey(WordsConverter.stem(shortName.toLowerCase())))
+                stemWord2Ids.put(WordsConverter.stem(shortName.toLowerCase()), new HashSet<>());
+            stemWord2Ids.get(WordsConverter.stem(shortName.toLowerCase())).add(id);
+            if (!originalWord2Ids.containsKey(shortName.toLowerCase()))
+                originalWord2Ids.put(shortName.toLowerCase(), new HashSet<>());
+            originalWord2Ids.get(shortName.toLowerCase()).add(id);
         }
         session.close();
     }

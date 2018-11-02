@@ -1,3 +1,5 @@
+SnowGraph is depressed now and has been migrated to [linzeqipku/intellide-graph](https://github.com/linzeqipku/intellide-graph)
+
 # Software Knowledge Graph
 
 ![licence](https://img.shields.io/badge/license-Apache2.0-blue.svg)
